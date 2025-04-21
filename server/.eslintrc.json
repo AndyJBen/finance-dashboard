@@ -1,0 +1,16 @@
+{
+    "env": {
+      "browser": false, // Important: Set to false for backend code
+      "commonjs": true, // Recognizes CommonJS globals and scope (like require/module.exports)
+      "es2021": true,   // Or your target ECMAScript version
+      "node": true      // Recognizes Node.js global variables and scope
+    },
+    "extends": "eslint:recommended", // Or your preferred base configuration
+    "parserOptions": {
+      "ecmaVersion": "latest"
+    },
+    "rules": {
+      // Add any custom rules here
+    }
+  }
+  

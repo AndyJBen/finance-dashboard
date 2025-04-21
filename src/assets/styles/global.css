@@ -1,0 +1,338 @@
+/* src/assets/styles/global.css */
+/* COMPLETE FILE CODE */
+/* Changes:
+    - Modified .ant-layout-header rule for transparency
+    - Added overflow-x and overscroll-behavior-x to body
+    - Added overscroll-behavior-y to body to prevent scrolling past top/bottom
+*/
+
+/* --- Google Font Import --- */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* --- CSS Variables Definition --- */
+:root {
+    /* Color palette */
+    --primary-100: #EBF5FF;
+    --primary-200: #CCE5FF;
+    --primary-500: #3388FF;
+    --primary-600: #0066FF; /* Mapped to AntD primaryColor */
+    --primary-700: #0052CC;
+
+    /* Neutrals */
+    --neutral-50: #FAFBFC;
+    --neutral-100: #F5F7FA; /* Mapped to AntD colorBgLayout */
+    --neutral-200: #EDF1F7; /* Mapped to AntD colorBorderSecondary */
+    --neutral-300: #DDE3ED; /* Mapped to AntD colorBorder */
+    --neutral-400: #B0B9C6;
+    --neutral-500: #8994A6;
+    --neutral-600: #6E7E94;
+    --neutral-700: #4D5E80;
+    --neutral-800: #2D4159; /* Mapped to AntD colorTextBase */
+    --neutral-900: #1A2533;
+
+    /* Semantic colors */
+    --success-100: #E5F8EF;
+    --success-500: #26C67B; /* Mapped to AntD colorSuccess */
+    --success-700: #1D9D60;
+
+    --warning-100: #FFF5E5;
+    --warning-500: #FF9233; /* Mapped to AntD colorWarning */
+    --warning-700: #E06500;
+
+    --danger-100: #FEEBEF;
+    --danger-50: #fff5f5; /* Lighter red for overdue background */
+    --danger-500: #F1476F; /* Mapped to AntD colorError */
+    --danger-700: #D1285A;
+
+
+    /* Shadows */
+    --shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.05);
+    --shadow-md: 0 2px 4px rgba(16, 24, 40, 0.06), 0 1px 2px rgba(16, 24, 40, 0.04);
+    --shadow-lg: 0 4px 8px rgba(16, 24, 40, 0.07), 0 2px 4px rgba(16, 24, 40, 0.05);
+
+    /* Spacing system */
+    --space-4: 0.25rem;
+    --space-8: 0.5rem;
+    --space-12: 0.75rem;
+    --space-16: 1rem;
+    --space-20: 1.25rem;
+    --space-24: 1.5rem;
+    --space-32: 2rem;
+
+    /* Border radius */
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+    --radius-full: 9999px;
+
+    /* Font settings */
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+    /* App Primary Color */
+    --app-primary-color: #0066FF;
+}
+
+/* --- Base & Global Styles --- */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-sans);
+    font-feature-settings: 'liga' 1, 'calt' 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-size: 15px;
+    line-height: 1.6;
+    /* Prevent horizontal movement/scroll */
+    overflow-x: hidden;
+    overscroll-behavior-x: contain;
+    /* *** ADDED STYLE TO PREVENT VERTICAL OVERSCROLL *** */
+    overscroll-behavior-y: contain; /* Prevent bounce/scroll past top/bottom */
+    min-height: 100vh;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+    color: var(--neutral-900);
+    line-height: 1.3;
+    margin-top: 0;
+    margin-bottom: 0.75em;
+}
+
+h1 { font-size: 1.75rem; }
+h2 { font-size: 1.25rem; }
+h3 { font-size: 1.125rem; }
+h4 { font-size: 1rem; }
+
+p {
+    margin-bottom: 1em;
+}
+
+a {
+    color: var(--primary-600);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+a:hover {
+    color: var(--primary-700);
+}
+
+
+/* --- Ant Design Overrides & Enhancements --- */
+
+#root, .ant-layout {
+  min-height: 100vh;
+}
+
+.ant-card {
+    box-shadow: var(--shadow-md) !important;
+    border: 1px solid var(--neutral-200) !important;
+}
+
+/* *** MODIFIED HEADER STYLES *** */
+.ant-layout-header {
+    /* Sticky positioning */
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 100 !important;
+
+    /* Visuals - Make transparent, remove border/shadow */
+    background-color: transparent !important; /* *** TRANSPARENT BACKGROUND *** */
+    border-bottom: none !important; /* *** REMOVE BORDER *** */
+    box-shadow: none !important; /* *** REMOVE SHADOW *** */
+
+    /* Keep layout styles */
+    padding: 0 var(--space-24) !important;
+    height: 64px;
+    line-height: 64px;
+}
+/* *** END MODIFIED HEADER STYLES *** */
+
+.ant-layout-sider {
+     box-shadow: var(--shadow-lg) !important;
+     border-right: 1px solid var(--neutral-200);
+}
+
+main.ant-layout-content {
+    margin: 0 !important;
+}
+
+.ant-layout {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Enhance Buttons (Keep styling for buttons inside header) */
+.ant-btn-primary {
+    box-shadow: var(--shadow-sm);
+}
+.ant-btn-primary:not(:disabled):hover {
+    background: var(--primary-700) !important;
+}
+
+.ant-btn-default {
+    background-color: #fff;
+    border: 1px solid var(--neutral-300);
+    box-shadow: var(--shadow-sm);
+}
+.ant-btn-default:not(:disabled):hover {
+    color: var(--primary-600) !important;
+    border-color: var(--primary-600) !important;
+}
+/* Specific override for header buttons if needed to maintain visibility */
+.ant-layout-header .ant-btn-default {
+    background-color: #fff !important; /* Ensure buttons have background */
+}
+
+/* Enhance Table */
+.ant-table-thead > tr > th {
+    background-color: var(--neutral-50) !important;
+    color: var(--neutral-600);
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid var(--neutral-200) !important;
+}
+
+.ant-table-tbody > tr > td {
+    border-bottom: 1px solid var(--neutral-200) !important;
+    font-size: 0.875rem;
+    color: var(--neutral-800);
+    vertical-align: middle;
+}
+
+.ant-table-tbody > tr:last-child > td {
+    border-bottom: none !important;
+}
+
+.ant-card .ant-table-wrapper {
+    border-radius: inherit;
+    overflow: hidden;
+}
+.ant-card .ant-table {
+    border-radius: inherit;
+}
+
+/* Style AntD Tags */
+.ant-tag {
+    border-radius: var(--radius-full) !important;
+    font-weight: 600;
+    font-size: 0.75rem;
+    padding: var(--space-4) var(--space-8);
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    line-height: 1.4;
+}
+
+/* Custom Tag Colors */
+.tag-category { background-color: var(--primary-100); color: var(--primary-700); }
+.tag-status-paid { background-color: var(--success-100); color: var(--success-700); }
+.tag-status-unpaid { background-color: var(--warning-100); color: var(--warning-700); }
+.tag-due-soon { background-color: var(--danger-100); color: var(--danger-700); }
+
+/* --- Action Icon Styles --- */
+.action-icon {
+    color: #bfbfbf !important;
+    font-size: 1rem;
+    transition: color 0.3s ease;
+}
+.action-icon-edit:hover { color: var(--primary-600) !important; }
+.action-icon-delete:hover { color: var(--danger-500) !important; }
+.ant-table-cell .ant-space-item { display: flex; align-items: center; }
+
+
+/* --- Checkbox Styles --- */
+.status-checkbox.checked .ant-checkbox-checked .ant-checkbox-inner {
+    background-color: var(--success-500) !important;
+    border-color: var(--success-500) !important;
+}
+.status-checkbox.checked .ant-checkbox-checked .ant-checkbox-inner::after {
+    border-color: #fff !important;
+}
+.ant-table-tbody .status-checkbox.large-checkbox .ant-checkbox-inner {
+    transform: scale(1.3);
+}
+.ant-table-tbody .status-checkbox.large-checkbox {
+    display: inline-flex;
+    align-items: center;
+}
+
+
+/* --- Filter Tag Style --- */
+.ant-tag-checkable.filter-tag-checked,
+.ant-tag-checkable.filter-tag-checked:hover {
+    background-color: var(--neutral-200, #EDF1F7) !important;
+    color: var(--neutral-800, #2D4159) !important;
+}
+.ant-tag-checkable.filter-tag-checked .anticon {
+     color: var(--neutral-800, #2D4159) !important;
+}
+
+/* --- Styles for Compact Overdue Panel --- */
+.compact-overdue-panel.ant-collapse-item {
+    border: 1px solid var(--neutral-200) !important;
+    background-color: #fff !important;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: var(--space-16);
+    border-bottom: 1px solid var(--neutral-200) !important;
+}
+.ant-collapse-item.ant-collapse-item-active > .compact-overdue-panel.ant-collapse-item {
+    border-bottom: none !important;
+}
+
+.compact-overdue-panel > .ant-collapse-header {
+    padding-top: 6px !important;
+    padding-bottom: 6px !important;
+    padding-left: 12px !important;
+    border-radius: 4px;
+    background-color: var(--neutral-50) !important;
+    border-bottom: 1px solid var(--neutral-200) !important;
+    transition: background-color 0.3s ease;
+}
+.compact-overdue-panel:hover > .ant-collapse-header {
+    background-color: var(--neutral-100) !important;
+}
+
+.compact-overdue-panel > .ant-collapse-content {
+    background-color: #fff !important;
+    border-radius: 0 0 4px 4px !important;
+    border-top: none !important;
+    padding: 0 !important;
+}
+.compact-overdue-panel > .ant-collapse-content > .ant-collapse-content-box {
+    padding: 8px 12px !important;
+    background-color: transparent !important;
+}
+
+.ant-collapse-item.ant-collapse-item-active > .compact-overdue-panel > .ant-collapse-header {
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    background-color: var(--neutral-100) !important;
+    border-bottom-color: var(--neutral-200) !important;
+}
+.ant-collapse-item.ant-collapse-item-active > .compact-overdue-panel > .ant-collapse-header {
+    border-top-left-radius: 4px !important;
+    border-top-right-radius: 4px !important;
+}
+/* Prevent background color change on sorted table column header */
+.ant-table-thead th.ant-table-column-sort {
+    background-color: var(--neutral-50) !important; /* Use your default header background */
+  }
+
+  /* Prevent background color change on sorted table body cells */
+  .ant-table-tbody > tr > td.ant-table-column-sort {
+    background-color: transparent !important; /* Make body cells transparent */
+  }
+
+  /* Ensure row hover still works correctly on sorted columns */
+  .ant-table-tbody > tr:hover > td.ant-table-column-sort {
+     /* Use AntD's hover variable or your theme's row hover color */
+     background-color: var(--ant-table-row-hover-bg, var(--neutral-50)) !important;
+  }

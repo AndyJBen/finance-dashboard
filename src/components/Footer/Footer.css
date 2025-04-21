@@ -1,0 +1,61 @@
+/* src/components/Footer/Footer.css */
+/* COMPLETE FILE CODE */
+/* Styles adjusted for a standard, non-floating footer. */
+
+.app-footer {
+    /* -- Positioning & Background -- */
+    background-color: var(--neutral-50); /* Very light grey background */
+    padding: var(--space-16) var(--space-24); /* Standard padding */
+    border-top: 1px solid var(--neutral-200); /* Subtle top border */
+    width: 100%; /* Ensure it spans the full width */
+    flex-shrink: 0; /* Prevent footer from shrinking if content is long */
+    /* removed margin-top: auto; - the flex layout in App.jsx handles positioning */
+  
+    /* -- Text Styling -- */
+    color: var(--neutral-700); /* Standard text color */
+    font-size: 0.875rem; /* Slightly smaller font */
+    line-height: 1.5;
+  }
+  
+  .app-footer .ant-typography,
+  .app-footer .ant-typography a {
+    color: var(--neutral-700); /* Consistent text color for Ant Design elements */
+    font-size: 0.875rem; /* Match base font size */
+  }
+  
+  .app-footer a:hover {
+    color: var(--primary-600); /* Link hover color */
+  }
+  
+  /* -- Layout & Alignment -- */
+  .app-footer .ant-space-item {
+    display: flex;
+    align-items: center;
+  }
+  
+  /* Responsive alignment (remains the same) */
+  .footer-copyright {
+    text-align: center; /* Center copyright on small screens */
+  }
+  
+  .footer-contact-info {
+    text-align: center; /* Center contact info on small screens */
+  }
+  
+  @media (min-width: 576px) {
+    .footer-copyright {
+      text-align: left; /* Align left on larger screens */
+    }
+    .footer-contact-info {
+      text-align: right; /* Align right on larger screens */
+    }
+    .footer-contact-info .ant-space {
+      justify-content: flex-end; /* Ensure space aligns right */
+    }
+  }
+  
+  /* Ensure icons are vertically aligned */
+  .app-footer .anticon {
+      vertical-align: middle;
+      margin-right: var(--space-8); /* Space after icon */
+  }

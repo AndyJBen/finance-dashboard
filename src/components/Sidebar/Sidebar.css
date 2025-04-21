@@ -1,0 +1,254 @@
+/* src/components/Sidebar/Sidebar.css */
+/* COMPLETE FILE CODE - Includes explicit flex layout and updated spacing */
+
+/* --- Sidebar Specific Styles --- */
+.app-sidebar {
+    transition: width 0.2s cubic-bezier(0.23, 1, 0.32, 1);
+    overflow: hidden !important; /* Prevent Sider scroll */
+}
+
+.sidebar-logo { display: flex; align-items: center; padding: var(--space-16); height: 64px; border-bottom: 1px solid var(--neutral-200); overflow: hidden; white-space: nowrap; flex-shrink: 0; }
+.logo-icon-wrapper { width: 36px; height: 36px; background: linear-gradient(135deg, var(--primary-600), var(--primary-700)); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; color: white; margin-right: var(--space-12); flex-shrink: 0; }
+.logo-text { font-size: 1.25rem; font-weight: 700; background: linear-gradient(90deg, var(--primary-700), var(--primary-500)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; display: inline-block; }
+
+/* Container for the main scrollable menu */
+.sidebar-main-menu-container { flex-grow: 1; overflow-y: auto; overflow-x: hidden; padding-bottom: var(--space-8); }
+
+/* --- Sidebar Menu Styling (Main Menu) --- */
+.sidebar-menu.ant-menu-light { border-right: none !important; background: transparent; padding: var(--space-8) 0; }
+.sidebar-menu.add-card-menu-section.ant-menu { padding-top: 0; } /* Remove padding for add section */
+
+
+/* General styling for NON-SORTABLE menu items */
+.sidebar-menu .ant-menu-item.non-sortable-menu-item,
+.sidebar-menu .ant-menu-submenu-title {
+    margin: var(--space-4) var(--space-8) !important;
+    padding: 0 var(--space-12) !important;
+    width: calc(100% - var(--space-16));
+    height: 44px;
+    border-radius: var(--radius-lg) !important;
+    color: var(--neutral-700);
+    font-weight: 500;
+    font-size: 0.875rem;
+    position: relative;
+    display: flex !important;
+    align-items: center;
+    overflow: hidden;
+    max-width: calc(100% - var(--space-16));
+}
+.sidebar-menu .ant-menu-item-disabled { background: none !important; cursor: default; color: var(--neutral-400) !important; }
+
+/* Menu Group Styling */
+/* Use separate class for headers not inside Menu */
+.sidebar-group-header { display: flex; justify-content: space-between; align-items: center; padding: var(--space-16) var(--space-16) var(--space-8) var(--space-8); }
+.sidebar-group-label { color: var(--neutral-500); font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; flex-grow: 1; }
+
+/* --- Drag and Drop Styles --- */
+
+/* Style for the wrapper div of each sortable item */
+.sortable-card-item-wrapper {
+  margin: var(--space-4) var(--space-8);
+  border-radius: var(--radius-lg);
+  list-style: none;
+  padding: 0;
+  box-sizing: border-box;
+  background-color: #fff;
+  transition: box-shadow 0.2s ease-in-out, transform 0.2s ease-in-out;
+}
+
+/* Explicit flex layout for the inner card item content */
+.sidebar-card-item {
+  display: flex;
+  align-items: center;
+  /* Increased horizontal padding as suggested */
+  padding: 0 var(--space-0); /* Apply padding here */
+  min-height: 44px;
+  gap: var(--space-0);
+  width: 100%;
+  box-sizing: border-box;
+  border-radius: inherit;
+  color: var(--neutral-700);
+  font-weight: 500;
+  font-size: 0.875rem;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Hover effect for the sortable item */
+.sortable-card-item-wrapper:hover .sidebar-card-item {
+   background-color: var(--neutral-50);
+}
+
+/* Drag Handle Styling */
+.drag-handle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 2px 0 0; /* Space to the right of handle */
+  cursor: grab;
+  color: var(--neutral-400);
+  flex-shrink: 0;
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+.sortable-card-item-wrapper:hover .drag-handle {
+  opacity: 1;
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+}
+
+/* Style for the item being dragged */
+.sortable-card-item-wrapper[data-is-dragging="true"] {
+  box-shadow: var(--shadow-lg);
+  opacity: 0.8;
+  z-index: 10;
+}
+
+/* Container for the sortable items */
+.sortable-items-container {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+/* Credit Card Item Content Styling (within SortableCardItem) */
+.sidebar-card-item-content { display: flex; align-items: center; min-width: 0; flex-grow: 1; }
+.card-item-main-icon { font-size: 1rem; color: var(--neutral-700); flex-shrink: 0; }
+
+/* *** MODIFIED RULE for card details spacing *** */
+.card-details {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+    min-width: 0;
+    overflow: hidden;
+    /* Add space-between to push name and balance apart */
+    justify-content: space-between;
+    /* Removed padding-right, space-between handles spacing */
+}
+/* *** END MODIFIED RULE *** */
+
+.card-details .card-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--neutral-700); min-width: 0; /* Let name take space but allow shrinking */ font-weight: 500; padding-right: var(--space-8);padding-left: var(--space-4); /* Add some padding so name doesn't touch balance */ }
+
+/* *** MODIFIED RULE for card balance spacing *** */
+.card-details .card-balance {
+    font-weight: 500;
+    color: var(--neutral-700);
+    font-size: 0.85em;
+    white-space: nowrap;
+    flex-shrink: 0; /* Prevent balance from shrinking */
+    text-align: right;
+    /* Removed margin-left: auto; */
+}
+/* *** END MODIFIED RULE *** */
+
+
+/* Add Card Menu Item */
+.sidebar-menu .ant-menu-item.add-card-menu-item { color: var(--primary-600); font-weight: 500; }
+.sidebar-menu .ant-menu-item.add-card-menu-item:hover { background-color: var(--primary-100) !important; }
+.sidebar-menu .ant-menu-item.add-card-menu-item .ant-menu-item-icon + .ant-menu-title-content { margin-left: var(--space-12); }
+
+/* Card Action Dropdown Trigger (within SortableCardItem) */
+.card-action-dropdown-trigger.ant-btn {
+    padding: 4px;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--neutral-500);
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease-in-out, color 0.2s ease;
+    z-index: 5;
+    margin-left: auto; /* Push to the right */
+    flex-shrink: 0;
+}
+.sortable-card-item-wrapper:hover .card-action-dropdown-trigger {
+    opacity: 1;
+    pointer-events: auto;
+}
+.card-action-dropdown-trigger.ant-btn:hover {
+    color: var(--primary-600);
+}
+
+/* Menu Item Icons (General - Non-Sortable) */
+.sidebar-menu .ant-menu-item.non-sortable-menu-item .ant-menu-item-icon,
+.sidebar-menu .ant-menu-submenu-title .ant-menu-item-icon {
+    font-size: 1rem; vertical-align: middle; flex-shrink: 0;
+}
+.sidebar-menu .ant-menu-item.non-sortable-menu-item .ant-menu-item-icon + .ant-menu-title-content,
+.sidebar-menu .ant-menu-submenu-title .ant-menu-item-icon + .ant-menu-title-content {
+     margin-left: var(--space-12); flex-grow: 1; overflow: hidden;
+}
+
+/* Hover state (General - Non-Sortable) */
+.sidebar-menu.ant-menu-light .ant-menu-item.non-sortable-menu-item:not(.ant-menu-item-selected):not(.add-card-menu-item):not(.ant-menu-item-disabled):hover,
+.sidebar-menu.ant-menu-light .ant-menu-submenu-title:hover {
+    background-color: var(--neutral-100) !important;
+    color: var(--neutral-900) !important;
+    margin-right: var(--space-8) !important;
+}
+
+/* Active state (General - Non-Sortable) */
+.sidebar-menu.ant-menu-light .ant-menu-item-selected.non-sortable-menu-item {
+    background-color: var(--primary-100) !important;
+    color: var(--primary-600) !important;
+    font-weight: 600 !important;
+}
+.sidebar-menu.ant-menu-light .ant-menu-item-selected.non-sortable-menu-item::before {
+    content: '';
+    width: 4px;
+    height: 24px;
+    background: var(--primary-600);
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+/* --- Styles for Bottom Navigation --- */
+.sidebar-bottom-nav { padding: var(--space-8); border-top: 1px solid var(--neutral-200); flex-shrink: 0; background: #fff; margin-top: auto; }
+.sidebar-bottom-button.ant-btn { width: 100%; height: 44px; margin-bottom: var(--space-4); padding: 0 var(--space-12); border-radius: var(--radius-lg); border: none; text-align: left; justify-content: flex-start; color: var(--neutral-700); font-weight: 500; font-size: 0.875rem; background: transparent; display: flex; align-items: center; }
+.sidebar-bottom-button.ant-btn:last-child { margin-bottom: 0; }
+.sidebar-bottom-button.ant-btn .anticon, .sidebar-bottom-button.ant-btn svg { font-size: 1rem; margin-right: var(--space-12); }
+.sidebar-bottom-button.ant-btn:hover { background-color: var(--neutral-100) !important; color: var(--neutral-900) !important; }
+.app-sidebar.ant-layout-sider-collapsed .sidebar-bottom-nav { padding: var(--space-8) 0; }
+.app-sidebar.ant-layout-sider-collapsed .sidebar-bottom-button.ant-btn { width: auto; margin: var(--space-4) auto; justify-content: center; padding: 0; width: 44px; }
+.app-sidebar.ant-layout-sider-collapsed .sidebar-bottom-button.ant-btn .anticon, .app-sidebar.ant-layout-sider-collapsed .sidebar-bottom-button.ant-btn svg { margin-right: 0; }
+.app-sidebar.ant-layout-sider-collapsed .sidebar-bottom-button.ant-btn span:not(.anticon) { display: none; }
+
+/* --- Styles for Collapsed Sidebar (General) --- */
+.app-sidebar.ant-layout-sider-collapsed .sidebar-group-header { justify-content: center; padding: var(--space-8) 0; }
+.app-sidebar.ant-layout-sider-collapsed .sidebar-group-label { display: none; }
+.app-sidebar.ant-layout-sider-collapsed .add-card-menu-item .ant-menu-title-content { display: none; }
+/* Adjustments for collapsed sortable items */
+.app-sidebar.ant-layout-sider-collapsed .sortable-card-item-wrapper { margin: var(--space-4) auto; width: 44px; }
+.app-sidebar.ant-layout-sider-collapsed .sidebar-card-item { padding: 0; justify-content: center; gap: 0; }
+.app-sidebar.ant-layout-sider-collapsed .sidebar-card-item .drag-handle { display: none; }
+.app-sidebar.ant-layout-sider-collapsed .sidebar-card-item-content .card-details { display: none; }
+.app-sidebar.ant-layout-sider-collapsed .sidebar-card-item-content { justify-content: center; flex-grow: 0; }
+.app-sidebar.ant-layout-sider-collapsed .card-item-main-icon { margin-right: 0; }
+/* Adjustments for collapsed non-sortable items */
+.app-sidebar.ant-layout-sider-collapsed .ant-menu-item.non-sortable-menu-item,
+.app-sidebar.ant-layout-sider-collapsed .ant-menu-submenu-title {
+    padding: 0 !important; display: flex; justify-content: center;
+}
+.app-sidebar.ant-layout-sider-collapsed .ant-menu-item.non-sortable-menu-item .ant-menu-item-icon + * {
+    margin-left: 0;
+}
+.app-sidebar.ant-layout-sider-collapsed .ant-menu-item.non-sortable-menu-item .ant-menu-item-icon {
+    margin-right: 0;
+}
+.app-sidebar.ant-layout-sider-collapsed .card-action-dropdown-trigger { display: none !important; }
