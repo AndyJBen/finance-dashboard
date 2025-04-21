@@ -7,34 +7,38 @@ const path = require('path'); // Optional: if serving static files from backend
 // --- Initialize Express App ---
 const app = express();
 
-// ✅ Fix: Ensure PORT is a number so Render can bind properly
+// ✅ Ensure PORT is a number so Render can bind properly
 const PORT = parseInt(process.env.PORT, 10) || 4000;
 
+// ✅ CORS setup: Allow frontend on Render
+const allowedOrigins = [
+  'https://finance-app-nq2c.onrender.com', // Replace with your actual frontend URL
+];
+
+app.use(cors({
+  origin: allowedOrigins,
+}));
+
 // --- Middleware ---
-// Enable Cross-Origin Resource Sharing (CORS) for all origins
-// TODO: Configure specific origins for production environments for better security
-app.use(cors());
+app.use(express.json()); // Enable parsing of JSON request bodies
 
-// Enable parsing of JSON request bodies (needed for POST/PUT/PATCH requests)
-app.use(express.json());
-
-// Optional: Simple request logger middleware
+// Optional: Simple request logger
 app.use((req, res, next) => {
   console.log(`${new Date().toISOString()} - ${req.method} ${req.originalUrl}`);
-  next(); // Pass control to the next middleware/route handler
+  next();
 });
 
 // --- Import API Routers ---
-const billsRouter = require('./routes/bills'); // Router for /api/bills
-const balanceRouter = require('./routes/balance'); // Router for /api/balance
-const creditCardsRouter = require('./routes/credit_cards'); // Router for /api/credit_cards
+const billsRouter = require('./routes/bills');
+const balanceRouter = require('./routes/balance');
+const creditCardsRouter = require('./routes/credit_cards');
 
 // --- Define API Routes ---
 app.use('/api/bills', billsRouter);
 app.use('/api/balance', balanceRouter);
-app.use('/api/credit_cards', creditCardsRouter); // Mount the new credit cards router
+app.use('/api/credit_cards', creditCardsRouter);
 
-// --- Optional: Serve Static Files (React Build) in Production ---
+// --- Optional: Serve Static Files from React in Production ---
 // if (process.env.NODE_ENV === 'production') {
 //   const clientBuildPath = path.join(__dirname, '../client/dist');
 //   console.log(`Serving static files from: ${clientBuildPath}`);
