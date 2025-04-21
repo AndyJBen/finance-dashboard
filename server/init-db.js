@@ -44,8 +44,9 @@ async function init() {
     console.log('✔ credit_cards ready');
   } catch (err) {
     console.error('❌ Initialization error:', err);
-  } finally {
-    await pool.end();
+  } finally  {
+    console.log('Initialization finished.');
+    process.exit(0);
   }
 }
 
