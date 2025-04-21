@@ -2,22 +2,16 @@
 // Import necessary modules
 const express = require('express');
 const cors = require('cors');
-const path = require('path'); // Needed if using dotenv relative path
+const path = require('path');
 const pool = require('./db'); // Import the database pool setup
 
-// Load environment variables from .env file in the 'server' directory
-// Make sure the .env file is actually present in the deployment environment
-require('dotenv').config({ path: path.resolve(__dirname, './.env') });
-
-// --- Environment Variable Check (Add this for debugging in Render logs) ---
+// --- Environment Variable Check (Optional - Remove if not needed) ---
+// Note: Removed dotenv require - rely on Render's injected env vars.
+// Note: Removed DB_HOST/USER/etc checks if using DATABASE_URL in db.js
 console.log('--- Environment Variables ---');
-console.log('NODE_ENV:', process.env.NODE_ENV); // Useful for conditional logic
-console.log('PORT (raw):', process.env.PORT);
-console.log('DB_HOST:', process.env.DB_HOST ? 'Loaded' : 'MISSING!');
-console.log('DB_USER:', process.env.DB_USER ? 'Loaded' : 'MISSING!');
-console.log('DB_DATABASE:', process.env.DB_DATABASE ? 'Loaded' : 'MISSING!');
-console.log('DB_PORT:', process.env.DB_PORT ? 'Loaded' : 'MISSING!');
-// Add any other critical env vars you rely on
+console.log('NODE_ENV:', process.env.NODE_ENV);
+console.log('Attempting to read PORT:', process.env.PORT); // Log before parsing
+// console.log('DATABASE_URL is set:', process.env.DATABASE_URL ? 'Yes' : 'No'); // Verify DATABASE_URL if needed
 console.log('-----------------------------');
 // --- End Environment Variable Check ---
 
@@ -29,112 +23,112 @@ const creditCardsRoutes = require('./routes/credit_cards');
 // Initialize the Express application
 const app = express();
 
-// Determine the port
-// Render provides the PORT environment variable. Default to 4000 for local dev.
-const PORT = parseInt(process.env.PORT || '4000', 10);
-if (isNaN(PORT)) {
-    console.error("Invalid PORT environment variable. Exiting.");
-    process.exit(1);
+// --- Determine Port (Safer Parsing) ---
+let port = parseInt(process.env.PORT, 10); // Try parsing Render's PORT directly
+
+// Check if parsing failed or resulted in an invalid port number
+if (isNaN(port) || port <= 0) {
+    console.warn(`WARN: Invalid or missing PORT environment variable: "${process.env.PORT}". Render requires a valid PORT. Defaulting to 4000 for potential local use, but deployment will likely fail if PORT is missing/invalid in Render.`);
+    // Defaulting might mask the underlying issue in Render if process.env.PORT is truly missing/invalid there.
+    port = 4000; // Use 4000 only as a fallback, primarily for local dev
 }
+const PORT = port; // Assign the validated/defaulted port
+
+// Final safety check
+if (isNaN(PORT)) {
+   console.error("FATAL: Could not determine a valid PORT. Exiting.");
+   process.exit(1);
+}
+console.log(`INFO: Determined PORT: ${PORT}`);
+// --- End Port Determination ---
+
 
 // --- CORS Configuration ---
-// Define allowed origins. Be specific for production.
 const allowedOrigins = [
     'https://finance-app-nq2c.onrender.com', // Your deployed frontend
-    // Add 'http://localhost:5173' or similar for local development if needed
+    // 'http://localhost:5173' // Add for local dev if needed
 ];
-
 const corsOptions = {
     origin: function (origin, callback) {
-        // Allow requests with no origin (like mobile apps or curl requests)
-        // or requests from allowed origins
         if (!origin || allowedOrigins.indexOf(origin) !== -1) {
             callback(null, true);
         } else {
-            console.error('CORS Error: Origin not allowed:', origin); // Log blocked origins
+            console.error('CORS Error: Origin not allowed:', origin);
             callback(new Error('Not allowed by CORS'));
         }
     },
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Allow common methods
-    credentials: true, // If you need to handle cookies or authorization headers
-    optionsSuccessStatus: 204 // For preflight requests
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+    optionsSuccessStatus: 204
 };
 
-// --- Middleware Setup (Order is important!) ---
-
-// 1. Enable CORS with the specified options *before* any routes
+// --- Middleware Setup ---
 app.use(cors(corsOptions));
-// Handle preflight requests across all routes
-app.options('*', cors(corsOptions));
-
-// 2. Enable JSON body parsing
+app.options('*', cors(corsOptions)); // Handle preflight
 app.use(express.json());
-
-// 3. Simple request logger (optional but helpful)
-app.use((req, res, next) => {
+app.use((req, res, next) => { // Request logger
     console.log(`${new Date().toISOString()} - ${req.method} ${req.originalUrl}`);
     next();
 });
 
 // --- API Routes ---
-// Mount all API routes under the /api prefix
-// Ensure this matches the VITE_API_URL in the frontend
-app.use('/api/balance', balanceRoutes);
-app.use('/api/bills', billsRoutes);
-app.use('/api/credit_cards', creditCardsRoutes);
-// Add other API routes here...
+// !! IMPORTANT: Comment these out one by one to find the source of the startup crash !!
+try {
+    console.log("INFO: Mounting /api/balance routes...");
+    app.use('/api/balance', balanceRoutes);
+    console.log("INFO: Mounting /api/bills routes...");
+    app.use('/api/bills', billsRoutes);
+    console.log("INFO: Mounting /api/credit_cards routes...");
+    app.use('/api/credit_cards', creditCardsRoutes);
+    console.log("INFO: All API routes mounted.");
+} catch (mountError) {
+    console.error("FATAL: Error occurred during route mounting:", mountError);
+    process.exit(1); // Exit if mounting fails, as the app is broken
+}
 
-// --- Health Check Route ---
-// Simple route at the root to verify the server is running
+
+// --- Health Check & Test Routes ---
 app.get('/', (req, res) => {
     res.status(200).send('Server is running.');
 });
-
-// --- Database Connection Test Route (Optional) ---
-// Useful for verifying DB connectivity from the deployed instance
 app.get('/db-test', async (req, res, next) => {
     try {
         const timeResult = await pool.query('SELECT NOW()');
         res.status(200).json({ dbTime: timeResult.rows[0].now });
     } catch (error) {
         console.error('Database test connection error:', error);
-        // Pass the error to the global error handler
-        next(error);
+        next(error); // Pass to global handler
     }
 });
 
-
 // --- Global Error Handler ---
-// Catches errors passed via next(error) or uncaught synchronous errors
-// Must be defined *after* all other app.use() and routes
 app.use((err, req, res, next) => {
     console.error('--- Global Error Handler ---');
-    console.error(err.stack || err); // Log the full error stack
+    console.error(err.stack || err);
     console.error('--------------------------');
-    res.status(500).json({
-        message: 'An unexpected error occurred on the server.',
-        // Optionally include error details in development, but not production
-        // error: process.env.NODE_ENV === 'development' ? err.message : undefined
-    });
+    // Avoid sending stack trace in production
+    const message = process.env.NODE_ENV === 'production'
+        ? 'An unexpected error occurred on the server.'
+        : err.message || 'An unexpected error occurred on the server.';
+    res.status(err.status || 500).json({ message: message });
 });
 
 // --- Server Startup ---
-// Listen on the determined port and IP '0.0.0.0' to be accessible in Render
 app.listen(PORT, '0.0.0.0', () => {
-    console.log(`✅ Server listening on port ${PORT}`);
-    // Log the base URL for clarity, especially if PORT is assigned by Render
+    console.log(`✅ Server listening on host 0.0.0.0, port ${PORT}`);
     console.log(`API base URL might be accessible externally at something like: http://<your-render-service-name>.onrender.com`);
-    console.log(`Or locally at: http://localhost:${PORT}`);
 
-    // Verify DB connection on startup (from db.js)
-    // Assuming db.js exports the pool and potentially has a test function
-    pool.query('SELECT NOW()')
-        .then(res => console.log(`✅ DB connection successful at ${res.rows[0].now}`))
-        .catch(err => console.error('❌ Initial DB connection failed:', err.stack));
+    // DB connection test is now in db.js via pool.connect, startup log confirms success/failure there.
+    // Optional: Call an exported test function from db.js if needed
+    // if (db.testConnection) { db.testConnection(); }
 });
 
-// Handle unhandled promise rejections (optional but good practice)
+// --- Process Event Handlers ---
 process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection at:', promise, 'reason:', reason);
-  // Application specific logging, throwing an error, or other logic here
+});
+process.on('uncaughtException', (error) => {
+  console.error('Uncaught Exception:', error);
+  // Consider exiting gracefully after logging
+  // process.exit(1);
 });
