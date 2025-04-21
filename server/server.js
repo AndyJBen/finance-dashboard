@@ -1,72 +1,53 @@
-// server/server.js
-require('dotenv').config(); // Load environment variables from .env file first
+require('dotenv').config();               // Load .env
 const express = require('express');
 const cors = require('cors');
-const path = require('path'); // Optional: if serving static files from backend
+const path = require('path');
 
-// --- Initialize Express App ---
 const app = express();
-
-// ✅ Ensure PORT is a number so Render can bind properly
 const PORT = parseInt(process.env.PORT, 10) || 4000;
 
-// ✅ CORS setup: Allow only your frontend's deployed domain
-const allowedOrigins = [
-  'https://finance-app-nq2c.onrender.com', // Replace with your actual frontend Render URL
+// CORS: only allow your frontend origin
+const ALLOWED_ORIGINS = [
+  'https://finance-app-nq2c.onrender.com'
 ];
-
 app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
+  origin: (origin, cb) => {
+    if (!origin || ALLOWED_ORIGINS.includes(origin)) cb(null, true);
+    else cb(new Error('Not allowed by CORS'));
   },
-  optionsSuccessStatus: 200,
+  optionsSuccessStatus: 200
 }));
 
-// --- Middleware ---
-app.use(express.json()); // Enable parsing of JSON request bodies
+app.use(express.json());  // parse JSON bodies
 
-// Optional: Simple request logger
+// simple request logger
 app.use((req, res, next) => {
-  console.log(`${new Date().toISOString()} - ${req.method} ${req.originalUrl}`);
+  console.log(`${new Date().toISOString()} ▶ ${req.method} ${req.originalUrl}`);
   next();
 });
 
-// --- Import API Routers ---
-const billsRouter = require('./routes/bills');
-const balanceRouter = require('./routes/balance');
+// import routers
+const billsRouter       = require('./routes/bills');
+const balanceRouter     = require('./routes/balance');
 const creditCardsRouter = require('./routes/credit_cards');
 
-// --- Define API Routes ---
-app.use('/api/bills', billsRouter);
-app.use('/api/balance', balanceRouter);
+// mount routes under /api
+app.use('/api/bills',       billsRouter);
+app.use('/api/balance',     balanceRouter);
 app.use('/api/credit_cards', creditCardsRouter);
 
-// --- Optional: Serve Static Files from React in Production ---
-// if (process.env.NODE_ENV === 'production') {
-//   const clientBuildPath = path.join(__dirname, '../client/dist');
-//   console.log(`Serving static files from: ${clientBuildPath}`);
-//   app.use(express.static(clientBuildPath));
-//   app.get('*', (req, res) => {
-//     res.sendFile(path.resolve(clientBuildPath, 'index.html'));
-//   });
-// }
-
-// --- Root Route ---
+// root health-check
 app.get('/', (req, res) => {
   res.send('Personal Finance Dashboard API is running!');
 });
 
-// --- Global Error Handler ---
+// global error handler
 app.use((err, req, res, next) => {
-  console.error("Unhandled Error:", err.stack || err.message || err);
+  console.error('Unhandled Error ▶', err.stack || err.message);
   res.status(500).json({ error: 'Internal Server Error' });
 });
 
-// --- Start Server ---
+// start listening
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server listening on port ${PORT}`);
   console.log(`API base URL: http://localhost:${PORT}/api`);
