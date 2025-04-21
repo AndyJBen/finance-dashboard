@@ -3,7 +3,6 @@ const express = require('express');
 const db = require('../db'); // Import the database query function
 
 const router = express.Router();
-// Define the key used to store the balance in the app_settings table
 const BALANCE_KEY = 'bankBalance';
 
 /**
@@ -12,33 +11,27 @@ const BALANCE_KEY = 'bankBalance';
  * Returns { balance: number } or a default value if not found/invalid.
  */
 router.get('/', async (req, res) => {
-  console.log(`GET /api/balance - Fetching balance for key: ${BALANCE_KEY}`);
+  console.log(`GET /api/balance`);
   try {
-    // Query the database for the setting value associated with BALANCE_KEY
     const result = await db.query(
       'SELECT value FROM app_settings WHERE key = $1',
       [BALANCE_KEY]
     );
 
-    // Check if the setting key was found
     if (result.rows.length === 0) {
-      console.warn(`Setting key '${BALANCE_KEY}' not found in database. Returning 0.`);
+      console.warn(`Key '${BALANCE_KEY}' not found. Returning 0.`);
       return res.json({ balance: 0 });
     }
 
-    // The value is stored as TEXT, attempt to parse it into a floating-point number
     const balance = parseFloat(result.rows[0].value);
-
     if (isNaN(balance)) {
-      console.error(`Invalid balance value found in DB for key '${BALANCE_KEY}': ${result.rows[0].value}`);
+      console.error(`Invalid stored value for '${BALANCE_KEY}': ${result.rows[0].value}`);
       return res.json({ balance: 0 });
     }
 
-    console.log(`GET /api/balance - Found balance: ${balance}`);
     res.json({ balance });
-
   } catch (err) {
-    console.error('Error fetching bank balance:', err);
+    console.error('Error fetching balance:', err);
     res.status(500).json({ error: 'Internal server error while fetching balance.' });
   }
 });
@@ -51,14 +44,11 @@ router.get('/', async (req, res) => {
  */
 router.put('/', async (req, res) => {
   const { balance } = req.body;
-  console.log(`PUT /api/balance - Received request to update balance to: ${balance}`);
+  console.log(`PUT /api/balance - update to: ${balance}`);
 
   if (typeof balance !== 'number' || isNaN(balance)) {
-    console.error(`PUT /api/balance - Invalid balance value received: ${balance}`);
-    return res.status(400).json({ error: 'Invalid balance value provided. Must be a number.' });
+    return res.status(400).json({ error: 'Invalid balance. Must be a number.' });
   }
-
-  const balanceString = balance.toFixed(2);
 
   try {
     const result = await db.query(
@@ -66,15 +56,13 @@ router.put('/', async (req, res) => {
        VALUES ($1, $2)
        ON CONFLICT (key) DO UPDATE SET value = $2
        RETURNING value`,
-      [BALANCE_KEY, balanceString]
+      [BALANCE_KEY, balance.toFixed(2)]
     );
 
-    const updatedBalance = parseFloat(result.rows[0].value);
-    console.log(`PUT /api/balance - Successfully updated balance to: ${updatedBalance}`);
-    res.json({ balance: updatedBalance });
-
+    const updated = parseFloat(result.rows[0].value);
+    res.json({ balance: updated });
   } catch (err) {
-    console.error('Error updating bank balance:', err);
+    console.error('Error updating balance:', err);
     res.status(500).json({ error: 'Internal server error while updating balance.' });
   }
 });
