@@ -10,13 +10,20 @@ const app = express();
 // ✅ Ensure PORT is a number so Render can bind properly
 const PORT = parseInt(process.env.PORT, 10) || 4000;
 
-// ✅ CORS setup: Allow frontend on Render
+// ✅ CORS setup: Allow only your frontend's deployed domain
 const allowedOrigins = [
-  'https://finance-app-nq2c.onrender.com', // Replace with your actual frontend URL
+  'https://finance-app-nq2c.onrender.com', // Replace with your actual frontend Render URL
 ];
 
 app.use(cors({
-  origin: allowedOrigins,
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  optionsSuccessStatus: 200,
 }));
 
 // --- Middleware ---
