@@ -74,8 +74,8 @@ app.use((req, res, next) => { // Request logger
 // --- API Routes ---
 // !! IMPORTANT: Comment these out one by one to find the source of the startup crash !!
 try {
-    console.log("INFO: Mounting /api/balance routes...");
-    app.use('/api/balance', balanceRoutes);
+    //console.log("INFO: Mounting /api/balance routes...");
+    //app.use('/api/balance', balanceRoutes);
     console.log("INFO: Mounting /api/bills routes...");
     app.use('/api/bills', billsRoutes);
     console.log("INFO: Mounting /api/credit_cards routes...");
