@@ -68,5 +68,6 @@ app.use((err, req, res, next) => {
 // --- Start Server ---
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server listening on port ${PORT}`);
-  console.log(`API base URL: http://YOUR_IP_ADDRESS:${PORT}/api`);
+  console.log(`API base URL: http://localhost:${PORT}/api`);
+
 });
