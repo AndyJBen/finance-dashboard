@@ -15,7 +15,7 @@ import PastDuePayments        from './components/RecentActivity/PastDuePayments'
 import AppFooter              from './components/Footer/Footer';
 
 // Charts page now lives under components/ChartPages
-import ChartsPage             from './components/ChartPages/ChartsPage';
+import ChartsPage from './components/ChartsPage/ChartsPage';
 
 const { Content } = Layout;
 const { Title }   = Typography;
