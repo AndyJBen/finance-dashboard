@@ -1,5 +1,5 @@
 // src/components/FinancialSummary/CombinedBillsOverview/MultiBillModal.jsx
-// Fixed import path for FinanceContext after moving the file.
+// Removed IconCoin prefix from Amount InputNumber.
 
 import React, { useEffect, useContext, useState } from 'react';
 import {
@@ -8,7 +8,7 @@ import {
 } from 'antd';
 import {
   IconPlus, IconMinus, IconTag,
-  IconCoin, IconCalendar, IconCategory
+  /* IconCoin removed */ IconCalendar, IconCategory // Removed IconCoin from imports
 } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 // Corrected the relative path for FinanceContext (up 3 levels)
@@ -176,7 +176,7 @@ export default function MultiBillModal({ open, onClose }) {
                         style={{ width: '100%', height: inputHeight, borderRadius: 8 }}
                         formatter={(value) => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                         parser={(value) => value?.replace(/\$\s?|(,*)/g, '') ?? ''}
-                        prefix={<IconCoin size={16} style={{ marginRight: 4 }} />}
+                        // prefix prop removed here
                         min={0}
                       />
                     </Form.Item>
@@ -192,8 +192,6 @@ export default function MultiBillModal({ open, onClose }) {
                       <Select
                         placeholder="Category"
                         style={{ height: inputHeight, borderRadius: 8 }}
-                        // Prefix icon simulation (if needed, otherwise remove)
-                        // prefix={<IconCategory size={16} style={{ marginRight: 4, color: 'rgba(0,0,0,.25)' }} />}
                       >
                         {billCategories.map(c => <Option key={c} value={c}>{c}</Option>)}
                       </Select>
