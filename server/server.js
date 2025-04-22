@@ -1,5 +1,5 @@
 // server/server.js
-// Highlight: Removed inline middleware from app.use() calls for API routes
+// Finance Dashboard API server
 
 // Import necessary modules
 const express = require('express');
@@ -12,6 +12,7 @@ const balanceRoutes = require('./routes/balance');
 const billsRoutes = require('./routes/bills');
 const creditCardsRoutes = require('./routes/credit_cards');
 
+// Log environment info
 console.log('--- Environment Variables ---');
 console.log('NODE_ENV:', process.env.NODE_ENV);
 console.log('Attempting to read PORT:', process.env.PORT);
@@ -23,7 +24,7 @@ const app = express();
 // --- Determine Port (Safer Parsing) ---
 let port = parseInt(process.env.PORT, 10);
 if (isNaN(port) || port <= 0) {
-    console.warn(`WARN: Invalid or missing PORT environment variable: "${process.env.PORT}". Render requires a valid PORT. Defaulting to 4000 for potential local use, but deployment will likely fail if PORT is missing/invalid in Render.`);
+    console.warn(`WARN: Invalid or missing PORT environment variable: "${process.env.PORT}". Defaulting to 4000.`);
     port = 4000; // Fallback for local dev
 }
 const PORT = port;
@@ -34,12 +35,11 @@ if (isNaN(PORT)) {
 console.log(`INFO: Determined PORT: ${PORT}`);
 // --- End Port Determination ---
 
-// --- JSON body parsing middleware (MUST come before routes) ---
+// --- JSON body parsing middleware ---
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// --- Very detailed request logging for debugging ---
-// This middleware logs details for ALL incoming requests
+// --- Detailed request logging ---
 app.use((req, res, next) => {
     console.log(`\n--- INCOMING REQUEST ${new Date().toISOString()} ---`);
     console.log(`Method: ${req.method}`);
@@ -48,22 +48,21 @@ app.use((req, res, next) => {
     console.log(`Original URL: ${req.originalUrl}`);
     console.log(`Query params:`, req.query);
     console.log(`Headers:`, req.headers);
-    console.log(`Body:`, req.body); // Be cautious logging bodies in production if they contain sensitive data
+    console.log(`Body:`, req.body);
     console.log(`-------------------------------------------`);
     next();
 });
 
-// --- CORS configuration (with permissive settings for debugging) ---
+// --- Global CORS middleware ---
 app.use(cors({
-    origin: '*', // Allow all origins temporarily for debugging - RESTRICT THIS IN PRODUCTION
+    origin: '*',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true
 }));
 
-// --- Test response header enhancement middleware (Optional) ---
+// --- Response send logging ---
 app.use((req, res, next) => {
-    // Add after CORS to ensure it doesn't interfere with CORS headers
     const originalSend = res.send;
     res.send = function(body) {
         console.log(`Sending response for ${req.method} ${req.originalUrl}`);
@@ -77,42 +76,36 @@ app.get('/', (req, res) => {
     console.log('>>> Root route hit!');
     res.status(200).send('Server is running. Try /api/ping to test API connectivity.');
 });
-
 app.get('/ping', (req, res) => {
     console.log('>>> /ping route hit!');
     res.status(200).json({ message: 'pong from root' });
 });
 
-// --- API root handler ---
+// --- API root handlers ---
 app.get('/api', (req, res) => {
     console.log('>>> /api root route hit!');
     res.status(200).json({ message: 'API is running' });
 });
-
-// --- Direct API test route ---
 app.get('/api/ping', (req, res) => {
     console.log('>>> /api/ping route hit!');
     res.status(200).json({ message: 'pong from api' });
 });
 
-// --- Main API Routes (Corrected Mounting) ---
+// --- Mount API routes ---
 try {
     console.log("INFO: Mounting /api/balance routes...");
-    // Mount the router directly without the inline middleware
     app.use('/api/balance', balanceRoutes);
 
     console.log("INFO: Mounting /api/bills routes...");
-    // Mount the router directly without the inline middleware
     app.use('/api/bills', billsRoutes);
 
     console.log("INFO: Mounting /api/credit_cards routes...");
-    // Mount the router directly without the inline middleware
     app.use('/api/credit_cards', creditCardsRoutes);
 
     console.log("INFO: All API routes mounted successfully.");
 } catch (mountError) {
     console.error("FATAL: Error during route mounting:", mountError);
-    process.exit(1); // Exit if mounting fails catastrophically
+    process.exit(1);
 }
 
 // --- Health Check & DB Test Route ---
@@ -126,55 +119,44 @@ app.get('/db-test', async (req, res, next) => {
         });
     } catch (error) {
         console.error('Database test connection error:', error);
-        next(error); // Pass error to the global error handler
+        next(error);
     }
 });
 
-// --- Direct route handler for OPTIONS requests (for CORS preflight) ---
-// This handles preflight requests that might not be caught by specific routes
-app.options('*', cors()); // Use cors middleware to handle OPTIONS preflight headers
+// --- Handle CORS preflight for all routes ---
+app.options('/*', cors()); // Updated to valid catch-all pattern
 
-// --- 404 handler (must be after all specific routes) ---
+// --- 404 handler ---
 app.use((req, res) => {
-    // This catches any request that didn't match a previous route
     console.log(`404: Route not found for ${req.method} ${req.originalUrl}`);
     res.status(404).json({ error: 'Route not found' });
 });
 
-// --- Global error handler (must be the LAST app.use call) ---
+// --- Global error handler ---
 app.use((err, req, res, next) => {
     console.error('--- Global Error Handler Triggered ---');
     console.error('Route:', req.method, req.originalUrl);
-    // Log the error stack for detailed debugging
     console.error(err.stack || err);
     console.error('------------------------------------');
 
-    // Determine appropriate status code
     const statusCode = err.status || err.statusCode || 500;
-
-    // Send a generic message in production, detailed in development
     const message = process.env.NODE_ENV === 'production'
         ? 'An unexpected error occurred on the server.'
         : err.message || 'An unexpected error occurred on the server.';
 
-    res.status(statusCode).json({ message: message });
+    res.status(statusCode).json({ message });
 });
 
 // --- Server Startup ---
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`✅ Server listening on host 0.0.0.0, port ${PORT}`);
-    // You might want to remove the hardcoded URL or make it dynamic
-    // console.log(`API base URL: https://finance-api.onrender.com`);
 });
 
-// --- Process Event Handlers for better stability ---
+// --- Process Event Handlers ---
 process.on('unhandledRejection', (reason, promise) => {
-  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
-  // Consider exiting the process in production for unhandled promise rejections
-  // process.exit(1);
+    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
 });
 process.on('uncaughtException', (error) => {
-  console.error('Uncaught Exception:', error);
-  // It's generally recommended to exit after an uncaught exception
-  process.exit(1);
+    console.error('Uncaught Exception:', error);
+    process.exit(1);
 });
