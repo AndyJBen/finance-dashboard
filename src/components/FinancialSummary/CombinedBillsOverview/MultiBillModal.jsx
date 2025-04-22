@@ -3,12 +3,12 @@ import React, { useEffect, useContext, useState } from 'react';
 import {
   Modal, Form, Input, InputNumber, DatePicker,
   Select, Checkbox, Row, Col, Typography, Space, Button, 
-  message, Card, Divider, Tag
+  message, Card, Tooltip
 } from 'antd';
 import {
-  PlusOutlined, MinusCircleOutlined, TagOutlined,
-  CalendarOutlined, AppstoreOutlined, DollarOutlined,
-  CheckCircleOutlined, SyncOutlined
+  PlusOutlined, DeleteOutlined, TagOutlined,
+  CalendarOutlined, DollarOutlined,
+  CheckOutlined, SyncOutlined
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
 // Corrected the relative path for FinanceContext
@@ -23,23 +23,6 @@ const billCategories = [
   "Credit Card", "Loan", "Insurance", "Medical", "Personal Care",
   "Bill Prep", "Auto", "Other"
 ];
-
-// Category colors for visual distinction
-const categoryColors = {
-  "Utilities": "blue", 
-  "Rent": "purple", 
-  "Mortgage": "volcano", 
-  "Groceries": "green",
-  "Subscription": "cyan", 
-  "Credit Card": "red", 
-  "Loan": "orange", 
-  "Insurance": "geekblue",
-  "Medical": "magenta", 
-  "Personal Care": "gold", 
-  "Bill Prep": "lime",
-  "Auto": "processing", 
-  "Other": "default"
-};
 
 export default function MultiBillModal({ open, onClose }) {
   const [form] = Form.useForm();
@@ -113,24 +96,23 @@ export default function MultiBillModal({ open, onClose }) {
     <Modal
       open={open}
       title={(
-        <Row align="middle" gutter={16}>
+        <Row align="middle" gutter={12}>
           <Col>
             <div style={{
-              background: 'linear-gradient(135deg, #52c41a 0%, #389e0d 100%)',
+              background: '#52c41a',
               color: 'white',
-              width: 40,
-              height: 40,
-              borderRadius: 8,
+              width: 32,
+              height: 32,
+              borderRadius: 6,
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center',
-              boxShadow: '0 2px 8px rgba(82, 196, 26, 0.3)'
+              justifyContent: 'center'
             }}>
-              <PlusOutlined style={{ fontSize: 20 }} />
+              <PlusOutlined style={{ fontSize: 16 }} />
             </div>
           </Col>
           <Col>
-            <Title level={4} style={{ margin: 0, fontWeight: 600 }}>
+            <Title level={4} style={{ margin: 0, fontWeight: 500 }}>
               Add Multiple Bills
             </Title>
           </Col>
@@ -138,7 +120,7 @@ export default function MultiBillModal({ open, onClose }) {
       )}
       onOk={handleOk}
       onCancel={handleCancel}
-      width={900}
+      width={800}
       destroyOnClose
       confirmLoading={isSubmitting}
       okText="Add Bills"
@@ -156,75 +138,72 @@ export default function MultiBillModal({ open, onClose }) {
       >
         <Form.List name="bills">
           {(fields, { add, remove }) => (
-            <div style={{ paddingBottom: 16 }}>
+            <div style={{ paddingBottom: 12 }}>
               {fields.map(({ key, name, ...restField }, index) => (
                 <Card 
                   key={key} 
+                  size="small"
                   style={{ 
-                    marginBottom: 16, 
-                    borderRadius: 8,
-                    boxShadow: '0 1px 4px rgba(0, 0, 0, 0.08)'
+                    marginBottom: 12, 
+                    borderRadius: 6,
+                    boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)'
                   }}
-                  bodyStyle={{ padding: '16px' }}
+                  bodyStyle={{ padding: '12px 16px' }}
                 >
-                  <Row gutter={[16, 16]}>
+                  <Row gutter={[12, 8]} align="middle">
                     {/* Bill Name */}
-                    <Col span={24} lg={12}>
+                    <Col span={7}>
                       <Form.Item
                         {...restField}
                         name={[name, 'name']}
-                        label={<Text strong>Bill Name</Text>}
-                        rules={[{ required: true, message: 'Bill name is required' }]}
+                        rules={[{ required: true, message: 'Required' }]}
+                        style={{ marginBottom: 0 }}
                       >
                         <Input
-                          placeholder="Enter bill name"
-                          prefix={<TagOutlined />}
-                          style={{ borderRadius: 6 }}
+                          placeholder="Bill Name"
+                          prefix={<TagOutlined style={{ color: '#8c8c8c' }} />}
+                          style={{ borderRadius: 4 }}
                         />
                       </Form.Item>
                     </Col>
                     
                     {/* Amount */}
-                    <Col span={24} lg={12}>
+                    <Col span={5}>
                       <Form.Item
                         {...restField}
                         name={[name, 'amount']}
-                        label={<Text strong>Amount</Text>}
-                        rules={[{ required: true, message: 'Amount is required' }]}
+                        rules={[{ required: true, message: 'Required' }]}
+                        style={{ marginBottom: 0 }}
                       >
                         <InputNumber
                           placeholder="0.00"
-                          style={{ width: '100%', borderRadius: 6 }}
+                          style={{ width: '100%', borderRadius: 4 }}
                           formatter={(value) => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                           parser={(value) => value?.replace(/\$\s?|(,*)/g, '') ?? ''}
                           min={0}
                           precision={2}
-                          prefix={<DollarOutlined />}
                         />
                       </Form.Item>
                     </Col>
                     
                     {/* Category */}
-                    <Col span={24} lg={8}>
+                    <Col span={5}>
                       <Form.Item
                         {...restField}
                         name={[name, 'category']}
-                        label={<Text strong>Category</Text>}
-                        rules={[{ required: true, message: 'Category is required' }]}
+                        rules={[{ required: true, message: 'Required' }]}
+                        style={{ marginBottom: 0 }}
                       >
                         <Select
-                          placeholder="Select category"
-                          style={{ width: '100%', borderRadius: 6 }}
-                          dropdownStyle={{ borderRadius: 6 }}
-                          optionLabelProp="label"
-                          optionFilterProp="label"
+                          placeholder="Category"
+                          style={{ width: '100%' }}
+                          optionFilterProp="children"
                           showSearch
+                          size="middle"
                         >
                           {billCategories.map(category => (
-                            <Option key={category} value={category} label={category}>
-                              <Space>
-                                <Tag color={categoryColors[category]}>{category}</Tag>
-                              </Space>
+                            <Option key={category} value={category}>
+                              {category}
                             </Option>
                           ))}
                         </Select>
@@ -232,69 +211,69 @@ export default function MultiBillModal({ open, onClose }) {
                     </Col>
                     
                     {/* Due Date */}
-                    <Col span={24} lg={8}>
+                    <Col span={5}>
                       <Form.Item
                         {...restField}
                         name={[name, 'dueDate']}
-                        label={<Text strong>Due Date</Text>}
-                        rules={[{ required: true, message: 'Due date is required' }]}
+                        rules={[{ required: true, message: 'Required' }]}
+                        style={{ marginBottom: 0 }}
                       >
                         <DatePicker
-                          style={{ width: '100%', borderRadius: 6 }}
+                          style={{ width: '100%' }}
                           format="YYYY-MM-DD"
-                          placeholder="Select date"
-                          suffixIcon={<CalendarOutlined />}
+                          placeholder="Due Date"
+                          suffixIcon={<CalendarOutlined style={{ color: '#8c8c8c' }} />}
                         />
                       </Form.Item>
                     </Col>
                     
                     {/* Status Checkboxes */}
-                    <Col span={24} lg={8}>
-                      <Row gutter={16}>
-                        <Col span={12}>
-                          <Form.Item
-                            {...restField}
-                            name={[name, 'isPaid']}
-                            valuePropName="checked"
-                            label={<Text strong>Paid</Text>}
-                          >
-                            <Checkbox>
-                              <CheckCircleOutlined style={{ color: '#52c41a' }} />
-                            </Checkbox>
-                          </Form.Item>
-                        </Col>
-                        <Col span={12}>
-                          <Form.Item
-                            {...restField}
-                            name={[name, 'isRecurring']}
-                            valuePropName="checked"
-                            label={<Text strong>Recurring</Text>}
-                          >
-                            <Checkbox>
-                              <SyncOutlined style={{ color: '#1890ff' }} />
-                            </Checkbox>
-                          </Form.Item>
-                        </Col>
-                      </Row>
+                    <Col span={2} style={{ textAlign: 'center' }}>
+                      <Tooltip title="Paid">
+                        <Form.Item
+                          {...restField}
+                          name={[name, 'isPaid']}
+                          valuePropName="checked"
+                          style={{ marginBottom: 0 }}
+                        >
+                          <Checkbox>
+                            <CheckOutlined style={{ color: '#52c41a' }} />
+                          </Checkbox>
+                        </Form.Item>
+                      </Tooltip>
+                    </Col>
+                    
+                    <Col span={2} style={{ textAlign: 'center' }}>
+                      <Tooltip title="Recurring">
+                        <Form.Item
+                          {...restField}
+                          name={[name, 'isRecurring']}
+                          valuePropName="checked"
+                          style={{ marginBottom: 0 }}
+                        >
+                          <Checkbox>
+                            <SyncOutlined style={{ color: '#1890ff' }} />
+                          </Checkbox>
+                        </Form.Item>
+                      </Tooltip>
+                    </Col>
+                  
+                    {/* Remove button */}
+                    <Col span={2} style={{ textAlign: 'right' }}>
+                      {fields.length > 1 && (
+                        <Tooltip title="Remove bill">
+                          <Button
+                            type="text"
+                            danger
+                            onClick={() => remove(name)}
+                            icon={<DeleteOutlined />}
+                            size="small"
+                            style={{ marginRight: -8 }}
+                          />
+                        </Tooltip>
+                      )}
                     </Col>
                   </Row>
-                  
-                  {/* Remove button */}
-                  {fields.length > 1 && (
-                    <Button
-                      type="text"
-                      danger
-                      onClick={() => remove(name)}
-                      icon={<MinusCircleOutlined />}
-                      style={{ 
-                        position: 'absolute', 
-                        top: 8, 
-                        right: 8 
-                      }}
-                    >
-                      Remove
-                    </Button>
-                  )}
                 </Card>
               ))}
               
@@ -304,13 +283,7 @@ export default function MultiBillModal({ open, onClose }) {
                 onClick={() => add({ dueDate: null })}
                 block
                 icon={<PlusOutlined />}
-                style={{ 
-                  borderRadius: 6, 
-                  height: 48,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}
+                style={{ borderRadius: 4 }}
               >
                 Add Bill
               </Button>
