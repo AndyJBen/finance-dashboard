@@ -1,12 +1,12 @@
 // src/contexts/FinanceContext.jsx
 import React, { createContext, useState, useEffect, useCallback } from 'react';
 import {
-    fetchBills, addBill as apiAddBill, updateBill as apiUpdateBill, deleteBill as apiDeleteBill,
-    fetchBankBalance, updateBankBalance as apiUpdateBankBalance,
-    fetchCreditCards, addCreditCard as apiAddCreditCard,
-    updateCreditCard as apiUpdateCreditCard,
-    deleteCreditCard as apiDeleteCreditCard,
-    apiReorderCreditCards
+  fetchBills, addBill as apiAddBill, updateBill as apiUpdateBill, deleteBill as apiDeleteBill,
+  fetchBankBalance, updateBankBalance as apiUpdateBankBalance,
+  fetchCreditCards, addCreditCard as apiAddCreditCard,
+  updateCreditCard as apiUpdateCreditCard,
+  deleteCreditCard as apiDeleteCreditCard,
+  apiReorderCreditCards
 } from '../services/api';
 import { message } from 'antd';
 import dayjs from 'dayjs';
@@ -186,16 +186,16 @@ export const FinanceProvider = ({ children }) => {
   }, [loadCreditCards]);
 
   // Derived values
-  const safeBills = Array.isArray(bills) ? bills : [];
-  const startOfMonth = dayjs().startOf('month');
-  const overdueBills = safeBills.filter(b => !b.isPaid && dayjs(b.dueDate).isBefore(startOfMonth));
-  const pastDueAmt = overdueBills.reduce((sum,b) => sum + Number(b.amount||0), 0);
+  const safeBills      = Array.isArray(bills) ? bills : [];
+  const startOfMonth   = dayjs().startOf('month');
+  const pastDueBills   = safeBills.filter(b => !b.isPaid && dayjs(b.dueDate).isBefore(startOfMonth));
+  const pastDueAmt     = pastDueBills.reduce((sum, b) => sum + Number(b.amount || 0), 0);
   const unpaidThisMonth = safeBills.filter(b =>
     !b.isPaid &&
     dayjs(b.dueDate).isBetween(startOfMonth, dayjs().endOf('month'), 'day','[]')
   );
-  const currentDueAmt = unpaidThisMonth.reduce((sum,b) => sum + Number(b.amount||0), 0) + pastDueAmt;
-  const totalCCBalance = creditCards.reduce((sum,c) => sum + Number(c.balance||0), 0);
+  const currentDueAmt  = unpaidThisMonth.reduce((sum, b) => sum + Number(b.amount || 0), 0) + pastDueAmt;
+  const totalCCBalance = creditCards.reduce((sum, c) => sum + Number(c.balance || 0), 0);
 
   return (
     <FinanceContext.Provider value={{
