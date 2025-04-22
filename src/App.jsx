@@ -14,8 +14,8 @@ import BillPrepCard           from './components/FinancialSummary/BillPrepCard';
 import PastDuePayments        from './components/RecentActivity/PastDuePayments';
 import AppFooter              from './components/Footer/Footer';
 
-// **NEW** ChartsPage must live at src/components/ChartsPage.jsx
-import ChartsPage             from './components/ChartsPage';
+// Charts page now lives under components/ChartPages
+import ChartsPage             from './components/ChartPages/ChartsPage';
 
 const { Content } = Layout;
 const { Title }   = Typography;
@@ -54,7 +54,6 @@ function MyApp() {
         return <BillsList />;
 
       case 'reports':
-        // now renders your real ChartsPage
         return <ChartsPage />;
 
       case 'settings':
