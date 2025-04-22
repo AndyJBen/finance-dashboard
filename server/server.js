@@ -1,5 +1,5 @@
 // server/server.js
-// Restore all API routes
+// Add direct /api/ping test route, revert balance mounting
 
 // Import necessary modules
 const express = require('express');
@@ -41,8 +41,6 @@ const allowedOrigins = [
 ];
 const corsOptions = {
     origin: function (origin, callback) {
-        // Allow requests with no origin (like mobile apps or curl requests)
-        // or requests from allowed origins
         if (!origin || allowedOrigins.indexOf(origin) !== -1) {
             callback(null, true);
         } else {
@@ -52,32 +50,36 @@ const corsOptions = {
     },
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
-    optionsSuccessStatus: 204 // For legacy browser compatibility
+    optionsSuccessStatus: 204
 };
 
 // --- Middleware Setup ---
-// Apply CORS options to all routes
 app.use(cors(corsOptions));
-// Explicitly handle preflight requests for all routes - KEEP COMMENTED FOR NOW
-// app.options('*', cors(corsOptions));
-// Parse JSON request bodies
+// app.options('*', cors(corsOptions)); // Keep commented
 app.use(express.json());
-// Simple request logger middleware
 app.use((req, res, next) => {
     console.log(`${new Date().toISOString()} - ${req.method} ${req.originalUrl}`);
     next();
 });
 
-// --- API Routes (Restoring All) ---
+// --- Direct Test Route (Added BEFORE other API routes) ---
+app.get('/api/ping', (req, res) => {
+    console.log('>>> /api/ping route hit!');
+    res.status(200).json({ message: 'pong' });
+});
+// --- End Direct Test Route ---
+
+
+// --- API Routes (All Uncommented) ---
 try {
     console.log("INFO: Mounting /api/balance routes...");
-    app.use('/api/balance', balanceRoutes); // <-- UNCOMMENTED
+    app.use('/api/balance', balanceRoutes); // <-- Mount normally
 
     console.log("INFO: Mounting /api/bills routes...");
-    app.use('/api/bills', billsRoutes); // <-- UNCOMMENTED
+    app.use('/api/bills', billsRoutes); // <-- Mount normally
 
     console.log("INFO: Mounting /api/credit_cards routes...");
-    app.use('/api/credit_cards', creditCardsRoutes); // <-- UNCOMMENTED
+    app.use('/api/credit_cards', creditCardsRoutes); // <-- Mount normally
 
     console.log("INFO: All API routes mounting points processed.");
 } catch (mountError) {
@@ -100,10 +102,10 @@ app.get('/db-test', async (req, res, next) => {
     }
 });
 
-// --- Global Error Handler (Should be placed AFTER all routes) ---
+// --- Global Error Handler ---
 app.use((err, req, res, next) => {
     console.error('--- Global Error Handler Triggered ---');
-    console.error(err.stack || err); // Log the full error stack
+    console.error(err.stack || err);
     console.error('------------------------------------');
     const message = process.env.NODE_ENV === 'production'
         ? 'An unexpected error occurred on the server.'
@@ -118,11 +120,11 @@ app.listen(PORT, '0.0.0.0', () => {
     console.log(`API base URL might be accessible externally at something like: http://<your-render-service-name>.onrender.com`);
 });
 
-// --- Process Event Handlers (Good Practice) ---
+// --- Process Event Handlers ---
 process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection at:', promise, 'reason:', reason);
 });
 process.on('uncaughtException', (error) => {
   console.error('Uncaught Exception:', error);
-  // process.exit(1); // Consider exiting
+  // process.exit(1);
 });

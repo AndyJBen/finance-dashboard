@@ -1,5 +1,5 @@
 // server/routes/balance.js
-// Modified for testing alternate mounting in server.js
+// Reverted to original paths
 
 const express = require('express');
 const db = require('../db'); // Import the database query function
@@ -12,8 +12,8 @@ const BALANCE_KEY = 'bankBalance';
  * Fetches the current bank balance stored in the app_settings table.
  * Returns { balance: number } or a default value if not found/invalid.
  */
-// Define path relative to the '/api' mount point in server.js
-router.get('/balance', async (req, res) => { // <-- Changed path from '/' to '/balance'
+// Path is relative to the '/api/balance' mount point in server.js
+router.get('/', async (req, res) => { // <-- Changed path back to '/'
   console.log(`GET /api/balance - Fetching balance for key: ${BALANCE_KEY}`);
   try {
     const result = await db.query(
@@ -48,8 +48,8 @@ router.get('/balance', async (req, res) => { // <-- Changed path from '/' to '/b
  * Expects { balance: number } in the request body.
  * Returns the updated { balance: number }.
  */
-// Define path relative to the '/api' mount point in server.js
-router.put('/balance', async (req, res) => { // <-- Changed path from '/' to '/balance'
+// Path is relative to the '/api/balance' mount point in server.js
+router.put('/', async (req, res) => { // <-- Changed path back to '/'
   const { balance } = req.body;
   console.log(`PUT /api/balance - Received request to update balance to: ${balance}`);
 
