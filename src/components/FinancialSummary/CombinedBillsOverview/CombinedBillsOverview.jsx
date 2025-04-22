@@ -1,5 +1,5 @@
 // src/components/FinancialSummary/CombinedBillsOverview/CombinedBillsOverview.jsx
-// Updated import paths for components moved into the same folder.
+// Fixed import path for FinanceContext after moving the file.
 
 import React, { useState, useContext, useMemo, useEffect } from 'react';
 import {
@@ -21,13 +21,14 @@ import {
     IconChevronUp,
     IconPlaylistAdd
 } from '@tabler/icons-react';
-import { FinanceContext } from '../../contexts/FinanceContext';
-// Import EditBillModal from its original location (assuming it stays in BillsList)
+// Corrected the relative path for FinanceContext (up 3 levels)
+import { FinanceContext } from '../../../contexts/FinanceContext';
+// Import EditBillModal from its original location
 import EditBillModal from '../../BillsList/EditBillModal';
 // Import components from the CURRENT directory
-import MultiBillModal from './MultiBillModal'; // Updated path
-import MonthlyProgressSummary from './MonthlyProgressSummary'; // Updated path
-import BillsListSection from './BillsListSection'; // Updated path
+import MultiBillModal from './MultiBillModal';
+import MonthlyProgressSummary from './MonthlyProgressSummary';
+import BillsListSection from './BillsListSection';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import updateLocale from 'dayjs/plugin/updateLocale';
