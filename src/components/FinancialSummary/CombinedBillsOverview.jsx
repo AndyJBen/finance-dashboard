@@ -1,5 +1,5 @@
 // src/components/FinancialSummary/CombinedBillsOverview.jsx
-// Combined "Add Bill" and "Add Multiple Bills" into a Dropdown.Button
+// Simplified Dropdown.Button: Main button adds single, dropdown adds multiple.
 
 import React, { useState, useContext, useMemo, useEffect } from 'react';
 import {
@@ -19,7 +19,7 @@ import {
     IconDotsVertical,
     IconChevronDown,
     IconChevronUp,
-    IconPlaylistAdd // New Icon for Multiple Bills
+    IconPlaylistAdd // Icon for Multiple Bills
 } from '@tabler/icons-react';
 import { FinanceContext } from '../../contexts/FinanceContext';
 import EditBillModal from '../BillsList/EditBillModal';
@@ -145,7 +145,7 @@ const CombinedBillsOverview = ({ style }) => {
     // --- End Derived State ---
 
     // --- Event Handlers ---
-     const handleAddSingle = () => { // Renamed for clarity
+     const handleAddSingle = () => { // For the main button click
          setEditingBill(null);
          setIsModalVisible(true);
      };
@@ -171,13 +171,13 @@ const CombinedBillsOverview = ({ style }) => {
          setMultiModalVisible(false);
      };
 
-     // Handler for Dropdown Menu clicks
+     // Handler for Dropdown Menu clicks (Now only opens Multi Modal)
      const handleMenuClick = (e) => {
+        // Since there's only one item, clicking it will always have the key 'add-multiple'
         if (e.key === 'add-multiple') {
             handleOpenMultiModal();
-        } else { // Default to 'add-single'
-            handleAddSingle();
         }
+        // No 'else' needed as there's no other menu option
      };
      // --- End Event Handlers ---
 
@@ -239,17 +239,17 @@ const CombinedBillsOverview = ({ style }) => {
         height: '28px',
     };
 
-    // Define items for the Dropdown.Button menu
+    // Define items for the Dropdown.Button menu - ONLY MULTIPLE
     const addBillMenuItems = [
-        {
-            key: 'add-single',
-            label: 'Add Single Bill',
-            icon: <IconPlus size={16} />,
-        },
+        // { // REMOVED Single Bill Option
+        //     key: 'add-single',
+        //     label: 'Add Single Bill',
+        //     icon: <IconPlus size={16} />,
+        // },
         {
             key: 'add-multiple',
             label: 'Add Multiple Bills',
-            icon: <IconPlaylistAdd size={16} />, // Use a different icon
+            icon: <IconPlaylistAdd size={16} />,
         },
     ];
 
@@ -258,11 +258,10 @@ const CombinedBillsOverview = ({ style }) => {
         <Card
             style={style}
             styles={{ body: { padding: 'var(--space-20)' } }}
-            // REMOVED 'extra' prop - button moved below
         >
             <Spin spinning={loading} tip="Loading Bills...">
 
-                {/* Section 1: Monthly Progress Summary (Original Content - No Changes Here) */}
+                {/* Section 1: Monthly Progress Summary (No Changes Here) */}
                 <div style={{ marginBottom: 'var(--space-24)' }}>
                     {/* Title and Badge */}
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 'var(--space-16)' }}>
@@ -343,14 +342,14 @@ const CombinedBillsOverview = ({ style }) => {
                                 </Button>
                             </Space>
 
-                            {/* MODIFIED: Dropdown Button for Adding Bills */}
+                            {/* MODIFIED: Dropdown Button - Menu has only one item now */}
                             <div>
                                 <Dropdown.Button
                                     type="primary"
                                     icon={<IconChevronDown size={16} />} // Dropdown indicator
                                     onClick={handleAddSingle} // Default action: Add Single Bill
-                                    menu={{ items: addBillMenuItems, onClick: handleMenuClick }} // Pass items and handler
-                                    style={{ display: 'flex', alignItems: 'center', /* gap: '4px', */ fontWeight: 500 }}
+                                    menu={{ items: addBillMenuItems, onClick: handleMenuClick }} // Pass items (now only 1) and handler
+                                    style={{ display: 'flex', alignItems: 'center', fontWeight: 500 }}
                                 >
                                     <IconPlus size={16} style={{marginRight: '4px'}}/> {/* Icon for the main button part */}
                                     Add Bill
