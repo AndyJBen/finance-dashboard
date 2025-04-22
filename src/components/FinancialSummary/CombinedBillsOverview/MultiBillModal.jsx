@@ -1,20 +1,20 @@
 // src/components/FinancialSummary/CombinedBillsOverview/MultiBillModal.jsx
-// Centered Paid/Recurring checkboxes horizontally. Ensured Amount field alignment.
-
 import React, { useEffect, useContext, useState } from 'react';
 import {
   Modal, Form, Input, InputNumber, DatePicker,
-  Select, Checkbox, Row, Col, Typography, Space, Button, message
+  Select, Checkbox, Row, Col, Typography, Space, Button, 
+  message, Card, Divider, Tag
 } from 'antd';
 import {
-  IconPlus, IconMinus, IconTag,
-  IconCalendar, IconCategory // IconCoin is removed
-} from '@tabler/icons-react';
+  PlusOutlined, MinusCircleOutlined, TagOutlined,
+  CalendarOutlined, AppstoreOutlined, DollarOutlined,
+  CheckCircleOutlined, SyncOutlined
+} from '@ant-design/icons';
 import dayjs from 'dayjs';
-// Corrected the relative path for FinanceContext (up 3 levels)
+// Corrected the relative path for FinanceContext
 import { FinanceContext } from '../../../contexts/FinanceContext';
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
 const { Option } = Select;
 
 // Define categories here or get them from context if available globally
@@ -24,18 +24,32 @@ const billCategories = [
   "Bill Prep", "Auto", "Other"
 ];
 
-const inputHeight = '45px'; // Consistent height for all input elements
+// Category colors for visual distinction
+const categoryColors = {
+  "Utilities": "blue", 
+  "Rent": "purple", 
+  "Mortgage": "volcano", 
+  "Groceries": "green",
+  "Subscription": "cyan", 
+  "Credit Card": "red", 
+  "Loan": "orange", 
+  "Insurance": "geekblue",
+  "Medical": "magenta", 
+  "Personal Care": "gold", 
+  "Bill Prep": "lime",
+  "Auto": "processing", 
+  "Other": "default"
+};
 
 export default function MultiBillModal({ open, onClose }) {
   const [form] = Form.useForm();
-  // Ensure FinanceContext is correctly imported above
   const { addBill, displayedMonth, loadBillsForMonth } = useContext(FinanceContext);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Initialize two empty rows when the modal opens
   useEffect(() => {
     if (open) {
-      form.setFieldsValue({ bills: [ {dueDate: null}, {dueDate: null} ] });
+      form.setFieldsValue({ bills: [{ dueDate: null }, { dueDate: null }] });
     }
   }, [open, form]);
 
@@ -51,15 +65,15 @@ export default function MultiBillModal({ open, onClose }) {
         return;
       }
 
-      const validBills = bills.filter(bill => bill && bill.name && bill.amount != null && bill.category && bill.dueDate);
+      const validBills = bills.filter(bill => 
+        bill && bill.name && bill.amount != null && bill.category && bill.dueDate
+      );
 
       if (validBills.length === 0) {
-          message.warning('No valid bill information entered.');
-          setIsSubmitting(false);
-          return;
+        message.warning('No valid bill information entered.');
+        setIsSubmitting(false);
+        return;
       }
-
-      console.log("Submitting Bills:", validBills);
 
       const addPromises = validBills.map(entry => addBill({
         name: entry.name.trim(),
@@ -73,25 +87,26 @@ export default function MultiBillModal({ open, onClose }) {
       await Promise.all(addPromises);
 
       message.success(`${validBills.length} bill(s) added successfully!`);
-      // Ensure loadBillsForMonth is available from context
+      
       if (loadBillsForMonth) {
-          await loadBillsForMonth(displayedMonth);
+        await loadBillsForMonth(displayedMonth);
       } else {
-          console.warn("loadBillsForMonth function not found in context");
+        console.warn("loadBillsForMonth function not found in context");
       }
+      
       form.resetFields();
       onClose();
     } catch (errInfo) {
       console.error('Validation Failed or API Error:', errInfo);
       message.error('Failed to add bills. Please check the form for errors.');
     } finally {
-        setIsSubmitting(false);
+      setIsSubmitting(false);
     }
   };
 
   const handleCancel = () => {
-      form.resetFields();
-      onClose();
+    form.resetFields();
+    onClose();
   };
 
   return (
@@ -101,20 +116,21 @@ export default function MultiBillModal({ open, onClose }) {
         <Row align="middle" gutter={16}>
           <Col>
             <div style={{
-              backgroundColor: '#52c41a',
+              background: 'linear-gradient(135deg, #52c41a 0%, #389e0d 100%)',
               color: 'white',
               width: 40,
               height: 40,
               borderRadius: 8,
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center'
+              justifyContent: 'center',
+              boxShadow: '0 2px 8px rgba(82, 196, 26, 0.3)'
             }}>
-              <IconPlus size={24} />
+              <PlusOutlined style={{ fontSize: 20 }} />
             </div>
           </Col>
           <Col>
-            <Title level={4} style={{ margin: 0 }}>
+            <Title level={4} style={{ margin: 0, fontWeight: 600 }}>
               Add Multiple Bills
             </Title>
           </Col>
@@ -123,139 +139,182 @@ export default function MultiBillModal({ open, onClose }) {
       onOk={handleOk}
       onCancel={handleCancel}
       width={900}
-      bodyStyle={{ maxHeight: '60vh', overflowY: 'auto' }}
       destroyOnClose
       confirmLoading={isSubmitting}
       okText="Add Bills"
+      okButtonProps={{ 
+        style: { background: '#52c41a', borderColor: '#52c41a' }
+      }}
+      style={{ top: 20 }}
     >
-      <Form form={form} layout="vertical" name="multiBillForm" autoComplete="off">
+      <Form 
+        form={form} 
+        layout="vertical" 
+        name="multiBillForm" 
+        autoComplete="off"
+        style={{ maxHeight: 'unset', overflow: 'visible' }}
+      >
         <Form.List name="bills">
           {(fields, { add, remove }) => (
-            <>
-              {/* Table Headers - Centering text for Paid/Recurring */}
-              <Row gutter={16} style={{ marginBottom: '12px', color: 'rgba(0, 0, 0, 0.45)' }}>
-                <Col span={5}><Typography.Text strong>Bill Name</Typography.Text></Col>
-                <Col span={3}><Typography.Text strong>Amount</Typography.Text></Col>
-                <Col span={4}><Typography.Text strong>Category</Typography.Text></Col>
-                <Col span={4}><Typography.Text strong>Due Date</Typography.Text></Col>
-                <Col span={2} style={{ textAlign: 'center' }}><Typography.Text strong>Paid</Typography.Text></Col>
-                <Col span={3} style={{ textAlign: 'center' }}><Typography.Text strong>Recurring</Typography.Text></Col>
-                <Col span={3} /> {/* Spacer for buttons */}
-              </Row>
-
-              {/* Dynamic Rows */}
+            <div style={{ paddingBottom: 16 }}>
               {fields.map(({ key, name, ...restField }, index) => (
-                <Row gutter={16} key={key} align="top" style={{ marginBottom: 8 }}>
-                   {/* Bill Name */}
-                  <Col span={5}>
-                    <Form.Item
-                      {...restField}
-                      name={[name, 'name']}
-                      rules={[{ required: true, message: 'Name?' }]}
-                      style={{ marginBottom: 0 }}
-                    >
-                      <Input
-                        placeholder="Bill Name"
-                        style={{ height: inputHeight, borderRadius: 8 }}
-                        prefix={<IconTag size={16} style={{ marginRight: 4 }} />}
-                      />
-                    </Form.Item>
-                  </Col>
-                   {/* Amount */}
-                  <Col span={3}>
-                    <Form.Item
-                      {...restField}
-                      name={[name, 'amount']}
-                      rules={[{ required: true, message: 'Amt?' }]}
-                      style={{ marginBottom: 0 }}
-                    >
-                      <InputNumber
-                        placeholder="Amount"
-                        // Ensure consistent height for vertical alignment
-                        style={{ width: '100%', height: inputHeight, borderRadius: 8, lineHeight: inputHeight }}
-                        formatter={(value) => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                        parser={(value) => value?.replace(/\$\s?|(,*)/g, '') ?? ''}
-                        min={0}
-                      />
-                    </Form.Item>
-                  </Col>
-                   {/* Category */}
-                  <Col span={4}>
-                    <Form.Item
-                      {...restField}
-                      name={[name, 'category']}
-                      rules={[{ required: true, message: 'Cat?' }]}
-                      style={{ marginBottom: 0 }}
-                    >
-                      <Select
-                        placeholder="Category"
-                        style={{ height: inputHeight, borderRadius: 8 }}
+                <Card 
+                  key={key} 
+                  style={{ 
+                    marginBottom: 16, 
+                    borderRadius: 8,
+                    boxShadow: '0 1px 4px rgba(0, 0, 0, 0.08)'
+                  }}
+                  bodyStyle={{ padding: '16px' }}
+                >
+                  <Row gutter={[16, 16]}>
+                    {/* Bill Name */}
+                    <Col span={24} lg={12}>
+                      <Form.Item
+                        {...restField}
+                        name={[name, 'name']}
+                        label={<Text strong>Bill Name</Text>}
+                        rules={[{ required: true, message: 'Bill name is required' }]}
                       >
-                        {billCategories.map(c => <Option key={c} value={c}>{c}</Option>)}
-                      </Select>
-                    </Form.Item>
-                  </Col>
-                  {/* Due Date */}
-                  <Col span={4}>
-                    <Form.Item
-                      {...restField}
-                      name={[name, 'dueDate']}
-                      rules={[{ required: true, message: 'Date?' }]}
-                      style={{ marginBottom: 0 }}
-                    >
-                      <DatePicker
-                        style={{ width: '100%', height: inputHeight, borderRadius: 8 }}
-                        suffixIcon={<IconCalendar size={16} />}
-                        format="YYYY-MM-DD"
-                      />
-                    </Form.Item>
-                  </Col>
-                  {/* Paid Checkbox - Centered */}
-                  <Col span={2} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: inputHeight }}>
-                    <Form.Item
-                      {...restField}
-                      name={[name, 'isPaid']}
-                      valuePropName="checked"
-                      style={{ marginBottom: 0 }} // Keep margin 0 for Form.Item
-                    >
-                      <Checkbox />
-                    </Form.Item>
-                  </Col>
-                    {/* Recurring Checkbox - Centered */}
-                  <Col span={3} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: inputHeight }}>
-                    <Form.Item
-                      {...restField}
-                      name={[name, 'isRecurring']}
-                      valuePropName="checked"
-                      style={{ marginBottom: 0 }} // Keep margin 0 for Form.Item
-                    >
-                      <Checkbox />
-                    </Form.Item>
-                  </Col>
-                   {/* Action Buttons */}
-                  <Col span={3} style={{ display: 'flex', alignItems: 'center', height: inputHeight }}>
-                    <Space>
-                      {fields.length > 1 ? (
-                        <Button
-                          icon={<IconMinus size={16} />}
-                          type="text" danger
-                          onClick={() => remove(name)}
-                          style={{ padding: '4px 8px'}}
+                        <Input
+                          placeholder="Enter bill name"
+                          prefix={<TagOutlined />}
+                          style={{ borderRadius: 6 }}
                         />
-                      ) : null}
-                       {index === fields.length - 1 && (
-                         <Button
-                           icon={<IconPlus size={16} />}
-                           type="dashed"
-                           onClick={() => add({dueDate: null})}
-                           style={{ padding: '4px 8px'}}
-                         />
-                       )}
-                    </Space>
-                  </Col>
-                </Row>
+                      </Form.Item>
+                    </Col>
+                    
+                    {/* Amount */}
+                    <Col span={24} lg={12}>
+                      <Form.Item
+                        {...restField}
+                        name={[name, 'amount']}
+                        label={<Text strong>Amount</Text>}
+                        rules={[{ required: true, message: 'Amount is required' }]}
+                      >
+                        <InputNumber
+                          placeholder="0.00"
+                          style={{ width: '100%', borderRadius: 6 }}
+                          formatter={(value) => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                          parser={(value) => value?.replace(/\$\s?|(,*)/g, '') ?? ''}
+                          min={0}
+                          precision={2}
+                          prefix={<DollarOutlined />}
+                        />
+                      </Form.Item>
+                    </Col>
+                    
+                    {/* Category */}
+                    <Col span={24} lg={8}>
+                      <Form.Item
+                        {...restField}
+                        name={[name, 'category']}
+                        label={<Text strong>Category</Text>}
+                        rules={[{ required: true, message: 'Category is required' }]}
+                      >
+                        <Select
+                          placeholder="Select category"
+                          style={{ width: '100%', borderRadius: 6 }}
+                          dropdownStyle={{ borderRadius: 6 }}
+                          optionLabelProp="label"
+                          optionFilterProp="label"
+                          showSearch
+                        >
+                          {billCategories.map(category => (
+                            <Option key={category} value={category} label={category}>
+                              <Space>
+                                <Tag color={categoryColors[category]}>{category}</Tag>
+                              </Space>
+                            </Option>
+                          ))}
+                        </Select>
+                      </Form.Item>
+                    </Col>
+                    
+                    {/* Due Date */}
+                    <Col span={24} lg={8}>
+                      <Form.Item
+                        {...restField}
+                        name={[name, 'dueDate']}
+                        label={<Text strong>Due Date</Text>}
+                        rules={[{ required: true, message: 'Due date is required' }]}
+                      >
+                        <DatePicker
+                          style={{ width: '100%', borderRadius: 6 }}
+                          format="YYYY-MM-DD"
+                          placeholder="Select date"
+                          suffixIcon={<CalendarOutlined />}
+                        />
+                      </Form.Item>
+                    </Col>
+                    
+                    {/* Status Checkboxes */}
+                    <Col span={24} lg={8}>
+                      <Row gutter={16}>
+                        <Col span={12}>
+                          <Form.Item
+                            {...restField}
+                            name={[name, 'isPaid']}
+                            valuePropName="checked"
+                            label={<Text strong>Paid</Text>}
+                          >
+                            <Checkbox>
+                              <CheckCircleOutlined style={{ color: '#52c41a' }} />
+                            </Checkbox>
+                          </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                          <Form.Item
+                            {...restField}
+                            name={[name, 'isRecurring']}
+                            valuePropName="checked"
+                            label={<Text strong>Recurring</Text>}
+                          >
+                            <Checkbox>
+                              <SyncOutlined style={{ color: '#1890ff' }} />
+                            </Checkbox>
+                          </Form.Item>
+                        </Col>
+                      </Row>
+                    </Col>
+                  </Row>
+                  
+                  {/* Remove button */}
+                  {fields.length > 1 && (
+                    <Button
+                      type="text"
+                      danger
+                      onClick={() => remove(name)}
+                      icon={<MinusCircleOutlined />}
+                      style={{ 
+                        position: 'absolute', 
+                        top: 8, 
+                        right: 8 
+                      }}
+                    >
+                      Remove
+                    </Button>
+                  )}
+                </Card>
               ))}
-            </>
+              
+              {/* Add button */}
+              <Button
+                type="dashed"
+                onClick={() => add({ dueDate: null })}
+                block
+                icon={<PlusOutlined />}
+                style={{ 
+                  borderRadius: 6, 
+                  height: 48,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                Add Bill
+              </Button>
+            </div>
           )}
         </Form.List>
       </Form>
