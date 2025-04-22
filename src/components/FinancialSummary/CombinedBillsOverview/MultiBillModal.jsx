@@ -1,20 +1,23 @@
+// src/components/FinancialSummary/CombinedBillsOverview/MultiBillModal.jsx
+// Fixed import path for FinanceContext after moving the file.
+
 import React, { useEffect, useContext, useState } from 'react';
 import {
   Modal, Form, Input, InputNumber, DatePicker,
-  Select, Checkbox, Row, Col, Typography, Space, Button, message // Added message
+  Select, Checkbox, Row, Col, Typography, Space, Button, message
 } from 'antd';
 import {
   IconPlus, IconMinus, IconTag,
-  IconCoin, IconCalendar, IconCategory // Added IconCategory
+  IconCoin, IconCalendar, IconCategory
 } from '@tabler/icons-react';
 import dayjs from 'dayjs';
-import { FinanceContext } from '../../contexts/FinanceContext';
+// Corrected the relative path for FinanceContext (up 3 levels)
+import { FinanceContext } from '../../../contexts/FinanceContext';
 
 const { Title } = Typography;
 const { Option } = Select;
 
 // Define categories here or get them from context if available globally
-// Using the list from EditBillModal for consistency
 const billCategories = [
   "Utilities", "Rent", "Mortgage", "Groceries", "Subscription",
   "Credit Card", "Loan", "Insurance", "Medical", "Personal Care",
@@ -25,23 +28,22 @@ const inputHeight = '45px'; // Consistent height
 
 export default function MultiBillModal({ open, onClose }) {
   const [form] = Form.useForm();
+  // Ensure FinanceContext is correctly imported above
   const { addBill, displayedMonth, loadBillsForMonth } = useContext(FinanceContext);
-  const [isSubmitting, setIsSubmitting] = useState(false); // Add submitting state
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Initialize two empty rows when the modal opens
   useEffect(() => {
     if (open) {
-      // Reset form with two empty rows when modal opens
       form.setFieldsValue({ bills: [ {dueDate: null}, {dueDate: null} ] });
     }
   }, [open, form]);
 
   const handleOk = async () => {
-    setIsSubmitting(true); // Set submitting state
+    setIsSubmitting(true);
     try {
-      // Explicitly validate all fields
       await form.validateFields();
-      const { bills } = form.getFieldsValue(); // Get values after validation
+      const { bills } = form.getFieldsValue();
 
       if (!bills || bills.length === 0) {
         message.warning('Please add at least one bill.');
@@ -49,7 +51,6 @@ export default function MultiBillModal({ open, onClose }) {
         return;
       }
 
-      // Filter out any potentially empty/invalid rows just in case
       const validBills = bills.filter(bill => bill && bill.name && bill.amount != null && bill.category && bill.dueDate);
 
       if (validBills.length === 0) {
@@ -58,37 +59,41 @@ export default function MultiBillModal({ open, onClose }) {
           return;
       }
 
-      console.log("Submitting Bills:", validBills); // Debug log
+      console.log("Submitting Bills:", validBills);
 
-      // Call addBill for each entry, await all promises
       const addPromises = validBills.map(entry => addBill({
         name: entry.name.trim(),
         amount: Number(entry.amount),
-        // Ensure dueDate is formatted correctly, default to today if somehow null after validation
         dueDate: entry.dueDate ? entry.dueDate.format('YYYY-MM-DD') : dayjs().format('YYYY-MM-DD'),
         category: entry.category,
-        isPaid: !!entry.isPaid, // Ensure boolean
-        isRecurring: !!entry.isRecurring // Ensure boolean
+        isPaid: !!entry.isPaid,
+        isRecurring: !!entry.isRecurring
       }));
 
       await Promise.all(addPromises);
 
       message.success(`${validBills.length} bill(s) added successfully!`);
-      await loadBillsForMonth(displayedMonth); // Reload the list for the current month
-      form.resetFields(); // Reset form after successful submission
-      onClose(); // Close the modal
+      // Ensure loadBillsForMonth is available from context
+      if (loadBillsForMonth) {
+          await loadBillsForMonth(displayedMonth);
+      } else {
+          console.warn("loadBillsForMonth function not found in context");
+          // Optionally reload the page or show a message to manually refresh
+          // window.location.reload();
+      }
+      form.resetFields();
+      onClose();
     } catch (errInfo) {
       console.error('Validation Failed or API Error:', errInfo);
       message.error('Failed to add bills. Please check the form for errors.');
-      // If errInfo.errorFields exists, Ant Design automatically highlights errors
     } finally {
-        setIsSubmitting(false); // Reset submitting state
+        setIsSubmitting(false);
     }
   };
 
   const handleCancel = () => {
-      form.resetFields(); // Reset form fields on cancel
-      onClose(); // Close the modal
+      form.resetFields();
+      onClose();
   };
 
   return (
@@ -97,9 +102,8 @@ export default function MultiBillModal({ open, onClose }) {
       title={(
         <Row align="middle" gutter={16}>
           <Col>
-            {/* Consistent Title Icon Style */}
             <div style={{
-              backgroundColor: '#52c41a', // Green background
+              backgroundColor: '#52c41a',
               color: 'white',
               width: 40,
               height: 40,
@@ -119,12 +123,12 @@ export default function MultiBillModal({ open, onClose }) {
         </Row>
       )}
       onOk={handleOk}
-      onCancel={handleCancel} // Use the updated cancel handler
-      width={900} // Increased width to accommodate fields better
+      onCancel={handleCancel}
+      width={900}
       bodyStyle={{ maxHeight: '60vh', overflowY: 'auto' }}
-      destroyOnClose // Destroy component state when closed
-      confirmLoading={isSubmitting} // Show loading state on OK button
-      okText="Add Bills" // Change OK button text
+      destroyOnClose
+      confirmLoading={isSubmitting}
+      okText="Add Bills"
     >
       <Form form={form} layout="vertical" name="multiBillForm" autoComplete="off">
         <Form.List name="bills">
@@ -150,12 +154,12 @@ export default function MultiBillModal({ open, onClose }) {
                       {...restField}
                       name={[name, 'name']}
                       rules={[{ required: true, message: 'Name?' }]}
-                      style={{ marginBottom: 0 }} // Reduce item margin
+                      style={{ marginBottom: 0 }}
                     >
                       <Input
                         placeholder="Bill Name"
                         style={{ height: inputHeight, borderRadius: 8 }}
-                        prefix={<IconTag size={16} style={{ marginRight: 4 }} />} // Smaller icon
+                        prefix={<IconTag size={16} style={{ marginRight: 4 }} />}
                       />
                     </Form.Item>
                   </Col>
@@ -172,8 +176,8 @@ export default function MultiBillModal({ open, onClose }) {
                         style={{ width: '100%', height: inputHeight, borderRadius: 8 }}
                         formatter={(value) => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                         parser={(value) => value?.replace(/\$\s?|(,*)/g, '') ?? ''}
-                        prefix={<IconCoin size={16} style={{ marginRight: 4 }} />} // Smaller icon
-                        min={0} // Ensure positive amount
+                        prefix={<IconCoin size={16} style={{ marginRight: 4 }} />}
+                        min={0}
                       />
                     </Form.Item>
                   </Col>
@@ -188,7 +192,8 @@ export default function MultiBillModal({ open, onClose }) {
                       <Select
                         placeholder="Category"
                         style={{ height: inputHeight, borderRadius: 8 }}
-                        // Add prefix icon directly to Select if possible or simulate it
+                        // Prefix icon simulation (if needed, otherwise remove)
+                        // prefix={<IconCategory size={16} style={{ marginRight: 4, color: 'rgba(0,0,0,.25)' }} />}
                       >
                         {billCategories.map(c => <Option key={c} value={c}>{c}</Option>)}
                       </Select>
@@ -204,8 +209,8 @@ export default function MultiBillModal({ open, onClose }) {
                     >
                       <DatePicker
                         style={{ width: '100%', height: inputHeight, borderRadius: 8 }}
-                        suffixIcon={<IconCalendar size={16} />} // Smaller icon
-                        format="YYYY-MM-DD" // Set format
+                        suffixIcon={<IconCalendar size={16} />}
+                        format="YYYY-MM-DD"
                       />
                     </Form.Item>
                   </Col>
@@ -234,33 +239,26 @@ export default function MultiBillModal({ open, onClose }) {
                    {/* Action Buttons */}
                   <Col span={3} style={{ display: 'flex', alignItems: 'center', height: inputHeight }}>
                     <Space>
-                      {fields.length > 1 ? ( // Only show remove if more than 1 item
+                      {fields.length > 1 ? (
                         <Button
                           icon={<IconMinus size={16} />}
                           type="text" danger
                           onClick={() => remove(name)}
-                          style={{ padding: '4px 8px'}} // Adjust padding
+                          style={{ padding: '4px 8px'}}
                         />
                       ) : null}
-                       {/* Show Plus only on the last item */}
                        {index === fields.length - 1 && (
                          <Button
                            icon={<IconPlus size={16} />}
                            type="dashed"
-                           onClick={() => add({dueDate: null})} // Add new row with default null date
-                           style={{ padding: '4px 8px'}} // Adjust padding
+                           onClick={() => add({dueDate: null})}
+                           style={{ padding: '4px 8px'}}
                          />
                        )}
                     </Space>
                   </Col>
                 </Row>
               ))}
-              {/* Button to add a new row if needed separately */}
-              {/* <Form.Item>
-                 <Button type="dashed" onClick={() => add({dueDate: null})} block icon={<IconPlus />}>
-                   Add Bill Row
-                 </Button>
-               </Form.Item> */}
             </>
           )}
         </Form.List>
