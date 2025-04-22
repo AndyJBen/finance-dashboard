@@ -1,174 +1,125 @@
-// server/server.js
+// server/server.js - Simplified Express 4.x-style approach
 
-// Import necessary modules
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
-const pool = require('./db'); // Import the database pool setup
+const pool = require('./db');
 
-// Import route handlers
+// Import route files
 const balanceRoutes = require('./routes/balance');
 const billsRoutes = require('./routes/bills');
 const creditCardsRoutes = require('./routes/credit_cards');
 
+// Initialize Express app
+const app = express();
+const PORT = process.env.PORT || 4000;
+
+// Log key environment info
 console.log('--- Environment Variables ---');
 console.log('NODE_ENV:', process.env.NODE_ENV);
-console.log('Attempting to read PORT:', process.env.PORT);
+console.log('PORT:', PORT);
+console.log('DATABASE_URL:', process.env.DATABASE_URL ? 'Set (hidden for security)' : 'Not set');
 console.log('-----------------------------');
 
-// Initialize the Express application
-const app = express();
-
-// --- Determine Port (Safer Parsing) ---
-let port = parseInt(process.env.PORT, 10);
-if (isNaN(port) || port <= 0) {
-    console.warn(`WARN: Invalid or missing PORT environment variable: "${process.env.PORT}". Render requires a valid PORT. Defaulting to 4000 for potential local use, but deployment will likely fail if PORT is missing/invalid in Render.`);
-    port = 4000; // Fallback for local dev
-}
-const PORT = port;
-if (isNaN(PORT)) {
-   console.error("FATAL: Could not determine a valid PORT. Exiting.");
-   process.exit(1);
-}
-console.log(`INFO: Determined PORT: ${PORT}`);
-// --- End Port Determination ---
-
-// --- JSON body parsing middleware (MUST come before routes) ---
+// Essential middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// --- Very detailed request logging for debugging ---
-app.use((req, res, next) => {
-    console.log(`\n--- INCOMING REQUEST ${new Date().toISOString()} ---`);
-    console.log(`Method: ${req.method}`);
-    console.log(`URL: ${req.url}`);
-    console.log(`Path: ${req.path}`);
-    console.log(`Original URL: ${req.originalUrl}`);
-    console.log(`Query params:`, req.query);
-    console.log(`Headers:`, req.headers);
-    console.log(`Body:`, req.body);
-    console.log(`-------------------------------------------`);
-    next();
-});
-
-// --- CORS configuration (with permissive settings for debugging) ---
+// CORS - Very permissive for debugging
 app.use(cors({
-    origin: '*', // Allow all origins temporarily for debugging
+    origin: '*',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true
 }));
 
-// --- Test response header enhancement middleware ---
+// Request logging
 app.use((req, res, next) => {
-    // Add after CORS to ensure it doesn't interfere with CORS headers
-    const originalSend = res.send;
-    res.send = function(body) {
-        console.log(`Sending response for ${req.method} ${req.originalUrl}`);
-        return originalSend.call(this, body);
-    };
+    console.log(`${new Date().toISOString()} [${req.method}] ${req.originalUrl}`);
     next();
 });
 
-// --- Basic test routes ---
+// Root endpoint for health check
 app.get('/', (req, res) => {
-    console.log('>>> Root route hit!');
-    res.status(200).send('Server is running. Try /api/ping to test API connectivity.');
+    console.log('>>> Root route accessed');
+    res.status(200).send('Server is running');
 });
 
+// Direct test endpoints - useful for debugging
 app.get('/ping', (req, res) => {
-    console.log('>>> /ping route hit!');
-    res.status(200).json({ message: 'pong from root' });
+    console.log('>>> /ping endpoint accessed');
+    res.status(200).json({ message: 'pong', timestamp: new Date().toISOString() });
 });
 
-// --- API root handler ---
-app.get('/api', (req, res) => {
-    console.log('>>> /api root route hit!');
-    res.status(200).json({ message: 'API is running' });
-});
-
-// --- Direct API test route ---
 app.get('/api/ping', (req, res) => {
-    console.log('>>> /api/ping route hit!');
-    res.status(200).json({ message: 'pong from api' });
+    console.log('>>> /api/ping endpoint accessed');
+    res.status(200).json({ message: 'API is online', timestamp: new Date().toISOString() });
 });
 
-// --- Main API Routes ---
-try {
-    console.log("INFO: Mounting /api/balance routes...");
-    app.use('/api/balance', (req, res, next) => {
-        console.log(`>>> Balance route middleware hit: ${req.method} ${req.originalUrl}`);
-        next();
-    }, balanceRoutes);
+// Mount API routes - Explicitly defining each major endpoint
+app.get('/api/balance', balanceRoutes);
+app.put('/api/balance', balanceRoutes);
 
-    console.log("INFO: Mounting /api/bills routes...");
-    app.use('/api/bills', (req, res, next) => {
-        console.log(`>>> Bills route middleware hit: ${req.method} ${req.originalUrl}`);
-        next();
-    }, billsRoutes);
+app.get('/api/bills', billsRoutes);
+app.post('/api/bills', billsRoutes);
+app.patch('/api/bills/:id', (req, res, next) => {
+    console.log(`>>> Bills PATCH route with ID: ${req.params.id}`);
+    next();
+}, billsRoutes);
+app.delete('/api/bills/:id', (req, res, next) => {
+    console.log(`>>> Bills DELETE route with ID: ${req.params.id}`);
+    next();
+}, billsRoutes);
 
-    console.log("INFO: Mounting /api/credit_cards routes...");
-    app.use('/api/credit_cards', (req, res, next) => {
-        console.log(`>>> Credit cards route middleware hit: ${req.method} ${req.originalUrl}`);
-        next();
-    }, creditCardsRoutes);
+app.get('/api/credit_cards', creditCardsRoutes);
+app.post('/api/credit_cards', creditCardsRoutes);
+app.patch('/api/credit_cards/:id', creditCardsRoutes);
+app.delete('/api/credit_cards/:id', creditCardsRoutes);
 
-    console.log("INFO: All API routes mounted successfully.");
-} catch (mountError) {
-    console.error("FATAL: Error during route mounting:", mountError);
-    process.exit(1);
-}
-
-// --- Health Check & DB Test Route ---
-app.get('/db-test', async (req, res, next) => {
+// DB test endpoint
+app.get('/db-test', async (req, res) => {
     try {
-        console.log('>>> DB test route hit!');
-        const timeResult = await pool.query('SELECT NOW()');
-        res.status(200).json({ 
-            dbTime: timeResult.rows[0].now,
+        const result = await pool.query('SELECT NOW()');
+        res.json({ 
+            dbTime: result.rows[0].now,
             message: 'Database connection successful'
         });
     } catch (error) {
-        console.error('Database test connection error:', error);
-        next(error);
+        console.error('Database test error:', error);
+        res.status(500).json({ error: 'Database connection failed' });
     }
 });
 
-// --- Direct route handler for OPTIONS requests (for CORS preflight) ---
-app.options('*', (req, res) => {
-    console.log(`>>> OPTIONS request received for: ${req.originalUrl}`);
-    res.status(204).end();
-});
-
-// --- 404 handler (must be after all routes) ---
+// 404 handler
 app.use((req, res) => {
-    console.log(`404: Route not found for ${req.method} ${req.originalUrl}`);
+    console.error(`404 - Route not found: ${req.method} ${req.originalUrl}`);
     res.status(404).json({ error: 'Route not found' });
 });
 
-// --- Global error handler ---
+// Error handler
 app.use((err, req, res, next) => {
-    console.error('--- Global Error Handler Triggered ---');
-    console.error('Route:', req.method, req.originalUrl);
-    console.error(err.stack || err);
-    console.error('------------------------------------');
-    const message = process.env.NODE_ENV === 'production'
-        ? 'An unexpected error occurred on the server.'
-        : err.message || 'An unexpected error occurred on the server.';
-    const statusCode = err.status || err.statusCode || 500;
-    res.status(statusCode).json({ message: message });
+    console.error('Server error:', err);
+    res.status(500).json({ 
+        error: 'Internal server error',
+        message: process.env.NODE_ENV === 'production' ? null : err.message
+    });
 });
 
-// --- Server Startup ---
+// Start server
 app.listen(PORT, '0.0.0.0', () => {
-    console.log(`✅ Server listening on host 0.0.0.0, port ${PORT}`);
-    console.log(`API base URL: https://finance-api.onrender.com`);
+    console.log(`Server running on port ${PORT}`);
+    console.log(`API should be accessible at https://finance-api.onrender.com`);
 });
 
-// --- Process Event Handlers ---
+// Handle unhandled errors
 process.on('unhandledRejection', (reason, promise) => {
-  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+    console.error('Unhandled Rejection:', reason);
 });
+
 process.on('uncaughtException', (error) => {
-  console.error('Uncaught Exception:', error);
+    console.error('Uncaught Exception:', error);
+    // Don't exit in production
+    if (process.env.NODE_ENV !== 'production') {
+        process.exit(1);
+    }
 });
