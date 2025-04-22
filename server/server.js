@@ -77,9 +77,9 @@ try {
     console.log("INFO: Mounting /api/balance routes...");
     //app.use('/api/balance', balanceRoutes);
     console.log("INFO: Mounting /api/bills routes...");
-    app.use('/api/bills', billsRoutes);
+    //app.use('/api/bills', billsRoutes);
     console.log("INFO: Mounting /api/credit_cards routes...");
-    app.use('/api/credit_cards', creditCardsRoutes);
+    //app.use('/api/credit_cards', creditCardsRoutes);
     console.log("INFO: All API routes mounted.");
 } catch (mountError) {
     console.error("FATAL: Error occurred during route mounting:", mountError);
@@ -88,18 +88,18 @@ try {
 
 
 // --- Health Check & Test Routes ---
-app.get('/', (req, res) => {
-    res.status(200).send('Server is running.');
-});
-app.get('/db-test', async (req, res, next) => {
-    try {
-        const timeResult = await pool.query('SELECT NOW()');
-        res.status(200).json({ dbTime: timeResult.rows[0].now });
-    } catch (error) {
-        console.error('Database test connection error:', error);
-        next(error); // Pass to global handler
-    }
-});
+//app.get('/', (req, res) => {
+    //res.status(200).send('Server is running.');
+//});
+//app.get('/db-test', async (req, res, next) => {
+    //try {
+        //const timeResult = await pool.query('SELECT NOW()');
+        //res.status(200).json({ dbTime: timeResult.rows[0].now });
+    //} catch (error) {
+        //console.error('Database test connection error:', error);
+        //next(error); // Pass to global handler
+    //}
+//});
 
 // --- Global Error Handler ---
 app.use((err, req, res, next) => {
