@@ -1,5 +1,5 @@
 // server/server.js
-// Restore /api/bills route
+// Restore all API routes
 
 // Import necessary modules
 const express = require('express');
@@ -68,7 +68,7 @@ app.use((req, res, next) => {
     next();
 });
 
-// --- API Routes (Restoring /api/bills) ---
+// --- API Routes (Restoring All) ---
 try {
     console.log("INFO: Mounting /api/balance routes...");
     app.use('/api/balance', balanceRoutes); // <-- UNCOMMENTED
@@ -76,8 +76,8 @@ try {
     console.log("INFO: Mounting /api/bills routes...");
     app.use('/api/bills', billsRoutes); // <-- UNCOMMENTED
 
-    console.log("INFO: Mounting /api/credit_cards routes... (Currently Commented Out)");
-    // app.use('/api/credit_cards', creditCardsRoutes);
+    console.log("INFO: Mounting /api/credit_cards routes...");
+    app.use('/api/credit_cards', creditCardsRoutes); // <-- UNCOMMENTED
 
     console.log("INFO: All API routes mounting points processed.");
 } catch (mountError) {
