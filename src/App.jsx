@@ -4,15 +4,16 @@ import React, { useState } from 'react';
 import { Layout, Row, Col, Typography, Space } from 'antd';
 
 // Core pages/components
-import BillsList              from './components/BillsList/BillsList';
-import UpcomingPayments       from './components/RecentActivity/UpcomingPayments';
-import ActivityFeed           from './components/RecentActivity/ActivityFeed';
-import Sidebar                from './components/Sidebar/Sidebar';
+import BillsList            from './components/BillsList/BillsList';
+import UpcomingPayments     from './components/RecentActivity/UpcomingPayments';
+import ActivityFeed         from './components/RecentActivity/ActivityFeed';
+import Sidebar              from './components/Sidebar/Sidebar';
 import FinancialOverviewCards from './components/FinancialSummary/FinancialOverviewCards';
-import CombinedBillsOverview  from './components/FinancialSummary/CombinedBillsOverview';
-import BillPrepCard           from './components/FinancialSummary/BillPrepCard';
-import PastDuePayments        from './components/RecentActivity/PastDuePayments';
-import AppFooter              from './components/Footer/Footer';
+// Updated import path for CombinedBillsOverview
+import CombinedBillsOverview  from './components/FinancialSummary/CombinedBillsOverview/CombinedBillsOverview';
+import BillPrepCard         from './components/FinancialSummary/BillPrepCard';
+import PastDuePayments      from './components/RecentActivity/PastDuePayments';
+import AppFooter            from './components/Footer/Footer';
 
 // Charts page now lives under components/ChartPages
 import ChartsPage from './components/ChartsPage/ChartsPage';
@@ -21,12 +22,12 @@ const { Content } = Layout;
 const { Title }   = Typography;
 
 function MyApp() {
-  const [collapsed, setCollapsed]      = useState(false);
+  const [collapsed, setCollapsed]       = useState(false);
   const [selectedMenuKey, setSelected] = useState('dashboard');
 
-  const SIDEBAR_WIDTH       = 240;
+  const SIDEBAR_WIDTH         = 240;
   const SIDEBAR_COLLAPSED_W = 80;
-  const marginLeft          = collapsed ? SIDEBAR_COLLAPSED_W : SIDEBAR_WIDTH;
+  const marginLeft            = collapsed ? SIDEBAR_COLLAPSED_W : SIDEBAR_WIDTH;
 
   const renderContent = () => {
     switch (selectedMenuKey) {
@@ -36,6 +37,7 @@ function MyApp() {
             <Col xs={24} lg={17}>
               <Space direction="vertical" size="large" style={{ width: '100%' }}>
                 <FinancialOverviewCards />
+                {/* CombinedBillsOverview component is used here */}
                 <CombinedBillsOverview style={{ height: '100%' }} />
               </Space>
             </Col>

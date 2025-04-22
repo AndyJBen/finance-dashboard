@@ -1,13 +1,13 @@
-// src/components/FinancialSummary/CombinedBillsOverview.jsx
-// Simplified Dropdown.Button: Main button adds single, dropdown adds multiple.
+// src/components/FinancialSummary/CombinedBillsOverview/CombinedBillsOverview.jsx
+// Updated import paths for components moved into the same folder.
 
 import React, { useState, useContext, useMemo, useEffect } from 'react';
 import {
     Table, Button, Space, Spin, Alert, Tooltip, Checkbox, Tag, Card,
     Progress, Typography, Row, Col, Statistic, Divider, message, Modal,
     List,
-    Dropdown, // Keep Dropdown
-    Menu // Keep Menu
+    Dropdown,
+    Menu
 } from 'antd';
 import {
     IconCalendarFilled, IconEdit, IconTrash, IconPlus, IconChevronLeft,
@@ -19,11 +19,15 @@ import {
     IconDotsVertical,
     IconChevronDown,
     IconChevronUp,
-    IconPlaylistAdd // Icon for Multiple Bills
+    IconPlaylistAdd
 } from '@tabler/icons-react';
 import { FinanceContext } from '../../contexts/FinanceContext';
-import EditBillModal from '../BillsList/EditBillModal';
-import MultiBillModal from './MultiBillModal'; // Keep MultiBillModal import
+// Import EditBillModal from its original location (assuming it stays in BillsList)
+import EditBillModal from '../../BillsList/EditBillModal';
+// Import components from the CURRENT directory
+import MultiBillModal from './MultiBillModal'; // Updated path
+import MonthlyProgressSummary from './MonthlyProgressSummary'; // Updated path
+import BillsListSection from './BillsListSection'; // Updated path
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import updateLocale from 'dayjs/plugin/updateLocale';
@@ -41,9 +45,9 @@ dayjs.extend(isBetween);
 dayjs.extend(isSameOrBeforePlugin);
 
 // Use Typography components directly
-const { Text, Title, Paragraph } = Typography;
+const { Text } = Typography;
 
-// --- Helper Functions (No changes) ---
+// --- Helper Functions (Kept here as they are used in column definitions) ---
 const getCategoryIcon = (category) => {
     const lowerCategory = category?.toLowerCase() || '';
     if (lowerCategory.includes('rent') || lowerCategory.includes('mortgage')) return <IconHome size={16} />;
@@ -63,7 +67,6 @@ const formatDueDate = (dueDate, displayedMonth) => {
     if (!dueDate || !dayjs(dueDate).isValid()) { return <span style={{ color: 'var(--neutral-400)' }}>N/A</span>; }
     const due = dayjs(dueDate).startOf('day');
     const today = dayjs().startOf('day');
-    const startOfDisplayedMonth = dayjs(displayedMonth).startOf('month');
     if (due.isBefore(today)) { return <span style={{ color: 'var(--danger-500)' }}>Past Due</span>; }
     if (due.isSame(today, 'day')) { return <span style={{ color: 'var(--warning-700)' }}>Today</span>; }
     const diffDaysFromToday = due.diff(today, 'day');
@@ -88,21 +91,22 @@ const getCategoryColor = (category) => {
 };
 // --- End Helper Functions ---
 
-// --- Main Component ---
+
+// --- Main Refactored Component ---
 const CombinedBillsOverview = ({ style }) => {
-    // Context and State
+    // Context and State (Remains the same)
     const {
         loading, error, deleteBill, updateBill, addBill,
         displayedMonth, goToPreviousMonth, goToNextMonth, bills,
     } = useContext(FinanceContext);
-    const [isModalVisible, setIsModalVisible] = useState(false); // For EditBillModal (single add/edit)
+    const [isModalVisible, setIsModalVisible] = useState(false); // For EditBillModal
     const [isMultiModalVisible, setMultiModalVisible] = useState(false); // For MultiBillModal
     const [editingBill, setEditingBill] = useState(null);
     const [selectedCategory, setSelectedCategory] = useState('All');
     const [isTableCollapsed, setIsTableCollapsed] = useState(false);
     const defaultPageSize = 10;
 
-    // --- Derived State (No changes) ---
+    // --- Derived State (Remains the same) ---
     const validBills = Array.isArray(bills) ? bills : [];
     const startOfDisplayedMonth = displayedMonth.startOf('month');
     const endOfDisplayedMonth = displayedMonth.endOf('month');
@@ -142,10 +146,16 @@ const CombinedBillsOverview = ({ style }) => {
     const totalAmountDueInDisplayedMonth = useMemo(() => {
         return billsDueInDisplayedMonth.reduce((sum, bill) => (!bill.isPaid && typeof bill.amount === 'number' ? sum + bill.amount : sum), 0);
     }, [billsDueInDisplayedMonth]);
+
+    // Data source for the table, considering collapse state
+     const tableDataSource = isTableCollapsed
+        ? mainTableDataSourceFiltered.slice(0, defaultPageSize)
+        : mainTableDataSourceFiltered;
     // --- End Derived State ---
 
-    // --- Event Handlers ---
-     const handleAddSingle = () => { // For the main button click
+
+    // --- Event Handlers (Remain in parent) ---
+     const handleAddSingle = () => {
          setEditingBill(null);
          setIsModalVisible(true);
      };
@@ -153,7 +163,7 @@ const CombinedBillsOverview = ({ style }) => {
          setEditingBill(record);
          setIsModalVisible(true);
      };
-     const handleModalSubmit = async (values) => { // Handles single add/edit submit
+     const handleModalSubmit = async (values) => {
          let result = editingBill ? await updateBill(editingBill, values) : await addBill(values);
          if (result) { setIsModalVisible(false); setEditingBill(null); }
      };
@@ -162,26 +172,21 @@ const CombinedBillsOverview = ({ style }) => {
          if (!record || typeof record.id === 'undefined') { message.error('Cannot delete bill: Invalid data.'); return; }
          try { await deleteBill(record.id); } catch (error) { message.error(`Deletion error: ${error.message || 'Unknown'}`); }
      };
-
-     // Handlers for MultiBillModal
      const handleOpenMultiModal = () => {
          setMultiModalVisible(true);
      };
      const handleCloseMultiModal = () => {
          setMultiModalVisible(false);
      };
-
-     // Handler for Dropdown Menu clicks (Now only opens Multi Modal)
      const handleMenuClick = (e) => {
-        // Since there's only one item, clicking it will always have the key 'add-multiple'
         if (e.key === 'add-multiple') {
             handleOpenMultiModal();
         }
-        // No 'else' needed as there's no other menu option
      };
      // --- End Event Handlers ---
 
-    // --- Table Columns (No changes) ---
+
+    // --- Table Columns Definition (Remains in parent) ---
     const columns = [
         { title: 'Status', dataIndex: 'isPaid', key: 'statusCheckbox', width: 50, align: 'center', render: (isPaid, record) => (<Tooltip title={isPaid ? "Mark as Unpaid" : "Mark as Paid"}><Checkbox className={`status-checkbox small-checkbox ${isPaid ? 'checked' : ''}`} checked={isPaid} onChange={() => handleTogglePaid(record)} /></Tooltip>) },
         { title: 'Name', dataIndex: 'name', key: 'name', width: 130, align: 'left', sorter: (a, b) => a.name.localeCompare(b.name), render: (text) => (<div style={{ textAlign: 'left' }}><Text strong>{text}</Text></div>) },
@@ -213,45 +218,16 @@ const CombinedBillsOverview = ({ style }) => {
     ];
     // --- End Table Columns ---
 
+
+    // --- Button Styles and Menu Items (Remain in parent) ---
+    const selectedAllButtonStyle = { fontWeight: 600, padding: '0 10px', height: '28px', borderColor: 'var(--primary-500)', color: 'var(--primary-600)' };
+    const defaultAllButtonStyle = { fontWeight: 500, padding: '0 10px', height: '28px' };
+    const addBillMenuItems = [ { key: 'add-multiple', label: 'Add Multiple Bills', icon: <IconPlaylistAdd size={16} /> } ];
+    // --- End Button Styles ---
+
+
     // --- Render Logic ---
-    const monthText = dayjs(displayedMonth).isValid() ? dayjs(displayedMonth).format("MMMM") : "Invalid";
-    const yearText = dayjs(displayedMonth).isValid() ? dayjs(displayedMonth).format("YYYY") : "Date";
-
     if (error && !loading) { return (<Card style={style}><Alert message="Error Loading Bills Data" description={error.message || 'Unknown error'} type="error" showIcon closable /></Card>); }
-
-    const tableDataSource = isTableCollapsed
-        ? mainTableDataSourceFiltered.slice(0, defaultPageSize)
-        : mainTableDataSourceFiltered;
-
-    // Style for the selected "All Categories" button
-    const selectedAllButtonStyle = {
-        fontWeight: 600,
-        padding: '0 10px',
-        height: '28px',
-        borderColor: 'var(--primary-500)',
-        color: 'var(--primary-600)',
-    };
-
-    // Style for the unselected "All Categories" button
-    const defaultAllButtonStyle = {
-        fontWeight: 500,
-        padding: '0 10px',
-        height: '28px',
-    };
-
-    // Define items for the Dropdown.Button menu - ONLY MULTIPLE
-    const addBillMenuItems = [
-        // { // REMOVED Single Bill Option
-        //     key: 'add-single',
-        //     label: 'Add Single Bill',
-        //     icon: <IconPlus size={16} />,
-        // },
-        {
-            key: 'add-multiple',
-            label: 'Add Multiple Bills',
-            icon: <IconPlaylistAdd size={16} />,
-        },
-    ];
 
     return (
      <> {/* Fragment to wrap Card and Modals */}
@@ -261,127 +237,42 @@ const CombinedBillsOverview = ({ style }) => {
         >
             <Spin spinning={loading} tip="Loading Bills...">
 
-                {/* Section 1: Monthly Progress Summary (No Changes Here) */}
-                <div style={{ marginBottom: 'var(--space-24)' }}>
-                    {/* Title and Badge */}
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 'var(--space-16)' }}>
-                        <div>
-                             <Text strong style={{ display: 'flex', alignItems: 'center', marginBottom: 'var(--space-4)', fontSize: '1rem' }}>
-                                 <IconCalendarFilled size={25} style={{ marginRight: 'var(--space-8)', color: 'var(--primary-600)' }} />
-                                 Monthly Bills Progress
-                                 {totalBillsInDisplayedMonth > 0 && (
-                                     <Text type="secondary" style={{ fontSize: '0.875rem', marginLeft: '8px' }}>
-                                         ({paidBillsInDisplayedMonth}/{totalBillsInDisplayedMonth})
-                                     </Text>
-                                 )}
-                             </Text>
-                        </div>
-                        {totalAmountForAllBillsInDisplayedMonth > 0 && (
-                             <Text style={{ fontSize: '0.8125rem', fontWeight: 700, color: 'var(--primary-600)', backgroundColor: 'var(--primary-100)', padding: '0.25rem 0.625rem', borderRadius: 'var(--radius-full)', whiteSpace: 'nowrap' }}>
-                                 {percentAmountPaid}% Paid
-                             </Text>
-                        )}
-                    </div>
+                {/* Render Monthly Progress Summary Component */}
+                <MonthlyProgressSummary
+                    loading={loading}
+                    displayedMonth={displayedMonth}
+                    goToPreviousMonth={goToPreviousMonth}
+                    goToNextMonth={goToNextMonth}
+                    totalBillsInDisplayedMonth={totalBillsInDisplayedMonth}
+                    paidBillsInDisplayedMonth={paidBillsInDisplayedMonth}
+                    totalAmountForAllBillsInDisplayedMonth={totalAmountForAllBillsInDisplayedMonth}
+                    percentAmountPaid={percentAmountPaid}
+                    totalExpensesInDisplayedMonth={totalExpensesInDisplayedMonth}
+                    totalAmountDueInDisplayedMonth={totalAmountDueInDisplayedMonth}
+                />
 
-                    {/* Month Navigation */}
-                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: 'var(--space-20)' }}>
-                        <Tooltip title="Previous Month">
-                            <Button shape="circle" icon={<IconChevronLeft size={16} />} onClick={goToPreviousMonth} style={{ margin: '0 var(--space-16)' }} />
-                        </Tooltip>
-                        <div style={{ textAlign: 'center', minWidth: '100px' }}>
-                           <Paragraph style={{ margin: 0, fontWeight: 600, fontSize: '1.25rem', lineHeight: 1.2, color: 'var(--neutral-800)', marginBottom: '2px' }}>
-                               {monthText}
-                           </Paragraph>
-                           <Paragraph style={{ margin: 0, fontSize: '0.9rem', lineHeight: 1.1, color: 'var(--neutral-600)' }}>
-                               {yearText}
-                           </Paragraph>
-                        </div>
-                        <Tooltip title="Next Month">
-                            <Button shape="circle" icon={<IconChevronRight size={16} />} onClick={goToNextMonth} style={{ margin: '0 var(--space-16)' }} />
-                        </Tooltip>
-                         </div>
-
-                    {/* Progress Bar */}
-                    {totalAmountForAllBillsInDisplayedMonth > 0 && (
-                        <div style={{ width: '90%', margin: '0 auto', marginBottom: 'var(--space-20)' }}>
-                            <Progress percent={percentAmountPaid} strokeColor="var(--success-500)" trailColor="var(--neutral-200)" showInfo={false} size={['100%', 12]} />
-                        </div>
-                    )}
-
-                    {/* Stats */}
-                    <Row gutter={[16, 16]} justify="space-around" align="middle" style={{ marginBottom: 'var(--space-16)' }}>
-                         <Col xs={24} sm={8} style={{ textAlign: 'center' }}>
-                            <Statistic title={<Text type="secondary" style={{ fontSize: '0.75rem', textTransform: 'capitalize', fontWeight: 500 }}>Paid This Month</Text>} value={totalExpensesInDisplayedMonth} precision={2} prefix="$" valueStyle={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--success-500)' }} />
-                         </Col>
-                         <Col xs={24} sm={8} style={{ textAlign: 'center' }}>
-                            <Statistic title={<Text type="secondary" style={{ fontSize: '0.75rem', textTransform: 'capitalize', fontWeight: 500 }}>Total Bills</Text>} value={totalAmountForAllBillsInDisplayedMonth} precision={2} prefix="$" valueStyle={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--neutral-900)' }} />
-                         </Col>
-                         <Col xs={24} sm={8} style={{ textAlign: 'center' }}>
-                               <Statistic title={<Text type="secondary" style={{ fontSize: '0.75rem', textTransform: 'capitalize', fontWeight: 500 }}>Remaining This Month</Text>} value={totalAmountDueInDisplayedMonth} precision={2} prefix="$" valueStyle={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--danger-500)' }} />
-                         </Col>
-                    </Row>
-
-                    {totalBillsInDisplayedMonth === 0 && !loading && (
-                        <Text type="secondary" style={{ display: 'block', textAlign: 'center', marginTop: 'var(--space-16)' }}>
-                            No bills due this month.
-                        </Text>
-                    )}
-                </div>
                 <Divider style={{ margin: '0 0 var(--space-24) 0' }} />
 
-                {/* Section 2: Bills List Table */}
-                <div>
-                    {/* Filter Section */}
-                    <div style={{ marginBottom: '16px', width: '100%' }}>
-                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                            {/* Filter controls */}
-                            <Space align="center">
-                                <Text strong style={{ color: 'var(--neutral-600)', whiteSpace: 'nowrap' }}> Filter by: </Text>
-                                <Button size="small" type="default" onClick={() => setSelectedCategory('All')} style={selectedCategory === 'All' ? selectedAllButtonStyle : defaultAllButtonStyle} >
-                                    All Categories
-                                </Button>
-                            </Space>
+                {/* Render Bills List Section Component */}
+                <BillsListSection
+                    loading={loading}
+                    columns={columns}
+                    tableDataSource={tableDataSource}
+                    isTableCollapsed={isTableCollapsed}
+                    categories={categories}
+                    selectedCategory={selectedCategory}
+                    setSelectedCategory={setSelectedCategory}
+                    handleAddSingle={handleAddSingle}
+                    handleMenuClick={handleMenuClick}
+                    addBillMenuItems={addBillMenuItems}
+                    getCategoryIcon={getCategoryIcon} // Pass helper
+                    selectedAllButtonStyle={selectedAllButtonStyle}
+                    defaultAllButtonStyle={defaultAllButtonStyle}
+                />
 
-                            {/* MODIFIED: Dropdown Button - Menu has only one item now */}
-                            <div>
-                                <Dropdown.Button
-                                    type="primary"
-                                    icon={<IconChevronDown size={16} />} // Dropdown indicator
-                                    onClick={handleAddSingle} // Default action: Add Single Bill
-                                    menu={{ items: addBillMenuItems, onClick: handleMenuClick }} // Pass items (now only 1) and handler
-                                    style={{ display: 'flex', alignItems: 'center', fontWeight: 500 }}
-                                >
-                                    <IconPlus size={16} style={{marginRight: '4px'}}/> {/* Icon for the main button part */}
-                                    Add Bill
-                                </Dropdown.Button>
-                            </div>
-                         </div>
-                         {/* Category Tags */}
-                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-                            {categories.map((category) => (
-                                <Tag.CheckableTag
-                                    key={category}
-                                    checked={selectedCategory === category}
-                                    onChange={(checked) => { setSelectedCategory(checked ? category : 'All'); }}
-                                    style={{ padding: '2px 8px', borderRadius: '12px', display: 'inline-flex', alignItems: 'center', gap: '6px', cursor: 'pointer', border: '1px solid', borderColor: selectedCategory === category ? 'var(--primary-500)' : 'var(--neutral-300)', backgroundColor: selectedCategory === category ? 'var(--primary-50)' : 'var(--neutral-50)', color: selectedCategory === category ? 'var(--primary-600)' : 'var(--neutral-700)', lineHeight: '1.4', fontSize: '0.8rem' }} >
-                                    {getCategoryIcon(category)} <span>{category}</span>
-                                </Tag.CheckableTag>
-                            ))}
-                         </div>
-                         </div>
-                         {/* END Filter Section */}
-
-                    {/* Main Bills Table (No changes) */}
-                    <Table columns={columns} dataSource={tableDataSource} rowKey={record => record.id || `${record.name}-${record.dueDate}`} pagination={false} scroll={{ x: 730 }} size="middle" />
-                    {tableDataSource.length === 0 && !loading && (
-                        <Text type="secondary" style={{ display: 'block', textAlign: 'center', marginTop: 'var(--space-16)' }}>
-                            {isTableCollapsed ? 'Table is collapsed.' : 'No bills match the current filters for this month.'}
-                        </Text>
-                         )}
-                </div>
             </Spin>
 
-            {/* Edit/Add Bill Modal (Single Bill) */}
+            {/* Edit/Add Bill Modal (Single Bill) - Remains in Parent */}
             {isModalVisible && (
                  <EditBillModal
                     open={isModalVisible}
@@ -392,7 +283,7 @@ const CombinedBillsOverview = ({ style }) => {
             )}
         </Card>
 
-        {/* Multi Bill Modal */}
+        {/* Multi Bill Modal - Remains in Parent */}
         {isMultiModalVisible && (
              <MultiBillModal
                 open={isMultiModalVisible}
