@@ -1,7 +1,5 @@
 // server/server.js
-// Finance Dashboard API server
 
-// Import necessary modules
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
@@ -12,20 +10,18 @@ const balanceRoutes = require('./routes/balance');
 const billsRoutes = require('./routes/bills');
 const creditCardsRoutes = require('./routes/credit_cards');
 
-// Log environment info
 console.log('--- Environment Variables ---');
 console.log('NODE_ENV:', process.env.NODE_ENV);
 console.log('Attempting to read PORT:', process.env.PORT);
 console.log('-----------------------------');
 
-// Initialize the Express application
 const app = express();
 
 // --- Determine Port (Safer Parsing) ---
 let port = parseInt(process.env.PORT, 10);
 if (isNaN(port) || port <= 0) {
-    console.warn(`WARN: Invalid or missing PORT environment variable: "${process.env.PORT}". Defaulting to 4000.`);
-    port = 4000; // Fallback for local dev
+    console.warn(`WARN: Invalid or missing PORT environment variable: "${process.env.PORT}". Defaulting to 4000 for local dev.`);
+    port = 4000;
 }
 const PORT = port;
 if (isNaN(PORT)) {
@@ -35,11 +31,11 @@ if (isNaN(PORT)) {
 console.log(`INFO: Determined PORT: ${PORT}`);
 // --- End Port Determination ---
 
-// --- JSON body parsing middleware ---
+// --- JSON body parsing middleware (MUST come before routes) ---
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// --- Detailed request logging ---
+// --- Very detailed request logging for debugging ---
 app.use((req, res, next) => {
     console.log(`\n--- INCOMING REQUEST ${new Date().toISOString()} ---`);
     console.log(`Method: ${req.method}`);
@@ -53,15 +49,15 @@ app.use((req, res, next) => {
     next();
 });
 
-// --- Global CORS middleware ---
+// --- CORS configuration (with permissive settings for debugging) ---
 app.use(cors({
-    origin: '*',
+    origin: '*', // Allow all origins temporarily for debugging - RESTRICT THIS IN PRODUCTION
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true
 }));
 
-// --- Response send logging ---
+// --- Test response header enhancement middleware (Optional) ---
 app.use((req, res, next) => {
     const originalSend = res.send;
     res.send = function(body) {
@@ -76,22 +72,25 @@ app.get('/', (req, res) => {
     console.log('>>> Root route hit!');
     res.status(200).send('Server is running. Try /api/ping to test API connectivity.');
 });
+
 app.get('/ping', (req, res) => {
     console.log('>>> /ping route hit!');
     res.status(200).json({ message: 'pong from root' });
 });
 
-// --- API root handlers ---
+// --- API root handler ---
 app.get('/api', (req, res) => {
     console.log('>>> /api root route hit!');
     res.status(200).json({ message: 'API is running' });
 });
+
+// --- Direct API test route ---
 app.get('/api/ping', (req, res) => {
     console.log('>>> /api/ping route hit!');
     res.status(200).json({ message: 'pong from api' });
 });
 
-// --- Mount API routes ---
+// --- Main API Routes ---
 try {
     console.log("INFO: Mounting /api/balance routes...");
     app.use('/api/balance', balanceRoutes);
@@ -123,16 +122,16 @@ app.get('/db-test', async (req, res, next) => {
     }
 });
 
-// --- Handle CORS preflight for all routes ---
-app.options('/*', cors()); // Updated to valid catch-all pattern
+// --- Handle OPTIONS preflight for all paths (fixed catch‑all) ---
+app.options('/*', cors());
 
-// --- 404 handler ---
+// --- 404 handler (must be after all specific routes) ---
 app.use((req, res) => {
     console.log(`404: Route not found for ${req.method} ${req.originalUrl}`);
     res.status(404).json({ error: 'Route not found' });
 });
 
-// --- Global error handler ---
+// --- Global error handler (must be the LAST app.use call) ---
 app.use((err, req, res, next) => {
     console.error('--- Global Error Handler Triggered ---');
     console.error('Route:', req.method, req.originalUrl);
@@ -152,11 +151,11 @@ app.listen(PORT, '0.0.0.0', () => {
     console.log(`✅ Server listening on host 0.0.0.0, port ${PORT}`);
 });
 
-// --- Process Event Handlers ---
+// --- Process Event Handlers for better stability ---
 process.on('unhandledRejection', (reason, promise) => {
-    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
 });
 process.on('uncaughtException', (error) => {
-    console.error('Uncaught Exception:', error);
-    process.exit(1);
+  console.error('Uncaught Exception:', error);
+  process.exit(1);
 });
