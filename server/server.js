@@ -33,86 +33,93 @@ if (isNaN(PORT)) {
 console.log(`INFO: Determined PORT: ${PORT}`);
 // --- End Port Determination ---
 
-// --- Debug incoming requests middleware ---
+// --- JSON body parsing middleware (MUST come before routes) ---
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// --- Very detailed request logging for debugging ---
 app.use((req, res, next) => {
-    console.log(`DEBUG [${new Date().toISOString()}]: Received ${req.method} request to ${req.originalUrl}`);
+    console.log(`\n--- INCOMING REQUEST ${new Date().toISOString()} ---`);
+    console.log(`Method: ${req.method}`);
+    console.log(`URL: ${req.url}`);
+    console.log(`Path: ${req.path}`);
+    console.log(`Original URL: ${req.originalUrl}`);
+    console.log(`Query params:`, req.query);
+    console.log(`Headers:`, req.headers);
+    console.log(`Body:`, req.body);
+    console.log(`-------------------------------------------`);
     next();
 });
 
-// --- Simplified CORS for debugging ---
+// --- CORS configuration (with permissive settings for debugging) ---
 app.use(cors({
-    origin: '*',
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    credentials: true,
-    optionsSuccessStatus: 204
+    origin: '*', // Allow all origins temporarily for debugging
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
 }));
 
-// --- JSON Body Parsing ---
-app.use(express.json());
-
-// --- Request Logging ---
+// --- Test response header enhancement middleware ---
 app.use((req, res, next) => {
-    console.log(`${new Date().toISOString()} - ${req.method} ${req.originalUrl}`);
+    // Add after CORS to ensure it doesn't interfere with CORS headers
+    const originalSend = res.send;
+    res.send = function(body) {
+        console.log(`Sending response for ${req.method} ${req.originalUrl}`);
+        return originalSend.call(this, body);
+    };
     next();
 });
 
-// --- Catch-all debugger to see if requests reach Express ---
-app.use((req, res, next) => {
-    console.log(`ROUTE DEBUG: ${req.method} ${req.originalUrl} reached Express router`);
-    next();
-});
-
-// --- Direct Test Routes (before API routes) ---
-app.get('/ping', (req, res) => {
-    console.log('>>> Root /ping route hit!');
-    res.status(200).json({ message: 'pong from root path' });
-});
-
-app.get('/api/ping', (req, res) => {
-    console.log('>>> /api/ping route hit!');
-    res.status(200).json({ message: 'pong from api path' });
-});
-// --- End Direct Test Routes ---
-
-// --- Explicit API Root Handler ---
-app.get('/api', (req, res) => {
-    console.log('>>> /api root route hit!');
-    res.status(200).json({ message: 'API is running' });
-});
-
-// --- API Routes with explicit path logging ---
-try {
-    console.log("INFO: Mounting /api/balance routes...");
-    app.use('/api/balance', (req, res, next) => {
-        console.log(`Balance route middleware hit: ${req.method} ${req.originalUrl}`);
-        next();
-    }, balanceRoutes);
-
-    console.log("INFO: Mounting /api/bills routes...");
-    app.use('/api/bills', (req, res, next) => {
-        console.log(`Bills route middleware hit: ${req.method} ${req.originalUrl}`);
-        next();
-    }, billsRoutes);
-
-    console.log("INFO: Mounting /api/credit_cards routes...");
-    app.use('/api/credit_cards', (req, res, next) => {
-        console.log(`Credit cards route middleware hit: ${req.method} ${req.originalUrl}`);
-        next();
-    }, creditCardsRoutes);
-
-    console.log("INFO: All API routes mounting points processed.");
-} catch (mountError) {
-    console.error("FATAL: Error occurred during route mounting section:", mountError);
-    process.exit(1);
-}
-
-// --- Health Check & Test Routes ---
-console.log("INFO: Health check routes are enabled.");
+// --- Basic test routes ---
 app.get('/', (req, res) => {
     console.log('>>> Root route hit!');
     res.status(200).send('Server is running. Try /api/ping to test API connectivity.');
 });
 
+app.get('/ping', (req, res) => {
+    console.log('>>> /ping route hit!');
+    res.status(200).json({ message: 'pong from root' });
+});
+
+// --- API root handler ---
+app.get('/api', (req, res) => {
+    console.log('>>> /api root route hit!');
+    res.status(200).json({ message: 'API is running' });
+});
+
+// --- Direct API test route ---
+app.get('/api/ping', (req, res) => {
+    console.log('>>> /api/ping route hit!');
+    res.status(200).json({ message: 'pong from api' });
+});
+
+// --- Main API Routes ---
+try {
+    console.log("INFO: Mounting /api/balance routes...");
+    app.use('/api/balance', (req, res, next) => {
+        console.log(`>>> Balance route middleware hit: ${req.method} ${req.originalUrl}`);
+        next();
+    }, balanceRoutes);
+
+    console.log("INFO: Mounting /api/bills routes...");
+    app.use('/api/bills', (req, res, next) => {
+        console.log(`>>> Bills route middleware hit: ${req.method} ${req.originalUrl}`);
+        next();
+    }, billsRoutes);
+
+    console.log("INFO: Mounting /api/credit_cards routes...");
+    app.use('/api/credit_cards', (req, res, next) => {
+        console.log(`>>> Credit cards route middleware hit: ${req.method} ${req.originalUrl}`);
+        next();
+    }, creditCardsRoutes);
+
+    console.log("INFO: All API routes mounted successfully.");
+} catch (mountError) {
+    console.error("FATAL: Error during route mounting:", mountError);
+    process.exit(1);
+}
+
+// --- Health Check & DB Test Route ---
 app.get('/db-test', async (req, res, next) => {
     try {
         console.log('>>> DB test route hit!');
@@ -123,17 +130,23 @@ app.get('/db-test', async (req, res, next) => {
         });
     } catch (error) {
         console.error('Database test connection error:', error);
-        next(error); // Pass to global handler
+        next(error);
     }
 });
 
-// --- 404 Handler (after all routes) ---
+// --- Direct route handler for OPTIONS requests (for CORS preflight) ---
+app.options('*', (req, res) => {
+    console.log(`>>> OPTIONS request received for: ${req.originalUrl}`);
+    res.status(204).end();
+});
+
+// --- 404 handler (must be after all routes) ---
 app.use((req, res) => {
     console.log(`404: Route not found for ${req.method} ${req.originalUrl}`);
     res.status(404).json({ error: 'Route not found' });
 });
 
-// --- Global Error Handler ---
+// --- Global error handler ---
 app.use((err, req, res, next) => {
     console.error('--- Global Error Handler Triggered ---');
     console.error('Route:', req.method, req.originalUrl);
@@ -149,7 +162,7 @@ app.use((err, req, res, next) => {
 // --- Server Startup ---
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`✅ Server listening on host 0.0.0.0, port ${PORT}`);
-    console.log(`API base URL might be accessible externally at something like: http://<your-render-service-name>.onrender.com`);
+    console.log(`API base URL: https://finance-api.onrender.com`);
 });
 
 // --- Process Event Handlers ---
@@ -158,6 +171,4 @@ process.on('unhandledRejection', (reason, promise) => {
 });
 process.on('uncaughtException', (error) => {
   console.error('Uncaught Exception:', error);
-  // Uncomment if you want to terminate on uncaught exceptions
-  // process.exit(1);
 });
