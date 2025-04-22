@@ -75,11 +75,11 @@ app.use((req, res, next) => { // Request logger
 // !! IMPORTANT: Comment these out one by one to find the source of the startup crash !!
 try {
     console.log("INFO: Mounting /api/balance routes...");
-    app.use('/api/balance', balanceRoutes);
+    //app.use('/api/balance', balanceRoutes);
     console.log("INFO: Mounting /api/bills routes...");
     app.use('/api/bills', billsRoutes);
     console.log("INFO: Mounting /api/credit_cards routes...");
-    //app.use('/api/credit_cards', creditCardsRoutes);
+    app.use('/api/credit_cards', creditCardsRoutes);
     console.log("INFO: All API routes mounted.");
 } catch (mountError) {
     console.error("FATAL: Error occurred during route mounting:", mountError);
