@@ -122,8 +122,7 @@ app.get('/db-test', async (req, res, next) => {
     }
 });
 
-// --- Handle OPTIONS preflight for all paths (fixed catch‑all) ---
-app.options('/*', cors());
+// Note: Removed explicit `app.options('/*', ...)` catch‑all because global CORS handles OPTIONS
 
 // --- 404 handler (must be after all specific routes) ---
 app.use((req, res) => {
@@ -148,7 +147,7 @@ app.use((err, req, res, next) => {
 
 // --- Server Startup ---
 app.listen(PORT, '0.0.0.0', () => {
-    console.log(`✅ Server listening on host 0.0.0.0, port ${PORT}`);
+    console.log(`Server listening on 0.0.0.0:${PORT}`);
 });
 
 // --- Process Event Handlers for better stability ---
