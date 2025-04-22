@@ -77,7 +77,7 @@ try {
     console.log("INFO: Mounting /api/balance routes...");
     app.use('/api/balance', balanceRoutes);
     console.log("INFO: Mounting /api/bills routes...");
-    app.use('/api/bills', billsRoutes);
+    //app.use('/api/bills', billsRoutes);
     console.log("INFO: Mounting /api/credit_cards routes...");
     app.use('/api/credit_cards', creditCardsRoutes);
     console.log("INFO: All API routes mounted.");
