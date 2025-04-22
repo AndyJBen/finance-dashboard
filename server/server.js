@@ -1,5 +1,5 @@
 // server/server.js
-// Regenerated to remove potential hidden characters/encoding issues
+// Testing basic CORS functionality
 
 // Import necessary modules
 const express = require('express');
@@ -56,10 +56,10 @@ const corsOptions = {
 };
 
 // --- Middleware Setup ---
-// Apply CORS options to all routes
-//app.use(cors(corsOptions));
-// Explicitly handle preflight requests for all routes
-//app.options('*', cors(corsOptions));
+// Apply CORS options to all routes - TESTING THIS LINE
+app.use(cors(corsOptions));
+// Explicitly handle preflight requests for all routes - KEEP COMMENTED FOR NOW
+// app.options('*', cors(corsOptions));
 // Parse JSON request bodies
 app.use(express.json());
 // Simple request logger middleware
@@ -81,7 +81,6 @@ try {
 
     console.log("INFO: All API routes mounting points processed (currently commented out).");
 } catch (mountError) {
-    // This catch block might not be reached if the error happens earlier
     console.error("FATAL: Error occurred during route mounting section:", mountError);
     process.exit(1);
 }
@@ -106,33 +105,24 @@ app.use((err, req, res, next) => {
     console.error('--- Global Error Handler Triggered ---');
     console.error(err.stack || err); // Log the full error stack
     console.error('------------------------------------');
-
-    // Avoid sending stack trace in production responses
     const message = process.env.NODE_ENV === 'production'
         ? 'An unexpected error occurred on the server.'
-        : err.message || 'An unexpected error occurred on the server.'; // Provide error message in dev
-
-    // Ensure a status code is set, default to 500
+        : err.message || 'An unexpected error occurred on the server.';
     const statusCode = err.status || err.statusCode || 500;
     res.status(statusCode).json({ message: message });
 });
 
 // --- Server Startup ---
 app.listen(PORT, '0.0.0.0', () => {
-    // Success message only prints if listen is successful
     console.log(`✅ Server listening on host 0.0.0.0, port ${PORT}`);
     console.log(`API base URL might be accessible externally at something like: http://<your-render-service-name>.onrender.com`);
-    // DB connection test is implicitly done by requiring './db' which connects the pool
 });
 
 // --- Process Event Handlers (Good Practice) ---
 process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection at:', promise, 'reason:', reason);
-  // Optionally exit or handle more gracefully
 });
 process.on('uncaughtException', (error) => {
   console.error('Uncaught Exception:', error);
-  // It's often recommended to exit after an uncaught exception,
-  // as the application state might be corrupt.
-  // process.exit(1);
+  // process.exit(1); // Consider exiting
 });
