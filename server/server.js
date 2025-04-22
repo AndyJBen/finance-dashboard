@@ -1,5 +1,5 @@
 // server/server.js
-// Testing basic CORS functionality
+// Testing basic CORS functionality - Re-enabling app.use(cors(corsOptions))
 
 // Import necessary modules
 const express = require('express');
@@ -56,7 +56,7 @@ const corsOptions = {
 };
 
 // --- Middleware Setup ---
-// Apply CORS options to all routes - TESTING THIS LINE
+// Apply CORS options to all routes - RE-ENABLING THIS LINE
 app.use(cors(corsOptions));
 // Explicitly handle preflight requests for all routes - KEEP COMMENTED FOR NOW
 // app.options('*', cors(corsOptions));
