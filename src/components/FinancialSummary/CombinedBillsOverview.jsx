@@ -1,17 +1,16 @@
 // src/components/FinancialSummary/CombinedBillsOverview.jsx
-// Highlight: Increased font size and spacing for the stacked month/year display.
-// Added "Add Multiple Bills" button and modal integration.
+// Combined "Add Bill" and "Add Multiple Bills" into a Dropdown.Button
 
 import React, { useState, useContext, useMemo, useEffect } from 'react';
 import {
     Table, Button, Space, Spin, Alert, Tooltip, Checkbox, Tag, Card,
     Progress, Typography, Row, Col, Statistic, Divider, message, Modal,
     List,
-    Dropdown,
-    Menu
+    Dropdown, // Keep Dropdown
+    Menu // Keep Menu
 } from 'antd';
 import {
-    IconCalendarFilled, IconEdit, IconTrash, IconPlus, IconChevronLeft, // IconPlus is already here, ensure it's used correctly later
+    IconCalendarFilled, IconEdit, IconTrash, IconPlus, IconChevronLeft,
     IconChevronRight, IconHome, IconBolt, IconWifi,
     IconCreditCard, IconCar, IconShoppingCart, IconHelp, IconApps,
     IconCalendar, IconCurrencyDollar, IconCircleCheck, IconClock, IconPhone,
@@ -19,11 +18,12 @@ import {
     IconX, IconUser,
     IconDotsVertical,
     IconChevronDown,
-    IconChevronUp
+    IconChevronUp,
+    IconPlaylistAdd // New Icon for Multiple Bills
 } from '@tabler/icons-react';
 import { FinanceContext } from '../../contexts/FinanceContext';
 import EditBillModal from '../BillsList/EditBillModal';
-import MultiBillModal from './MultiBillModal'; // <<< ADDED: Import MultiBillModal
+import MultiBillModal from './MultiBillModal'; // Keep MultiBillModal import
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import updateLocale from 'dayjs/plugin/updateLocale';
@@ -95,14 +95,12 @@ const CombinedBillsOverview = ({ style }) => {
         loading, error, deleteBill, updateBill, addBill,
         displayedMonth, goToPreviousMonth, goToNextMonth, bills,
     } = useContext(FinanceContext);
-    const [isModalVisible, setIsModalVisible] = useState(false); // For EditBillModal
+    const [isModalVisible, setIsModalVisible] = useState(false); // For EditBillModal (single add/edit)
+    const [isMultiModalVisible, setMultiModalVisible] = useState(false); // For MultiBillModal
     const [editingBill, setEditingBill] = useState(null);
     const [selectedCategory, setSelectedCategory] = useState('All');
     const [isTableCollapsed, setIsTableCollapsed] = useState(false);
     const defaultPageSize = 10;
-
-    // <<< ADDED: State for MultiBillModal visibility >>>
-    const [isMultiModalVisible, setMultiModalVisible] = useState(false);
 
     // --- Derived State (No changes) ---
     const validBills = Array.isArray(bills) ? bills : [];
@@ -146,10 +144,16 @@ const CombinedBillsOverview = ({ style }) => {
     }, [billsDueInDisplayedMonth]);
     // --- End Derived State ---
 
-    // --- Event Handlers (Original handlers + new ones for MultiBillModal) ---
-     const handleAdd = () => { setEditingBill(null); setIsModalVisible(true); }; // For single add/edit
-     const handleEdit = (record) => { setEditingBill(record); setIsModalVisible(true); }; // For single add/edit
-     const handleModalSubmit = async (values) => { // For single add/edit
+    // --- Event Handlers ---
+     const handleAddSingle = () => { // Renamed for clarity
+         setEditingBill(null);
+         setIsModalVisible(true);
+     };
+     const handleEdit = (record) => {
+         setEditingBill(record);
+         setIsModalVisible(true);
+     };
+     const handleModalSubmit = async (values) => { // Handles single add/edit submit
          let result = editingBill ? await updateBill(editingBill, values) : await addBill(values);
          if (result) { setIsModalVisible(false); setEditingBill(null); }
      };
@@ -159,12 +163,21 @@ const CombinedBillsOverview = ({ style }) => {
          try { await deleteBill(record.id); } catch (error) { message.error(`Deletion error: ${error.message || 'Unknown'}`); }
      };
 
-     // <<< ADDED: Handlers for MultiBillModal >>>
+     // Handlers for MultiBillModal
      const handleOpenMultiModal = () => {
          setMultiModalVisible(true);
      };
      const handleCloseMultiModal = () => {
          setMultiModalVisible(false);
+     };
+
+     // Handler for Dropdown Menu clicks
+     const handleMenuClick = (e) => {
+        if (e.key === 'add-multiple') {
+            handleOpenMultiModal();
+        } else { // Default to 'add-single'
+            handleAddSingle();
+        }
      };
      // --- End Event Handlers ---
 
@@ -226,27 +239,30 @@ const CombinedBillsOverview = ({ style }) => {
         height: '28px',
     };
 
-    // <<< ADDED: React Fragment wrapper >>>
+    // Define items for the Dropdown.Button menu
+    const addBillMenuItems = [
+        {
+            key: 'add-single',
+            label: 'Add Single Bill',
+            icon: <IconPlus size={16} />,
+        },
+        {
+            key: 'add-multiple',
+            label: 'Add Multiple Bills',
+            icon: <IconPlaylistAdd size={16} />, // Use a different icon
+        },
+    ];
+
     return (
-     <> {/* <<< ADDED: Fragment >>> */}
+     <> {/* Fragment to wrap Card and Modals */}
         <Card
             style={style}
             styles={{ body: { padding: 'var(--space-20)' } }}
-            // <<< ADDED: 'extra' prop with the button >>>
-            extra={
-                <Button
-                    type="primary"
-                    icon={<IconPlus size={16} />}
-                    onClick={handleOpenMultiModal} // Use the new handler
-                    size="middle"
-                >
-                    Add Multiple Bills
-                </Button>
-            }
+            // REMOVED 'extra' prop - button moved below
         >
             <Spin spinning={loading} tip="Loading Bills...">
 
-                {/* Section 1: Monthly Progress Summary (Original Content) */}
+                {/* Section 1: Monthly Progress Summary (Original Content - No Changes Here) */}
                 <div style={{ marginBottom: 'var(--space-24)' }}>
                     {/* Title and Badge */}
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 'var(--space-16)' }}>
@@ -273,30 +289,14 @@ const CombinedBillsOverview = ({ style }) => {
                         <Tooltip title="Previous Month">
                             <Button shape="circle" icon={<IconChevronLeft size={16} />} onClick={goToPreviousMonth} style={{ margin: '0 var(--space-16)' }} />
                         </Tooltip>
-
-                        {/* UPDATED MONTH/YEAR DISPLAY with adjusted styles */}
                         <div style={{ textAlign: 'center', minWidth: '100px' }}>
-                           <Paragraph style={{
-                               margin: 0, // Remove default margin
-                               fontWeight: 600,
-                               fontSize: '1.25rem', // Increased font size
-                               lineHeight: 1.2,
-                               color: 'var(--neutral-800)',
-                               marginBottom: '2px' // Added space below month
-                           }}>
+                           <Paragraph style={{ margin: 0, fontWeight: 600, fontSize: '1.25rem', lineHeight: 1.2, color: 'var(--neutral-800)', marginBottom: '2px' }}>
                                {monthText}
                            </Paragraph>
-                           <Paragraph style={{
-                               margin: 0, // Remove default margin
-                               fontSize: '0.9rem', // Increased font size
-                               lineHeight: 1.1,
-                               color: 'var(--neutral-600)'
-                           }}>
+                           <Paragraph style={{ margin: 0, fontSize: '0.9rem', lineHeight: 1.1, color: 'var(--neutral-600)' }}>
                                {yearText}
                            </Paragraph>
                         </div>
-                        {/* END UPDATED DISPLAY */}
-
                         <Tooltip title="Next Month">
                             <Button shape="circle" icon={<IconChevronRight size={16} />} onClick={goToNextMonth} style={{ margin: '0 var(--space-16)' }} />
                         </Tooltip>
@@ -305,44 +305,20 @@ const CombinedBillsOverview = ({ style }) => {
                     {/* Progress Bar */}
                     {totalAmountForAllBillsInDisplayedMonth > 0 && (
                         <div style={{ width: '90%', margin: '0 auto', marginBottom: 'var(--space-20)' }}>
-                            <Progress
-                                percent={percentAmountPaid}
-                                strokeColor="var(--success-500)"
-                                trailColor="var(--neutral-200)"
-                                showInfo={false}
-                                size={['100%', 12]}
-                            />
+                            <Progress percent={percentAmountPaid} strokeColor="var(--success-500)" trailColor="var(--neutral-200)" showInfo={false} size={['100%', 12]} />
                         </div>
                     )}
 
                     {/* Stats */}
                     <Row gutter={[16, 16]} justify="space-around" align="middle" style={{ marginBottom: 'var(--space-16)' }}>
                          <Col xs={24} sm={8} style={{ textAlign: 'center' }}>
-                            <Statistic
-                                title={<Text type="secondary" style={{ fontSize: '0.75rem', textTransform: 'capitalize', fontWeight: 500 }}>Paid This Month</Text>}
-                                value={totalExpensesInDisplayedMonth}
-                                precision={2}
-                                prefix="$"
-                                valueStyle={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--success-500)' }}
-                            />
+                            <Statistic title={<Text type="secondary" style={{ fontSize: '0.75rem', textTransform: 'capitalize', fontWeight: 500 }}>Paid This Month</Text>} value={totalExpensesInDisplayedMonth} precision={2} prefix="$" valueStyle={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--success-500)' }} />
                          </Col>
                          <Col xs={24} sm={8} style={{ textAlign: 'center' }}>
-                            <Statistic
-                                title={<Text type="secondary" style={{ fontSize: '0.75rem', textTransform: 'capitalize', fontWeight: 500 }}>Total Bills</Text>}
-                                value={totalAmountForAllBillsInDisplayedMonth}
-                                precision={2}
-                                prefix="$"
-                                valueStyle={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--neutral-900)' }}
-                            />
+                            <Statistic title={<Text type="secondary" style={{ fontSize: '0.75rem', textTransform: 'capitalize', fontWeight: 500 }}>Total Bills</Text>} value={totalAmountForAllBillsInDisplayedMonth} precision={2} prefix="$" valueStyle={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--neutral-900)' }} />
                          </Col>
                          <Col xs={24} sm={8} style={{ textAlign: 'center' }}>
-                               <Statistic
-                                title={<Text type="secondary" style={{ fontSize: '0.75rem', textTransform: 'capitalize', fontWeight: 500 }}>Remaining This Month</Text>}
-                                value={totalAmountDueInDisplayedMonth}
-                                precision={2}
-                                prefix="$"
-                                valueStyle={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--danger-500)' }}
-                               />
+                               <Statistic title={<Text type="secondary" style={{ fontSize: '0.75rem', textTransform: 'capitalize', fontWeight: 500 }}>Remaining This Month</Text>} value={totalAmountDueInDisplayedMonth} precision={2} prefix="$" valueStyle={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--danger-500)' }} />
                          </Col>
                     </Row>
 
@@ -354,34 +330,34 @@ const CombinedBillsOverview = ({ style }) => {
                 </div>
                 <Divider style={{ margin: '0 0 var(--space-24) 0' }} />
 
-                {/* Section 2: Bills List Table (Original Content) */}
+                {/* Section 2: Bills List Table */}
                 <div>
                     {/* Filter Section */}
                     <div style={{ marginBottom: '16px', width: '100%' }}>
                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                            {/* Filter controls */}
                             <Space align="center">
                                 <Text strong style={{ color: 'var(--neutral-600)', whiteSpace: 'nowrap' }}> Filter by: </Text>
-                                {/* Button uses updated conditional styles */}
-                                <Button
-                                    size="small"
-                                    type="default"
-                                    onClick={() => setSelectedCategory('All')}
-                                    style={selectedCategory === 'All' ? selectedAllButtonStyle : defaultAllButtonStyle}
-                                >
+                                <Button size="small" type="default" onClick={() => setSelectedCategory('All')} style={selectedCategory === 'All' ? selectedAllButtonStyle : defaultAllButtonStyle} >
                                     All Categories
                                 </Button>
                             </Space>
-                            <div> {/* Original "Add Bill" button */}
-                                <Button
+
+                            {/* MODIFIED: Dropdown Button for Adding Bills */}
+                            <div>
+                                <Dropdown.Button
                                     type="primary"
-                                    onClick={handleAdd} // Uses original handler for single add/edit
-                                    style={{ display: 'flex', alignItems: 'center', gap: '4px', fontWeight: 500 }}
+                                    icon={<IconChevronDown size={16} />} // Dropdown indicator
+                                    onClick={handleAddSingle} // Default action: Add Single Bill
+                                    menu={{ items: addBillMenuItems, onClick: handleMenuClick }} // Pass items and handler
+                                    style={{ display: 'flex', alignItems: 'center', /* gap: '4px', */ fontWeight: 500 }}
                                 >
-                                    <IconPlus size={16} />
-                                     Add Bill
-                                </Button>
+                                    <IconPlus size={16} style={{marginRight: '4px'}}/> {/* Icon for the main button part */}
+                                    Add Bill
+                                </Dropdown.Button>
                             </div>
                          </div>
+                         {/* Category Tags */}
                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                             {categories.map((category) => (
                                 <Tag.CheckableTag
@@ -396,16 +372,8 @@ const CombinedBillsOverview = ({ style }) => {
                          </div>
                          {/* END Filter Section */}
 
-                    {/* Main Bills Table */}
-                    <Table
-                        columns={columns}
-                        dataSource={tableDataSource}
-                        rowKey={record => record.id || `${record.name}-${record.dueDate}`}
-                        pagination={false}
-                        scroll={{ x: 730 }}
-                        size="middle"
-                    />
-                    {/* No Bills Message */}
+                    {/* Main Bills Table (No changes) */}
+                    <Table columns={columns} dataSource={tableDataSource} rowKey={record => record.id || `${record.name}-${record.dueDate}`} pagination={false} scroll={{ x: 730 }} size="middle" />
                     {tableDataSource.length === 0 && !loading && (
                         <Text type="secondary" style={{ display: 'block', textAlign: 'center', marginTop: 'var(--space-16)' }}>
                             {isTableCollapsed ? 'Table is collapsed.' : 'No bills match the current filters for this month.'}
@@ -414,7 +382,7 @@ const CombinedBillsOverview = ({ style }) => {
                 </div>
             </Spin>
 
-            {/* Edit/Add Bill Modal (Original Modal) */}
+            {/* Edit/Add Bill Modal (Single Bill) */}
             {isModalVisible && (
                  <EditBillModal
                     open={isModalVisible}
@@ -425,14 +393,14 @@ const CombinedBillsOverview = ({ style }) => {
             )}
         </Card>
 
-        {/* <<< ADDED: MultiBillModal rendering (outside the Card) >>> */}
+        {/* Multi Bill Modal */}
         {isMultiModalVisible && (
              <MultiBillModal
                 open={isMultiModalVisible}
                 onClose={handleCloseMultiModal}
              />
         )}
-     </> // <<< ADDED: Fragment closing tag >>>
+     </>
     );
 };
 
