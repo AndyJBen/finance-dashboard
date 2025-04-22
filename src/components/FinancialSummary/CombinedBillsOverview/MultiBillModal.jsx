@@ -126,7 +126,7 @@ export default function MultiBillModal({ open, onClose }) {
       confirmLoading={isSubmitting}
       okText="Complete"
       okButtonProps={{ 
-        style: { background: '#52c41a', borderColor: '#52c41a' }
+        style: { background: '#1890ff', borderColor: '#1890ff' }
       }}
       style={{ top: 20 }}
     >
@@ -185,7 +185,9 @@ export default function MultiBillModal({ open, onClose }) {
                               style={{ 
                                 width: '100%', 
                                 borderRadius: 8, 
-                                height: 38
+                                height: 38,
+                                display: 'flex',
+                                alignItems: 'center' // Vertically center the content
                               }}
                               formatter={(value) => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                               parser={(value) => value?.replace(/\$\s?|(,*)/g, '') ?? ''}
@@ -329,8 +331,9 @@ export default function MultiBillModal({ open, onClose }) {
       
       {/* Add custom styles for the InputNumber component to center the $ sign */}
       <style jsx global>{`
-        .custom-input-number .ant-input-number-input-wrap input {
-          text-align: center;
+        .custom-input-number .ant-input-number-input {
+          height: 38px;
+          line-height: 38px;
         }
         .custom-input-number .ant-input-number-handler-wrap {
           opacity: 1;
