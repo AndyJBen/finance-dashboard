@@ -1,5 +1,4 @@
 // server/server.js
-// Add direct /api/ping test route, revert balance mounting
 
 // Import necessary modules
 const express = require('express');
@@ -34,52 +33,72 @@ if (isNaN(PORT)) {
 console.log(`INFO: Determined PORT: ${PORT}`);
 // --- End Port Determination ---
 
-// --- CORS Configuration ---
-const allowedOrigins = [
-    'https://finance-app-nq2c.onrender.com', // Your deployed frontend
-    // 'http://localhost:5173' // Add for local dev if needed
-];
-const corsOptions = {
-    origin: function (origin, callback) {
-        if (!origin || allowedOrigins.indexOf(origin) !== -1) {
-            callback(null, true);
-        } else {
-            console.error('CORS Error: Origin not allowed:', origin);
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
+// --- Debug incoming requests middleware ---
+app.use((req, res, next) => {
+    console.log(`DEBUG [${new Date().toISOString()}]: Received ${req.method} request to ${req.originalUrl}`);
+    next();
+});
+
+// --- Simplified CORS for debugging ---
+app.use(cors({
+    origin: '*',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
     optionsSuccessStatus: 204
-};
+}));
 
-// --- Middleware Setup ---
-app.use(cors(corsOptions));
-// app.options('*', cors(corsOptions)); // Keep commented
+// --- JSON Body Parsing ---
 app.use(express.json());
+
+// --- Request Logging ---
 app.use((req, res, next) => {
     console.log(`${new Date().toISOString()} - ${req.method} ${req.originalUrl}`);
     next();
 });
 
-// --- Direct Test Route (Added BEFORE other API routes) ---
+// --- Catch-all debugger to see if requests reach Express ---
+app.use((req, res, next) => {
+    console.log(`ROUTE DEBUG: ${req.method} ${req.originalUrl} reached Express router`);
+    next();
+});
+
+// --- Direct Test Routes (before API routes) ---
+app.get('/ping', (req, res) => {
+    console.log('>>> Root /ping route hit!');
+    res.status(200).json({ message: 'pong from root path' });
+});
+
 app.get('/api/ping', (req, res) => {
     console.log('>>> /api/ping route hit!');
-    res.status(200).json({ message: 'pong' });
+    res.status(200).json({ message: 'pong from api path' });
 });
-// --- End Direct Test Route ---
+// --- End Direct Test Routes ---
 
+// --- Explicit API Root Handler ---
+app.get('/api', (req, res) => {
+    console.log('>>> /api root route hit!');
+    res.status(200).json({ message: 'API is running' });
+});
 
-// --- API Routes (All Uncommented) ---
+// --- API Routes with explicit path logging ---
 try {
     console.log("INFO: Mounting /api/balance routes...");
-    app.use('/api/balance', balanceRoutes); // <-- Mount normally
+    app.use('/api/balance', (req, res, next) => {
+        console.log(`Balance route middleware hit: ${req.method} ${req.originalUrl}`);
+        next();
+    }, balanceRoutes);
 
     console.log("INFO: Mounting /api/bills routes...");
-    app.use('/api/bills', billsRoutes); // <-- Mount normally
+    app.use('/api/bills', (req, res, next) => {
+        console.log(`Bills route middleware hit: ${req.method} ${req.originalUrl}`);
+        next();
+    }, billsRoutes);
 
     console.log("INFO: Mounting /api/credit_cards routes...");
-    app.use('/api/credit_cards', creditCardsRoutes); // <-- Mount normally
+    app.use('/api/credit_cards', (req, res, next) => {
+        console.log(`Credit cards route middleware hit: ${req.method} ${req.originalUrl}`);
+        next();
+    }, creditCardsRoutes);
 
     console.log("INFO: All API routes mounting points processed.");
 } catch (mountError) {
@@ -90,21 +109,34 @@ try {
 // --- Health Check & Test Routes ---
 console.log("INFO: Health check routes are enabled.");
 app.get('/', (req, res) => {
-    res.status(200).send('Server is running.');
+    console.log('>>> Root route hit!');
+    res.status(200).send('Server is running. Try /api/ping to test API connectivity.');
 });
+
 app.get('/db-test', async (req, res, next) => {
     try {
+        console.log('>>> DB test route hit!');
         const timeResult = await pool.query('SELECT NOW()');
-        res.status(200).json({ dbTime: timeResult.rows[0].now });
+        res.status(200).json({ 
+            dbTime: timeResult.rows[0].now,
+            message: 'Database connection successful'
+        });
     } catch (error) {
         console.error('Database test connection error:', error);
         next(error); // Pass to global handler
     }
 });
 
+// --- 404 Handler (after all routes) ---
+app.use((req, res) => {
+    console.log(`404: Route not found for ${req.method} ${req.originalUrl}`);
+    res.status(404).json({ error: 'Route not found' });
+});
+
 // --- Global Error Handler ---
 app.use((err, req, res, next) => {
     console.error('--- Global Error Handler Triggered ---');
+    console.error('Route:', req.method, req.originalUrl);
     console.error(err.stack || err);
     console.error('------------------------------------');
     const message = process.env.NODE_ENV === 'production'
@@ -126,5 +158,6 @@ process.on('unhandledRejection', (reason, promise) => {
 });
 process.on('uncaughtException', (error) => {
   console.error('Uncaught Exception:', error);
+  // Uncomment if you want to terminate on uncaught exceptions
   // process.exit(1);
 });
