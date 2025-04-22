@@ -12,7 +12,12 @@
     "dayjs": "^1.11.13",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
-    "pg": "^8.14.1"
+    "pg": "^8.14.1",
+    "@nivo/calendar": "^0.80.0",
+    "@nivo/bar":      "^0.80.0",
+    "@nivo/pie":      "^0.80.0",
+    "@nivo/line":     "^0.80.0",
+    "@nivo/radial-bar":"^0.80.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.9"
