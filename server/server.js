@@ -1,5 +1,5 @@
 // server/server.js
-// Restore /api/balance route
+// Restore /api/bills route
 
 // Import necessary modules
 const express = require('express');
@@ -68,13 +68,13 @@ app.use((req, res, next) => {
     next();
 });
 
-// --- API Routes (Restoring /api/balance) ---
+// --- API Routes (Restoring /api/bills) ---
 try {
     console.log("INFO: Mounting /api/balance routes...");
     app.use('/api/balance', balanceRoutes); // <-- UNCOMMENTED
 
-    console.log("INFO: Mounting /api/bills routes... (Currently Commented Out)");
-    // app.use('/api/bills', billsRoutes);
+    console.log("INFO: Mounting /api/bills routes...");
+    app.use('/api/bills', billsRoutes); // <-- UNCOMMENTED
 
     console.log("INFO: Mounting /api/credit_cards routes... (Currently Commented Out)");
     // app.use('/api/credit_cards', creditCardsRoutes);
