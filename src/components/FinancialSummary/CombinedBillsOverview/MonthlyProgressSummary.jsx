@@ -1,18 +1,21 @@
-// src/components/FinancialSummary/MonthlyProgressSummary.jsx
+// src/components/FinancialSummary/CombinedBillsOverview/MonthlyProgressSummary.jsx
+// Adjusted Statistic layout and titles for mobile view.
+
 import React from 'react';
 import {
-    Button, Tooltip, Progress, Typography, Row, Col, Statistic
+    Button, Tooltip, Progress, Typography, Row, Col, Statistic, Grid // Added Grid
 } from 'antd';
 import {
     IconCalendarFilled, IconChevronLeft, IconChevronRight
 } from '@tabler/icons-react';
-import dayjs from 'dayjs'; // Ensure dayjs is available
+import dayjs from 'dayjs';
 
 // Use Typography components directly
 const { Text, Title, Paragraph } = Typography;
+const { useBreakpoint } = Grid; // Import the hook
 
 const MonthlyProgressSummary = ({
-    loading, // To potentially show loading state here if needed, though parent handles main spin
+    loading,
     displayedMonth,
     goToPreviousMonth,
     goToNextMonth,
@@ -24,12 +27,23 @@ const MonthlyProgressSummary = ({
     totalAmountDueInDisplayedMonth
 }) => {
 
+    const screens = useBreakpoint(); // Get breakpoint status
+
+    // Determine if we are on a small screen (xs or sm)
+    // Adjust this logic if you want the change at a different breakpoint (e.g., !screens.md)
+    const isSmallScreen = screens.xs || screens.sm;
+
     const monthText = dayjs(displayedMonth).isValid() ? dayjs(displayedMonth).format("MMMM") : "Invalid";
     const yearText = dayjs(displayedMonth).isValid() ? dayjs(displayedMonth).format("YYYY") : "Date";
 
+    // Define titles based on screen size
+    const paidTitle = isSmallScreen ? "Paid" : "Paid This Month";
+    const totalTitle = isSmallScreen ? "Total" : "Total Bills";
+    const remainingTitle = isSmallScreen ? "Remaining" : "Remaining This Month";
+
     return (
         <div style={{ marginBottom: 'var(--space-24)' }}>
-            {/* Title and Badge */}
+            {/* Title and Badge (No changes) */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 'var(--space-16)' }}>
                 <div>
                      <Text strong style={{ display: 'flex', alignItems: 'center', marginBottom: 'var(--space-4)', fontSize: '1rem' }}>
@@ -49,7 +63,7 @@ const MonthlyProgressSummary = ({
                 )}
             </div>
 
-            {/* Month Navigation */}
+            {/* Month Navigation (No changes) */}
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: 'var(--space-20)' }}>
                 <Tooltip title="Previous Month">
                     <Button shape="circle" icon={<IconChevronLeft size={16} />} onClick={goToPreviousMonth} style={{ margin: '0 var(--space-16)' }} />
@@ -67,26 +81,50 @@ const MonthlyProgressSummary = ({
                 </Tooltip>
                  </div>
 
-            {/* Progress Bar */}
+            {/* Progress Bar (No changes) */}
             {totalAmountForAllBillsInDisplayedMonth > 0 && (
                 <div style={{ width: '90%', margin: '0 auto', marginBottom: 'var(--space-20)' }}>
                     <Progress percent={percentAmountPaid} strokeColor="var(--success-500)" trailColor="var(--neutral-200)" showInfo={false} size={['100%', 12]} />
                 </div>
             )}
 
-            {/* Stats */}
-            <Row gutter={[16, 16]} justify="space-around" align="middle" style={{ marginBottom: 'var(--space-16)' }}>
-                 <Col xs={24} sm={8} style={{ textAlign: 'center' }}>
-                    <Statistic title={<Text type="secondary" style={{ fontSize: '0.75rem', textTransform: 'capitalize', fontWeight: 500 }}>Paid This Month</Text>} value={totalExpensesInDisplayedMonth} precision={2} prefix="$" valueStyle={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--success-500)' }} />
+            {/* Stats - Updated Col spans and titles */}
+            <Row gutter={[8, 16]} justify="space-around" align="middle" style={{ marginBottom: 'var(--space-16)' }}>
+                 {/* Changed xs={24} to xs={8} to make them fit in a row */}
+                 {/* Reduced horizontal gutter from 16 to 8 */}
+                 <Col xs={8} sm={8} style={{ textAlign: 'center' }}>
+                    <Statistic
+                        // Use conditional title
+                        title={<Text type="secondary" style={{ fontSize: '0.75rem', textTransform: 'capitalize', fontWeight: 500 }}>{paidTitle}</Text>}
+                        value={totalExpensesInDisplayedMonth}
+                        precision={2}
+                        prefix="$"
+                        valueStyle={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--success-500)' }}
+                    />
                  </Col>
-                 <Col xs={24} sm={8} style={{ textAlign: 'center' }}>
-                    <Statistic title={<Text type="secondary" style={{ fontSize: '0.75rem', textTransform: 'capitalize', fontWeight: 500 }}>Total Bills</Text>} value={totalAmountForAllBillsInDisplayedMonth} precision={2} prefix="$" valueStyle={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--neutral-900)' }} />
+                 <Col xs={8} sm={8} style={{ textAlign: 'center' }}>
+                    <Statistic
+                        // Use conditional title
+                        title={<Text type="secondary" style={{ fontSize: '0.75rem', textTransform: 'capitalize', fontWeight: 500 }}>{totalTitle}</Text>}
+                        value={totalAmountForAllBillsInDisplayedMonth}
+                        precision={2}
+                        prefix="$"
+                        valueStyle={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--neutral-900)' }}
+                    />
                  </Col>
-                 <Col xs={24} sm={8} style={{ textAlign: 'center' }}>
-                       <Statistic title={<Text type="secondary" style={{ fontSize: '0.75rem', textTransform: 'capitalize', fontWeight: 500 }}>Remaining This Month</Text>} value={totalAmountDueInDisplayedMonth} precision={2} prefix="$" valueStyle={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--danger-500)' }} />
+                 <Col xs={8} sm={8} style={{ textAlign: 'center' }}>
+                       <Statistic
+                        // Use conditional title
+                        title={<Text type="secondary" style={{ fontSize: '0.75rem', textTransform: 'capitalize', fontWeight: 500 }}>{remainingTitle}</Text>}
+                        value={totalAmountDueInDisplayedMonth}
+                        precision={2}
+                        prefix="$"
+                        valueStyle={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--danger-500)' }}
+                       />
                  </Col>
             </Row>
 
+            {/* No Bills Message (No changes) */}
             {totalBillsInDisplayedMonth === 0 && !loading && (
                 <Text type="secondary" style={{ display: 'block', textAlign: 'center', marginTop: 'var(--space-16)' }}>
                     No bills due this month.
