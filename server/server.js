@@ -1,5 +1,5 @@
 // server/server.js
-// Testing basic CORS functionality - Re-enabling app.use(cors(corsOptions))
+// Restore health check routes
 
 // Import necessary modules
 const express = require('express');
@@ -56,7 +56,7 @@ const corsOptions = {
 };
 
 // --- Middleware Setup ---
-// Apply CORS options to all routes - RE-ENABLING THIS LINE
+// Apply CORS options to all routes
 app.use(cors(corsOptions));
 // Explicitly handle preflight requests for all routes - KEEP COMMENTED FOR NOW
 // app.options('*', cors(corsOptions));
@@ -68,7 +68,7 @@ app.use((req, res, next) => {
     next();
 });
 
-// --- API Routes (KEEP COMMENTED OUT FOR INITIAL TEST) ---
+// --- API Routes (KEEP COMMENTED OUT FOR NOW) ---
 try {
     console.log("INFO: Mounting /api/balance routes... (Currently Commented Out)");
     // app.use('/api/balance', balanceRoutes);
@@ -85,20 +85,20 @@ try {
     process.exit(1);
 }
 
-// --- Health Check & Test Routes (KEEP COMMENTED OUT FOR INITIAL TEST) ---
-console.log("INFO: Health check routes are currently commented out.");
-// app.get('/', (req, res) => {
-//     res.status(200).send('Server is running.');
-// });
-// app.get('/db-test', async (req, res, next) => {
-//     try {
-//         const timeResult = await pool.query('SELECT NOW()');
-//         res.status(200).json({ dbTime: timeResult.rows[0].now });
-//     } catch (error) {
-//         console.error('Database test connection error:', error);
-//         next(error); // Pass to global handler
-//     }
-// });
+// --- Health Check & Test Routes (RE-ENABLING THESE) ---
+console.log("INFO: Health check routes are being re-enabled.");
+app.get('/', (req, res) => {
+    res.status(200).send('Server is running.');
+});
+app.get('/db-test', async (req, res, next) => {
+    try {
+        const timeResult = await pool.query('SELECT NOW()');
+        res.status(200).json({ dbTime: timeResult.rows[0].now });
+    } catch (error) {
+        console.error('Database test connection error:', error);
+        next(error); // Pass to global handler
+    }
+});
 
 // --- Global Error Handler (Should be placed AFTER all routes) ---
 app.use((err, req, res, next) => {
