@@ -121,10 +121,10 @@ export default function MultiBillModal({ open, onClose }) {
       )}
       onOk={handleOk}
       onCancel={handleCancel}
-      width={800}
+      width={740}
       destroyOnClose
       confirmLoading={isSubmitting}
-      okText="Add Bills"
+      okText="Complete"
       okButtonProps={{ 
         style: { background: '#52c41a', borderColor: '#52c41a' }
       }}
@@ -153,11 +153,11 @@ export default function MultiBillModal({ open, onClose }) {
                   }}
                   bodyStyle={{ padding: '16px' }}
                 >
-                  <Row gutter={[16, 16]}>
+                  <Row gutter={[12, 16]}>
                     <Col span={24}>
                       <Row gutter={[12, 0]} align="middle">
                         {/* Bill Name */}
-                        <Col span={8}>
+                        <Col span={7}>
                           <Form.Item
                             {...restField}
                             name={[name, 'name']}
@@ -182,11 +182,17 @@ export default function MultiBillModal({ open, onClose }) {
                           >
                             <InputNumber
                               placeholder="Amount"
-                              style={{ width: '100%', borderRadius: 8, height: 38 }}
+                              style={{ 
+                                width: '100%', 
+                                borderRadius: 8, 
+                                height: 38
+                              }}
                               formatter={(value) => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                               parser={(value) => value?.replace(/\$\s?|(,*)/g, '') ?? ''}
                               min={0}
                               precision={2}
+                              // Ensure the $ is vertically centered
+                              className="custom-input-number"
                             />
                           </Form.Item>
                         </Col>
@@ -216,7 +222,7 @@ export default function MultiBillModal({ open, onClose }) {
                         </Col>
                         
                         {/* Due Date */}
-                        <Col span={5}>
+                        <Col span={6}>
                           <Form.Item
                             {...restField}
                             name={[name, 'dueDate']}
@@ -300,24 +306,36 @@ export default function MultiBillModal({ open, onClose }) {
                 </Card>
               ))}
               
-              {/* Add button */}
-              <Button
-                type="dashed"
-                onClick={() => add({ dueDate: null })}
-                block
-                icon={<PlusOutlined />}
-                style={{ 
-                  borderRadius: 10, 
-                  height: 42,
-                  marginTop: 4
-                }}
-              >
-                Add Bill
-              </Button>
+              {/* Add button - with reduced width */}
+              <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <Button
+                  type="dashed"
+                  onClick={() => add({ dueDate: null })}
+                  icon={<PlusOutlined />}
+                  style={{ 
+                    borderRadius: 10, 
+                    height: 42,
+                    marginTop: 4,
+                    width: '50%'
+                  }}
+                >
+                  Insert New Bill
+                </Button>
+              </div>
             </div>
           )}
         </Form.List>
       </Form>
+      
+      {/* Add custom styles for the InputNumber component to center the $ sign */}
+      <style jsx global>{`
+        .custom-input-number .ant-input-number-input-wrap input {
+          text-align: center;
+        }
+        .custom-input-number .ant-input-number-handler-wrap {
+          opacity: 1;
+        }
+      `}</style>
     </Modal>
   );
 }
