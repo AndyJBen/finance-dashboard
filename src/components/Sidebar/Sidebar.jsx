@@ -1,3 +1,6 @@
+// src/components/Sidebar/Sidebar.jsx
+// Highlight: Updated the 'Reports' menu item to 'Charts' with the correct key 'charts'.
+
 import React, { useContext, useState, useMemo } from 'react';
 import { Layout, Menu, Spin, Button, Tooltip, Space, message, Typography, Dropdown } from 'antd';
 import {
@@ -33,8 +36,7 @@ const { Sider } = Layout;
 const { Text } = Typography;
 
 // --- START: Sortable Item Component ---
-// This component wraps each credit card item to make it sortable
-// Added isOverlay prop for styling the drag overlay differently if needed
+// (SortableCardItem component code remains the same as you provided)
 const SortableCardItem = ({ card, collapsed, onEdit, onDelete, isOverlay = false, id }) => {
   const {
     attributes,
@@ -214,15 +216,17 @@ const Sidebar = ({ collapsed, onCollapse, selectedKey, onSelect, width, collapse
   const mainMenuItems = [
       { label: 'Dashboard', key: 'dashboard', icon: <IconHomeFilled size={20} />, className: 'non-sortable-menu-item' },
       { label: 'Bills', key: 'bills', icon: <IconReceiptFilled size={20} />, className: 'non-sortable-menu-item' },
-      { label: 'Reports', key: 'reports', icon: <IconChartPieFilled size={20} />, className: 'non-sortable-menu-item' },
+      // --- UPDATED LINE BELOW ---
+      { label: 'Charts', key: 'charts', icon: <IconChartPieFilled size={20} />, className: 'non-sortable-menu-item' },
+      // --- END UPDATED LINE ---
   ];
 
   // Use useMemo for credit card IDs used by SortableContext for performance
   const creditCardIds = useMemo(() => creditCards.map(card => card.id), [creditCards]);
-   // --- End Menu Item Generation ---
+    // --- End Menu Item Generation ---
 
-   // Find the currently dragged card for the DragOverlay
-   const activeCard = activeId ? creditCards.find(card => card.id === activeId) : null;
+    // Find the currently dragged card for the DragOverlay
+    const activeCard = activeId ? creditCards.find(card => card.id === activeId) : null;
 
   // --- Component Render ---
   return (
@@ -240,8 +244,8 @@ const Sidebar = ({ collapsed, onCollapse, selectedKey, onSelect, width, collapse
       >
         {/* Logo Section */}
         <div className="sidebar-logo">
-           <div className="logo-icon-wrapper"> <IconWallet size={20} style={{ color: 'white' }} /> </div>
-           {!collapsed && <span className="logo-text">Financely</span>}
+            <div className="logo-icon-wrapper"> <IconWallet size={20} style={{ color: 'white' }} /> </div>
+            {!collapsed && <span className="logo-text">Financely</span>}
         </div>
 
         {/* --- Wrap Menu Area with DndContext --- */}
@@ -343,16 +347,16 @@ const Sidebar = ({ collapsed, onCollapse, selectedKey, onSelect, width, collapse
         {/* Bottom Navigation Section */}
         <div className="sidebar-bottom-nav">
            {collapsed ? (
-            <>
-              <Tooltip title="Settings" placement="right"><Button className="sidebar-bottom-button" type="text" icon={<IconSettings size={20} />} onClick={() => onSelect({ key: 'settings' })} /></Tooltip>
-              <Tooltip title="Account" placement="right"><Button className="sidebar-bottom-button" type="text" icon={<IconUsers size={20} />} onClick={() => { console.log("Account clicked - Placeholder"); }} /></Tooltip>
-            </>
-          ) : (
-            <>
-              <Button className="sidebar-bottom-button" type="text" icon={<IconSettings size={20} />} onClick={() => onSelect({ key: 'settings' })} > Settings </Button>
-              <Button className="sidebar-bottom-button" type="text" icon={<IconUsers size={20} />} onClick={() => { console.log("Account clicked - Placeholder"); }} > Account </Button>
-            </>
-          )}
+             <>
+               <Tooltip title="Settings" placement="right"><Button className="sidebar-bottom-button" type="text" icon={<IconSettings size={20} />} onClick={() => onSelect({ key: 'settings' })} /></Tooltip>
+               <Tooltip title="Account" placement="right"><Button className="sidebar-bottom-button" type="text" icon={<IconUsers size={20} />} onClick={() => { console.log("Account clicked - Placeholder"); }} /></Tooltip>
+             </>
+           ) : (
+             <>
+               <Button className="sidebar-bottom-button" type="text" icon={<IconSettings size={20} />} onClick={() => onSelect({ key: 'settings' })} > Settings </Button>
+               <Button className="sidebar-bottom-button" type="text" icon={<IconUsers size={20} />} onClick={() => { console.log("Account clicked - Placeholder"); }} > Account </Button>
+             </>
+           )}
         </div>
       </Sider>
 
