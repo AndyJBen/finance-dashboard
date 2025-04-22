@@ -1,4 +1,6 @@
 // src/components/Navigation/BottomNavBar.jsx
+// Added onAddClick prop for the center button
+
 import React from 'react';
 import { Button, Tooltip } from 'antd';
 import {
@@ -9,24 +11,23 @@ import {
     IconPlus
 } from '@tabler/icons-react';
 
-// Define the style for the bottom navigation bar
+// Styles remain the same...
 const navStyle = {
     position: 'fixed',
     bottom: 0,
     left: 0,
     width: '100%',
-    height: '60px', // Standard height for bottom nav
-    backgroundColor: 'var(--neutral-0, #ffffff)', // Use CSS variables or direct color
+    height: '60px',
+    backgroundColor: 'var(--neutral-0, #ffffff)',
     borderTop: '1px solid var(--neutral-200, #e5e7eb)',
     display: 'flex',
-    justifyContent: 'space-around', // Distribute items evenly
+    justifyContent: 'space-around',
     alignItems: 'center',
-    padding: '0 10px', // Add some horizontal padding
-    zIndex: 1000, // Ensure it's above other content
-    boxShadow: '0 -2px 5px rgba(0,0,0,0.05)' // Subtle shadow
+    padding: '0 10px',
+    zIndex: 1000,
+    boxShadow: '0 -2px 5px rgba(0,0,0,0.05)'
 };
 
-// Style for the navigation buttons/icons
 const itemStyle = {
     display: 'flex',
     flexDirection: 'column',
@@ -35,77 +36,76 @@ const itemStyle = {
     border: 'none',
     padding: '5px',
     height: '100%',
-    fontSize: '10px', // Smaller text for labels
-    color: 'var(--neutral-500)', // Default color
-    flex: 1, // Make items share space equally
-    maxWidth: '20%', // Ensure items don't get too wide
+    fontSize: '10px',
+    color: 'var(--neutral-500)',
+    flex: 1,
+    maxWidth: '20%',
+    backgroundColor: 'transparent', // Ensure background is transparent for text buttons
 };
 
-// Style for the active navigation button/icon
 const activeItemStyle = {
     ...itemStyle,
-    color: 'var(--primary-600)', // Active color from your theme
+    color: 'var(--primary-600)',
     fontWeight: 600,
 };
 
-// Style for the central Add button
 const centerButtonStyle = {
     width: '50px',
     height: '50px',
     borderRadius: '50%',
-    backgroundColor: 'var(--primary-600)', // Primary color
+    backgroundColor: 'var(--primary-600)',
     color: 'white',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     border: 'none',
     boxShadow: '0 4px 8px rgba(0,0,0,0.15)',
-    // Position it slightly elevated if desired (optional)
-    // transform: 'translateY(-15px)',
-    zIndex: 1001, // Above the nav bar itself
+    zIndex: 1001,
 };
+// --- End Styles ---
 
-const BottomNavBar = ({ selectedKey, onSelect }) => {
+// Accept onAddClick prop
+const BottomNavBar = ({ selectedKey, onSelect, onAddClick }) => {
 
-    // Placeholder function for the Add button click
+    // Use the passed-in handler for the Add button click
     const handleAddClick = () => {
-        console.log("Add button clicked - implement modal opening logic here");
-        // Example: Open a specific modal
-        // openAddTransactionModal();
+        if (onAddClick) {
+            onAddClick(); // Call the function passed from App.jsx
+        } else {
+            console.error("onAddClick handler not provided to BottomNavBar");
+        }
     };
 
     const menuItems = [
         { key: 'dashboard', label: 'Dashboard', icon: <IconLayoutDashboard size={24} /> },
         { key: 'bills', label: 'Bills', icon: <IconReceipt size={24} /> },
-        { key: 'add', label: 'Add', icon: <IconPlus size={28} />, isCenter: true }, // Special item
+        { key: 'add', label: 'Add', icon: <IconPlus size={28} />, isCenter: true },
         { key: 'reports', label: 'Reports', icon: <IconChartBar size={24} /> },
-        { key: 'account', label: 'Account', icon: <IconUserCircle size={24} /> }, // Assuming 'Account' maps to 'settings' or a new key
+        { key: 'account', label: 'Account', icon: <IconUserCircle size={24} /> },
     ];
 
     return (
         <div style={navStyle}>
             {menuItems.map(item => {
                 if (item.isCenter) {
-                    // Render the central Add button
                     return (
-                        <Tooltip title="Add Transaction" key={item.key}>
+                        <Tooltip title="Add Bill" key={item.key}>
                              <Button
                                 style={centerButtonStyle}
                                 icon={item.icon}
-                                onClick={handleAddClick}
-                                aria-label="Add Transaction"
+                                onClick={handleAddClick} // Use the internal handler that calls the prop
+                                aria-label="Add Bill"
                              />
                         </Tooltip>
                     );
                 } else {
-                    // Render regular navigation items
                     const isActive = selectedKey === item.key;
                     return (
                         <Button
                             key={item.key}
-                            type="text" // Use text button for icon + label look
+                            type="text"
                             style={isActive ? activeItemStyle : itemStyle}
-                            onClick={() => onSelect({ key: item.key })} // Pass key object like Menu
+                            onClick={() => onSelect({ key: item.key })}
                             aria-label={item.label}
                         >
                             {item.icon}

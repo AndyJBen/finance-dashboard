@@ -1,29 +1,30 @@
-// src/components/FinancialSummary/BillsListSection.jsx
+// src/components/FinancialSummary/CombinedBillsOverview/BillsListSection.jsx
+// Using handleAddSingle prop for the main button click
+
 import React from 'react';
 import {
     Table, Button, Space, Tag, Dropdown, Menu, Typography
 } from 'antd';
 import {
-    IconPlus, IconChevronDown, IconPlaylistAdd
+    IconPlus, IconChevronDown, IconPlaylistAdd // Keep needed icons
 } from '@tabler/icons-react';
 
-// Use Typography components directly
 const { Text } = Typography;
 
 const BillsListSection = ({
-    loading, // To potentially show loading state here if needed
+    loading,
     columns,
     tableDataSource,
     isTableCollapsed,
     categories,
     selectedCategory,
     setSelectedCategory,
-    handleAddSingle, // Function to open single add modal
-    handleMenuClick, // Function to handle dropdown menu clicks
+    handleAddSingle, // Function to open single add modal (received as prop)
+    handleMenuClick, // Function to handle dropdown menu clicks (for multi-modal)
     addBillMenuItems, // Menu items for the dropdown
-    getCategoryIcon, // Helper function passed from parent
-    selectedAllButtonStyle, // Style object passed from parent
-    defaultAllButtonStyle // Style object passed from parent
+    getCategoryIcon,
+    selectedAllButtonStyle,
+    defaultAllButtonStyle
 }) => {
 
     return (
@@ -43,12 +44,13 @@ const BillsListSection = ({
                     <div>
                         <Dropdown.Button
                             type="primary"
-                            icon={<IconChevronDown size={16} />} // Dropdown indicator
-                            onClick={handleAddSingle} // Default action: Add Single Bill
-                            menu={{ items: addBillMenuItems, onClick: handleMenuClick }} // Pass items and handler
+                            icon={<IconChevronDown size={16} />}
+                            // Use the handleAddSingle prop for the main button click
+                            onClick={handleAddSingle} // Use the prop here
+                            menu={{ items: addBillMenuItems, onClick: handleMenuClick }}
                             style={{ display: 'flex', alignItems: 'center', fontWeight: 500 }}
                         >
-                            <IconPlus size={16} style={{marginRight: '4px'}}/> {/* Icon for the main button part */}
+                            <IconPlus size={16} style={{marginRight: '4px'}}/>
                             Add Bill
                         </Dropdown.Button>
                     </div>
@@ -61,7 +63,8 @@ const BillsListSection = ({
                             checked={selectedCategory === category}
                             onChange={(checked) => { setSelectedCategory(checked ? category : 'All'); }}
                             style={{ padding: '2px 8px', borderRadius: '12px', display: 'inline-flex', alignItems: 'center', gap: '6px', cursor: 'pointer', border: '1px solid', borderColor: selectedCategory === category ? 'var(--primary-500)' : 'var(--neutral-300)', backgroundColor: selectedCategory === category ? 'var(--primary-50)' : 'var(--neutral-50)', color: selectedCategory === category ? 'var(--primary-600)' : 'var(--neutral-700)', lineHeight: '1.4', fontSize: '0.8rem' }} >
-                            {getCategoryIcon(category)} <span>{category}</span>
+                            {/* Ensure getCategoryIcon is available and correct */}
+                            {getCategoryIcon && getCategoryIcon(category)} <span>{category}</span>
                         </Tag.CheckableTag>
                     ))}
                  </div>
@@ -73,12 +76,11 @@ const BillsListSection = ({
                 columns={columns}
                 dataSource={tableDataSource}
                 rowKey={record => record.id || `${record.name}-${record.dueDate}`} // Ensure unique keys
-                pagination={false} // Pagination handled by parent or potentially here if needed
+                pagination={false}
                 scroll={{ x: 730 }}
                 size="middle"
-                loading={loading} // Show loading state on table
+                loading={loading}
             />
-            {/* No Bills Message */}
             {tableDataSource.length === 0 && !loading && (
                 <Text type="secondary" style={{ display: 'block', textAlign: 'center', marginTop: 'var(--space-16)' }}>
                     {isTableCollapsed ? 'Table is collapsed.' : 'No bills match the current filters for this month.'}
@@ -87,5 +89,12 @@ const BillsListSection = ({
         </div>
     );
 };
+
+// Add defaultProps for safety, although App.jsx should always pass them
+BillsListSection.defaultProps = {
+  handleAddSingle: () => console.warn("handleAddSingle handler not provided to BillsListSection"),
+  getCategoryIcon: () => null, // Provide a default fallback for the icon function
+};
+
 
 export default BillsListSection;

@@ -1,9 +1,9 @@
 // src/App.jsx
-// Implemented Bottom Navigation for smaller screens
+// Lifted state for EditBillModal, added handlers, and context access.
 
-import React, { useState } from 'react';
-// Added Grid for breakpoint detection
+import React, { useState, useContext } from 'react'; // Added useContext
 import { Layout, Row, Col, Typography, Space, Grid } from 'antd';
+import { FinanceContext } from './contexts/FinanceContext'; // Import context
 
 // Core pages/components
 import BillsList            from './components/BillsList/BillsList';
@@ -16,42 +16,92 @@ import BillPrepCard         from './components/FinancialSummary/BillPrepCard';
 import PastDuePayments      from './components/RecentActivity/PastDuePayments';
 import AppFooter            from './components/Footer/Footer';
 import ChartsPage           from './components/ChartsPage/ChartsPage';
-// Import the new BottomNavBar
 import BottomNavBar         from './components/Navigation/BottomNavBar';
+// Import the modal component itself
+import EditBillModal        from './components/BillsList/EditBillModal';
+
 
 const { Content } = Layout;
 const { Title }   = Typography;
-const { useBreakpoint } = Grid; // Hook to get breakpoint status
+const { useBreakpoint } = Grid;
 
 function MyApp() {
-  // Removed collapsed state, sidebar will handle its own collapse on larger screens if needed
-  // const [collapsed, setCollapsed] = useState(false);
   const [selectedMenuKey, setSelected] = useState('dashboard');
-  const screens = useBreakpoint(); // Get current breakpoint status {xs: bool, sm: bool, md: bool, lg: bool, ...}
-
-  // Determine if we should show the mobile bottom nav (md breakpoint and below)
-  // `md` is true if screen width is >= 768px. So we want the nav when md is FALSE.
+  const screens = useBreakpoint();
   const isMobileView = !screens.md;
 
+  // --- State Lifted Up for EditBillModal ---
+  const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+  const [editingBill, setEditingBill] = useState(null); // null for Add, bill object for Edit
+
+  // --- Get Context Functions for Modal Submit ---
+  // Ensure FinanceProvider wraps this component in main.jsx or index.js
+  const financeContext = useContext(FinanceContext);
+   // Add checks to ensure context is loaded before destructuring
+   const addBill = financeContext ? financeContext.addBill : () => console.error("FinanceContext not available for addBill");
+   const updateBill = financeContext ? financeContext.updateBill : () => console.error("FinanceContext not available for updateBill");
+
+
+  // --- Modal Handlers ---
+  const handleOpenAddBillModal = () => {
+    setEditingBill(null); // Ensure it's in 'Add' mode
+    setIsEditModalVisible(true);
+  };
+
+  const handleOpenEditBillModal = (billRecord) => {
+    setEditingBill(billRecord); // Set the bill to edit
+    setIsEditModalVisible(true);
+  };
+
+  const handleModalClose = () => {
+    setIsEditModalVisible(false);
+    setEditingBill(null); // Reset editing state on close
+  };
+
+  const handleModalSubmit = async (values) => {
+    let success = false;
+    try {
+        if (editingBill) {
+          // Update existing bill
+          if (updateBill) {
+              success = await updateBill(editingBill, values); // Pass editingBill object
+          }
+        } else {
+          // Add new bill
+          if (addBill) {
+              success = await addBill(values);
+          }
+        }
+
+        if (success) {
+          handleModalClose(); // Close modal on successful add/update
+        } else {
+            // Optional: Add specific error message if add/update function returns false/error
+            console.error("Failed to submit bill via modal.");
+            // Consider showing an Ant Design message.error here
+        }
+    } catch (error) {
+        console.error("Error submitting bill modal:", error);
+        // Show error message to user
+        // message.error("An error occurred while saving the bill.");
+    }
+    // Error handling/messaging is likely within addBill/updateBill in context
+  };
+  // --- End Modal Handlers ---
+
+
   const SIDEBAR_WIDTH = 240;
-  // No collapsed width needed here if sidebar is hidden on mobile
-  // const SIDEBAR_COLLAPSED_W = 80;
+  const marginLeft = isMobileView ? 0 : SIDEBAR_WIDTH;
 
-  // Adjust margin based on whether sidebar is shown (only on non-mobile)
-  const marginLeft = isMobileView ? 0 : SIDEBAR_WIDTH; // Use fixed width when sidebar is shown
-
-  // Handle selection from either Sidebar or BottomNavBar
   const handleSelect = ({ key }) => {
-    // Prevent selection if 'add' button is clicked (it has its own action)
     if (key !== 'add') {
-        // Map 'account' key from bottom nav to 'settings' if needed
         setSelected(key === 'account' ? 'settings' : key);
     }
+    // The 'add' button click is handled directly by handleOpenAddBillModal passed to BottomNavBar
   };
 
 
   const renderContent = () => {
-    // Add 'account' case if it's a distinct page
     switch (selectedMenuKey) {
       case 'dashboard':
         return (
@@ -59,7 +109,12 @@ function MyApp() {
             <Col xs={24} lg={17}>
               <Space direction="vertical" size="large" style={{ width: '100%' }}>
                 <FinancialOverviewCards />
-                <CombinedBillsOverview style={{ height: '100%' }} />
+                {/* Pass the edit handler down */}
+                <CombinedBillsOverview
+                    style={{ height: '100%' }}
+                    onEditBill={handleOpenEditBillModal} // Pass handler for editing
+                    onAddBill={handleOpenAddBillModal} // Pass handler for adding via dropdown
+                 />
               </Space>
             </Col>
             <Col xs={24} lg={7}>
@@ -74,12 +129,13 @@ function MyApp() {
         );
 
       case 'bills':
-        return <BillsList />;
+        // BillsList might also need onEditBill and onAddBill if it has edit/add buttons
+        return <BillsList onEditBill={handleOpenEditBillModal} onAddBill={handleOpenAddBillModal} />;
 
       case 'reports':
         return <ChartsPage />;
 
-      case 'settings': // This corresponds to 'Account' on bottom nav
+      case 'settings': // Corresponds to 'account' key
         return <Title level={3}>Account/Settings (Placeholder)</Title>;
 
       default:
@@ -87,31 +143,26 @@ function MyApp() {
     }
   };
 
-  // Add paddingBottom to content when bottom nav is visible
   const contentStyle = {
       padding: 'var(--space-24)',
       margin: 0,
       flexGrow: 1,
-      paddingBottom: isMobileView ? '80px' : 'var(--space-24)' // Add extra padding (nav height + buffer)
+      paddingBottom: isMobileView ? '80px' : 'var(--space-24)' // Add space for bottom nav
   };
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
-      {/* Conditionally render Sidebar only on larger screens */}
       {!isMobileView && (
           <Sidebar
-            // collapsed={collapsed} // Sidebar can manage its own collapse internally if needed
-            // onCollapse={setCollapsed}
             selectedKey={selectedMenuKey}
-            onSelect={handleSelect} // Use unified handler
+            onSelect={handleSelect}
             width={SIDEBAR_WIDTH}
-            // collapsedWidth={SIDEBAR_COLLAPSED_W}
           />
       )}
 
       <Layout
         style={{
-          marginLeft, // Apply dynamic margin
+          marginLeft,
           transition: 'margin-left 0.2s',
           minHeight: '100vh',
           overflowY: 'auto',
@@ -122,17 +173,31 @@ function MyApp() {
           backgroundColor: 'var(--neutral-100)',
         }}
       >
-        <Content style={contentStyle}> {/* Apply style with bottom padding */}
+        <Content style={contentStyle}>
           {renderContent()}
         </Content>
-        <AppFooter /> {/* Footer might need adjustment if overlapping with bottom nav */}
+        {/* Footer might be visually hidden by BottomNavBar on mobile */}
+        {/* Consider conditionally rendering Footer or adjusting layout further */}
+        <AppFooter />
       </Layout>
 
-      {/* Conditionally render BottomNavBar only on smaller screens */}
       {isMobileView && (
           <BottomNavBar
               selectedKey={selectedMenuKey}
-              onSelect={handleSelect} // Use unified handler
+              onSelect={handleSelect}
+              // Pass the specific handler for the add button
+              onAddClick={handleOpenAddBillModal}
+          />
+      )}
+
+      {/* Render EditBillModal globally, controlled by App state */}
+      {/* Ensure EditBillModal is correctly imported */}
+      {isEditModalVisible && (
+          <EditBillModal
+              open={isEditModalVisible}
+              onCancel={handleModalClose}
+              onSubmit={handleModalSubmit}
+              initialData={editingBill} // Pass null for Add, bill object for Edit
           />
       )}
     </Layout>
