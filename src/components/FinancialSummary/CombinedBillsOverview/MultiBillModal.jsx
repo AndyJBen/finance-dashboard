@@ -1,5 +1,5 @@
 // src/components/FinancialSummary/CombinedBillsOverview/MultiBillModal.jsx
-// Removed IconCoin prefix from Amount InputNumber.
+// Centered Paid/Recurring checkboxes horizontally. Ensured Amount field alignment.
 
 import React, { useEffect, useContext, useState } from 'react';
 import {
@@ -8,7 +8,7 @@ import {
 } from 'antd';
 import {
   IconPlus, IconMinus, IconTag,
-  /* IconCoin removed */ IconCalendar, IconCategory // Removed IconCoin from imports
+  IconCalendar, IconCategory // IconCoin is removed
 } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 // Corrected the relative path for FinanceContext (up 3 levels)
@@ -24,7 +24,7 @@ const billCategories = [
   "Bill Prep", "Auto", "Other"
 ];
 
-const inputHeight = '45px'; // Consistent height
+const inputHeight = '45px'; // Consistent height for all input elements
 
 export default function MultiBillModal({ open, onClose }) {
   const [form] = Form.useForm();
@@ -78,8 +78,6 @@ export default function MultiBillModal({ open, onClose }) {
           await loadBillsForMonth(displayedMonth);
       } else {
           console.warn("loadBillsForMonth function not found in context");
-          // Optionally reload the page or show a message to manually refresh
-          // window.location.reload();
       }
       form.resetFields();
       onClose();
@@ -134,14 +132,14 @@ export default function MultiBillModal({ open, onClose }) {
         <Form.List name="bills">
           {(fields, { add, remove }) => (
             <>
-              {/* Table Headers */}
+              {/* Table Headers - Centering text for Paid/Recurring */}
               <Row gutter={16} style={{ marginBottom: '12px', color: 'rgba(0, 0, 0, 0.45)' }}>
                 <Col span={5}><Typography.Text strong>Bill Name</Typography.Text></Col>
                 <Col span={3}><Typography.Text strong>Amount</Typography.Text></Col>
                 <Col span={4}><Typography.Text strong>Category</Typography.Text></Col>
                 <Col span={4}><Typography.Text strong>Due Date</Typography.Text></Col>
-                <Col span={2}><Typography.Text strong>Paid</Typography.Text></Col>
-                <Col span={3}><Typography.Text strong>Recurring</Typography.Text></Col>
+                <Col span={2} style={{ textAlign: 'center' }}><Typography.Text strong>Paid</Typography.Text></Col>
+                <Col span={3} style={{ textAlign: 'center' }}><Typography.Text strong>Recurring</Typography.Text></Col>
                 <Col span={3} /> {/* Spacer for buttons */}
               </Row>
 
@@ -173,10 +171,10 @@ export default function MultiBillModal({ open, onClose }) {
                     >
                       <InputNumber
                         placeholder="Amount"
-                        style={{ width: '100%', height: inputHeight, borderRadius: 8 }}
+                        // Ensure consistent height for vertical alignment
+                        style={{ width: '100%', height: inputHeight, borderRadius: 8, lineHeight: inputHeight }}
                         formatter={(value) => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                         parser={(value) => value?.replace(/\$\s?|(,*)/g, '') ?? ''}
-                        // prefix prop removed here
                         min={0}
                       />
                     </Form.Item>
@@ -212,24 +210,24 @@ export default function MultiBillModal({ open, onClose }) {
                       />
                     </Form.Item>
                   </Col>
-                  {/* Paid Checkbox */}
-                  <Col span={2} style={{ display: 'flex', alignItems: 'center', height: inputHeight }}>
+                  {/* Paid Checkbox - Centered */}
+                  <Col span={2} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: inputHeight }}>
                     <Form.Item
                       {...restField}
                       name={[name, 'isPaid']}
                       valuePropName="checked"
-                      style={{ marginBottom: 0 }}
+                      style={{ marginBottom: 0 }} // Keep margin 0 for Form.Item
                     >
                       <Checkbox />
                     </Form.Item>
                   </Col>
-                    {/* Recurring Checkbox */}
-                  <Col span={3} style={{ display: 'flex', alignItems: 'center', height: inputHeight }}>
+                    {/* Recurring Checkbox - Centered */}
+                  <Col span={3} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: inputHeight }}>
                     <Form.Item
                       {...restField}
                       name={[name, 'isRecurring']}
                       valuePropName="checked"
-                      style={{ marginBottom: 0 }}
+                      style={{ marginBottom: 0 }} // Keep margin 0 for Form.Item
                     >
                       <Checkbox />
                     </Form.Item>
