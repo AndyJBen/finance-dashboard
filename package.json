@@ -22,8 +22,8 @@
     "antd": "^5.24.6",
     "dayjs": "^1.11.13",
     "prop-types": "^15.8.1",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "react-router-dom": "^7.4.1"
   },
   "devDependencies": {
