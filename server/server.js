@@ -1,5 +1,5 @@
 // server/server.js
-// Restore health check routes
+// Restore /api/balance route
 
 // Import necessary modules
 const express = require('express');
@@ -7,7 +7,7 @@ const cors = require('cors');
 const path = require('path');
 const pool = require('./db'); // Import the database pool setup
 
-// Import route handlers (even though they are commented out below)
+// Import route handlers
 const balanceRoutes = require('./routes/balance');
 const billsRoutes = require('./routes/bills');
 const creditCardsRoutes = require('./routes/credit_cards');
@@ -68,10 +68,10 @@ app.use((req, res, next) => {
     next();
 });
 
-// --- API Routes (KEEP COMMENTED OUT FOR NOW) ---
+// --- API Routes (Restoring /api/balance) ---
 try {
-    console.log("INFO: Mounting /api/balance routes... (Currently Commented Out)");
-    // app.use('/api/balance', balanceRoutes);
+    console.log("INFO: Mounting /api/balance routes...");
+    app.use('/api/balance', balanceRoutes); // <-- UNCOMMENTED
 
     console.log("INFO: Mounting /api/bills routes... (Currently Commented Out)");
     // app.use('/api/bills', billsRoutes);
@@ -79,14 +79,14 @@ try {
     console.log("INFO: Mounting /api/credit_cards routes... (Currently Commented Out)");
     // app.use('/api/credit_cards', creditCardsRoutes);
 
-    console.log("INFO: All API routes mounting points processed (currently commented out).");
+    console.log("INFO: All API routes mounting points processed.");
 } catch (mountError) {
     console.error("FATAL: Error occurred during route mounting section:", mountError);
     process.exit(1);
 }
 
-// --- Health Check & Test Routes (RE-ENABLING THESE) ---
-console.log("INFO: Health check routes are being re-enabled.");
+// --- Health Check & Test Routes ---
+console.log("INFO: Health check routes are enabled.");
 app.get('/', (req, res) => {
     res.status(200).send('Server is running.');
 });
