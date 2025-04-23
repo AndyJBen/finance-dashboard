@@ -1,5 +1,6 @@
 // src/components/FinancialSummary/CombinedBillsOverview/CombinedBillsOverview.jsx
 // Fixed import path for FinanceContext after moving the file.
+// Highlight: Updated 'Due In' column render logic to show '-' for past due 'Bill Prep' category items.
 
 import React, { useState, useContext, useMemo, useEffect } from 'react';
 import {
@@ -64,12 +65,15 @@ const getCategoryIcon = (category) => {
     if (lowerCategory.includes('bill prep')) return <IconCalendarTime size={16} />;
     return <IconHelp size={16} />;
 };
-const formatDueDate = (dueDate, displayedMonth) => {
+
+// Updated formatDueDate to handle past due logic *outside* this function
+// It now focuses purely on formatting future dates relative to today.
+const formatDueDate = (dueDate) => {
     if (!dueDate || !dayjs(dueDate).isValid()) { return <span style={{ color: 'var(--neutral-400)' }}>N/A</span>; }
     const due = dayjs(dueDate).startOf('day');
     const today = dayjs().startOf('day');
-    if (due.isBefore(today)) { return <span style={{ color: 'var(--danger-500)' }}>Past Due</span>; }
-    if (due.isSame(today, 'day')) { return <span style={{ color: 'var(--warning-700)' }}>Today</span>; }
+    // This function now assumes the date is NOT past due or today,
+    // as those checks are handled in the column render function.
     const diffDaysFromToday = due.diff(today, 'day');
     let resultText = '';
     if (diffDaysFromToday <= 10) { resultText = `${diffDaysFromToday}d`; }
@@ -80,6 +84,7 @@ const formatDueDate = (dueDate, displayedMonth) => {
     }
     return resultText;
 };
+
 const getCategoryColor = (category) => {
     switch (category?.toLowerCase()) {
         case 'utilities': return 'blue'; case 'rent': return 'purple'; case 'mortgage': return 'volcano';
@@ -203,7 +208,40 @@ const CombinedBillsOverview = ({ style }) => {
                 return dateA - dateB;
             },
             defaultSortOrder: 'ascend',
-            render: (dueDate, record) => record.isPaid ? <span style={{ color: 'var(--neutral-400)' }}>-</span> : formatDueDate(dueDate, displayedMonth),
+            // --- START: Updated Render Logic for 'Due In' ---
+            render: (dueDate, record) => {
+                // If paid, always show dash
+                if (record.isPaid) {
+                    return <span style={{ color: 'var(--neutral-400)' }}>-</span>;
+                }
+
+                // Check if dueDate is valid
+                if (!dueDate || !dayjs(dueDate).isValid()) {
+                    return <span style={{ color: 'var(--neutral-400)' }}>N/A</span>;
+                }
+
+                const due = dayjs(dueDate).startOf('day');
+                const today = dayjs().startOf('day');
+
+                // Check if past due
+                if (due.isBefore(today)) {
+                    // Special case for 'Bill Prep' category when past due
+                    if (record.category === 'Bill Prep') {
+                        return <span style={{ color: 'var(--neutral-400)' }}>-</span>; // Show dash instead of 'Past Due'
+                    } else {
+                        return <span style={{ color: 'var(--danger-500)' }}>Past Due</span>; // Default past due text
+                    }
+                }
+
+                // Check if due today
+                if (due.isSame(today, 'day')) {
+                    return <span style={{ color: 'var(--warning-700)' }}>Today</span>;
+                }
+
+                // Otherwise, calculate relative time using the helper function
+                return formatDueDate(dueDate); // Pass only dueDate
+            },
+            // --- END: Updated Render Logic for 'Due In' ---
         },
         {
             title: (<Tooltip title={isTableCollapsed ? "Expand List" : "Collapse List"}><Button type="link" size="small" icon={isTableCollapsed ? <IconChevronDown size={16} /> : <IconChevronUp size={16} />} onClick={() => setIsTableCollapsed(!isTableCollapsed)} style={{ padding: '0 4px' }} /></Tooltip>),

@@ -1,6 +1,7 @@
 // src/components/FinancialSummary/CombinedBillsOverview/MonthlyProgressSummary.jsx
 // Adjusted Statistic layout and titles for mobile view.
 // Highlight: Changed alignItems from 'flex-start' to 'center' for the title container div to vertically center the icon, text, and badge.
+// Highlight: Added transform: translateY(-2px) to the calendar icon for fine vertical adjustment.
 
 import React from 'react';
 import {
@@ -49,7 +50,16 @@ const MonthlyProgressSummary = ({
                 {/* Left side: Icon and Text */}
                 {/* This inner div ensures the icon and text stay together */}
                 <div style={{ display: 'flex', alignItems: 'center' }}>
-                     <IconCalendarFilled size={25} style={{ marginRight: 'var(--space-8)', color: 'var(--primary-600)', flexShrink: 0 }} />
+                     {/* Added transform to nudge icon up slightly */}
+                     <IconCalendarFilled
+                        size={25}
+                        style={{
+                            marginRight: 'var(--space-8)',
+                            color: 'var(--primary-600)',
+                            flexShrink: 0,
+                            transform: 'translateY(-2px)' // Nudge icon up slightly
+                        }}
+                     />
                      <Text strong style={{ fontSize: '1rem', lineHeight: '1.2' }}> {/* Adjusted line-height potentially */}
                          Monthly Bills Progress
                          {totalBillsInDisplayedMonth > 0 && (
