@@ -14,9 +14,7 @@ import {
   IconSettings,
   IconUsers,
   IconDotsVertical,
-  IconGripVertical,
-  IconSun,
-  IconMoon
+  IconGripVertical
 } from '@tabler/icons-react';
 // dnd‑kit imports
 import {
@@ -38,7 +36,6 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 
 import { FinanceContext } from '../../contexts/FinanceContext';
-import { ThemeContext } from '../../contexts/ThemeContext';
 import AddCreditCardModal from './AddCreditCardModal';
 import EditCreditCardModal from './EditCreditCardModal';
 import './Sidebar.css';
@@ -124,9 +121,6 @@ const Sidebar = ({ collapsed, onCollapse, selectedKey, onSelect, width, collapse
     removeCreditCard,
     reorderCreditCards,
   } = useContext(FinanceContext);
-
-  // Add theme context
-  const { darkMode, toggleTheme } = useContext(ThemeContext);
 
   const [isAddModalVisible, setIsAddModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
@@ -283,14 +277,6 @@ const Sidebar = ({ collapsed, onCollapse, selectedKey, onSelect, width, collapse
         <div className="sidebar-bottom-nav">
           {collapsed ? (
             <>
-              {/* Theme toggle button (collapsed) */}
-              <Tooltip title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"} placement="right">
-                <Button 
-                  type="text" 
-                  icon={darkMode ? <IconSun size={20} /> : <IconMoon size={20} />} 
-                  onClick={toggleTheme} 
-                />
-              </Tooltip>
               <Tooltip title="Settings" placement="right">
                 <Button type="text" icon={<IconSettings size={20} />} onClick={() => onSelect({ key: 'settings' })} />
               </Tooltip>
@@ -300,14 +286,6 @@ const Sidebar = ({ collapsed, onCollapse, selectedKey, onSelect, width, collapse
             </>
           ) : (
             <Space direction="vertical" style={{ width: '100%' }}>
-              {/* Theme toggle button (expanded) */}
-              <Button 
-                type="text" 
-                icon={darkMode ? <IconSun size={20} /> : <IconMoon size={20} />} 
-                onClick={toggleTheme}
-              >
-                {darkMode ? 'Light Mode' : 'Dark Mode'}
-              </Button>
               <Button type="text" icon={<IconSettings size={20} />} onClick={() => onSelect({ key: 'settings' })}>
                 Settings
               </Button>
