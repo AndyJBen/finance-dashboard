@@ -176,9 +176,3 @@ html, body, #root, * {
   /* disable iOS callout menus */
   -webkit-touch-callout: none !important;
 }
-
-/* Prevent JS-driven selection events */
-document {
-  /* disable default selectstart & contextmenu */
-}
-/* --- END: Aggressive User-Select Disable --- */

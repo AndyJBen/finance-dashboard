@@ -1,4 +1,6 @@
 // src/components/FinancialSummary/FinancialOverviewCards/NetPositionCard.jsx
+// Highlight: Added formatCurrencySuperscript function and updated Statistic component.
+
 import React, { useContext } from 'react';
 import { Card, Col, Space, Statistic, Typography } from 'antd';
 import { IconCoinFilled } from '@tabler/icons-react';
@@ -6,11 +8,33 @@ import { FinanceContext } from '../../../contexts/FinanceContext'; // Adjust pat
 
 const { Text } = Typography;
 
-// Helper function to format currency (Consider moving to a utils file)
-const formatCurrency = (value) => {
-  const number = Number(value) || 0;
-  return number.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+// Helper function to format currency with superscript cents using Tailwind CSS
+const formatCurrencySuperscript = (value) => {
+  // Handle loading state or null/undefined/NaN values
+  if (value === null || value === undefined || isNaN(Number(value))) {
+    return '-'; // Display a dash for loading or invalid states
+  }
+
+  const numericValue = Number(value);
+  const sign = numericValue < 0 ? '-' : '';
+  // Format the absolute value to ensure two decimal places for splitting
+  const formatted = Math.abs(numericValue).toFixed(2);
+  const [dollars, cents] = formatted.split('.');
+
+  // Add commas to the dollar part
+  const formattedDollars = parseInt(dollars, 10).toLocaleString('en-US');
+
+  return (
+    // Use spans and Tailwind classes for styling
+    // Ensure your project's Tailwind setup includes these classes
+    <span>
+      {sign}${formattedDollars}
+      {/* Styling for cents: smaller text, aligned top, slightly raised, small left margin */}
+      <span className="text-xs align-top relative top-[-0.3em] ml-px">.{cents}</span>
+    </span>
+  );
 };
+
 
 // Component for the Net Position card
 const NetPositionCard = ({ isMobile, styles, isComponentLoading }) => {
@@ -19,7 +43,7 @@ const NetPositionCard = ({ isMobile, styles, isComponentLoading }) => {
 
   // --- Calculations specific to this card ---
   const combinedTotalDue = (currentDueAmt ?? 0) + (totalCreditCardBalance ?? 0);
-  const grandTotal = (bankBalance !== null) ? bankBalance - combinedTotalDue : null;
+  const grandTotal = (bankBalance !== null) ? bankBalance - combinedTotalDue : null; // Handle null bankBalance
   const grandTotalIsNegative = grandTotal !== null && grandTotal < 0;
   // --- End Calculations ---
 
@@ -27,7 +51,7 @@ const NetPositionCard = ({ isMobile, styles, isComponentLoading }) => {
     <Col xs={24} md={8}>
       <Card
         style={{
-          background: grandTotal === null
+          background: grandTotal === null || isComponentLoading // Check loading state
             ? 'var(--neutral-100)' // Neutral background while loading
             : grandTotalIsNegative
               ? 'linear-gradient(145deg, var(--danger-700), #A51F49)' // Red gradient if negative
@@ -48,7 +72,7 @@ const NetPositionCard = ({ isMobile, styles, isComponentLoading }) => {
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-between',
-            zIndex: 1,
+            zIndex: 1, // Keep zIndex if needed for overlapping elements/effects
           },
         }}
       >
@@ -71,16 +95,16 @@ const NetPositionCard = ({ isMobile, styles, isComponentLoading }) => {
         {/* Bottom section: Statistic Value */}
         <div>
           <Statistic
-            value={isComponentLoading ? "-" : (grandTotal ?? 0)} // Show '-' while loading
-            precision={2}
+            value={isComponentLoading ? null : (grandTotal ?? 0)} // Pass raw value or null
+            // precision prop is removed as formatter handles it
             valueStyle={{
               color: 'white',
               fontSize: styles.fontSize.value,
               fontWeight: 700,
-              lineHeight: 1.2,
+              lineHeight: 1.2, // Adjust line height if needed for superscript alignment
               marginBottom: 0,
             }}
-            formatter={formatCurrency}
+            formatter={formatCurrencySuperscript} // Use the new JSX formatter
           />
         </div>
       </Card>

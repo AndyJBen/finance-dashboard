@@ -1,4 +1,6 @@
 // src/components/FinancialSummary/FinancialOverviewCards/BankBalanceCard.jsx
+// Highlight: Added formatCurrencySuperscript function and updated Statistic component.
+
 import React, { useContext, useState, useEffect } from 'react';
 import { Card, Col, Space, Statistic, Typography, InputNumber, Button, Tooltip, message } from 'antd';
 import { IconBuildingBank, IconCircleCheck, IconEdit, IconX } from '@tabler/icons-react';
@@ -6,11 +8,33 @@ import { FinanceContext } from '../../../contexts/FinanceContext'; // Adjust pat
 
 const { Text } = Typography;
 
-// Helper function to format currency (Consider moving to a utils file)
-const formatCurrency = (value) => {
-  const number = Number(value) || 0;
-  return number.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+// Helper function to format currency with superscript cents using Tailwind CSS
+const formatCurrencySuperscript = (value) => {
+  // Handle loading state or null/undefined/NaN values
+  if (value === null || value === undefined || isNaN(Number(value))) {
+    return '-'; // Display a dash for loading or invalid states
+  }
+
+  const numericValue = Number(value);
+  const sign = numericValue < 0 ? '-' : '';
+  // Format the absolute value to ensure two decimal places for splitting
+  const formatted = Math.abs(numericValue).toFixed(2);
+  const [dollars, cents] = formatted.split('.');
+
+  // Add commas to the dollar part
+  const formattedDollars = parseInt(dollars, 10).toLocaleString('en-US');
+
+  return (
+    // Use spans and Tailwind classes for styling
+    // Ensure your project's Tailwind setup includes these classes
+    <span>
+      {sign}${formattedDollars}
+      {/* Styling for cents: smaller text, aligned top, slightly raised, small left margin */}
+      <span className="text-xs align-top relative top-[-0.3em] ml-px">.{cents}</span>
+    </span>
+  );
 };
+
 
 // Component for the Bank Balance card
 const BankBalanceCard = ({ isMobile, styles, isComponentLoading }) => {
@@ -26,10 +50,11 @@ const BankBalanceCard = ({ isMobile, styles, isComponentLoading }) => {
     if (typeof bankBalance === 'number' && !isEditing) {
       setEditValue(bankBalance);
     }
+    // Initialize editValue if bankBalance loads and editValue hasn't been set yet
     if (bankBalance !== null && editValue === 0 && !isEditing) {
       setEditValue(bankBalance);
     }
-  }, [bankBalance, isEditing, editValue]);
+  }, [bankBalance, isEditing]); // Removed editValue from dependency array to prevent potential loops
 
   // --- Edit Handlers ---
   const handleEditClick = () => {
@@ -44,16 +69,18 @@ const BankBalanceCard = ({ isMobile, styles, isComponentLoading }) => {
   const handleSaveClick = async () => {
     if (typeof editValue === 'number' && !isNaN(editValue)) {
       const result = await updateBalance({ balance: editValue });
-      if (result !== null) {
+      if (result !== null) { // Assuming updateBalance returns null on failure, non-null on success
         setIsEditing(false);
       }
+      // Error messages should be handled within updateBalance or context
     } else {
       message.error("Invalid balance amount entered.");
     }
   };
   // --- End Edit Handlers ---
 
-  const bankBalanceColor = bankBalance === null || bankBalance > 0 ? 'var(--success-500)' : 'var(--danger-500)';
+  // Determine color based on balance, handle null case
+  const bankBalanceColor = bankBalance === null || bankBalance >= 0 ? 'var(--success-500)' : 'var(--danger-500)';
 
   return (
     <Col xs={24} md={8}>
@@ -128,16 +155,16 @@ const BankBalanceCard = ({ isMobile, styles, isComponentLoading }) => {
         <div>
           {!isEditing ? (
             <Statistic
-              value={loadingBalance || isComponentLoading ? "-" : (bankBalance ?? 0)} // Show '-' while loading
-              precision={2}
+              value={loadingBalance || isComponentLoading ? null : (bankBalance ?? 0)} // Pass raw value or null for loading state
+              // precision prop is removed as formatter handles it
               valueStyle={{
                 fontSize: styles.fontSize.value,
                 fontWeight: 700,
-                lineHeight: 1.2,
+                lineHeight: 1.2, // Adjust line height if needed for superscript alignment
                 marginBottom: 0,
                 color: bankBalanceColor,
               }}
-              formatter={formatCurrency}
+              formatter={formatCurrencySuperscript} // Use the new JSX formatter
             />
           ) : (
             <InputNumber
