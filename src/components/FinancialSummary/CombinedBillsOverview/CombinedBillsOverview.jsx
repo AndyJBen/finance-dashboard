@@ -155,8 +155,8 @@ const CombinedBillsOverview = ({ style }) => {
 
     // Data source for the table, considering collapse state
      const tableDataSource = isTableCollapsed
-        ? mainTableDataSourceFiltered.slice(0, defaultPageSize)
-        : mainTableDataSourceFiltered;
+        ? [] // Provide an empty array when collapsed
+        : mainTableDataSourceFiltered; // Show all filtered bills when not collapsed
     // --- End Derived State ---
 
 
