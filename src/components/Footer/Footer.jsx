@@ -1,13 +1,16 @@
 // src/components/Footer/Footer.jsx
-import React from 'react';
-import { Layout, Row, Col, Typography, Space, Switch } from 'antd';
-import { IconCopyright, IconPhone, IconMail, IconMapPin, IconMoon, IconSun } from '@tabler/icons-react';
-import './Footer.css';
+// COMPLETE FILE CODE
+// This is a new component for the application footer.
 
-const { Footer: AntFooter } = Layout;
+import React from 'react';
+import { Layout, Row, Col, Typography, Space } from 'antd';
+import { IconCopyright, IconPhone, IconMail, IconMapPin } from '@tabler/icons-react'; // Using Tabler icons
+import './Footer.css'; // Import custom CSS for the footer
+
+const { Footer: AntFooter } = Layout; // Alias Ant Design's Footer
 const { Text, Link } = Typography;
 
-const AppFooter = ({ isDarkMode, toggleDarkMode }) => {
+const AppFooter = () => {
   const currentYear = new Date().getFullYear();
 
   return (
@@ -21,21 +24,7 @@ const AppFooter = ({ isDarkMode, toggleDarkMode }) => {
           </Space>
         </Col>
 
-        {/* Right Side: Dark Mode Toggle */}
-        <Col xs={24} sm={12} md={8} style={{ textAlign: 'right' }}>
-          <Space align="center" size="small">
-            <IconSun size={18} style={{ opacity: isDarkMode ? 0.5 : 1 }} />
-            <Switch
-              checked={isDarkMode}
-              onChange={toggleDarkMode}
-              size="small"
-            />
-            <IconMoon size={18} style={{ opacity: isDarkMode ? 1 : 0.5 }} />
-            <Text type="secondary" style={{ marginLeft: 8 }}>
-              {isDarkMode ? 'Dark Mode' : 'Light Mode'}
-            </Text>
-          </Space>
-        </Col>
+        {/* Right Side: Placeholder Contact Info */}
       </Row>
     </AntFooter>
   );
