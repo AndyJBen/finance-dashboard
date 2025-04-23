@@ -152,7 +152,7 @@ const DueBalanceCard = ({ isMobile, styles, isComponentLoading }) => {
           line-height: 1;
           margin-left: 2px;
           font-weight: inherit;
-          vertical-align: super;
+          vertical-align: top; /* Changed from 'super' to 'top' */
           opacity: 0.85;
         }
       `}</style>
