@@ -1,11 +1,3 @@
-/* src/assets/styles/global.css */
-/* COMPLETE FILE CODE */
-/* Changes:
-    - Modified .ant-layout-header rule for transparency
-    - Added overflow-x and overscroll-behavior-x to body
-    - Added overscroll-behavior-y to body to prevent scrolling past top/bottom
-*/
-
 /* --- Google Font Import --- */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
@@ -336,3 +328,11 @@ main.ant-layout-content {
      /* Use AntD's hover variable or your theme's row hover color */
      background-color: var(--ant-table-row-hover-bg, var(--neutral-50)) !important;
   }
+
+/* --- Responsive Utilities --- */
+@media (max-width: 767.98px) { /* Target typical mobile/tablet portrait breakpoint */
+  .hide-on-mobile {
+    display: none !important; /* Use !important to override potential inline styles or specificity issues */
+  }
+  /* Add other mobile-specific overrides here if needed */
+}
