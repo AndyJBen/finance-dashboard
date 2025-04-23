@@ -1,7 +1,3 @@
-// src/components/BillsList/DashboardBillsList.jsx
-// COMPLETE FILE CODE
-// Highlight: Added e.domEvent.stopPropagation() inside Menu Item onClick.
-
 import React, { useState, useContext } from 'react';
 import { Table, Button, Modal, message, Tag, Dropdown, Menu, Space } from 'antd';
 import {
@@ -135,7 +131,7 @@ const DashboardBillsList = ({
     <>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
         <h3>{title}</h3>
-        {onAddBill && ( <Button type="primary" icon={<IconPlus size={16} />} onClick={() => { setEditingBill(null); setIsEditModalVisible(true); } }> Add Bill </Button> )}
+        {onAddBill && ( <Button type="primary" icon={<IconPlus size={16} />} onClick={() => { setEditingBill(null); setIsEditModalVisible(true); } } className="hide-on-mobile"> Add Bill </Button> )}
       </div>
       <Table
         columns={columns}
