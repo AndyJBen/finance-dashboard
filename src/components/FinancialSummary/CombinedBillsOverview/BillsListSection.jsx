@@ -1,5 +1,6 @@
 // src/components/FinancialSummary/CombinedBillsOverview/BillsListSection.jsx
 // Using handleAddSingle prop for the main button click
+// Highlight: Added className="hide-on-mobile" to Dropdown.Button
 
 import React from 'react';
 import {
@@ -41,6 +42,7 @@ const BillsListSection = ({
                     </Space>
 
                     {/* Dropdown Button for Adding Bills */}
+                    {/* This button will be hidden on mobile via the 'hide-on-mobile' class (defined in global.css) */}
                     <div>
                         <Dropdown.Button
                             type="primary"
@@ -49,6 +51,7 @@ const BillsListSection = ({
                             onClick={handleAddSingle} // Use the prop here
                             menu={{ items: addBillMenuItems, onClick: handleMenuClick }}
                             style={{ display: 'flex', alignItems: 'center', fontWeight: 500 }}
+                            className="hide-on-mobile" // Add class to hide on mobile
                         >
                             <IconPlus size={16} style={{marginRight: '4px'}}/>
                             Add Bill
