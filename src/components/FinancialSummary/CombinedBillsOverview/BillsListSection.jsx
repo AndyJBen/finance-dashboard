@@ -1,6 +1,7 @@
 // src/components/FinancialSummary/CombinedBillsOverview/BillsListSection.jsx
 // Using handleAddSingle prop for the main button click
 // Highlight: Added className="hide-on-mobile" to Dropdown.Button
+// Highlight: Added className="category-tags-container" to the div wrapping category tags for mobile carousel styling
 
 import React from 'react';
 import {
@@ -58,8 +59,11 @@ const BillsListSection = ({
                         </Dropdown.Button>
                     </div>
                  </div>
-                 {/* Category Tags */}
-                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                 {/* Category Tags Container - Apply specific class for mobile styling */}
+                 <div
+                    className="category-tags-container" // Added class for mobile carousel styling
+                    style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }} // Default styles (wrap on desktop)
+                 >
                     {categories.map((category) => (
                         <Tag.CheckableTag
                             key={category}

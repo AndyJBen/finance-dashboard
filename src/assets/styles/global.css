@@ -1,3 +1,13 @@
+/* src/assets/styles/global.css */
+/* COMPLETE FILE CODE */
+/* Changes:
+    - Modified .ant-layout-header rule for transparency
+    - Added overflow-x and overscroll-behavior-x to body
+    - Added overscroll-behavior-y to body to prevent scrolling past top/bottom
+    - Added .hide-on-mobile utility class
+    - Added mobile carousel styles for .category-tags-container
+*/
+
 /* --- Google Font Import --- */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
@@ -334,5 +344,30 @@ main.ant-layout-content {
   .hide-on-mobile {
     display: none !important; /* Use !important to override potential inline styles or specificity issues */
   }
+
+  /* START: Mobile Category Carousel Styles */
+  .category-tags-container {
+    display: flex; /* Ensure flex display */
+    flex-wrap: nowrap; /* Prevent wrapping */
+    overflow-x: auto; /* Enable horizontal scrolling */
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    padding-bottom: 8px; /* Add some space for the scrollbar if visible */
+    margin-bottom: -8px; /* Counteract the padding-bottom visually */
+    gap: 8px; /* Adjust gap for horizontal layout */
+
+    /* Hide scrollbar for a cleaner look */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;  /* IE and Edge */
+  }
+  .category-tags-container::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+  }
+
+  /* Ensure individual tags don't shrink */
+  .category-tags-container > .ant-tag {
+      flex-shrink: 0;
+  }
+  /* END: Mobile Category Carousel Styles */
+
   /* Add other mobile-specific overrides here if needed */
 }
