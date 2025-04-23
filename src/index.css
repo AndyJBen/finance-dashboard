@@ -113,8 +113,6 @@ body {
   box-sizing: border-box;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-
-  /* NOTE: user-select and touch-action rules are moved to the end of the file */
 }
 
 /* Ensure box-sizing is inherited */
@@ -162,22 +160,25 @@ a:hover {
   background: var(--neutral-500);
 }
 
-/* --- START: Hardened Mobile Interaction Rules --- */
-/* These rules should be at the end to ensure they override other styles */
+/* --- START: Aggressive User-Select Disable --- */
+/* These should appear last to override any other rules */
+html, body, #root, * {
+  /* kill any form of zoom & selection on mobile */
+  touch-action: manipulation !important;
+  -ms-touch-action: manipulation !important;
 
-/* 1. Disable any zoom-related gesture handling */
-html, body {
-  touch-action: manipulation;       /* kills pinch & double-tap zoom */
-  -ms-touch-action: manipulation;   /* IE/Edge */
+  /* disable text selection */
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  user-select: none !important;
+
+  /* disable iOS callout menus */
+  -webkit-touch-callout: none !important;
 }
 
-/* 2. Stop text selection / long-press menus on mobile */
-html, body {
-  -webkit-user-select: none;  /* Safari */
-  -moz-user-select: none;     /* Firefox */
-  -ms-user-select: none;      /* IE/Edge */
-  user-select: none;          /* standard */
-
-  -webkit-touch-callout: none; /* iOS Safari “copy/paste” menu */
+/* Prevent JS-driven selection events */
+document {
+  /* disable default selectstart & contextmenu */
 }
-/* --- END: Hardened Mobile Interaction Rules --- */
+/* --- END: Aggressive User-Select Disable --- */
