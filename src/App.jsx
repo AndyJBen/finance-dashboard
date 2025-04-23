@@ -6,20 +6,19 @@ import { Layout, Row, Col, Typography, Space, Grid } from 'antd';
 import { FinanceContext } from './contexts/FinanceContext'; // Import context
 
 // Core pages/components
-import FinancialOverviewCards from './components/FinancialSummary/FinancialOverviewCards';
-import BillsList            from './components/BillsList/BillsList';
-import UpcomingPayments     from './components/RecentActivity/UpcomingPayments';
-import ActivityFeed         from './components/RecentActivity/ActivityFeed';
-import Sidebar              from './components/Sidebar/Sidebar';
-import FinancialOverviewCards from './components/FinancialSummary/FinancialOverviewCards';
+import FinancialOverviewCards from './components/FinancialSummary/FinancialOverviewCards'; // Keep only one import
+import BillsList              from './components/BillsList/BillsList';
+import UpcomingPayments       from './components/RecentActivity/UpcomingPayments';
+import ActivityFeed           from './components/RecentActivity/ActivityFeed';
+import Sidebar                from './components/Sidebar/Sidebar';
 import CombinedBillsOverview  from './components/FinancialSummary/CombinedBillsOverview/CombinedBillsOverview';
-import BillPrepCard         from './components/FinancialSummary/BillPrepCard';
-import PastDuePayments      from './components/RecentActivity/PastDuePayments';
-import AppFooter            from './components/Footer/Footer';
-import ChartsPage           from './components/ChartsPage/ChartsPage';
-import BottomNavBar         from './components/Navigation/BottomNavBar';
+import BillPrepCard           from './components/FinancialSummary/BillPrepCard';
+import PastDuePayments        from './components/RecentActivity/PastDuePayments';
+import AppFooter              from './components/Footer/Footer';
+import ChartsPage             from './components/ChartsPage/ChartsPage';
+import BottomNavBar           from './components/Navigation/BottomNavBar';
 // Import the modal component itself
-import EditBillModal        from './components/BillsList/EditBillModal';
+import EditBillModal          from './components/BillsList/EditBillModal';
 
 
 const { Content } = Layout;
@@ -108,6 +107,7 @@ function MyApp() {
         return (
           <Row gutter={[24, 24]}>
             <Col xs={24} lg={17}>
+              {/* Use the imported (now single) component */}
               <FinancialOverviewCards />
               <div style={{ marginTop: 24 }}>
                 <CombinedBillsOverview
