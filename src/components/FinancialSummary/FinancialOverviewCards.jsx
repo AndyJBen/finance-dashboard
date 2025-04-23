@@ -32,7 +32,7 @@ const FinancialOverviewCards = () => {
   // Destructure necessary values and functions from the FinanceContext
   const {
     loadingBalance, // State indicating if the bank balance is currently being fetched/updated
-    loadingCreditCards, // 🟩 ADDED: State indicating if credit cards are loading
+    loadingCreditCards, // State indicating if credit cards are loading
     error,          // Any error message from fetching data
     bankBalance,    // The current bank balance value
     updateBalance,  // Function to update the bank balance on the server
@@ -184,7 +184,6 @@ const FinancialOverviewCards = () => {
   }
 
   // Determine the overall loading state for the component
-  // 🟩 CORRECTED: Include loadingCreditCards in the check
   const isComponentLoading = loading || loadingBalance || loadingCreditCards;
   // Choose the icon for the "Due Balance" card based on whether there's a warning state
   const dueCardIcon = showDueWarning ? <IconFlagFilled size={isMobile ? 18 : 22} /> : <IconCircleCheck size={isMobile ? 16 : 18} />;
@@ -217,6 +216,10 @@ const FinancialOverviewCards = () => {
   // Select the appropriate style object based on the current isMobile state
   const styles = isMobile ? mobileStyles : desktopStyles;
   // --- End Responsive Styling Definitions ---
+
+  // --- DEBUG LOGGING ---
+  console.log(`[FinancialOverviewCards] Rendering with values: currentDueAmt=${currentDueAmt}, totalCreditCardBalance=${totalCreditCardBalance}, combinedTotalDue=${combinedTotalDue}, loading=${loading}, loadingBalance=${loadingBalance}, loadingCreditCards=${loadingCreditCards}`);
+  // --- END DEBUG LOGGING ---
 
   // --- Component JSX Rendering ---
   return (
