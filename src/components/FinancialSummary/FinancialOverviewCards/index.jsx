@@ -115,7 +115,7 @@ const FinancialOverviewCardsContainer = () => {
         .currency-wrapper {
           position: relative;
           display: inline-flex;
-          align-items: flex-start;
+          align-items: center; /* Changed to center alignment */
         }
         
         .cents-superscript {
@@ -123,7 +123,7 @@ const FinancialOverviewCardsContainer = () => {
           margin-left: 2px;
           font-weight: inherit;
           position: relative;
-          top: 0; /* This ensures the top aligns with the main numbers */
+          top: -40%; /* This positions the cents to align with the dollar digits */
           line-height: 1;
           opacity: 0.85;
         }
@@ -131,7 +131,7 @@ const FinancialOverviewCardsContainer = () => {
         /* Ensure proper vertical alignment in Ant Design Statistic component */
         .ant-statistic-content-value {
           display: inline-flex;
-          align-items: flex-start;
+          align-items: center; /* Changed to center alignment */
         }
 
         /* Icon alignment fixes */
