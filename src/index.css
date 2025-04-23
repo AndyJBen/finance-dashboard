@@ -103,18 +103,6 @@
   --border-radius-full: 9999px;
 }
 
-/* START: Added rules to disable touch interactions */
-/* Disable pinch & double-tap zoom on touch devices */
-html, body {
-  touch-action: pan-x pan-y;       /* allow only scrolling on X/Y, no pinch-zoom */
-  -ms-touch-action: pan-x pan-y;   /* IE/Edge prefix */
-}
-/* Prevent the iOS long-press menu on text */
-html, body {
-  -webkit-touch-callout: none;     /* iOS Safari */
-}
-/* END: Added rules to disable touch interactions */
-
 /* Apply base styles */
 body {
   font-family: var(--font-family-sans);
@@ -126,11 +114,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  /* Existing rule: Disable text selection/highlighting */
-  -webkit-user-select: none; /* Safari */
-  -moz-user-select: none; /* Firefox */
-  -ms-user-select: none; /* IE/Edge */
-  user-select: none; /* Standard */
+  /* NOTE: user-select and touch-action rules are moved to the end of the file */
 }
 
 /* Ensure box-sizing is inherited */
@@ -177,3 +161,23 @@ a:hover {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--neutral-500);
 }
+
+/* --- START: Hardened Mobile Interaction Rules --- */
+/* These rules should be at the end to ensure they override other styles */
+
+/* 1. Disable any zoom-related gesture handling */
+html, body {
+  touch-action: manipulation;       /* kills pinch & double-tap zoom */
+  -ms-touch-action: manipulation;   /* IE/Edge */
+}
+
+/* 2. Stop text selection / long-press menus on mobile */
+html, body {
+  -webkit-user-select: none;  /* Safari */
+  -moz-user-select: none;     /* Firefox */
+  -ms-user-select: none;      /* IE/Edge */
+  user-select: none;          /* standard */
+
+  -webkit-touch-callout: none; /* iOS Safari “copy/paste” menu */
+}
+/* --- END: Hardened Mobile Interaction Rules --- */
