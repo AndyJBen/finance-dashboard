@@ -32,10 +32,11 @@ const FinancialOverviewCards = () => {
   // Destructure necessary values and functions from the FinanceContext
   const {
     loadingBalance, // State indicating if the bank balance is currently being fetched/updated
+    loadingCreditCards, // 🟩 ADDED: State indicating if credit cards are loading
     error,          // Any error message from fetching data
     bankBalance,    // The current bank balance value
     updateBalance,  // Function to update the bank balance on the server
-    currentDueAmt, // 🟩 CORRECTED: Changed from totalCurrentlyDue - Total amount of unpaid bills (current month + past due)
+    currentDueAmt, // Total amount of unpaid bills (current month + past due)
     hasAnyPastDueBills, // Boolean indicating if there are any unpaid bills from previous months
     pastDueAmountFromPreviousMonths, // The total amount of only the past due bills
     totalCreditCardBalance, // The sum of balances across all credit cards
@@ -103,7 +104,7 @@ const FinancialOverviewCards = () => {
 
   // --- Derived Financial Calculations ---
   // Calculate the total amount due (unpaid bills + credit card balances)
-  const combinedTotalDue = (currentDueAmt ?? 0) + (totalCreditCardBalance ?? 0); // 🟩 CORRECTED: Changed from totalCurrentlyDue
+  const combinedTotalDue = (currentDueAmt ?? 0) + (totalCreditCardBalance ?? 0);
   // Calculate the net position (bank balance minus total due)
   const grandTotal = (bankBalance !== null) ? bankBalance - combinedTotalDue : null; // Null if balance isn't loaded
   // Determine if the net position is negative for styling
@@ -111,7 +112,9 @@ const FinancialOverviewCards = () => {
   // Determine the color for the bank balance display (red if negative/zero, green otherwise)
   const bankBalanceColor = bankBalance === null || bankBalance > 0 ? 'var(--success-500)' : 'var(--danger-500)';
   // Determine if a warning state should be shown on the "Due Balance" card
-  const showDueWarning = hasAnyPastDueBills || (totalCreditCardBalance ?? 0) > 0;
+  // Note: We check `currentDueAmt` here instead of `hasAnyPastDueBills` to make the card red
+  // if there are *any* unpaid bills contributing to the due amount, not just past due ones.
+  const showDueWarning = (currentDueAmt ?? 0) > 0 || (totalCreditCardBalance ?? 0) > 0;
   // --- End Derived Financial Calculations ---
 
   // --- Subtext Generation for "Due Balance" Card ---
@@ -119,6 +122,7 @@ const FinancialOverviewCards = () => {
   const generateDueSubtext = () => {
     const hasCCBalance = (totalCreditCardBalance ?? 0) > 0;
     // Format the past due and credit card amounts for display
+    // Use pastDueAmountFromPreviousMonths specifically for the subtext label
     const pastDueFormatted = formatCurrency(pastDueAmountFromPreviousMonths);
     const ccBalanceFormatted = formatCurrency(totalCreditCardBalance);
     let subtext = ''; // Initialize empty subtext
@@ -126,6 +130,7 @@ const FinancialOverviewCards = () => {
     // Generate different text based on whether it's mobile or desktop view
     if (isMobile) {
       // Mobile view: Use shorter, more concise text
+      // Only show "Past" part if there are actual past due bills
       if (hasAnyPastDueBills && hasCCBalance) {
         subtext = `${pastDueFormatted} Past | ${ccBalanceFormatted} CC`;
       } else if (hasAnyPastDueBills) {
@@ -135,6 +140,7 @@ const FinancialOverviewCards = () => {
       }
     } else {
       // Desktop view: Use the original, slightly more descriptive text
+      // Only show "Bill Prep" part if there are actual past due bills
       if (hasAnyPastDueBills && hasCCBalance) {
         subtext = `Incl. ${pastDueFormatted} in Bill Prep | ${ccBalanceFormatted} CC`;
       } else if (hasAnyPastDueBills) {
@@ -165,7 +171,7 @@ const FinancialOverviewCards = () => {
 
   // --- Loading and Error Handling ---
   // If there's an error and data isn't loading, display an error alert
-  if (error && !loading && !loadingBalance) {
+  if (error && !loading && !loadingBalance && !loadingCreditCards) {
     return (
       <Alert
         message="Error loading financial data"
@@ -178,7 +184,8 @@ const FinancialOverviewCards = () => {
   }
 
   // Determine the overall loading state for the component
-  const isComponentLoading = loading || loadingBalance;
+  // 🟩 CORRECTED: Include loadingCreditCards in the check
+  const isComponentLoading = loading || loadingBalance || loadingCreditCards;
   // Choose the icon for the "Due Balance" card based on whether there's a warning state
   const dueCardIcon = showDueWarning ? <IconFlagFilled size={isMobile ? 18 : 22} /> : <IconCircleCheck size={isMobile ? 16 : 18} />;
   // --- End Loading and Error Handling ---
@@ -504,3 +511,4 @@ const FinancialOverviewCards = () => {
 };
 
 export default FinancialOverviewCards; // Export the component
+//> END finance-app/src/components/FinancialSummary/FinancialOverviewCards.jsx
