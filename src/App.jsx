@@ -1,11 +1,9 @@
 // src/App.jsx
-// Lifted state for EditBillModal, added handlers, and context access.
+import React, { useState, useContext, useEffect } from 'react'; // Added useEffect
+import { Layout, Row, Col, Typography, Space, Grid, ConfigProvider, theme } from 'antd'; // Added ConfigProvider and theme
+import { FinanceContext } from './contexts/FinanceContext';
 
-import React, { useState, useContext } from 'react'; // Added useContext
-import { Layout, Row, Col, Typography, Space, Grid } from 'antd';
-import { FinanceContext } from './contexts/FinanceContext'; // Import context
-
-// Core pages/components
+// Core pages/components imports remain the same
 import BillsList            from './components/BillsList/BillsList';
 import UpcomingPayments     from './components/RecentActivity/UpcomingPayments';
 import ActivityFeed         from './components/RecentActivity/ActivityFeed';
@@ -17,78 +15,87 @@ import PastDuePayments      from './components/RecentActivity/PastDuePayments';
 import AppFooter            from './components/Footer/Footer';
 import ChartsPage           from './components/ChartsPage/ChartsPage';
 import BottomNavBar         from './components/Navigation/BottomNavBar';
-// Import the modal component itself
 import EditBillModal        from './components/BillsList/EditBillModal';
-
 
 const { Content } = Layout;
 const { Title }   = Typography;
 const { useBreakpoint } = Grid;
+const { darkAlgorithm, defaultAlgorithm } = theme;
 
 function MyApp() {
   const [selectedMenuKey, setSelected] = useState('dashboard');
   const screens = useBreakpoint();
   const isMobileView = !screens.md;
+  
+  // Dark mode state
+  const [isDarkMode, setIsDarkMode] = useState(
+    localStorage.getItem('darkMode') === 'true' || false
+  );
+  
+  // Save dark mode preference to localStorage
+  useEffect(() => {
+    localStorage.setItem('darkMode', isDarkMode);
+    
+    // Optional: update CSS variables or body class for components that don't use Ant Design theme
+    if (isDarkMode) {
+      document.body.classList.add('dark-mode');
+    } else {
+      document.body.classList.remove('dark-mode');
+    }
+  }, [isDarkMode]);
 
   // --- State Lifted Up for EditBillModal ---
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
-  const [editingBill, setEditingBill] = useState(null); // null for Add, bill object for Edit
+  const [editingBill, setEditingBill] = useState(null);
 
   // --- Get Context Functions for Modal Submit ---
-  // Ensure FinanceProvider wraps this component in main.jsx or index.js
   const financeContext = useContext(FinanceContext);
-   // Add checks to ensure context is loaded before destructuring
-   const addBill = financeContext ? financeContext.addBill : () => console.error("FinanceContext not available for addBill");
-   const updateBill = financeContext ? financeContext.updateBill : () => console.error("FinanceContext not available for updateBill");
+  const addBill = financeContext ? financeContext.addBill : () => console.error("FinanceContext not available for addBill");
+  const updateBill = financeContext ? financeContext.updateBill : () => console.error("FinanceContext not available for updateBill");
 
+  // Toggle dark mode handler
+  const toggleDarkMode = () => {
+    setIsDarkMode(!isDarkMode);
+  };
 
-  // --- Modal Handlers ---
+  // --- Modal Handlers --- (Unchanged)
   const handleOpenAddBillModal = () => {
-    setEditingBill(null); // Ensure it's in 'Add' mode
+    setEditingBill(null);
     setIsEditModalVisible(true);
   };
 
   const handleOpenEditBillModal = (billRecord) => {
-    setEditingBill(billRecord); // Set the bill to edit
+    setEditingBill(billRecord);
     setIsEditModalVisible(true);
   };
 
   const handleModalClose = () => {
     setIsEditModalVisible(false);
-    setEditingBill(null); // Reset editing state on close
+    setEditingBill(null);
   };
 
   const handleModalSubmit = async (values) => {
     let success = false;
     try {
         if (editingBill) {
-          // Update existing bill
           if (updateBill) {
-              success = await updateBill(editingBill, values); // Pass editingBill object
+              success = await updateBill(editingBill, values);
           }
         } else {
-          // Add new bill
           if (addBill) {
               success = await addBill(values);
           }
         }
 
         if (success) {
-          handleModalClose(); // Close modal on successful add/update
+          handleModalClose();
         } else {
-            // Optional: Add specific error message if add/update function returns false/error
             console.error("Failed to submit bill via modal.");
-            // Consider showing an Ant Design message.error here
         }
     } catch (error) {
         console.error("Error submitting bill modal:", error);
-        // Show error message to user
-        // message.error("An error occurred while saving the bill.");
     }
-    // Error handling/messaging is likely within addBill/updateBill in context
   };
-  // --- End Modal Handlers ---
-
 
   const SIDEBAR_WIDTH = 240;
   const marginLeft = isMobileView ? 0 : SIDEBAR_WIDTH;
@@ -97,9 +104,24 @@ function MyApp() {
     if (key !== 'add') {
         setSelected(key === 'account' ? 'settings' : key);
     }
-    // The 'add' button click is handled directly by handleOpenAddBillModal passed to BottomNavBar
   };
 
+  // Create Ant Design theme with proper color algorithm
+  const antTheme = {
+    algorithm: isDarkMode ? darkAlgorithm : defaultAlgorithm,
+    token: {
+      colorPrimary: '#52c41a', // Your primary green color
+      borderRadius: 6,
+    },
+    components: {
+      Card: {
+        colorBgContainer: isDarkMode ? '#1f1f1f' : '#ffffff',
+      },
+      Layout: {
+        colorBgBody: isDarkMode ? '#141414' : 'var(--neutral-100)',
+      },
+    },
+  };
 
   const renderContent = () => {
     switch (selectedMenuKey) {
@@ -111,8 +133,8 @@ function MyApp() {
               <div style={{ marginTop: 24 }}>
                 <CombinedBillsOverview
                   style={{ height: '100%' }}
-                  onEditBill={handleOpenEditBillModal} // Pass handler for editing
-                  onAddBill={handleOpenAddBillModal} // Pass handler for adding via dropdown
+                  onEditBill={handleOpenEditBillModal}
+                  onAddBill={handleOpenAddBillModal}
                 />
               </div>
             </Col>
@@ -128,13 +150,12 @@ function MyApp() {
         );
 
       case 'bills':
-        // BillsList might also need onEditBill and onAddBill if it has edit/add buttons
         return <BillsList onEditBill={handleOpenEditBillModal} onAddBill={handleOpenAddBillModal} />;
 
       case 'reports':
         return <ChartsPage />;
 
-      case 'settings': // Corresponds to 'account' key
+      case 'settings':
         return <Title level={3}>Account/Settings (Placeholder)</Title>;
 
       default:
@@ -146,60 +167,56 @@ function MyApp() {
       padding: 'var(--space-24)',
       margin: 0,
       flexGrow: 1,
-      paddingBottom: isMobileView ? '80px' : 'var(--space-24)' // Add space for bottom nav
+      paddingBottom: isMobileView ? '80px' : 'var(--space-24)'
   };
 
   return (
-    <Layout style={{ minHeight: '100vh' }}>
-      {!isMobileView && (
-          <Sidebar
-            selectedKey={selectedMenuKey}
-            onSelect={handleSelect}
-            width={SIDEBAR_WIDTH}
-          />
-      )}
-
-      <Layout
-        style={{
-          marginLeft,
-          transition: 'margin-left 0.2s',
-          minHeight: '100vh',
-          overflowY: 'auto',
-          overflowX: 'hidden',
-          overscrollBehaviorY: 'contain',
-          display: 'flex',
-          flexDirection: 'column',
-          backgroundColor: 'var(--neutral-100)',
-        }}
-      >
-        <Content style={contentStyle}>
-          {renderContent()}
-        </Content>
-        {/* Footer might be visually hidden by BottomNavBar on mobile */}
-        {/* Consider conditionally rendering Footer or adjusting layout further */}
-        <AppFooter />
-      </Layout>
-
-      {isMobileView && (
-          <BottomNavBar
+    <ConfigProvider theme={antTheme}>
+      <Layout style={{ minHeight: '100vh' }}>
+        {!isMobileView && (
+            <Sidebar
               selectedKey={selectedMenuKey}
               onSelect={handleSelect}
-              // Pass the specific handler for the add button
-              onAddClick={handleOpenAddBillModal}
-          />
-      )}
+              width={SIDEBAR_WIDTH}
+            />
+        )}
 
-      {/* Render EditBillModal globally, controlled by App state */}
-      {/* Ensure EditBillModal is correctly imported */}
-      {isEditModalVisible && (
-          <EditBillModal
-              open={isEditModalVisible}
-              onCancel={handleModalClose}
-              onSubmit={handleModalSubmit}
-              initialData={editingBill} // Pass null for Add, bill object for Edit
-          />
-      )}
-    </Layout>
+        <Layout
+          style={{
+            marginLeft,
+            transition: 'margin-left 0.2s',
+            minHeight: '100vh',
+            overflowY: 'auto',
+            overflowX: 'hidden',
+            overscrollBehaviorY: 'contain',
+            display: 'flex',
+            flexDirection: 'column',
+          }}
+        >
+          <Content style={contentStyle}>
+            {renderContent()}
+          </Content>
+          <AppFooter isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
+        </Layout>
+
+        {isMobileView && (
+            <BottomNavBar
+                selectedKey={selectedMenuKey}
+                onSelect={handleSelect}
+                onAddClick={handleOpenAddBillModal}
+            />
+        )}
+
+        {isEditModalVisible && (
+            <EditBillModal
+                open={isEditModalVisible}
+                onCancel={handleModalClose}
+                onSubmit={handleModalSubmit}
+                initialData={editingBill}
+            />
+        )}
+      </Layout>
+    </ConfigProvider>
   );
 }
 

@@ -59,3 +59,35 @@
       vertical-align: middle;
       margin-right: var(--space-8); /* Space after icon */
   }
+  css/* src/components/Footer/Footer.css */
+.app-footer {
+  padding: 12px 24px;
+  background-color: var(--bg-color, #fff);
+  border-top: 1px solid var(--border-color, #f0f0f0);
+}
+
+/* Dark mode variables */
+body.dark-mode {
+  --bg-color: #1f1f1f;
+  --border-color: #303030;
+  --text-color: rgba(255, 255, 255, 0.85);
+  --secondary-text-color: rgba(255, 255, 255, 0.45);
+  
+  /* Add more custom variables as needed */
+  color-scheme: dark;
+}
+
+body {
+  --bg-color: #ffffff;
+  --border-color: #f0f0f0;
+  --text-color: rgba(0, 0, 0, 0.85);
+  --secondary-text-color: rgba(0, 0, 0, 0.45);
+  
+  /* Add more custom variables as needed */
+  color-scheme: light;
+}
+
+/* Optional: Add transition for smooth theme switching */
+body, .app-footer {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
