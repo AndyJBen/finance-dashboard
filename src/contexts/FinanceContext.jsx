@@ -104,18 +104,19 @@ export const FinanceProvider = ({ children }) => {
   const goToPreviousMonth = () => setDisplayedMonth(m => m.subtract(1, 'month').startOf('month'));
   const goToNextMonth     = () => setDisplayedMonth(m => m.add(1, 'month').startOf('month'));
 
-  // Balance update function
+  // Balance update function (used by BankBalanceCard and now by updateBill)
   const updateBalance = useCallback(async (newData) => {
     console.log('[FinanceContext] Attempting to update balance:', newData);
     setLoadingBalance(true); // Indicate loading during update
     try {
       const updated = await apiUpdateBankBalance(newData);
       setBankBalance(updated.balance); // Update local state
-      message.success('Bank balance updated.');
+      // message.success('Bank balance updated.'); // Avoid double messages if called from updateBill
       return updated; // Return updated data
     } catch (err) {
       console.error('[FinanceContext] Failed to update balance:', err);
       message.error(`Failed to update balance: ${err.message}`);
+      // If update fails, should we revert local state? For now, no.
       return null; // Indicate failure
     } finally {
       setLoadingBalance(false); // Finish loading
@@ -139,23 +140,59 @@ export const FinanceProvider = ({ children }) => {
     }
   };
 
-  const updateBill = async (orig, upd) => {
-    console.log(`[FinanceContext] Attempting to update bill ID ${orig.id}:`, upd);
-    // No loading state change here
+  // 🟩 MODIFIED: updateBill now also updates bank balance
+  const updateBill = async (originalBillData, updatedBillFields) => {
+    console.log(`[FinanceContext] Attempting to update bill ID ${originalBillData.id}:`, updatedBillFields);
+
+    // Determine if the 'isPaid' status is changing
+    const isPaidStatusChanging = updatedBillFields.hasOwnProperty('isPaid');
+    const newIsPaidStatus = updatedBillFields.isPaid;
+    const wasPaid = originalBillData.isPaid;
+
     try {
-      const updated = await apiUpdateBill(orig.id, upd);
-      message.success(`Bill "${updated.name}" updated.`);
-      // Refresh bills for the current view after updating
-      // This ensures recurring bill changes (like next instance creation) are reflected
+      // 1. Update the bill status in the backend
+      const updatedBill = await apiUpdateBill(originalBillData.id, updatedBillFields);
+      message.success(`Bill "${updatedBill.name}" updated.`);
+
+      // 2. If 'isPaid' status changed, update the bank balance
+      if (isPaidStatusChanging && newIsPaidStatus !== wasPaid) {
+        const billAmount = Number(updatedBill.amount); // Use amount from the updated bill
+
+        if (isNaN(billAmount)) {
+          console.error(`[FinanceContext] Invalid bill amount (${updatedBill.amount}) for bill ID ${updatedBill.id}. Cannot update balance.`);
+          message.error('Could not update balance due to invalid bill amount.');
+        } else if (bankBalance === null) {
+            console.error('[FinanceContext] Bank balance is null. Cannot update balance automatically.');
+            message.warn('Bank balance not loaded, could not update automatically.');
+        } else {
+          let newBalance;
+          if (newIsPaidStatus === true) { // Marked as Paid
+            newBalance = bankBalance - billAmount;
+            console.log(`[FinanceContext] Bill ${updatedBill.id} marked PAID. Deducting ${billAmount}. New balance: ${newBalance}`);
+          } else { // Marked as Unpaid
+            newBalance = bankBalance + billAmount;
+            console.log(`[FinanceContext] Bill ${updatedBill.id} marked UNPAID. Adding back ${billAmount}. New balance: ${newBalance}`);
+          }
+
+          // Call the existing updateBalance function (which handles API call and state update)
+          // Use await to ensure it completes, but don't block return if it fails
+          // Error handling/messaging is inside updateBalance
+          await updateBalance({ balance: newBalance });
+        }
+      }
+
+      // 3. Refresh the bills list to reflect changes (including potential recurring updates)
       await loadBillsForMonth(displayedMonth);
-      return updated;
+      return updatedBill; // Return the updated bill data
+
     } catch (err) {
-      console.error(`[FinanceContext] Failed to update bill ID ${orig.id}:`, err);
+      console.error(`[FinanceContext] Failed to update bill ID ${originalBillData.id}:`, err);
       message.error(`Failed to update bill: ${err.message}`);
-      // Optionally, revert optimistic update here if needed
-      return null;
+      // Consider reverting optimistic UI updates if they were implemented elsewhere
+      return null; // Indicate failure
     }
   };
+
 
   const deleteBill = async (id) => {
     console.log(`[FinanceContext] Attempting to delete bill ID ${id}`);
@@ -257,7 +294,7 @@ export const FinanceProvider = ({ children }) => {
       // await loadCreditCards();
     }
     return success; // Return success status
-  }, [creditCards]); // Dependency on creditCards to have the original state for revert
+  }, [creditCards, loadCreditCards]); // Added loadCreditCards dependency
 
   // --- Derived Values (Calculated on every render) ---
   // Ensure bills is always an array, even if loading fails
@@ -293,15 +330,15 @@ export const FinanceProvider = ({ children }) => {
   const totalCCBalance = safeCreditCards.reduce((sum, c) => sum + Number(c.balance || 0), 0);
 
   // --- DEBUG LOGGING ---
-  console.log('[FinanceContext] --- Context Value Calculation ---');
-  console.log('[FinanceContext] Bills State:', bills); // Log raw bills state
-  console.log('[FinanceContext] Credit Cards State:', creditCards); // Log raw credit cards state
-  console.log('[FinanceContext] Calculated Past Due Amount:', pastDueAmt);
-  console.log('[FinanceContext] Calculated Unpaid This Month Amount:', unpaidThisMonthAmt);
-  console.log('[FinanceContext] Calculated currentDueAmt (Unpaid This Month + Past Due):', currentDueAmt);
-  console.log('[FinanceContext] Calculated totalCCBalance:', totalCCBalance);
-  console.log('[FinanceContext] Loading states:', { loading, loadingBalance, loadingCreditCards });
-  console.log('[FinanceContext] --- End Context Value Calculation ---');
+  // console.log('[FinanceContext] --- Context Value Calculation ---');
+  // console.log('[FinanceContext] Bills State:', bills); // Log raw bills state
+  // console.log('[FinanceContext] Credit Cards State:', creditCards); // Log raw credit cards state
+  // console.log('[FinanceContext] Calculated Past Due Amount:', pastDueAmt);
+  // console.log('[FinanceContext] Calculated Unpaid This Month Amount:', unpaidThisMonthAmt);
+  // console.log('[FinanceContext] Calculated currentDueAmt (Unpaid This Month + Past Due):', currentDueAmt);
+  // console.log('[FinanceContext] Calculated totalCCBalance:', totalCCBalance);
+  // console.log('[FinanceContext] Loading states:', { loading, loadingBalance, loadingCreditCards });
+  // console.log('[FinanceContext] --- End Context Value Calculation ---');
   // --- END DEBUG LOGGING ---
 
 
@@ -322,9 +359,9 @@ export const FinanceProvider = ({ children }) => {
       goToPreviousMonth,
       goToNextMonth,
       addBill,
-      updateBill,
+      updateBill, // Now includes balance update logic
       deleteBill,
-      updateBalance,
+      updateBalance, // Still exposed for direct balance edits
       createCreditCard,
       editCreditCard,
       removeCreditCard,
