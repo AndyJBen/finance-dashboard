@@ -1,318 +1,480 @@
 // src/components/FinancialSummary/FinancialOverviewCards.jsx
-// COMPLETE FILE CODE
-// Corrected version using Ant Design's useBreakpoint hook for responsiveness.
-
 import React, { useContext, useState, useEffect } from 'react';
 import {
-    Card, Row, Col, Spin, Alert, Typography, Space, Statistic,
-    InputNumber, Button, Tooltip, message, Grid // Ensure Grid is imported
+  Card, Row, Col, Spin, Alert, Typography, Space, Statistic,
+  InputNumber, Button, Tooltip, message
 } from 'antd';
 import {
-    IconBuildingBank,
-    IconCoinFilled,
-    IconFlagFilled,
-    IconCircleCheck,
-    IconEdit,
-    IconX,
-    IconCreditCard // Keep existing icons
+  IconBuildingBank,
+  IconCoinFilled,
+  IconFlagFilled,
+  IconCircleCheck,
+  IconEdit,
+  IconX
 } from '@tabler/icons-react';
-// Ensure the path to your context is correct
 import { FinanceContext } from '../../contexts/FinanceContext';
 
 const { Text } = Typography;
-const { useBreakpoint } = Grid; // Import hook
 
 // Helper function to format currency
 const formatCurrency = (value) => {
-    const number = Number(value) || 0;
-    // Ensure value is a number before formatting
-    if (isNaN(number)) {
-        return '$0.00'; // Or some placeholder for invalid input
-    }
-    return number.toLocaleString('en-US', {
-        style: 'currency',
-        currency: 'USD',
-    });
+  const number = Number(value) || 0;
+  return number.toLocaleString('en-US', {
+    style: 'currency',
+    currency: 'USD',
+  });
 };
-
 
 const FinancialOverviewCards = () => {
   const {
-      loadingBalance,
-      error,
-      bankBalance,
-      updateBalance,
-      totalCurrentlyDue,
-      hasAnyPastDueBills,
-      pastDueAmountFromPreviousMonths,
-      totalCreditCardBalance,
-      loading, // This might be a general loading state, ensure it's distinct if needed
+    loadingBalance,
+    error,
+    bankBalance,
+    updateBalance,
+    totalCurrentlyDue,
+    hasAnyPastDueBills,
+    pastDueAmountFromPreviousMonths,
+    totalCreditCardBalance,
+    loading,
   } = useContext(FinanceContext);
 
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(0);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
-  // --- Breakpoint Detection ---
-  const screens = useBreakpoint();
-  // Determine if we are on a small screen (xs or sm are typically mobile/small tablet)
-  const isSmallScreen = !screens.md; // True if screen is smaller than md (768px)
-  // --- End Breakpoint Detection ---
-
-
-  // Effect to initialize editValue when bankBalance loads or editing stops
+  // Handle window resize
   useEffect(() => {
-    // Only update if not editing and bankBalance is a valid number
-    if (!isEditing && typeof bankBalance === 'number' && !isNaN(bankBalance)) {
-         setEditValue(bankBalance);
-    }
-    // Reset editValue if bankBalance becomes null while not editing
-    else if (!isEditing && bankBalance === null) {
-         setEditValue(0);
-    }
-  }, [bankBalance, isEditing]);
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
 
-  // --- Event Handlers ---
-  const handleEditClick = () => {
-      // Initialize with current balance or 0 if null/undefined
-      setEditValue(typeof bankBalance === 'number' ? bankBalance : 0);
-      setIsEditing(true);
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  // Update edit value when bank balance changes
+  useEffect(() => {
+    if (typeof bankBalance === 'number' && !isEditing) { 
+      setEditValue(bankBalance); 
+    }
+    if (bankBalance !== null && editValue === 0 && !isEditing) { 
+      setEditValue(bankBalance); 
+    }
+  }, [bankBalance, isEditing, editValue]);
+  
+  // Form handlers
+  const handleEditClick = () => { 
+    setEditValue(bankBalance ?? 0); 
+    setIsEditing(true); 
   };
-  const handleCancelClick = () => {
-      setIsEditing(false);
-      // Optionally reset editValue to bankBalance on cancel
-      // setEditValue(typeof bankBalance === 'number' ? bankBalance : 0);
+  
+  const handleCancelClick = () => { 
+    setIsEditing(false); 
   };
+  
   const handleSaveClick = async () => {
     if (typeof editValue === 'number' && !isNaN(editValue)) {
-        // Ensure updateBalance function exists before calling
-        if (updateBalance) {
-            const result = await updateBalance({ balance: editValue });
-            // Assuming updateBalance returns truthy on success
-            if (result) {
-                setIsEditing(false);
-                message.success("Bank balance updated.");
-            } else {
-                message.error("Failed to update balance.");
-            }
-        } else {
-            console.error("updateBalance function not found in context.");
-            message.error("Error: Update function unavailable.");
-        }
-    } else {
-        message.error("Invalid balance amount entered.");
+      const result = await updateBalance({ balance: editValue });
+      if (result !== null) { 
+        setIsEditing(false); 
+      }
+    } else { 
+      message.error("Invalid balance amount entered."); 
     }
   };
-  // --- End Event Handlers ---
 
-  // --- Calculations ---
-  // Use nullish coalescing (??) for safer defaults
-  const currentTotalDue = totalCurrentlyDue ?? 0;
-  const currentCCBalance = totalCreditCardBalance ?? 0;
-  const combinedTotalDue = currentTotalDue + currentCCBalance;
-  const currentBankBalance = bankBalance ?? null; // Keep null if not loaded
-  const grandTotal = currentBankBalance !== null ? currentBankBalance - combinedTotalDue : null;
-  // --- End Calculations ---
-
-
-  // --- Responsive Styling ---
+  // Financial calculations
+  const combinedTotalDue = (totalCurrentlyDue ?? 0) + (totalCreditCardBalance ?? 0);
+  const grandTotal = (bankBalance !== null) ? bankBalance - combinedTotalDue : null;
   const grandTotalIsNegative = grandTotal !== null && grandTotal < 0;
-  // Base card styles
-  const baseCardStyle = {
-      minHeight: isSmallScreen ? '120px' : '160px', // Shorter cards on mobile
-      height: '100%', // Allow card to fill Col height
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'space-between',
-      border: 'none',
-      borderRadius: 'var(--radius-md)', // Use CSS variable if defined
-      boxShadow: 'var(--shadow-sm)' // Use CSS variable if defined
-  };
-  const cardBodyStyle = {
-      padding: isSmallScreen ? '12px' : 'var(--space-20, 20px)', // Reduced padding on mobile
-      flexGrow: 1,
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'space-between'
-  };
-
-  // Net Position Card Styles
-  const grandTotalCardStyle = {
-      ...baseCardStyle,
-      background: grandTotal === null ? '#f0f0f0' : grandTotalIsNegative ? 'linear-gradient(145deg, var(--danger-700, #a50f15), var(--danger-500, #cf1322))' : 'linear-gradient(145deg, var(--success-500, #52c41a), var(--success-700, #389e0d))',
-      color: 'white',
-  };
-  const grandTotalTextStyle = { fontSize: isSmallScreen ? '0.75rem' : '0.875rem', fontWeight: 500, color: 'rgba(255, 255, 255, 0.9)' };
-  const grandTotalIconStyle = { opacity: 0.9, color: 'white' }; // Size set directly on icon
-  const grandTotalValueStyle = { color: 'white', fontSize: isSmallScreen ? '1.5rem' : '1.75rem', fontWeight: 700, lineHeight: 1.2, marginBottom: 0 };
-
-  // Due Balance Card Styles
-  const showDueWarning = hasAnyPastDueBills || currentCCBalance > 0;
-  const dueCardStyle = {
-      ...baseCardStyle,
-      background: showDueWarning ? 'linear-gradient(145deg, var(--danger-500, #cf1322), var(--danger-700, #a50f15))' : 'linear-gradient(145deg, var(--success-500, #52c41a), var(--success-700, #389e0d))',
-      color: 'white',
-  };
-  // Conditionally render icon component with size prop
-  const dueCardIcon = showDueWarning
-      ? <IconFlagFilled size={isSmallScreen ? 18 : 22} style={{ color: 'white' }} />
-      : <IconCircleCheck size={isSmallScreen ? 18 : 22} style={{ color: 'white' }} />;
-  const dueCardTextStyle = { fontSize: isSmallScreen ? '0.75rem' : '0.875rem', fontWeight: 500, color: 'rgba(255, 255, 255, 0.9)' };
-  const dueCardValueStyle = { color: 'white', fontSize: isSmallScreen ? '1.5rem' : '1.75rem', fontWeight: 700, lineHeight: 1.2, marginBottom: 0 };
-  const dueSubtextStyle = { ...dueCardTextStyle, fontSize: isSmallScreen ? '0.65rem' : '0.75rem', opacity: 0.9, marginTop: '4px', display: 'block' };
-
-  // Bank Balance Card Styles
-  const bankBalanceColor = currentBankBalance === null || currentBankBalance >= 0 ? 'var(--success-600, #389e0d)' : 'var(--danger-600, #cf1322)';
-  const whiteCardStyle = { ...baseCardStyle, background: 'white' };
-  const whiteCardTextStyle = { fontSize: isSmallScreen ? '0.75rem' : '0.875rem', fontWeight: 500, color: 'var(--neutral-700, #4a5568)' };
-  const whiteCardIconStyle = { color: 'var(--neutral-500, #718096)' }; // Size set directly on icon
-  const whiteCardValueBaseStyle = { fontSize: isSmallScreen ? '1.5rem' : '1.75rem', fontWeight: 700, lineHeight: 1.2, marginBottom: 0 };
-  const whiteCardEditButtonStyle = { color: 'var(--neutral-600, #4a5568)' };
-  const editButtonSize = isSmallScreen ? 14 : 16; // Size for edit/cancel/save icons
-
-  // --- End Responsive Styling ---
-
-
-  // --- Subtext Generation Logic ---
+  const bankBalanceColor = bankBalance === null || bankBalance > 0 ? 'var(--success-500)' : 'var(--danger-500)';
+  const showDueWarning = hasAnyPastDueBills || (totalCreditCardBalance ?? 0) > 0;
+  
+  // Due Balance subtext
   const generateDueSubtext = () => {
-      const hasCCBalance = currentCCBalance > 0;
-      const currentPastDue = pastDueAmountFromPreviousMonths ?? 0;
-      const pastDueFormatted = formatCurrency(currentPastDue);
-      const ccBalanceFormatted = formatCurrency(currentCCBalance);
-      let subtextParts = [];
-
-      if (hasAnyPastDueBills && currentPastDue > 0) {
-          subtextParts.push(`${pastDueFormatted} Past`);
+    const hasCCBalance = (totalCreditCardBalance ?? 0) > 0;
+    const pastDueFormatted = formatCurrency(pastDueAmountFromPreviousMonths);
+    const ccBalanceFormatted = formatCurrency(totalCreditCardBalance);
+    let subtext = '';
+    
+    if (isMobile) {
+      // Mobile view - shorter text
+      if (hasAnyPastDueBills && hasCCBalance) { 
+        subtext = `${pastDueFormatted} Past | ${ccBalanceFormatted} CC`; 
+      } else if (hasAnyPastDueBills) { 
+        subtext = `${pastDueFormatted} Past`; 
+      } else if (hasCCBalance) { 
+        subtext = `${ccBalanceFormatted} CC`; 
       }
-      if (hasCCBalance) {
-          subtextParts.push(`${ccBalanceFormatted} CC`);
+    } else {
+      // Desktop view - original text
+      if (hasAnyPastDueBills && hasCCBalance) { 
+        subtext = `Incl. ${pastDueFormatted} in Bill Prep | ${ccBalanceFormatted} CC`; 
+      } else if (hasAnyPastDueBills) { 
+        subtext = `Incl. ${pastDueFormatted} in Bill Prep`; 
+      } else if (hasCCBalance) { 
+        subtext = `Incl. ${ccBalanceFormatted} CC`; 
       }
-
-      const subtext = subtextParts.join(' | '); // Join with separator
-
-      if (subtext) {
-          return ( <Text style={dueSubtextStyle}>{subtext}</Text> );
-      }
-      return null;
+    }
+    
+    if (subtext) {
+      return (
+        <Text style={{
+          fontSize: isMobile ? '0.65rem' : '0.75rem',
+          fontWeight: 500,
+          color: 'rgba(255, 255, 255, 0.9)',
+          opacity: 0.9,
+          marginTop: '4px',
+          display: 'block'
+        }}>
+          {subtext}
+        </Text>
+      );
+    }
+    return null;
   };
-  // --- End Subtext Generation Logic ---
 
-
-  // --- Render Logic ---
-  // Display error only if not loading
+  // Handle error state
   if (error && !loading && !loadingBalance) {
-    return <Alert message="Error loading financial data" description={String(error)} type="error" showIcon style={{ marginBottom: 'var(--space-24, 24px)' }} />;
+    return (
+      <Alert 
+        message="Error loading financial data" 
+        description={error} 
+        type="error" 
+        showIcon 
+        style={{ marginBottom: 'var(--space-24)' }} 
+      />
+    );
   }
 
-  // Unified loading state for the whole component
   const isComponentLoading = loading || loadingBalance;
+  const dueCardIcon = showDueWarning ? <IconFlagFilled size={isMobile ? 18 : 22} /> : <IconCircleCheck size={isMobile ? 16 : 18} />;
+
+  // Desktop styling
+  const desktopStyles = {
+    // Card layouts
+    cardHeight: '160px',
+    cardPadding: 'var(--space-20)',
+    gutter: [16, 16],
+    marginBottom: 'var(--space-24)',
+    spaceMargin: 'var(--space-16)',
+    
+    // Typography
+    fontSize: {
+      title: '0.875rem',
+      value: '1.75rem',
+      subtext: '0.75rem'
+    },
+    
+    // Icons
+    iconSize: {
+      standard: 22,
+      small: 18,
+      edit: 16
+    }
+  };
+  
+  // Mobile styling overrides
+  const mobileStyles = {
+    // Card layouts
+    cardHeight: '100px',
+    cardPadding: '12px',
+    gutter: [8, 8],
+    marginBottom: 8,
+    spaceMargin: 8,
+    
+    // Typography
+    fontSize: {
+      title: '0.75rem',
+      value: '1.25rem',
+      subtext: '0.65rem'
+    },
+    
+    // Icons
+    iconSize: {
+      standard: 18,
+      small: 16,
+      edit: 14
+    },
+    
+    // Buttons
+    editButtonStyle: {
+      padding: '0px',
+      minWidth: '24px',
+      height: '24px'
+    }
+  };
+  
+  // Apply correct styles based on device
+  const styles = isMobile ? mobileStyles : desktopStyles;
 
   return (
-    // Use Spin wrapper around the Row for better loading indication
     <Spin spinning={isComponentLoading} size="large" tip="Loading Overview...">
-      <Row gutter={[isSmallScreen ? 8 : 16, 16]} style={{ marginBottom: 'var(--space-24, 24px)' }}>
-
-          {/* Card 1: Net Position */}
-          {/* Set xs={8} to make it 1/3 width on mobile */}
-          <Col xs={8} md={8} style={{ display: 'flex' }}> {/* Added display flex to Col */}
-            <Card style={grandTotalCardStyle} bodyStyle={cardBodyStyle}>
-              {/* Top Section */}
-              <div>
-                  <Space align="center" style={{ marginBottom: 'var(--space-12, 12px)' }}>
-                      <IconCoinFilled size={isSmallScreen ? 18 : 22} style={grandTotalIconStyle} />
-                      <Text style={grandTotalTextStyle}> Net Position </Text>
-                  </Space>
-              </div>
-              {/* Bottom Section */}
-              <div>
-                  <Statistic
-                      value={grandTotal ?? 0} // Show 0 if null while not loading
-                      precision={2}
-                      valueStyle={grandTotalValueStyle}
-                      formatter={formatCurrency}
-                  />
-              </div>
-            </Card>
-          </Col>
-
-          {/* Card 2: Due Balance */}
-          {/* Set xs={8} to make it 1/3 width on mobile */}
-          <Col xs={8} md={8} style={{ display: 'flex' }}> {/* Added display flex to Col */}
-            <Card style={dueCardStyle} bodyStyle={cardBodyStyle}>
-              {/* Top Section */}
-              <div>
-                <Space align="center" style={{ marginBottom: 'var(--space-12, 12px)' }}>
-                    {/* Render the icon directly */}
-                    {dueCardIcon}
-                    <Text style={dueCardTextStyle}> Due Balance </Text>
-                </Space>
-              </div>
-              {/* Bottom Section */}
-              <div>
-                <Statistic
-                    value={combinedTotalDue}
-                    precision={2}
-                    valueStyle={dueCardValueStyle}
-                    formatter={formatCurrency}
+      <Row gutter={styles.gutter} style={{ marginBottom: styles.marginBottom }}>
+        {/* Card 1: Net Position */}
+        <Col xs={24} md={8}>
+          <Card 
+            style={{ 
+              background: grandTotal === null 
+                ? 'white' 
+                : grandTotalIsNegative 
+                  ? 'linear-gradient(145deg, var(--danger-700), #A51F49)' 
+                  : 'linear-gradient(145deg, var(--success-500), var(--success-700))',
+              color: 'white',
+              minHeight: styles.cardHeight,
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              border: 'none',
+              marginBottom: isMobile ? 8 : undefined
+            }} 
+            styles={{ 
+              body: { 
+                padding: styles.cardPadding,
+                flexGrow: 1,
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+                zIndex: 1
+              } 
+            }}
+          >
+            <div>
+              <Space align="center" style={{ marginBottom: styles.spaceMargin }}>
+                <IconCoinFilled 
+                  size={styles.iconSize.standard}
+                  style={{ opacity: 0.9, color: 'white' }}
                 />
-                {generateDueSubtext()}
-              </div>
-            </Card>
-          </Col>
+                <Text style={{ 
+                  fontSize: styles.fontSize.title,
+                  fontWeight: 500,
+                  color: 'rgba(255, 255, 255, 0.9)'
+                }}>
+                  Net Position
+                </Text>
+              </Space>
+            </div>
+            <div>
+              <Statistic
+                value={isComponentLoading ? "-" : (grandTotal ?? 0)}
+                precision={2}
+                valueStyle={{
+                  color: 'white',
+                  fontSize: styles.fontSize.value,
+                  fontWeight: 700,
+                  lineHeight: 1.2,
+                  marginBottom: 0
+                }}
+                formatter={formatCurrency}
+              />
+            </div>
+          </Card>
+        </Col>
 
-          {/* Card 3: Current Bank Balance */}
-          {/* Set xs={8} to make it 1/3 width on mobile */}
-          <Col xs={8} md={8} style={{ display: 'flex' }}> {/* Added display flex to Col */}
-            <Card style={whiteCardStyle} bodyStyle={cardBodyStyle} >
-              {/* Top Section */}
-              <div>
-                <Space align="center" justify="space-between" style={{ width: '100%', marginBottom: 'var(--space-12, 12px)' }}>
-                    <Space align="center">
-                        <IconBuildingBank size={isSmallScreen ? 18 : 22} style={whiteCardIconStyle} />
-                        <Text style={whiteCardTextStyle}> Bank Balance </Text>
-                    </Space>
-                    {/* Edit buttons */}
-                    {!isEditing ? (
-                        <Tooltip title="Edit Balance">
-                            <Button type="text" shape="circle" icon={<IconEdit size={editButtonSize} />} onClick={handleEditClick} style={whiteCardEditButtonStyle} size="small"/>
-                        </Tooltip>
-                     ) : (
-                        <Space size="small">
-                            <Tooltip title="Save Balance">
-                                <Button type="text" shape="circle" icon={<IconCircleCheck size={editButtonSize} style={{ color: 'var(--success-500)' }} />} onClick={handleSaveClick} style={whiteCardEditButtonStyle} size="small"/>
-                            </Tooltip>
-                            <Tooltip title="Cancel Edit">
-                                <Button type="text" shape="circle" icon={<IconX size={editButtonSize} style={{ color: 'var(--danger-500)' }} />} onClick={handleCancelClick} style={whiteCardEditButtonStyle} size="small"/>
-                            </Tooltip>
-                        </Space>
-                     )}
+        {/* Card 2: Due Balance */}
+        <Col xs={24} md={8}>
+          <Card 
+            style={{ 
+              background: showDueWarning 
+                ? 'linear-gradient(145deg, var(--danger-500), var(--danger-700))' 
+                : 'linear-gradient(145deg, var(--success-500), var(--success-700))',
+              color: 'white',
+              minHeight: styles.cardHeight,
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              border: 'none',
+              marginBottom: isMobile ? 8 : undefined
+            }} 
+            styles={{ 
+              body: { 
+                padding: styles.cardPadding,
+                flexGrow: 1,
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between'
+              } 
+            }}
+          >
+            <div>
+              <Space align="center" style={{ marginBottom: styles.spaceMargin }}>
+                {React.cloneElement(dueCardIcon, { 
+                  style: { 
+                    fontSize: '1rem',
+                    opacity: 0.9,
+                    color: 'white'
+                  } 
+                })}
+                <Text style={{ 
+                  fontSize: styles.fontSize.title,
+                  fontWeight: 500,
+                  color: 'rgba(255, 255, 255, 0.9)'
+                }}>
+                  Due Balance
+                </Text>
+              </Space>
+            </div>
+            <div>
+              <Statistic
+                value={isComponentLoading ? "-" : (combinedTotalDue ?? 0)}
+                precision={2}
+                valueStyle={{
+                  color: 'white',
+                  fontSize: styles.fontSize.value,
+                  fontWeight: 700,
+                  lineHeight: 1.2,
+                  marginBottom: 0
+                }}
+                formatter={formatCurrency}
+              />
+              {!isComponentLoading && generateDueSubtext()}
+            </div>
+          </Card>
+        </Col>
+
+        {/* Card 3: Current Bank Balance */}
+        <Col xs={24} md={8}>
+          <Card 
+            style={{ 
+              background: 'white',
+              minHeight: styles.cardHeight,
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              border: 'none'
+            }} 
+            styles={{ 
+              body: { 
+                padding: styles.cardPadding,
+                flexGrow: 1,
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between'
+              } 
+            }}
+          >
+            <div>
+              <Space align="center" justify="space-between" style={{ 
+                width: '100%', 
+                marginBottom: styles.spaceMargin 
+              }}>
+                <Space align="center">
+                  <IconBuildingBank 
+                    size={styles.iconSize.standard}
+                    style={{ 
+                      fontSize: '1rem',
+                      color: '#47586d',
+                      opacity: 0.8
+                    }}
+                  />
+                  <Text style={{ 
+                    fontSize: styles.fontSize.title,
+                    fontWeight: 500,
+                    color: '#47586d'
+                  }}>
+                    Bank Balance
+                  </Text>
                 </Space>
-              </div>
-              {/* Bottom Section */}
-              <div>
+                
+                {/* Edit buttons */}
                 {!isEditing ? (
-                    <Statistic
-                        value={currentBankBalance ?? 0} // Show 0 if null while not loading
-                        precision={2}
-                        valueStyle={{...whiteCardValueBaseStyle, color: bankBalanceColor}}
-                        formatter={formatCurrency}
-                    /> )
-                : (
-                    <InputNumber
-                        value={editValue}
-                        onChange={(value) => setEditValue(value ?? 0)}
-                        formatter={(value) => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                        parser={(value) => value?.replace(/\$\s?|(,*)/g, '') ?? ''}
-                        precision={2}
-                        style={{ width: '100%' }}
-                        size={isSmallScreen ? "middle" : "large"} // Adjust size based on screen
-                        autoFocus
+                  <Tooltip title="Edit Balance">
+                    <Button 
+                      type="text" 
+                      shape="circle" 
+                      icon={<IconEdit size={styles.iconSize.edit} />} 
+                      onClick={handleEditClick} 
+                      style={{
+                        color: '#47586d',
+                        ...(isMobile ? mobileStyles.editButtonStyle : {})
+                      }} 
                     />
-                 )}
-              </div>
-            </Card>
-          </Col>
-
+                  </Tooltip>
+                ) : (
+                  <Space size="small">
+                    <Tooltip title="Save Balance">
+                      <Button 
+                        type="text" 
+                        shape="circle" 
+                        icon={<IconCircleCheck 
+                          size={styles.iconSize.edit}
+                          style={{ color: 'var(--success-500)' }} 
+                        />} 
+                        onClick={handleSaveClick} 
+                        style={{
+                          color: '#47586d',
+                          ...(isMobile ? mobileStyles.editButtonStyle : {})
+                        }} 
+                      />
+                    </Tooltip>
+                    <Tooltip title="Cancel Edit">
+                      <Button 
+                        type="text" 
+                        shape="circle" 
+                        icon={<IconX 
+                          size={styles.iconSize.edit}
+                          style={{ color: 'var(--danger-500)' }} 
+                        />} 
+                        onClick={handleCancelClick} 
+                        style={{
+                          color: '#47586d',
+                          ...(isMobile ? mobileStyles.editButtonStyle : {})
+                        }} 
+                      />
+                    </Tooltip>
+                  </Space>
+                )}
+              </Space>
+            </div>
+            <div>
+              {!isEditing ? (
+                <Statistic
+                  value={loadingBalance ? "-" : (bankBalance ?? 0)}
+                  precision={2}
+                  valueStyle={{
+                    fontSize: styles.fontSize.value,
+                    fontWeight: 700,
+                    lineHeight: 1.2,
+                    marginBottom: 0,
+                    color: bankBalanceColor
+                  }}
+                  formatter={formatCurrency}
+                />
+              ) : (
+                <InputNumber 
+                  value={editValue} 
+                  onChange={(value) => setEditValue(value ?? 0)} 
+                  formatter={(value) => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')} 
+                  parser={(value) => value?.replace(/\$\s?|(,*)/g, '') ?? ''} 
+                  precision={2} 
+                  style={{ width: '100%' }} 
+                  size={isMobile ? "middle" : "large"} 
+                  autoFocus 
+                />
+              )}
+            </div>
+          </Card>
+        </Col>
       </Row>
+      
+      {/* Mobile-specific styles */}
+      {isMobile && (
+        <style jsx global>{`
+          @media (max-width: 768px) {
+            .ant-col-xs-24 {
+              padding-left: 4px !important;
+              padding-right: 4px !important;
+            }
+            
+            .ant-card {
+              margin-bottom: 8px !important;
+              border-radius: 8px;
+            }
+          }
+        `}</style>
+      )}
     </Spin>
   );
 };
