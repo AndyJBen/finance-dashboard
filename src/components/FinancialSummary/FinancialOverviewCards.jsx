@@ -502,3 +502,5 @@ const FinancialOverviewCards = () => {
   );
   // --- End Component JSX Rendering ---
 };
+
+export default FinancialOverviewCards; // Export the component
