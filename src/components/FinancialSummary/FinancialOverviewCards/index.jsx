@@ -115,23 +115,23 @@ const FinancialOverviewCardsContainer = () => {
         .currency-wrapper {
           position: relative;
           display: inline-flex;
-          align-items: center; /* Changed to center alignment */
+          align-items: flex-start; /* Changed back to flex-start for top alignment */
         }
         
         .cents-superscript {
           font-size: 45%;
           margin-left: 2px;
           font-weight: inherit;
-          position: relative;
-          top: -25%; /* Adjusted from -40% to -25% to raise the cents */
           line-height: 1;
           opacity: 0.85;
+          vertical-align: text-top; /* Aligns with the top of the text */
+          margin-top: 1px; /* Small adjustment to line up perfectly */
         }
         
         /* Ensure proper vertical alignment in Ant Design Statistic component */
         .ant-statistic-content-value {
           display: inline-flex;
-          align-items: center; /* Changed to center alignment */
+          align-items: flex-start; /* Changed back to align at the top */
         }
 
         /* Icon alignment fixes */

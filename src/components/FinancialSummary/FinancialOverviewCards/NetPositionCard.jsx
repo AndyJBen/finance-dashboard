@@ -98,17 +98,17 @@ const NetPositionCard = ({ isMobile, styles, isComponentLoading }) => {
         .currency-wrapper {
           position: relative;
           display: inline-flex;
-          align-items: center;
+          align-items: flex-start;
         }
         
         .cents-superscript {
           font-size: 45%;
           margin-left: 2px;
           font-weight: inherit;
-          position: relative;
-          top: -25%; /* Adjusted from -40% to -25% to raise the cents */
           line-height: 1;
           opacity: 0.85;
+          vertical-align: text-top;
+          margin-top: 1px;
         }
       `}</style>
     </Col>
