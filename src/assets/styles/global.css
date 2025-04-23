@@ -5,6 +5,7 @@
     - Added overflow-x and overscroll-behavior-x to body
     - Added overscroll-behavior-y to body to prevent scrolling past top/bottom
     - Added .hide-on-mobile utility class
+    - Added DEFAULT styles for .category-tags-container (desktop)
     - Added mobile carousel styles for .category-tags-container
 */
 
@@ -339,6 +340,15 @@ main.ant-layout-content {
      background-color: var(--ant-table-row-hover-bg, var(--neutral-50)) !important;
   }
 
+/* --- Category Tags Container Styles --- */
+/* Default (Desktop) styles */
+.category-tags-container {
+    display: flex;
+    flex-wrap: wrap; /* Default wrap behavior */
+    gap: 6px; /* Default gap */
+}
+
+
 /* --- Responsive Utilities --- */
 @media (max-width: 767.98px) { /* Target typical mobile/tablet portrait breakpoint */
   .hide-on-mobile {
@@ -347,13 +357,13 @@ main.ant-layout-content {
 
   /* START: Mobile Category Carousel Styles */
   .category-tags-container {
-    display: flex; /* Ensure flex display */
+    /* Override defaults for mobile */
     flex-wrap: nowrap; /* Prevent wrapping */
     overflow-x: auto; /* Enable horizontal scrolling */
     -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
     padding-bottom: 8px; /* Add some space for the scrollbar if visible */
     margin-bottom: -8px; /* Counteract the padding-bottom visually */
-    gap: 8px; /* Adjust gap for horizontal layout */
+    gap: 8px; /* Adjust gap for horizontal layout if needed */
 
     /* Hide scrollbar for a cleaner look */
     scrollbar-width: none; /* Firefox */

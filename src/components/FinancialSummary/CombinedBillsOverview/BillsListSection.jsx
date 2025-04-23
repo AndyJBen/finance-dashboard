@@ -2,6 +2,7 @@
 // Using handleAddSingle prop for the main button click
 // Highlight: Added className="hide-on-mobile" to Dropdown.Button
 // Highlight: Added className="category-tags-container" to the div wrapping category tags for mobile carousel styling
+// Highlight: REMOVED inline style from category-tags-container div
 
 import React from 'react';
 import {
@@ -59,16 +60,17 @@ const BillsListSection = ({
                         </Dropdown.Button>
                     </div>
                  </div>
-                 {/* Category Tags Container - Apply specific class for mobile styling */}
+                 {/* Category Tags Container - Apply specific class, REMOVE inline style */}
                  <div
-                    className="category-tags-container" // Added class for mobile carousel styling
-                    style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }} // Default styles (wrap on desktop)
+                    className="category-tags-container" // Class for styling (mobile and desktop)
+                    // Removed inline style: style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}
                  >
                     {categories.map((category) => (
                         <Tag.CheckableTag
                             key={category}
                             checked={selectedCategory === category}
                             onChange={(checked) => { setSelectedCategory(checked ? category : 'All'); }}
+                            // Inline styles for individual tags are fine
                             style={{ padding: '2px 8px', borderRadius: '12px', display: 'inline-flex', alignItems: 'center', gap: '6px', cursor: 'pointer', border: '1px solid', borderColor: selectedCategory === category ? 'var(--primary-500)' : 'var(--neutral-300)', backgroundColor: selectedCategory === category ? 'var(--primary-50)' : 'var(--neutral-50)', color: selectedCategory === category ? 'var(--primary-600)' : 'var(--neutral-700)', lineHeight: '1.4', fontSize: '0.8rem' }} >
                             {/* Ensure getCategoryIcon is available and correct */}
                             {getCategoryIcon && getCategoryIcon(category)} <span>{category}</span>
