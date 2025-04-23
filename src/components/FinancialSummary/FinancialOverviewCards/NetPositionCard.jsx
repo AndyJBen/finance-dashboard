@@ -108,7 +108,7 @@ const NetPositionCard = ({ isMobile, styles, isComponentLoading }) => {
           line-height: 1;
           opacity: 0.85;
           vertical-align: text-top;
-          margin-top: 1px;
+          margin-top: 4px;
         }
       `}</style>
     </Col>

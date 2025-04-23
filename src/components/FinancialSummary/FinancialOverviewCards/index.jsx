@@ -125,7 +125,7 @@ const FinancialOverviewCardsContainer = () => {
           line-height: 1;
           opacity: 0.85;
           vertical-align: text-top; /* Aligns with the top of the text */
-          margin-top: 1px; /* Small adjustment to line up perfectly */
+          margin-top: 4px; /* Small adjustment to line up perfectly */
         }
         
         /* Ensure proper vertical alignment in Ant Design Statistic component */
