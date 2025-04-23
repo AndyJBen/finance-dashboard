@@ -1,5 +1,6 @@
 // src/components/FinancialSummary/CombinedBillsOverview/MonthlyProgressSummary.jsx
 // Adjusted Statistic layout and titles for mobile view.
+// Highlight: Changed alignItems from 'flex-start' to 'center' for the title container div to vertically center the icon, text, and badge.
 
 import React from 'react';
 import {
@@ -43,11 +44,13 @@ const MonthlyProgressSummary = ({
 
     return (
         <div style={{ marginBottom: 'var(--space-24)' }}>
-            {/* Title and Badge (No changes) */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 'var(--space-16)' }}>
-                <div>
-                     <Text strong style={{ display: 'flex', alignItems: 'center', marginBottom: 'var(--space-4)', fontSize: '1rem' }}>
-                         <IconCalendarFilled size={25} style={{ marginRight: 'var(--space-8)', color: 'var(--primary-600)' }} />
+            {/* Title and Badge - Changed alignItems to 'center' */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-16)' }}>
+                {/* Left side: Icon and Text */}
+                {/* This inner div ensures the icon and text stay together */}
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                     <IconCalendarFilled size={25} style={{ marginRight: 'var(--space-8)', color: 'var(--primary-600)', flexShrink: 0 }} />
+                     <Text strong style={{ fontSize: '1rem', lineHeight: '1.2' }}> {/* Adjusted line-height potentially */}
                          Monthly Bills Progress
                          {totalBillsInDisplayedMonth > 0 && (
                              <Text type="secondary" style={{ fontSize: '0.875rem', marginLeft: '8px' }}>
@@ -56,8 +59,9 @@ const MonthlyProgressSummary = ({
                          )}
                      </Text>
                 </div>
+                {/* Right side: Badge */}
                 {totalAmountForAllBillsInDisplayedMonth > 0 && (
-                     <Text style={{ fontSize: '0.8125rem', fontWeight: 700, color: 'var(--primary-600)', backgroundColor: 'var(--primary-100)', padding: '0.25rem 0.625rem', borderRadius: 'var(--radius-full)', whiteSpace: 'nowrap' }}>
+                     <Text style={{ fontSize: '0.8125rem', fontWeight: 700, color: 'var(--primary-600)', backgroundColor: 'var(--primary-100)', padding: '0.25rem 0.625rem', borderRadius: 'var(--radius-full)', whiteSpace: 'nowrap', marginLeft: 'var(--space-8)' }}>
                          {percentAmountPaid}% Paid
                      </Text>
                 )}
