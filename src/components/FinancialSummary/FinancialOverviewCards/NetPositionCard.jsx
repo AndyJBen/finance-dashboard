@@ -20,9 +20,9 @@ const formatCurrencySuperscript = (value) => {
   const formattedDollars = parseInt(dollars, 10).toLocaleString('en-US');
 
   return (
-    <span>
+    <span className="currency-wrapper">
       {sign}${formattedDollars}
-      <sup className="text-xs ml-px">{cents}</sup>
+      <sup className="cents-superscript">{cents}</sup>
     </span>
   );
 };
@@ -92,6 +92,22 @@ const NetPositionCard = ({ isMobile, styles, isComponentLoading }) => {
           />
         </div>
       </Card>
+      <style jsx>{`
+        .currency-wrapper {
+          position: relative;
+          display: inline-flex;
+          align-items: flex-start;
+        }
+        
+        .cents-superscript {
+          font-size: 45%;
+          line-height: 1;
+          margin-left: 2px;
+          font-weight: inherit;
+          vertical-align: super;
+          opacity: 0.85;
+        }
+      `}</style>
     </Col>
   );
 };

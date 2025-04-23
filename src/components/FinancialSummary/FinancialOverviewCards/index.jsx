@@ -108,6 +108,31 @@ const FinancialOverviewCardsContainer = () => {
           }
         `}</style>
       )}
+
+      {/* Global currency formatting styles */}
+      <style jsx global>{`
+        /* Global currency formatting styles */
+        .currency-wrapper {
+          position: relative;
+          display: inline-flex;
+          align-items: flex-start;
+        }
+        
+        .cents-superscript {
+          font-size: 45%;
+          line-height: 1;
+          margin-left: 2px;
+          font-weight: inherit;
+          vertical-align: super;
+          opacity: 0.85;
+        }
+        
+        /* Ensure proper vertical alignment in Ant Design Statistic component */
+        .ant-statistic-content-value {
+          display: inline-flex;
+          align-items: flex-start;
+        }
+      `}</style>
     </Spin>
   );
 };
