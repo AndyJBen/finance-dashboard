@@ -6,7 +6,7 @@ import { Layout, Row, Col, Typography, Space, Grid } from 'antd';
 import { FinanceContext } from './contexts/FinanceContext'; // Import context
 
 // Core pages/components
-import FinancialOverviewCards from './components/FinancialSummary/FinancialOverviewCards/index.jsx';
+import FinancialOverviewCards from './components/FinancialSummary/FinancialOverviewCards';
 import BillsList              from './components/BillsList/BillsList';
 import UpcomingPayments       from './components/RecentActivity/UpcomingPayments';
 import ActivityFeed           from './components/RecentActivity/ActivityFeed';
