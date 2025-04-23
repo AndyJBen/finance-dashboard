@@ -120,10 +120,11 @@ const FinancialOverviewCardsContainer = () => {
         
         .cents-superscript {
           font-size: 45%;
-          line-height: 1;
           margin-left: 2px;
           font-weight: inherit;
-          vertical-align: top; /* Changed from 'super' to 'top' */
+          position: relative;
+          top: 0; /* This ensures the top aligns with the main numbers */
+          line-height: 1;
           opacity: 0.85;
         }
         
@@ -131,6 +132,16 @@ const FinancialOverviewCardsContainer = () => {
         .ant-statistic-content-value {
           display: inline-flex;
           align-items: flex-start;
+        }
+
+        /* Icon alignment fixes */
+        .ant-space-align-center {
+          align-items: center !important;
+        }
+
+        .ant-space-item {
+          display: flex !important;
+          align-items: center !important;
         }
       `}</style>
     </Spin>

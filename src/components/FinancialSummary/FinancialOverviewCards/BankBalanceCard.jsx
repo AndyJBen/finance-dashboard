@@ -89,9 +89,15 @@ const BankBalanceCard = ({ isMobile, styles, isComponentLoading }) => {
             <Space align="center">
               <IconBuildingBank
                 size={styles.iconSize.standard}
-                style={{ color: '#47586d', opacity: 0.8 }}
+                style={{ color: '#47586d', opacity: 0.8, display: 'flex' }}
               />
-              <Text style={{ fontSize: styles.fontSize.title, fontWeight: 500, color: '#47586d' }}>
+              <Text style={{ 
+                fontSize: styles.fontSize.title, 
+                fontWeight: 500, 
+                color: '#47586d',
+                display: 'flex',
+                alignItems: 'center',
+              }}>
                 Bank Balance
               </Text>
             </Space>
@@ -171,10 +177,11 @@ const BankBalanceCard = ({ isMobile, styles, isComponentLoading }) => {
         
         .cents-superscript {
           font-size: 45%;
-          line-height: 1;
           margin-left: 2px;
           font-weight: inherit;
-          vertical-align: top; /* Changed from 'super' to 'top' */
+          position: relative;
+          top: 0; /* This ensures the top aligns with the main numbers */
+          line-height: 1;
           opacity: 0.85;
         }
       `}</style>

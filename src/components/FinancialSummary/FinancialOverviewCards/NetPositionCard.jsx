@@ -62,16 +62,18 @@ const NetPositionCard = ({ isMobile, styles, isComponentLoading }) => {
         }}
       >
         <div>
-          <Space align="center" style={{ marginBottom: styles.spaceMargin }}>
+          <Space align="center" style={{ marginBottom: styles.spaceMargin, height: "22px" }}>
             <IconCoinFilled
               size={styles.iconSize.standard}
-              style={{ opacity: 0.9, color: 'white' }}
+              style={{ opacity: 0.9, color: 'white', display: 'flex' }}
             />
             <Text
               style={{
                 fontSize: styles.fontSize.title,
                 fontWeight: 500,
                 color: 'rgba(255, 255, 255, 0.9)',
+                display: 'flex',
+                alignItems: 'center',
               }}
             >
               Net Position
@@ -101,10 +103,11 @@ const NetPositionCard = ({ isMobile, styles, isComponentLoading }) => {
         
         .cents-superscript {
           font-size: 45%;
-          line-height: 1;
           margin-left: 2px;
           font-weight: inherit;
-          vertical-align: top; /* Changed from 'super' to 'top' */
+          position: relative;
+          top: 0; /* This ensures the top aligns with the main numbers */
+          line-height: 1;
           opacity: 0.85;
         }
       `}</style>
