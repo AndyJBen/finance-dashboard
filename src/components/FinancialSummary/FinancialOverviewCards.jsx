@@ -29,19 +29,8 @@ const formatCurrency = (value) => {
 
 // Component to display the main financial overview cards (Net Position, Due Balance, Bank Balance)
 const FinancialOverviewCards = () => {
-  // Destructure necessary values and functions from the FinanceContext
-  const {
-    loadingBalance, // State indicating if the bank balance is currently being fetched/updated
-    loadingCreditCards, // State indicating if credit cards are loading
-    error,          // Any error message from fetching data
-    bankBalance,    // The current bank balance value
-    updateBalance,  // Function to update the bank balance on the server
-    currentDueAmt, // Total amount of unpaid bills (current month + past due)
-    hasAnyPastDueBills, // Boolean indicating if there are any unpaid bills from previous months
-    pastDueAmountFromPreviousMonths, // The total amount of only the past due bills
-    totalCreditCardBalance, // The sum of balances across all credit cards
-    loading,        // General loading state for bills data
-  } = useContext(FinanceContext);
+  // 🟩 CORRECTED: Get the entire context object instead of destructuring
+  const financeData = useContext(FinanceContext);
 
   // State for managing the inline editing of the bank balance
   const [isEditing, setIsEditing] = useState(false); // Is the bank balance input field active?
@@ -65,19 +54,21 @@ const FinancialOverviewCards = () => {
   // Effect hook to update the edit input value when the bank balance changes externally,
   // but only if the user isn't currently editing it.
   useEffect(() => {
-    // If bankBalance is a valid number and we are not in edit mode, update the input field's value
-    if (typeof bankBalance === 'number' && !isEditing) {
-      setEditValue(bankBalance);
+    // 🟩 Use financeData
+    if (typeof financeData.bankBalance === 'number' && !isEditing) {
+      setEditValue(financeData.bankBalance);
     }
-    // Also handles the initial load case where editValue might be 0 but bankBalance is fetched
-    if (bankBalance !== null && editValue === 0 && !isEditing) {
-      setEditValue(bankBalance);
+    // 🟩 Use financeData
+    if (financeData.bankBalance !== null && editValue === 0 && !isEditing) {
+      setEditValue(financeData.bankBalance);
     }
-  }, [bankBalance, isEditing, editValue]); // Re-run if bankBalance, isEditing, or editValue changes
+    // 🟩 Use financeData
+  }, [financeData.bankBalance, isEditing, editValue]); // Re-run if bankBalance, isEditing, or editValue changes
 
   // --- Event Handlers for Bank Balance Editing ---
   const handleEditClick = () => {
-    setEditValue(bankBalance ?? 0); // Set input field to current balance (or 0 if null)
+    // 🟩 Use financeData
+    setEditValue(financeData.bankBalance ?? 0); // Set input field to current balance (or 0 if null)
     setIsEditing(true); // Activate edit mode
   };
 
@@ -88,8 +79,8 @@ const FinancialOverviewCards = () => {
   const handleSaveClick = async () => {
     // Validate the input value before saving
     if (typeof editValue === 'number' && !isNaN(editValue)) {
-      // Call the updateBalance function from the context
-      const result = await updateBalance({ balance: editValue });
+      // 🟩 Use financeData
+      const result = await financeData.updateBalance({ balance: editValue });
       // If the update was successful (not null), exit edit mode
       if (result !== null) {
         setIsEditing(false);
@@ -104,46 +95,52 @@ const FinancialOverviewCards = () => {
 
   // --- Derived Financial Calculations ---
   // Calculate the total amount due (unpaid bills + credit card balances)
-  const combinedTotalDue = (currentDueAmt ?? 0) + (totalCreditCardBalance ?? 0);
+  // 🟩 Use financeData
+  const combinedTotalDue = (financeData.currentDueAmt ?? 0) + (financeData.totalCreditCardBalance ?? 0);
   // Calculate the net position (bank balance minus total due)
-  const grandTotal = (bankBalance !== null) ? bankBalance - combinedTotalDue : null; // Null if balance isn't loaded
+  // 🟩 Use financeData
+  const grandTotal = (financeData.bankBalance !== null) ? financeData.bankBalance - combinedTotalDue : null; // Null if balance isn't loaded
   // Determine if the net position is negative for styling
   const grandTotalIsNegative = grandTotal !== null && grandTotal < 0;
   // Determine the color for the bank balance display (red if negative/zero, green otherwise)
-  const bankBalanceColor = bankBalance === null || bankBalance > 0 ? 'var(--success-500)' : 'var(--danger-500)';
+  // 🟩 Use financeData
+  const bankBalanceColor = financeData.bankBalance === null || financeData.bankBalance > 0 ? 'var(--success-500)' : 'var(--danger-500)';
   // Determine if a warning state should be shown on the "Due Balance" card
-  // Note: We check `currentDueAmt` here instead of `hasAnyPastDueBills` to make the card red
-  // if there are *any* unpaid bills contributing to the due amount, not just past due ones.
-  const showDueWarning = (currentDueAmt ?? 0) > 0 || (totalCreditCardBalance ?? 0) > 0;
+  // 🟩 Use financeData
+  const showDueWarning = (financeData.currentDueAmt ?? 0) > 0 || (financeData.totalCreditCardBalance ?? 0) > 0;
   // --- End Derived Financial Calculations ---
 
   // --- Subtext Generation for "Due Balance" Card ---
   // Creates a dynamic subtext explaining the components of the due balance
   const generateDueSubtext = () => {
-    const hasCCBalance = (totalCreditCardBalance ?? 0) > 0;
+    // 🟩 Use financeData
+    const hasCCBalance = (financeData.totalCreditCardBalance ?? 0) > 0;
     // Format the past due and credit card amounts for display
-    // Use pastDueAmountFromPreviousMonths specifically for the subtext label
-    const pastDueFormatted = formatCurrency(pastDueAmountFromPreviousMonths);
-    const ccBalanceFormatted = formatCurrency(totalCreditCardBalance);
+    // 🟩 Use financeData (accessing pastDueAmountFromPreviousMonths)
+    const pastDueFormatted = formatCurrency(financeData.pastDueAmountFromPreviousMonths);
+    // 🟩 Use financeData
+    const ccBalanceFormatted = formatCurrency(financeData.totalCreditCardBalance);
     let subtext = ''; // Initialize empty subtext
 
     // Generate different text based on whether it's mobile or desktop view
     if (isMobile) {
       // Mobile view: Use shorter, more concise text
-      // Only show "Past" part if there are actual past due bills
-      if (hasAnyPastDueBills && hasCCBalance) {
+      // 🟩 Use financeData (accessing hasAnyPastDueBills)
+      if (financeData.hasAnyPastDueBills && hasCCBalance) {
         subtext = `${pastDueFormatted} Past | ${ccBalanceFormatted} CC`;
-      } else if (hasAnyPastDueBills) {
+      // 🟩 Use financeData
+      } else if (financeData.hasAnyPastDueBills) {
         subtext = `${pastDueFormatted} Past`;
       } else if (hasCCBalance) {
         subtext = `${ccBalanceFormatted} CC`;
       }
     } else {
       // Desktop view: Use the original, slightly more descriptive text
-      // Only show "Bill Prep" part if there are actual past due bills
-      if (hasAnyPastDueBills && hasCCBalance) {
+      // 🟩 Use financeData
+      if (financeData.hasAnyPastDueBills && hasCCBalance) {
         subtext = `Incl. ${pastDueFormatted} in Bill Prep | ${ccBalanceFormatted} CC`;
-      } else if (hasAnyPastDueBills) {
+      // 🟩 Use financeData
+      } else if (financeData.hasAnyPastDueBills) {
         subtext = `Incl. ${pastDueFormatted} in Bill Prep`;
       } else if (hasCCBalance) {
         subtext = `Incl. ${ccBalanceFormatted} CC`;
@@ -171,11 +168,13 @@ const FinancialOverviewCards = () => {
 
   // --- Loading and Error Handling ---
   // If there's an error and data isn't loading, display an error alert
-  if (error && !loading && !loadingBalance && !loadingCreditCards) {
+  // 🟩 Use financeData
+  if (financeData.error && !financeData.loading && !financeData.loadingBalance && !financeData.loadingCreditCards) {
     return (
       <Alert
         message="Error loading financial data"
-        description={error} // Show the error message details
+        // 🟩 Use financeData
+        description={financeData.error} // Show the error message details
         type="error"
         showIcon
         style={{ marginBottom: 'var(--space-24)' }} // Add some space below the alert
@@ -184,7 +183,8 @@ const FinancialOverviewCards = () => {
   }
 
   // Determine the overall loading state for the component
-  const isComponentLoading = loading || loadingBalance || loadingCreditCards;
+  // 🟩 Use financeData
+  const isComponentLoading = financeData.loading || financeData.loadingBalance || financeData.loadingCreditCards;
   // Choose the icon for the "Due Balance" card based on whether there's a warning state
   const dueCardIcon = showDueWarning ? <IconFlagFilled size={isMobile ? 18 : 22} /> : <IconCircleCheck size={isMobile ? 16 : 18} />;
   // --- End Loading and Error Handling ---
@@ -218,7 +218,8 @@ const FinancialOverviewCards = () => {
   // --- End Responsive Styling Definitions ---
 
   // --- DEBUG LOGGING ---
-  console.log(`[FinancialOverviewCards] Rendering with values: currentDueAmt=${currentDueAmt}, totalCreditCardBalance=${totalCreditCardBalance}, combinedTotalDue=${combinedTotalDue}, loading=${loading}, loadingBalance=${loadingBalance}, loadingCreditCards=${loadingCreditCards}`);
+  // 🟩 Use financeData
+  console.log(`[FinancialOverviewCards] Rendering with values from financeData: currentDueAmt=${financeData.currentDueAmt}, totalCreditCardBalance=${financeData.totalCreditCardBalance}, combinedTotalDue=${combinedTotalDue}, loading=${financeData.loading}, loadingBalance=${financeData.loadingBalance}, loadingCreditCards=${financeData.loadingCreditCards}`);
   // --- END DEBUG LOGGING ---
 
   // --- Component JSX Rendering ---
@@ -460,7 +461,8 @@ const FinancialOverviewCards = () => {
               {!isEditing ? (
                 // Display the bank balance using Statistic when not editing
                 <Statistic
-                  value={loadingBalance ? "-" : (bankBalance ?? 0)} // Show '-' while loading
+                  // 🟩 Use financeData
+                  value={financeData.loadingBalance ? "-" : (financeData.bankBalance ?? 0)} // Show '-' while loading
                   precision={2}
                   valueStyle={{
                     fontSize: styles.fontSize.value,
