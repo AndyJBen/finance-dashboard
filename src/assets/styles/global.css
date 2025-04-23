@@ -381,3 +381,18 @@ main.ant-layout-content {
 
   /* Add other mobile-specific overrides here if needed */
 }
+
+.currency-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: flex-start;
+}
+
+.cents-superscript {
+  font-size: 45%;
+  line-height: 1;
+  margin-left: 2px;
+  font-weight: inherit;
+  vertical-align: super;
+  opacity: 0.85;
+}
