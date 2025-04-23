@@ -3,6 +3,8 @@
 // Highlight: Added className="hide-on-mobile" to Dropdown.Button
 // Highlight: Added className="category-tags-container" to the div wrapping category tags for mobile carousel styling
 // Highlight: REMOVED inline style from category-tags-container div
+// Highlight: Added locale prop to Table to conditionally hide "No Data" when collapsed.
+// Highlight: Adjusted text logic below table to only show when not collapsed and empty.
 
 import React from 'react';
 import {
@@ -18,7 +20,7 @@ const BillsListSection = ({
     loading,
     columns,
     tableDataSource,
-    isTableCollapsed,
+    isTableCollapsed, // Receive collapse state from parent
     categories,
     selectedCategory,
     setSelectedCategory,
@@ -89,12 +91,20 @@ const BillsListSection = ({
                 scroll={{ x: 730 }}
                 size="middle"
                 loading={loading}
+                // --- START: MODIFIED LOCALE FOR COLLAPSE ---
+                // Conditionally set locale to hide "No Data" message only when collapsed
+                locale={isTableCollapsed ? { emptyText: null } : undefined}
+                // --- END: MODIFIED LOCALE FOR COLLAPSE ---
             />
-            {tableDataSource.length === 0 && !loading && (
+            {/* --- START: ADJUSTED EMPTY TEXT LOGIC --- */}
+            {/* Only show this text if the table is NOT collapsed AND the dataSource is truly empty */}
+            {tableDataSource.length === 0 && !loading && !isTableCollapsed && (
                 <Text type="secondary" style={{ display: 'block', textAlign: 'center', marginTop: 'var(--space-16)' }}>
-                    {isTableCollapsed ? 'Table is collapsed.' : 'No bills match the current filters for this month.'}
+                    No bills match the current filters for this month.
                 </Text>
-                 )}
+            )}
+            {/* Removed the redundant "Table is collapsed" text block */}
+            {/* --- END: ADJUSTED EMPTY TEXT LOGIC --- */}
         </div>
     );
 };

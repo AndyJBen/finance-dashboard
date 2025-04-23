@@ -1,6 +1,7 @@
 // src/components/FinancialSummary/CombinedBillsOverview/CombinedBillsOverview.jsx
 // Fixed import path for FinanceContext after moving the file.
 // Highlight: Updated 'Due In' column render logic to show '-' for past due 'Bill Prep' category items.
+// Highlight: Modified tableDataSource logic to return an empty array when isTableCollapsed is true.
 
 import React, { useState, useContext, useMemo, useEffect } from 'react';
 import {
@@ -109,10 +110,10 @@ const CombinedBillsOverview = ({ style }) => {
     const [isMultiModalVisible, setMultiModalVisible] = useState(false); // For MultiBillModal
     const [editingBill, setEditingBill] = useState(null);
     const [selectedCategory, setSelectedCategory] = useState('All');
-    const [isTableCollapsed, setIsTableCollapsed] = useState(false);
-    const defaultPageSize = 10;
+    const [isTableCollapsed, setIsTableCollapsed] = useState(false); // State for collapse/expand
+    const defaultPageSize = 10; // Kept for reference, but not used for slicing when collapsed
 
-    // --- Derived State (Remains the same) ---
+    // --- Derived State (Remains the same logic, except tableDataSource) ---
     const validBills = Array.isArray(bills) ? bills : [];
     const startOfDisplayedMonth = displayedMonth.startOf('month');
     const endOfDisplayedMonth = displayedMonth.endOf('month');
@@ -153,10 +154,12 @@ const CombinedBillsOverview = ({ style }) => {
         return billsDueInDisplayedMonth.reduce((sum, bill) => (!bill.isPaid && typeof bill.amount === 'number' ? sum + bill.amount : sum), 0);
     }, [billsDueInDisplayedMonth]);
 
+    // --- START: MODIFIED LOGIC FOR COLLAPSE ---
     // Data source for the table, considering collapse state
      const tableDataSource = isTableCollapsed
-        ? [] // Provide an empty array when collapsed
+        ? [] // Provide an empty array when collapsed to hide all rows
         : mainTableDataSourceFiltered; // Show all filtered bills when not collapsed
+    // --- END: MODIFIED LOGIC FOR COLLAPSE ---
     // --- End Derived State ---
 
 
@@ -244,7 +247,9 @@ const CombinedBillsOverview = ({ style }) => {
             // --- END: Updated Render Logic for 'Due In' ---
         },
         {
+            // --- START: Collapse/Expand Button ---
             title: (<Tooltip title={isTableCollapsed ? "Expand List" : "Collapse List"}><Button type="link" size="small" icon={isTableCollapsed ? <IconChevronDown size={16} /> : <IconChevronUp size={16} />} onClick={() => setIsTableCollapsed(!isTableCollapsed)} style={{ padding: '0 4px' }} /></Tooltip>),
+            // --- END: Collapse/Expand Button ---
             key: 'actions', fixed: 'right', width: 30, align: 'center',
             render: (_, record) => {
                 const menuItems = [
@@ -296,8 +301,8 @@ const CombinedBillsOverview = ({ style }) => {
                 <BillsListSection
                     loading={loading}
                     columns={columns}
-                    tableDataSource={tableDataSource}
-                    isTableCollapsed={isTableCollapsed}
+                    tableDataSource={tableDataSource} // Pass the potentially empty dataSource
+                    isTableCollapsed={isTableCollapsed} // Pass collapse state down
                     categories={categories}
                     selectedCategory={selectedCategory}
                     setSelectedCategory={setSelectedCategory}
