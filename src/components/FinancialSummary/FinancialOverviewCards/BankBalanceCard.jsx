@@ -93,7 +93,7 @@ const BankBalanceCard = ({ isMobile, styles, isComponentLoading }) => {
                 style={{ color: '#47586d', opacity: 0.8, display: 'flex' }}
               />
               <Text style={{ 
-                fontSize: isMobile ? '0.7rem' : styles.fontSize.title,
+                fontSize: isMobile ? '0.75rem' : styles.fontSize.title,
                 fontWeight: 500, 
                 color: '#47586d',
                 display: 'flex',

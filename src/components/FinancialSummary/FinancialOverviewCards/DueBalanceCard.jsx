@@ -114,7 +114,7 @@ const DueBalanceCard = ({ isMobile, styles, isComponentLoading }) => {
             })}
             <Text
               style={{
-                fontSize: isMobile ? '0.7rem' : styles.fontSize.title,
+                fontSize: isMobile ? '0.75rem' : styles.fontSize.title,
                 fontWeight: 500,
                 color: 'rgba(255, 255, 255, 0.9)',
                 display: 'flex',
