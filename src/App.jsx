@@ -93,36 +93,32 @@ function MyApp() {
       case 'dashboard':
         return (
           <Row gutter={isMobileView ? [8, 16] : [24, 24]}>
-            {/* Left Column */}
             <Col xs={24} lg={17}>
+              {/* Use the imported (now single) component */}
               <FinancialOverviewCards />
               <div style={{ marginTop: isMobileView ? 16 : 24 }}>
                 <CombinedBillsOverview
                   style={{ height: '100%' }}
-                  onEditBill={handleOpenEditBillModal}
-                  onAddBill={handleOpenAddBillModal}
+                  onEditBill={handleOpenEditBillModal} // Pass handler for editing
+                  onAddBill={handleOpenAddBillModal} // Pass handler for adding via dropdown
                 />
               </div>
             </Col>
-
-            {/* Right Column - MODIFIED as per Step 2 */}
-            <Col xs={24} lg={7} style={{ width: '100%' }}>
-              {/* 🟩 Replaced Space with div and gap */}
-              <div
-                 style={{
-                   display: 'flex',
-                   flexDirection: 'column',
-                   gap: isMobileView ? 16 : 24, // Use gap for spacing
-                   width: '100%'
-                 }}
+            <Col xs={24} lg={7} style={{ width: '100%' }}> {/* Added width: 100% */}
+              {/* Change from Space to div with flexDirection column */}
+              <div 
+                style={{ 
+                  display: 'flex', 
+                  flexDirection: 'column', 
+                  gap: isMobileView ? 16 : 24, 
+                  width: '100%' 
+                }}
               >
-                {/* Added style={{ width: '100%', height: 'auto' }} as requested */}
                 <BillPrepCard style={{ width: '100%', height: 'auto' }} />
                 <PastDuePayments style={{ width: '100%', height: 'auto' }} />
                 <UpcomingPayments style={{ width: '100%', height: 'auto' }} />
                 <ActivityFeed style={{ width: '100%', height: 'auto' }} />
               </div>
-              {/* 🟥 Removed original Space component */}
             </Col>
           </Row>
         );

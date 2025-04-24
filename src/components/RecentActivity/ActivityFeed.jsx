@@ -1,28 +1,30 @@
 // src/components/RecentActivity/ActivityFeed.jsx
-// Updated to use CardLayout as per Step 3
+// COMPLETE FILE CODE WITH FIXES
 
 import React, { useContext, useState } from 'react';
-import { Timeline, Alert, Typography, Empty, Button } from 'antd'; // Removed Card, Spin, Tooltip
-import {
-    IconCircleCheckFilled,
-    IconClock,
-    IconTimeDuration15,
-    // IconMinus, IconChevronDown are now handled by CardLayout
+import { Timeline, Typography, Empty, Button } from 'antd';
+import { 
+    IconCircleCheckFilled, 
+    IconClock, 
+    IconTimeDuration15
 } from '@tabler/icons-react';
-import CardLayout from '../shared/CardLayout'; // 🟩 Added import
 import { FinanceContext } from '../../contexts/FinanceContext';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
+// Import the shared CardLayout component
+import CardLayout from '../shared/CardLayout';
 
 dayjs.extend(relativeTime);
 
-const { Text, Title } = Typography; // 🟩 Ensure Title is imported
+const { Text, Title } = Typography;
 
-// Helper functions (getActivityDetails, getActivitySubtitle) remain the same
+// Helper function to format activity details
 const getActivityDetails = (item) => {
     if (item.isPaid) { return `${item.name}`; }
     return item.name || 'Unknown Activity';
 };
+
+// Helper function to format subtitle
 const getActivitySubtitle = (item) => {
      if (item.isPaid) { return `$${Number(item.amount).toFixed(2)} • ${item.category || 'Bill Payment'}`; }
      return `$${Number(item.amount).toFixed(2)}`;
@@ -37,7 +39,7 @@ const ActivityFeed = ({ style }) => {
 
   const toggleCollapse = () => setIsCollapsed(prev => !prev);
 
-  // Filter and sort logic remains the same
+  // Filter and sort paid bills
   const validBills = Array.isArray(bills) ? bills : [];
   const paidActivitiesInView = validBills
       .filter(bill => bill.isPaid)
@@ -49,7 +51,7 @@ const ActivityFeed = ({ style }) => {
        dot: <IconCircleCheckFilled size={16} style={{ color: 'var(--success-500)' }} />,
        style: { paddingBottom: 'var(--space-16)'},
        children: (
-         <div className="activity-content" style={{ padding: '8px 0' }}>
+         <div className="activity-content" style={{ padding: '8px 0', width: '100%' }}>
              <Text strong style={{ display: 'block', fontSize: '0.875rem', marginBottom: 'var(--space-4)' }}>
                  {getActivityDetails(item)}
              </Text>
@@ -68,7 +70,7 @@ const ActivityFeed = ({ style }) => {
         ? timelineItems
         : timelineItems.slice(0, INITIAL_ACTIVITY_LIMIT);
 
-  // 🟩 Custom title component as requested
+  // Custom title component
   const titleComponent = (
     <Title level={4} style={{ margin: 0, display: 'flex', alignItems: 'center' }}>
       <IconTimeDuration15 size={26} style={{ marginRight: 'var(--space-8)', color: 'var(--primary-600)' }} />
@@ -76,47 +78,44 @@ const ActivityFeed = ({ style }) => {
     </Title>
   );
 
-  // 🟥 Removed original return with Card/Spin
-  // 🟩 Replace the return statement with CardLayout
+  // Use the shared CardLayout component
   return (
     <CardLayout
       title={titleComponent}
-      style={style} // Pass style prop
+      style={style}
       loading={loading}
       isCollapsed={isCollapsed}
       toggleCollapse={toggleCollapse}
-      error={error} // Pass error state
-      errorMessage="Error loading recent activity" // Custom error message
+      error={error}
+      errorMessage="Error loading recent activity"
     >
-      {/* Children passed to CardLayout */}
       {timelineItems.length === 0 ? (
-        <Empty
-           description="No recent activity"
-           image={Empty.PRESENTED_IMAGE_SIMPLE}
-           style={{
-             padding: 'var(--space-32) 0',
-             margin: 'auto', // Center Empty component
-             flexGrow: 1, // Allow Empty to take available space
-             display: 'flex',
-             flexDirection: 'column',
-             justifyContent: 'center'
-           }}
+        <Empty 
+          description="No recent activity" 
+          image={Empty.PRESENTED_IMAGE_SIMPLE} 
+          style={{ 
+            padding: 'var(--space-32) 0',
+            margin: 'auto',
+            flexGrow: 1,
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center'
+          }}
         />
       ) : (
         <>
-          {/* Ensure this div takes full width and allows scrolling */}
-          <div style={{
-             flexGrow: 1, // Takes available vertical space
-             overflowY: 'auto', // Allows scrolling if content exceeds height
-             padding: '16px 8px 8px 8px', // Internal padding for timeline
-             width: '100%' // Ensure it uses full width
+          <div style={{ 
+            flexGrow: 1, 
+            overflowY: 'auto', 
+            padding: '16px 8px 8px 8px',
+            width: '100%' // Ensure full width
           }}>
             <Timeline
               items={displayedTimelineItems}
-              style={{ width: '100%' }} // Ensure Timeline itself takes full width
+              style={{ width: '100%' }} // Ensure full width
             />
           </div>
-          {/* "Display All" button logic remains */}
+          {/* Conditionally render the "Display All" / "Show Less" button */}
           {timelineItems.length > INITIAL_ACTIVITY_LIMIT && (
             <div style={{ textAlign: 'center', marginTop: 'var(--space-8)' }}>
               <Button
