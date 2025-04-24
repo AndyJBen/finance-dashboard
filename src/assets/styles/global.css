@@ -348,15 +348,73 @@ main.ant-layout-content {
     gap: 6px; /* Default gap */
 }
 
+/* Mobile-only table styles for bills overview */
+@media (max-width: 767.98px) {
+  /* Target the bills table specifically */
+  .bills-overview-table .ant-table-tbody > tr > td {
+    padding: 6px 8px !important; /* Reduced vertical and horizontal padding */
+    height: auto !important; /* Allow height to shrink */
+    line-height: 1.2 !important; /* Tighter line height */
+    font-size: 0.8rem !important; /* Slightly smaller font */
+  }
 
-/* --- Responsive Utilities --- */
-@media (max-width: 767.98px) { /* Target typical mobile/tablet portrait breakpoint */
+  /* Make table header more compact */
+  .bills-overview-table .ant-table-thead > tr > th {
+    padding: 8px 8px !important; /* Reduced padding */
+    font-size: 0.7rem !important; /* Smaller font for headers */
+  }
+
+  /* Style the first column to be even more compact */
+  .bills-overview-table .ant-table-tbody > tr > td:first-child {
+    padding-left: 8px !important;
+    width: 24px !important; /* Minimum width for checkbox column */
+  }
+
+  /* Make checkboxes slightly smaller */
+  .bills-overview-table .ant-checkbox-inner {
+    width: 14px !important;
+    height: 14px !important;
+  }
+
+  /* Reduce the size of avatars/icons if present */
+  .bills-overview-table .ant-avatar {
+    width: 24px !important;
+    height: 24px !important;
+    line-height: 24px !important;
+    font-size: 0.75rem !important;
+  }
+
+  /* Compress action buttons/icons */
+  .bills-overview-table .ant-table-cell .ant-space {
+    gap: 4px !important;
+  }
+
+  /* Adjust any icons within the table */
+  .bills-overview-table .tabler-icon,
+  .bills-overview-table .anticon {
+    font-size: 0.9rem !important;
+    width: 16px !important;
+    height: 16px !important;
+  }
+
+  /* Optional: Make due dates and amounts more prominent */
+  .bills-overview-table .due-date-cell {
+    font-weight: 500 !important;
+    white-space: nowrap !important;
+  }
+
+  .bills-overview-table .amount-cell {
+    font-weight: 600 !important;
+    white-space: nowrap !important;
+  }
+  
+  /* --- Responsive Utilities --- */
   .hide-on-mobile {
     display: none !important; /* Use !important to override potential inline styles or specificity issues */
   }
 
-/* START: Mobile Category Carousel Styles */
-.category-tags-container {
+  /* START: Mobile Category Carousel Styles */
+  .category-tags-container {
     /* Override defaults for mobile */
     flex-wrap: nowrap; /* Prevent wrapping */
     overflow-x: auto; /* Enable horizontal scrolling */
@@ -378,8 +436,6 @@ main.ant-layout-content {
       flex-shrink: 0;
   }
   /* END: Mobile Category Carousel Styles */
-
-  /* Add other mobile-specific overrides here if needed */
 }
 
 .currency-wrapper {
@@ -399,69 +455,69 @@ main.ant-layout-content {
 
 /* Updated mobile styles for financial overview cards */
 @media (max-width: 768px) {
-    /* Make all 3 cards span full width of container with equal width */
-    .financial-overview-row {
-      display: flex !important;
-      flex-wrap: nowrap !important;
-      margin: 0 !important;
-      width: 100% !important;
-      justify-content: space-between !important;
-    }
-    
-    .financial-overview-row .ant-col {
-      flex: 1 1 0 !important;
-      width: 33.33% !important;
-      max-width: 33.33% !important;
-      padding: 0 3px !important;
-    }
-    
-    /* More compact card height */
-    .financial-overview-row .ant-card {
-      border-radius: 10px !important;
-      margin-bottom: 8px;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-      min-height: 90px !important; /* Reduced height */
-    }
-    
-    /* Reduce padding to make cards more compact */
-    .financial-overview-row .ant-card-body {
-      padding: 8px 10px !important;
-    }
-    
-    /* Adjust font sizes for mobile readability */
-    .financial-overview-row .ant-statistic-content {
-      font-size: 18px !important;
-      line-height: 1 !important;
-      margin-top: 4px !important;
-    }
-    
-    /* Smaller superscript for cents */
-    .financial-overview-row .cents-superscript {
-      font-size: 40% !important;
-      margin-top: 2px !important;
-    }
-    
-    /* More compact header spacing */
-    .financial-overview-row .ant-space {
-      margin-bottom: 4px !important;
-    }
-    
-    /* Hide due balance subtext on mobile */
-    .financial-overview-row .due-balance-subtext {
-      display: none !important;
-    }
-    
-    /* Smaller title text */
-    .financial-overview-row .ant-typography {
-      font-size: 0.6rem !important;
-    }
-    
-    /* Smaller icons */
-    .financial-overview-row .tabler-icon {
-      width: 16px !important;
-      height: 16px !important;
-    }
-    
+  /* Make all 3 cards span full width of container with equal width */
+  .financial-overview-row {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    margin: 0 !important;
+    width: 100% !important;
+    justify-content: space-between !important;
+  }
+  
+  .financial-overview-row .ant-col {
+    flex: 1 1 0 !important;
+    width: 33.33% !important;
+    max-width: 33.33% !important;
+    padding: 0 3px !important;
+  }
+  
+  /* More compact card height */
+  .financial-overview-row .ant-card {
+    border-radius: 10px !important;
+    margin-bottom: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    min-height: 90px !important; /* Reduced height */
+  }
+  
+  /* Reduce padding to make cards more compact */
+  .financial-overview-row .ant-card-body {
+    padding: 8px 10px !important;
+  }
+  
+  /* Adjust font sizes for mobile readability */
+  .financial-overview-row .ant-statistic-content {
+    font-size: 18px !important;
+    line-height: 1 !important;
+    margin-top: 4px !important;
+  }
+  
+  /* Smaller superscript for cents */
+  .financial-overview-row .cents-superscript {
+    font-size: 40% !important;
+    margin-top: 2px !important;
+  }
+  
+  /* More compact header spacing */
+  .financial-overview-row .ant-space {
+    margin-bottom: 4px !important;
+  }
+  
+  /* Hide due balance subtext on mobile */
+  .financial-overview-row .due-balance-subtext {
+    display: none !important;
+  }
+  
+  /* Smaller title text */
+  .financial-overview-row .ant-typography {
+    font-size: 0.6rem !important;
+  }
+  
+  /* Smaller icons */
+  .financial-overview-row .tabler-icon {
+    width: 16px !important;
+    height: 16px !important;
+  }
+  
   /* Content area adjustments - INCREASED SIDE PADDING */
   main.ant-layout-content {
     padding: var(--space-4) var(--space-12) var(--space-24) !important; /* Increased sides from 8px to 12px */
@@ -469,24 +525,24 @@ main.ant-layout-content {
     width: 100% !important;
     max-width: 100% !important;
   }
-    
-    /* Reset any row margins to ensure full width */
-    .ant-row {
-      margin-left: 0 !important;
-      margin-right: 0 !important;
-      width: 100% !important;
-    }
   
-    /* Ensure the row container takes full available width */
-    .ant-layout-content > div {
-      width: 100% !important;
-      max-width: 100% !important;
-      padding: 0 !important;
-    }
-    
-    /* Ensure main layout has no extra padding */
-    .ant-layout {
-      padding: 0 !important;
-      width: 100% !important;
-    }
+  /* Reset any row margins to ensure full width */
+  .ant-row {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    width: 100% !important;
   }
+
+  /* Ensure the row container takes full available width */
+  .ant-layout-content > div {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+  }
+  
+  /* Ensure main layout has no extra padding */
+  .ant-layout {
+    padding: 0 !important;
+    width: 100% !important;
+  }
+}
