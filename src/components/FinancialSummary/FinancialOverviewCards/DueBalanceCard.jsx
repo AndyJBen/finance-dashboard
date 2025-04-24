@@ -112,17 +112,17 @@ const DueBalanceCard = ({ isMobile, styles, isComponentLoading }) => {
             {React.cloneElement(dueCardIcon, {
               style: { opacity: 0.9, color: 'white', display: 'flex' },
             })}
-              <Text
-                style={{
-                  fontSize: isMobile ? '0.75rem' : styles.fontSize.title, // Changed from 0.7rem to 0.75rem
-                  fontWeight: 500,
-                  color: 'rgba(255, 255, 255, 0.9)',
-                  display: 'flex',
-                  alignItems: 'center',
-                }}
-              >
-                Due Balance
-              </Text>
+            <Text
+              style={{
+                fontSize: isMobile ? '0.7rem' : styles.fontSize.title, // Changed from 0.7rem to 0.75rem
+                fontWeight: 500,
+                color: 'rgba(255, 255, 255, 0.9)',
+                display: 'flex',
+                alignItems: 'center',
+              }}
+            >
+              Due Balance
+            </Text>
           </Space>
         </div>
         <div>
