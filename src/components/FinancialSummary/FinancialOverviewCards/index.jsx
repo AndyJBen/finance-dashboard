@@ -35,7 +35,7 @@ const FinancialOverviewCardsContainer = () => {
   };
 
   const mobileStyles = {
-    cardHeight: '100px',
+    cardHeight: '110px',
     cardPadding: '12px',
     gutter: [8, 8],
     marginBottom: 8, // Applied to individual cards now
@@ -98,7 +98,7 @@ const FinancialOverviewCardsContainer = () => {
         .currency-wrapper {
           position: relative;
           display: inline-flex;
-          align-items: flex-start; /* Changed back to flex-start for top alignment */
+          align-items: flex-start;
         }
         
         .cents-superscript {
@@ -107,14 +107,14 @@ const FinancialOverviewCardsContainer = () => {
           font-weight: inherit;
           line-height: 1;
           opacity: 0.85;
-          vertical-align: text-top; /* Aligns with the top of the text */
-          margin-top: 4px; /* Small adjustment to line up perfectly */
+          vertical-align: text-top;
+          margin-top: 4px;
         }
         
         /* Ensure proper vertical alignment in Ant Design Statistic component */
         .ant-statistic-content-value {
           display: inline-flex;
-          align-items: flex-start; /* Changed back to align at the top */
+          align-items: flex-start;
         }
 
         /* Icon alignment fixes */
@@ -129,37 +129,36 @@ const FinancialOverviewCardsContainer = () => {
         
         /* Mobile only changes - won't affect desktop */
         @media (max-width: 768px) {
-          /* Keep cards in a row on mobile */
+          /* Keep all 3 cards in a row on mobile */
           .financial-overview-row {
             display: flex !important;
             flex-wrap: nowrap !important;
             margin: 0 -4px !important;
-            overflow-x: auto;
-            padding-bottom: 8px;
+            width: 100% !important;
           }
           
           .financial-overview-row .ant-col {
-            flex: 0 0 180px !important; /* Fixed width for mobile cards - larger than before */
-            min-width: 180px !important;
+            flex: 1 1 33.3333% !important;
+            width: 33.3333% !important;
             padding: 0 4px !important;
+            max-width: none !important;
           }
           
           /* Modern styling for mobile cards */
           .financial-overview-row .ant-card {
             border-radius: 12px !important;
             margin-bottom: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-            height: 135px !important; /* Taller cards for mobile */
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
           }
           
-          /* Make text visible on smaller screens */
+          /* Adjust font sizes for mobile readability */
           .financial-overview-row .ant-statistic-content-value {
-            font-size: 110% !important;
+            font-size: 105% !important;
           }
           
-          /* Improved spacing on mobile */
-          .financial-overview-row .ant-card-body {
-            padding: 12px !important;
+          /* More compact subtext on mobile */
+          .financial-overview-row .ant-typography {
+            font-size: 0.65rem !important;
           }
         }
       `}</style>
