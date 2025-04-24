@@ -35,13 +35,13 @@ const FinancialOverviewCardsContainer = () => {
   };
 
   const mobileStyles = {
-    cardHeight: '90px', // Reduced from 110px to 90px
-    cardPadding: '8px 10px', // Reduced padding
+    cardHeight: '90px', 
+    cardPadding: '8px 10px', 
     gutter: [8, 8],
     marginBottom: 8,
-    spaceMargin: 4, // Reduced from 8px to 4px
-    fontSize: { title: '0.7rem', value: '18px', subtext: '0.65rem' }, // Updated from 0.6rem to 0.7rem
-    iconSize: { standard: 16, small: 14, edit: 14 }, // Smaller icons
+    spaceMargin: 4,
+    fontSize: { title: '0.8rem', value: '18px', subtext: '0.65rem' },
+    iconSize: { standard: 16, small: 14, edit: 14 }, 
     editButtonStyle: { padding: '0px', minWidth: '24px', height: '24px' }
   };
 
@@ -185,9 +185,9 @@ const FinancialOverviewCardsContainer = () => {
             display: none !important;
           }
           
-          /* Smaller title text - updated from 0.6rem to 0.7rem */
+          /* Smaller title text
           .financial-overview-row .ant-typography {
-            font-size: 0.7rem !important;
+            font-size: 0.8rem !important;
           }
           
           /* Smaller icons */
