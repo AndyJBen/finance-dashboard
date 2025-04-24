@@ -8,7 +8,6 @@ import {
     IconUserCircle,
     IconPlus,
     IconPencil,
-    IconCoin,
     IconEdit
 } from '@tabler/icons-react';
 
@@ -64,52 +63,43 @@ const centerButtonStyle = {
     zIndex: 1001,
 };
 
-// IMPROVED ACTION MENU STYLES
+// ALTERNATIVE MENU STYLES - FLAT DESIGN WITH HORIZONTAL ICONS
 const actionMenuStyle = {
-    borderRadius: '12px',
+    borderRadius: '16px',
     overflow: 'hidden',
-    boxShadow: '0 4px 20px rgba(0,0,0,0.12)',
+    backgroundColor: 'white',
+    boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
+    padding: '8px',
 };
 
 const actionItemStyle = {
     display: 'flex',
     alignItems: 'center',
-    padding: '14px 18px',
+    padding: '16px',
     color: 'var(--neutral-800)',
     cursor: 'pointer',
     transition: 'all 0.2s',
-    position: 'relative',
-    borderBottom: '1px solid var(--neutral-100)',
+    borderRadius: '12px',
+    marginBottom: '4px',
 };
 
-// Remove bottom border from last item
+// No margin on last item
 const lastActionItemStyle = {
     ...actionItemStyle,
-    borderBottom: 'none',
+    marginBottom: '0',
 };
 
-const actionIconWrapperStyle = {
+const iconStyle = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    width: '36px',
-    height: '36px',
-    borderRadius: '10px',
-    marginRight: '12px',
-    backgroundColor: 'var(--primary-50, #eff6ff)',
-};
-
-const addBillIconStyle = {
-    color: 'var(--primary-600)',
-};
-
-const editBalanceIconStyle = {
+    marginRight: '16px',
     color: 'var(--primary-600)',
 };
 
 const actionItemTextStyle = {
     fontWeight: '500',
-    fontSize: '14px',
+    fontSize: '15px',
 };
 
 const actionItemHoverStyle = {
@@ -134,8 +124,8 @@ const BottomNavBar = ({ selectedKey, onSelect, onAddClick, onEditBalanceClick })
                 onMouseEnter={() => setHoverItem('addBill')}
                 onMouseLeave={() => setHoverItem(null)}
             >
-                <div style={actionIconWrapperStyle}>
-                    <IconPlus size={18} style={addBillIconStyle} />
+                <div style={iconStyle}>
+                    <IconPlus size={20} strokeWidth={2} />
                 </div>
                 <span style={actionItemTextStyle}>Add a Bill</span>
             </div>
@@ -150,8 +140,8 @@ const BottomNavBar = ({ selectedKey, onSelect, onAddClick, onEditBalanceClick })
                 onMouseEnter={() => setHoverItem('editBalance')}
                 onMouseLeave={() => setHoverItem(null)}
             >
-                <div style={actionIconWrapperStyle}>
-                    <IconEdit size={18} style={editBalanceIconStyle} />
+                <div style={iconStyle}>
+                    <IconEdit size={20} strokeWidth={2} />
                 </div>
                 <span style={actionItemTextStyle}>Edit Bank Balance</span>
             </div>
@@ -177,7 +167,7 @@ const BottomNavBar = ({ selectedKey, onSelect, onAddClick, onEditBalanceClick })
                             trigger="click"
                             placement="top"
                             arrow={{ pointAtCenter: true }}
-                            overlayStyle={{ width: '240px' }}
+                            overlayStyle={{ width: '250px' }}
                         >
                             <Button
                                 style={centerButtonStyle}
