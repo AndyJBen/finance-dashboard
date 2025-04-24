@@ -8,10 +8,11 @@ import {
     IconUserCircle,
     IconPlus,
     IconPencil,
-    IconCoin
+    IconCoin,
+    IconEdit
 } from '@tabler/icons-react';
 
-// Styles remain the same...
+// Existing styles...
 const navStyle = {
     position: 'fixed',
     bottom: 0,
@@ -40,7 +41,7 @@ const itemStyle = {
     color: 'var(--neutral-500)',
     flex: 1,
     maxWidth: '20%',
-    backgroundColor: 'transparent', // Ensure background is transparent for text buttons
+    backgroundColor: 'transparent',
 };
 
 const activeItemStyle = {
@@ -63,28 +64,63 @@ const centerButtonStyle = {
     zIndex: 1001,
 };
 
+// IMPROVED ACTION MENU STYLES
 const actionMenuStyle = {
-    padding: '8px 0',
+    borderRadius: '12px',
+    overflow: 'hidden',
+    boxShadow: '0 4px 20px rgba(0,0,0,0.12)',
 };
 
 const actionItemStyle = {
     display: 'flex',
     alignItems: 'center',
-    padding: '10px 16px',
+    padding: '14px 18px',
     color: 'var(--neutral-800)',
     cursor: 'pointer',
-    transition: 'background-color 0.2s',
+    transition: 'all 0.2s',
+    position: 'relative',
+    borderBottom: '1px solid var(--neutral-100)',
+};
+
+// Remove bottom border from last item
+const lastActionItemStyle = {
+    ...actionItemStyle,
+    borderBottom: 'none',
+};
+
+const actionIconWrapperStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '36px',
+    height: '36px',
+    borderRadius: '10px',
+    marginRight: '12px',
+    backgroundColor: 'var(--primary-50, #eff6ff)',
+};
+
+const addBillIconStyle = {
+    color: 'var(--primary-600)',
+};
+
+const editBalanceIconStyle = {
+    color: 'var(--primary-600)',
+};
+
+const actionItemTextStyle = {
+    fontWeight: '500',
+    fontSize: '14px',
 };
 
 const actionItemHoverStyle = {
-    backgroundColor: 'var(--neutral-100)',
+    backgroundColor: 'var(--neutral-50)',
 };
 
-// Accept onAddClick and onEditBalanceClick props
+// Bottom Nav component
 const BottomNavBar = ({ selectedKey, onSelect, onAddClick, onEditBalanceClick }) => {
     const [hoverItem, setHoverItem] = useState(null);
 
-    // Action menu content
+    // Improved action menu content
     const actionMenu = (
         <div style={actionMenuStyle}>
             <div 
@@ -98,12 +134,14 @@ const BottomNavBar = ({ selectedKey, onSelect, onAddClick, onEditBalanceClick })
                 onMouseEnter={() => setHoverItem('addBill')}
                 onMouseLeave={() => setHoverItem(null)}
             >
-                <IconPlus size={18} style={{ marginRight: '8px', color: 'var(--primary-600)' }} />
-                <span>Add a Bill</span>
+                <div style={actionIconWrapperStyle}>
+                    <IconPlus size={18} style={addBillIconStyle} />
+                </div>
+                <span style={actionItemTextStyle}>Add a Bill</span>
             </div>
             <div 
                 style={{
-                    ...actionItemStyle,
+                    ...lastActionItemStyle,
                     ...(hoverItem === 'editBalance' ? actionItemHoverStyle : {})
                 }}
                 onClick={() => {
@@ -112,8 +150,10 @@ const BottomNavBar = ({ selectedKey, onSelect, onAddClick, onEditBalanceClick })
                 onMouseEnter={() => setHoverItem('editBalance')}
                 onMouseLeave={() => setHoverItem(null)}
             >
-                <IconCoin size={18} style={{ marginRight: '8px', color: 'var(--primary-600)' }} />
-                <span>Edit Bank Balance</span>
+                <div style={actionIconWrapperStyle}>
+                    <IconEdit size={18} style={editBalanceIconStyle} />
+                </div>
+                <span style={actionItemTextStyle}>Edit Bank Balance</span>
             </div>
         </div>
     );
@@ -137,7 +177,7 @@ const BottomNavBar = ({ selectedKey, onSelect, onAddClick, onEditBalanceClick })
                             trigger="click"
                             placement="top"
                             arrow={{ pointAtCenter: true }}
-                            overlayStyle={{ width: '200px' }}
+                            overlayStyle={{ width: '240px' }}
                         >
                             <Button
                                 style={centerButtonStyle}
