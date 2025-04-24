@@ -34,16 +34,16 @@ const FinancialOverviewCardsContainer = () => {
     iconSize: { standard: 22, small: 18, edit: 16 }
   };
 
-  const mobileStyles = {
-    cardHeight: '90px', 
-    cardPadding: '8px 10px', 
-    gutter: [8, 8],
-    marginBottom: 8,
-    spaceMargin: 4,
-    fontSize: { title: '0.8rem', value: '18px', subtext: '0.65rem' },
-    iconSize: { standard: 16, small: 14, edit: 14 }, 
-    editButtonStyle: { padding: '0px', minWidth: '24px', height: '24px' }
-  };
+const mobileStyles = {
+  cardHeight: '90px', 
+  cardPadding: '8px 10px', 
+  gutter: [8, 8],
+  marginBottom: 8,
+  spaceMargin: 4, 
+  fontSize: { title: '0.75rem', value: '18px', subtext: '0.65rem' }, // Changed from 0.7rem to 0.75rem
+  iconSize: { standard: 16, small: 14, edit: 14 },
+  editButtonStyle: { padding: '0px', minWidth: '24px', height: '24px' }
+};
 
   const styles = isMobile ? mobileStyles : desktopStyles;
   // --- End Responsive Styling ---
@@ -187,7 +187,7 @@ const FinancialOverviewCardsContainer = () => {
           
           /* Smaller title text
           .financial-overview-row .ant-typography {
-            font-size: 0.8rem !important;
+            font-size: 0.75rem !important;
           }
           
           /* Smaller icons */

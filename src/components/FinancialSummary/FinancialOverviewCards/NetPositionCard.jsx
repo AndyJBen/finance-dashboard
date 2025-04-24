@@ -69,7 +69,7 @@ const NetPositionCard = ({ isMobile, styles, isComponentLoading }) => {
             />
             <Text
               style={{
-                fontSize: isMobile ? '0.8rem' : styles.fontSize.title,
+                fontSize: isMobile ? '0.75rem' : styles.fontSize.title, // Changed from 0.7rem to 0.75rem
                 fontWeight: 500,
                 color: 'rgba(255, 255, 255, 0.9)',
                 display: 'flex',
