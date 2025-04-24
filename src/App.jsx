@@ -1,9 +1,9 @@
 // src/App.jsx
-// Lifted state for EditBillModal, added handlers, and context access.
+// Updated to use div with gap for right column layout as per instructions.
 
-import React, { useState, useContext } from 'react'; // Added useContext
-import { Layout, Row, Col, Typography, Space, Grid } from 'antd';
-import { FinanceContext } from './contexts/FinanceContext'; // Import context
+import React, { useState, useContext } from 'react';
+import { Layout, Row, Col, Typography, Grid } from 'antd'; // Removed Space as it's replaced
+import { FinanceContext } from './contexts/FinanceContext';
 
 // Core pages/components
 import FinancialOverviewCards from './components/FinancialSummary/FinancialOverviewCards';
@@ -17,7 +17,6 @@ import PastDuePayments        from './components/RecentActivity/PastDuePayments'
 import AppFooter              from './components/Footer/Footer';
 import ChartsPage             from './components/ChartsPage/ChartsPage';
 import BottomNavBar           from './components/Navigation/BottomNavBar';
-// Import the modal component itself
 import EditBillModal          from './components/BillsList/EditBillModal';
 
 
@@ -30,64 +29,53 @@ function MyApp() {
   const screens = useBreakpoint();
   const isMobileView = !screens.md;
 
-  // --- State Lifted Up for EditBillModal ---
+  // State Lifted Up for EditBillModal
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
-  const [editingBill, setEditingBill] = useState(null); // null for Add, bill object for Edit
+  const [editingBill, setEditingBill] = useState(null);
 
-  // --- Get Context Functions for Modal Submit ---
-  // Ensure FinanceProvider wraps this component in main.jsx or index.js
+  // Get Context Functions for Modal Submit
   const financeContext = useContext(FinanceContext);
-   // Add checks to ensure context is loaded before destructuring
-   const addBill = financeContext ? financeContext.addBill : () => console.error("FinanceContext not available for addBill");
-   const updateBill = financeContext ? financeContext.updateBill : () => console.error("FinanceContext not available for updateBill");
+  const addBill = financeContext ? financeContext.addBill : () => console.error("FinanceContext not available for addBill");
+  const updateBill = financeContext ? financeContext.updateBill : () => console.error("FinanceContext not available for updateBill");
 
 
-  // --- Modal Handlers ---
+  // Modal Handlers
   const handleOpenAddBillModal = () => {
-    setEditingBill(null); // Ensure it's in 'Add' mode
+    setEditingBill(null);
     setIsEditModalVisible(true);
   };
 
   const handleOpenEditBillModal = (billRecord) => {
-    setEditingBill(billRecord); // Set the bill to edit
+    setEditingBill(billRecord);
     setIsEditModalVisible(true);
   };
 
   const handleModalClose = () => {
     setIsEditModalVisible(false);
-    setEditingBill(null); // Reset editing state on close
+    setEditingBill(null);
   };
 
   const handleModalSubmit = async (values) => {
     let success = false;
     try {
         if (editingBill) {
-          // Update existing bill
           if (updateBill) {
-              success = await updateBill(editingBill, values); // Pass editingBill object
+              success = await updateBill(editingBill, values);
           }
         } else {
-          // Add new bill
           if (addBill) {
               success = await addBill(values);
           }
         }
-
         if (success) {
-          handleModalClose(); // Close modal on successful add/update
+          handleModalClose();
         } else {
-            // Optional: Add specific error message if add/update function returns false/error
             console.error("Failed to submit bill via modal.");
-            // Consider showing an Ant Design message.error here
         }
     } catch (error) {
         console.error("Error submitting bill modal:", error);
-        // Show error message to user
-        // message.error("An error occurred while saving the bill.");
     }
-    // Error handling/messaging is likely within addBill/updateBill in context
   };
-  // --- End Modal Handlers ---
 
 
   const SIDEBAR_WIDTH = 240;
@@ -97,7 +85,6 @@ function MyApp() {
     if (key !== 'add') {
         setSelected(key === 'account' ? 'settings' : key);
     }
-    // The 'add' button click is handled directly by handleOpenAddBillModal passed to BottomNavBar
   };
 
 
@@ -106,36 +93,47 @@ function MyApp() {
       case 'dashboard':
         return (
           <Row gutter={isMobileView ? [8, 16] : [24, 24]}>
+            {/* Left Column */}
             <Col xs={24} lg={17}>
-              {/* Use the imported (now single) component */}
               <FinancialOverviewCards />
               <div style={{ marginTop: isMobileView ? 16 : 24 }}>
                 <CombinedBillsOverview
                   style={{ height: '100%' }}
-                  onEditBill={handleOpenEditBillModal} // Pass handler for editing
-                  onAddBill={handleOpenAddBillModal} // Pass handler for adding via dropdown
+                  onEditBill={handleOpenEditBillModal}
+                  onAddBill={handleOpenAddBillModal}
                 />
               </div>
             </Col>
-            <Col xs={24} lg={7}>
-              <Space direction="vertical" size={isMobileView ? 16 : 24} style={{ width: '100%' }}>
-                <BillPrepCard style={{ height: '100%' }} />
-                <PastDuePayments style={{ height: '100%' }} />
-                <UpcomingPayments style={{ height: '100%' }} />
-                <ActivityFeed style={{ height: '100%' }} />
-              </Space>
+
+            {/* Right Column - MODIFIED as per Step 2 */}
+            <Col xs={24} lg={7} style={{ width: '100%' }}>
+              {/* 🟩 Replaced Space with div and gap */}
+              <div
+                 style={{
+                   display: 'flex',
+                   flexDirection: 'column',
+                   gap: isMobileView ? 16 : 24, // Use gap for spacing
+                   width: '100%'
+                 }}
+              >
+                {/* Added style={{ width: '100%', height: 'auto' }} as requested */}
+                <BillPrepCard style={{ width: '100%', height: 'auto' }} />
+                <PastDuePayments style={{ width: '100%', height: 'auto' }} />
+                <UpcomingPayments style={{ width: '100%', height: 'auto' }} />
+                <ActivityFeed style={{ width: '100%', height: 'auto' }} />
+              </div>
+              {/* 🟥 Removed original Space component */}
             </Col>
           </Row>
         );
 
       case 'bills':
-        // BillsList might also need onEditBill and onAddBill if it has edit/add buttons
         return <BillsList onEditBill={handleOpenEditBillModal} onAddBill={handleOpenAddBillModal} />;
 
       case 'reports':
         return <ChartsPage />;
 
-      case 'settings': // Corresponds to 'account' key
+      case 'settings':
         return <Title level={3}>Account/Settings (Placeholder)</Title>;
 
       default:
@@ -143,14 +141,13 @@ function MyApp() {
     }
   };
 
-  // Updated contentStyle with consistent padding on both sides
   const contentStyle = {
     padding: isMobileView ? 'var(--space-4) var(--space-12)' : 'var(--space-24)',
     margin: 0,
     flexGrow: 1,
     width: '100%',
     maxWidth: '100%',
-    paddingBottom: isMobileView ? '80px' : 'var(--space-24)' // Add space for bottom nav
+    paddingBottom: isMobileView ? '80px' : 'var(--space-24)'
   };
 
   return (
@@ -182,8 +179,6 @@ function MyApp() {
         <Content style={contentStyle}>
           {renderContent()}
         </Content>
-        {/* Footer might be visually hidden by BottomNavBar on mobile */}
-        {/* Consider conditionally rendering Footer or adjusting layout further */}
         <AppFooter />
       </Layout>
 
@@ -191,19 +186,16 @@ function MyApp() {
           <BottomNavBar
               selectedKey={selectedMenuKey}
               onSelect={handleSelect}
-              // Pass the specific handler for the add button
               onAddClick={handleOpenAddBillModal}
           />
       )}
 
-      {/* Render EditBillModal globally, controlled by App state */}
-      {/* Ensure EditBillModal is correctly imported */}
       {isEditModalVisible && (
           <EditBillModal
               open={isEditModalVisible}
               onCancel={handleModalClose}
               onSubmit={handleModalSubmit}
-              initialData={editingBill} // Pass null for Add, bill object for Edit
+              initialData={editingBill}
           />
       )}
     </Layout>
