@@ -1,14 +1,14 @@
 // src/components/Navigation/BottomNavBar.jsx
-// Added onAddClick prop for the center button
-
-import React from 'react';
-import { Button, Tooltip } from 'antd';
+import React, { useState } from 'react';
+import { Button, Tooltip, Popover } from 'antd';
 import {
     IconLayoutDashboard,
     IconReceipt,
     IconChartBar,
     IconUserCircle,
-    IconPlus
+    IconPlus,
+    IconPencil,
+    IconCoin
 } from '@tabler/icons-react';
 
 // Styles remain the same...
@@ -62,24 +62,66 @@ const centerButtonStyle = {
     boxShadow: '0 4px 8px rgba(0,0,0,0.15)',
     zIndex: 1001,
 };
-// --- End Styles ---
 
-// Accept onAddClick prop
-const BottomNavBar = ({ selectedKey, onSelect, onAddClick }) => {
+const actionMenuStyle = {
+    padding: '8px 0',
+};
 
-    // Use the passed-in handler for the Add button click
-    const handleAddClick = () => {
-        if (onAddClick) {
-            onAddClick(); // Call the function passed from App.jsx
-        } else {
-            console.error("onAddClick handler not provided to BottomNavBar");
-        }
-    };
+const actionItemStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    padding: '10px 16px',
+    color: 'var(--neutral-800)',
+    cursor: 'pointer',
+    transition: 'background-color 0.2s',
+};
+
+const actionItemHoverStyle = {
+    backgroundColor: 'var(--neutral-100)',
+};
+
+// Accept onAddClick and onEditBalanceClick props
+const BottomNavBar = ({ selectedKey, onSelect, onAddClick, onEditBalanceClick }) => {
+    const [hoverItem, setHoverItem] = useState(null);
+
+    // Action menu content
+    const actionMenu = (
+        <div style={actionMenuStyle}>
+            <div 
+                style={{
+                    ...actionItemStyle,
+                    ...(hoverItem === 'addBill' ? actionItemHoverStyle : {})
+                }}
+                onClick={() => {
+                    if (onAddClick) onAddClick();
+                }}
+                onMouseEnter={() => setHoverItem('addBill')}
+                onMouseLeave={() => setHoverItem(null)}
+            >
+                <IconPlus size={18} style={{ marginRight: '8px', color: 'var(--primary-600)' }} />
+                <span>Add a Bill</span>
+            </div>
+            <div 
+                style={{
+                    ...actionItemStyle,
+                    ...(hoverItem === 'editBalance' ? actionItemHoverStyle : {})
+                }}
+                onClick={() => {
+                    if (onEditBalanceClick) onEditBalanceClick();
+                }}
+                onMouseEnter={() => setHoverItem('editBalance')}
+                onMouseLeave={() => setHoverItem(null)}
+            >
+                <IconCoin size={18} style={{ marginRight: '8px', color: 'var(--primary-600)' }} />
+                <span>Edit Bank Balance</span>
+            </div>
+        </div>
+    );
 
     const menuItems = [
         { key: 'dashboard', label: 'Dashboard', icon: <IconLayoutDashboard size={24} /> },
         { key: 'bills', label: 'Bills', icon: <IconReceipt size={24} /> },
-        { key: 'add', label: 'Add', icon: <IconPlus size={28} />, isCenter: true },
+        { key: 'action', label: 'Actions', icon: <IconPencil size={28} />, isCenter: true },
         { key: 'reports', label: 'Reports', icon: <IconChartBar size={24} /> },
         { key: 'account', label: 'Account', icon: <IconUserCircle size={24} /> },
     ];
@@ -89,14 +131,20 @@ const BottomNavBar = ({ selectedKey, onSelect, onAddClick }) => {
             {menuItems.map(item => {
                 if (item.isCenter) {
                     return (
-                        <Tooltip title="Add Bill" key={item.key}>
-                             <Button
+                        <Popover 
+                            key={item.key}
+                            content={actionMenu}
+                            trigger="click"
+                            placement="top"
+                            arrow={{ pointAtCenter: true }}
+                            overlayStyle={{ width: '200px' }}
+                        >
+                            <Button
                                 style={centerButtonStyle}
                                 icon={item.icon}
-                                onClick={handleAddClick} // Use the internal handler that calls the prop
-                                aria-label="Add Bill"
-                             />
-                        </Tooltip>
+                                aria-label="Actions Menu"
+                            />
+                        </Popover>
                     );
                 } else {
                     const isActive = selectedKey === item.key;

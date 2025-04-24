@@ -70,7 +70,6 @@ const BankBalanceCard = ({ isMobile, styles, isComponentLoading }) => {
           flexDirection: 'column',
           justifyContent: 'space-between',
           border: 'none',
-          borderRadius: isMobile ? 8 : undefined,
         }}
         bodyStyle={{
           padding: styles.cardPadding,
@@ -102,18 +101,21 @@ const BankBalanceCard = ({ isMobile, styles, isComponentLoading }) => {
               </Text>
             </Space>
 
-            {!isEditing ? (
+            {!isEditing && !isMobile && (
               <Tooltip title="Edit Balance">
                 <Button
                   type="text"
                   shape="circle"
                   icon={<IconEdit size={styles.iconSize.edit} />}
                   onClick={handleEditClick}
-                  style={{ color: '#47586d', ...(isMobile ? styles.editButtonStyle : {}) }}
+                  style={{ color: '#47586d' }}
                   disabled={loadingBalance || isComponentLoading}
+                  className="desktop-only-edit-btn"
                 />
               </Tooltip>
-            ) : (
+            )}
+
+            {isEditing && (
               <Space size="small">
                 <Tooltip title="Save Balance">
                   <Button
@@ -183,6 +185,13 @@ const BankBalanceCard = ({ isMobile, styles, isComponentLoading }) => {
           opacity: 0.85;
           vertical-align: text-top;
           margin-top: 4px;
+        }
+
+        /* Hide edit button on mobile explicitly */
+        @media (max-width: 768px) {
+          .desktop-only-edit-btn {
+            display: none !important;
+          }
         }
       `}</style>
     </Col>
