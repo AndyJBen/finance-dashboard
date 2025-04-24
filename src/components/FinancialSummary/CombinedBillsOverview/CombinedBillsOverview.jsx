@@ -294,9 +294,6 @@ const CombinedBillsOverview = ({ style }) => {
                     totalExpensesInDisplayedMonth={totalExpensesInDisplayedMonth}
                     totalAmountDueInDisplayedMonth={totalAmountDueInDisplayedMonth}
                 />
-
-                <Divider style={{ margin: '0 0 var(--space-24) 0' }} />
-
                 {/* Render Bills List Section Component */}
                 <BillsListSection
                     loading={loading}
