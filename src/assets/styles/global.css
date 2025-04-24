@@ -464,8 +464,8 @@ main.ant-layout-content {
     
     /* Adjust content container to expand full width */
     main.ant-layout-content {
-      padding-left: var(--space-10) !important;
-      padding-right: var(--space-10) !important;
+      padding-left: var(--space-7) !important;
+      padding-right: var(--space-7) !important;
       max-width: 100% !important;
       width: 100% !important;
       overflow-x: hidden !important;
