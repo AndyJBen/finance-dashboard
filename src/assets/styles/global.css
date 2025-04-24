@@ -396,3 +396,33 @@ main.ant-layout-content {
   vertical-align: super;
   opacity: 0.85;
 }
+/* Mobile Padding Adjustments */
+@media (max-width: 767.98px) {
+    /* Content padding adjustment */
+    main.ant-layout-content {
+      padding: var(--space-4) var(--space-12) var(--space-24) !important; /* Reduce top by 80%, sides by 50% */
+    }
+    
+    /* Adjust App.jsx inline styles if needed */
+    .mobile-content-container {
+      padding: var(--space-4) var(--space-12) var(--space-24) !important;
+    }
+    
+    /* Ensure full width components on mobile */
+    .ant-row, .ant-col, .ant-card {
+      width: 100% !important;
+      max-width: 100% !important;
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+    }
+    
+    /* Optional: Reduce padding inside cards for more content space */
+    .ant-card-body {
+      padding: 16px !important;
+    }
+    
+    /* Remove any extra container margins */
+    #root {
+      padding: 0 !important;
+    }
+  }

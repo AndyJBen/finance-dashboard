@@ -144,10 +144,10 @@ function MyApp() {
   };
 
   const contentStyle = {
-      padding: 'var(--space-24)',
-      margin: 0,
-      flexGrow: 1,
-      paddingBottom: isMobileView ? '80px' : 'var(--space-24)' // Add space for bottom nav
+    padding: isMobileView ? 'var(--space-4) var(--space-12)' : 'var(--space-24)',
+    margin: 0,
+    flexGrow: 1,
+    paddingBottom: isMobileView ? '80px' : 'var(--space-24)' // Add space for bottom nav
   };
 
   return (
