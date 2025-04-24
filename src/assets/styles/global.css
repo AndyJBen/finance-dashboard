@@ -396,33 +396,79 @@ main.ant-layout-content {
   vertical-align: super;
   opacity: 0.85;
 }
-/* Mobile Padding Adjustments */
+
+/* Enhanced mobile layout adjustments for global.css */
+
 @media (max-width: 767.98px) {
-    /* Content padding adjustment */
-    main.ant-layout-content {
-      padding: var(--space-4) var(--space-12) var(--space-24) !important; /* Reduce top by 80%, sides by 50% */
-    }
-    
-    /* Adjust App.jsx inline styles if needed */
-    .mobile-content-container {
-      padding: var(--space-4) var(--space-12) var(--space-24) !important;
-    }
-    
-    /* Ensure full width components on mobile */
-    .ant-row, .ant-col, .ant-card {
-      width: 100% !important;
-      max-width: 100% !important;
-      margin-left: 0 !important;
-      margin-right: 0 !important;
-    }
-    
-    /* Optional: Reduce padding inside cards for more content space */
-    .ant-card-body {
-      padding: 16px !important;
-    }
-    
-    /* Remove any extra container margins */
+    /* Root container max-width removal */
     #root {
+      max-width: 100% !important;
       padding: 0 !important;
+      margin: 0 !important;
+    }
+    
+    /* Main Layout adjustments */
+    .ant-layout {
+      padding: 0 !important;
+      margin: 0 !important;
+      width: 100% !important;
+      max-width: 100vw !important;
+    }
+    
+    /* Content area adjustments */
+    main.ant-layout-content {
+      padding: var(--space-4) var(--space-8) var(--space-24) !important; /* Reduced top and sides */
+      margin: 0 !important;
+      width: 100% !important;
+      max-width: 100vw !important;
+    }
+    
+    /* Row and column adjustments to expand width */
+    .ant-row {
+      margin-left: -4px !important;
+      margin-right: -4px !important;
+      width: 100% !important;
+      max-width: 100vw !important;
+    }
+    
+    /* Reset column gutters to be smaller */
+    .ant-col {
+      padding-left: 4px !important;
+      padding-right: 4px !important;
+    }
+    
+    /* Card adjustments for more content space */
+    .ant-card {
+      width: 100% !important;
+      margin-bottom: 8px !important;
+    }
+    
+    .ant-card-body {
+      padding: 12px !important; /* Reduced internal card padding */
+    }
+    
+    /* Space component adjustments */
+    .ant-space {
+      width: 100% !important;
+    }
+    
+    /* Layout container adjustments */
+    .ant-layout > div {
+      padding: 0 !important;
+      margin: 0 !important;
+      max-width: 100vw !important;
+    }
+    
+    /* Force container to expand to edges */
+    .ant-layout-content > div,
+    .ant-layout-content > * {
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+      max-width: 100vw !important;
+    }
+    
+    /* Adjust any fixed width components to be responsive */
+    [style*="width"] {
+      max-width: 100% !important;
     }
   }

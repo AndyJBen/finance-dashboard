@@ -105,11 +105,11 @@ function MyApp() {
     switch (selectedMenuKey) {
       case 'dashboard':
         return (
-          <Row gutter={[24, 24]}>
+          <Row gutter={isMobileView ? [8, 16] : [24, 24]}>
             <Col xs={24} lg={17}>
               {/* Use the imported (now single) component */}
               <FinancialOverviewCards />
-              <div style={{ marginTop: 24 }}>
+              <div style={{ marginTop: isMobileView ? 16 : 24 }}>
                 <CombinedBillsOverview
                   style={{ height: '100%' }}
                   onEditBill={handleOpenEditBillModal} // Pass handler for editing
@@ -118,7 +118,7 @@ function MyApp() {
               </div>
             </Col>
             <Col xs={24} lg={7}>
-              <Space direction="vertical" size={24} style={{ width: '100%' }}>
+              <Space direction="vertical" size={isMobileView ? 16 : 24} style={{ width: '100%' }}>
                 <BillPrepCard style={{ height: '100%' }} />
                 <PastDuePayments style={{ height: '100%' }} />
                 <UpcomingPayments style={{ height: '100%' }} />
@@ -143,10 +143,13 @@ function MyApp() {
     }
   };
 
+  // Updated contentStyle for improved mobile layout
   const contentStyle = {
-    padding: isMobileView ? 'var(--space-4) var(--space-12)' : 'var(--space-24)',
+    padding: isMobileView ? 'var(--space-4) var(--space-8)' : 'var(--space-24)',
     margin: 0,
     flexGrow: 1,
+    width: '100%',
+    maxWidth: isMobileView ? '100vw' : '1280px',
     paddingBottom: isMobileView ? '80px' : 'var(--space-24)' // Add space for bottom nav
   };
 
@@ -171,6 +174,9 @@ function MyApp() {
           display: 'flex',
           flexDirection: 'column',
           backgroundColor: 'var(--neutral-100)',
+          width: '100%',
+          maxWidth: isMobileView ? '100vw' : 'auto',
+          padding: 0,
         }}
       >
         <Content style={contentStyle}>
