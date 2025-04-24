@@ -1,41 +1,37 @@
 // src/components/RecentActivity/UpcomingPayments.jsx
-// COMPLETE FILE CODE
-// Updated with Tabler icons and explicit styling to override theme conflicts
-// All text color updated to #47586d
-// FIX: Filter upcoming payments to only show those within the currently displayed month.
-// FIX: Changed card title to simply "Upcoming Bills".
+// COMPLETE FILE CODE WITH FIXES
 
 import React, { useContext, useState, useMemo } from 'react';
 import { List, Card, Spin, Alert, Typography, Empty, Space, Button, Tooltip } from 'antd';
 import {
   IconHourglassHigh,
-    IconClock, // Default / Upcoming
-    IconHome,  // Rent / Housing
-    IconBolt,  // Electricity / Utilities
-    IconWifi,  // Internet
-    IconCreditCard, // Credit Card
-    IconCar,   // Auto / Car
-    IconShoppingCart, // Groceries
-    IconHelp,  // Other / Default
-    IconMedicineSyrup, // Medical
-    IconScissors,  // Personal Care
-    IconCalendarTime, // Bill Prep
-    IconMinus,  // For minimize
-    IconChevronDown  // For expand
+    IconClock,
+    IconHome,
+    IconBolt,
+    IconWifi,
+    IconCreditCard,
+    IconCar,
+    IconShoppingCart,
+    IconHelp,
+    IconMedicineSyrup,
+    IconScissors,
+    IconCalendarTime,
+    IconMinus,
+    IconChevronDown
  } from '@tabler/icons-react';
-import { FinanceContext } from '../../contexts/FinanceContext'; // Ensure path is correct
+import { FinanceContext } from '../../contexts/FinanceContext';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
-import isBetween from 'dayjs/plugin/isBetween'; // Import isBetween plugin
+import isBetween from 'dayjs/plugin/isBetween';
 
 dayjs.extend(relativeTime);
 dayjs.extend(isSameOrAfter);
-dayjs.extend(isBetween); // Extend dayjs with isBetween
+dayjs.extend(isBetween);
 
 const { Text, Title } = Typography;
 
-// Helper function to get an icon based on category (updated with Tabler icons)
+// Helper function to get an icon based on category
 const getCategoryIcon = (category) => {
     const lowerCategory = category?.toLowerCase() || '';
     if (lowerCategory.includes('rent') || lowerCategory.includes('mortgage')) return <IconHome size={18} />;
@@ -73,6 +69,7 @@ const UpcomingPayments = ({ style }) => {
   // Access displayedMonth from context
   const { loading, error, bills, displayedMonth } = useContext(FinanceContext);
   const [showAllUpcoming, setShowAllUpcoming] = useState(false);
+  // State for collapse - default to expanded (false)
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const toggleCollapse = () => setIsCollapsed(prev => !prev);
@@ -120,83 +117,97 @@ const UpcomingPayments = ({ style }) => {
           backgroundColor: '#ffffff',
           color: '#47586d',
           boxShadow: '0 2px 4px rgba(16, 24, 40, 0.06), 0 1px 2px rgba(16, 24, 40, 0.04)',
-          height: '100%' // Keep height 100%
+          height: '100%',
+          minHeight: '350px', // FIX: Set minimum height
+          display: 'flex',
+          flexDirection: 'column'
+        }}
+        bodyStyle={{
+          flexGrow: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          padding: isCollapsed ? '16px' : upcomingPaymentsInView.length > 0 ? '0 16px 16px 16px' : '16px'
         }}
         title={
-            // *** UPDATED TITLE TEXT ***
             <Title level={4} style={{ margin: 0, display: 'flex', alignItems: 'center', color: '#47586d' }}>
                 <IconHourglassHigh size={26} style={{ marginRight: '8px', color: '#0066FF' }} />
-                Upcoming Bills {/* Removed month scope and count */}
+                Upcoming Bills
             </Title>
-            // *** END UPDATED TITLE TEXT ***
         }
         extra={collapseButton}
-        // Adjust padding if list exists
-        styles={{ body: { padding: upcomingPaymentsInView.length > 0 ? '0 20px 16px 20px' : '20px' } }}
       >
         {!isCollapsed && (
-            <>
+            <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
                 {upcomingPaymentsInView.length === 0 && !loading ? (
                     <Empty
                         description={<span style={{ color: '#47586d' }}>No upcoming payments for this month</span>}
                         image={Empty.PRESENTED_IMAGE_SIMPLE}
-                        style={{ padding: '32px 0' }}
+                        style={{ 
+                          padding: '32px 0',
+                          margin: 'auto',
+                          flexGrow: 1,
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'center'
+                        }}
                     />
                 ) : (
-                <>
-                    <List
-                    itemLayout="horizontal"
-                    dataSource={displayedUpcomingPayments}
-                    renderItem={(item) => {
-                        const dueDate = dayjs(item.dueDate);
-                        let dueDateText = `Due ${dueDate.fromNow()}`;
-                        if (dueDate.isSame(dayjs(), 'day')) { dueDateText = 'Due Today'; }
-                        else if (dueDate.isSame(dayjs().add(1, 'day'), 'day')) { dueDateText = 'Due Tomorrow'; }
+                <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+                    <div style={{ flexGrow: 1, overflowY: 'auto', padding: '16px 0 8px 0' }}>
+                      <List
+                        itemLayout="horizontal"
+                        dataSource={displayedUpcomingPayments}
+                        renderItem={(item) => {
+                            const dueDate = dayjs(item.dueDate);
+                            let dueDateText = `Due ${dueDate.fromNow()}`;
+                            if (dueDate.isSame(dayjs(), 'day')) { dueDateText = 'Due Today'; }
+                            else if (dueDate.isSame(dayjs().add(1, 'day'), 'day')) { dueDateText = 'Due Tomorrow'; }
 
-                        const categoryIcon = getCategoryIcon(item.category);
-                        const [bgColor, iconColor] = getCategoryColors(item.category);
+                            const categoryIcon = getCategoryIcon(item.category);
+                            const [bgColor, iconColor] = getCategoryColors(item.category);
 
-                        return (
-                            <List.Item
-                                style={{
-                                    padding: '12px 0', // Adjusted padding
-                                    paddingRight: 0,
-                                    borderBottom: '1px solid #EDF1F7'
-                                }}
-                            >
-                                <Space align="center" style={{ width: '100%', justifyContent: 'space-between' }}>
-                                    <Space align="center">
-                                        <div style={{
-                                            width: 40,
-                                            height: 40,
-                                            backgroundColor: bgColor,
-                                            borderRadius: 8,
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            border: '1px solid #f0f0f0'
-                                        }}>
-                                            {React.cloneElement(categoryIcon, {
-                                                style: { color: iconColor }
-                                            })}
-                                        </div>
-                                        <div className="payment-details">
-                                            <Text strong style={{ display: 'block', fontSize: '0.875rem', color: '#47586d' }}>{item.name}</Text>
-                                            <Text type="secondary" style={{ fontSize: '0.75rem', color: '#47586d' }}>{dueDateText}</Text>
-                                        </div>
+                            return (
+                                <List.Item
+                                    style={{
+                                        padding: '12px 0',
+                                        paddingRight: '8px', // FIX: Add right padding
+                                        borderBottom: '1px solid #EDF1F7'
+                                    }}
+                                >
+                                    <Space align="center" style={{ width: '100%', justifyContent: 'space-between' }}>
+                                        <Space align="center">
+                                            <div style={{
+                                                width: 40,
+                                                height: 40,
+                                                backgroundColor: bgColor,
+                                                borderRadius: 8,
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                border: '1px solid #f0f0f0'
+                                            }}>
+                                                {React.cloneElement(categoryIcon, {
+                                                    style: { color: iconColor }
+                                                })}
+                                            </div>
+                                            <div className="payment-details">
+                                                <Text strong style={{ display: 'block', fontSize: '0.875rem', color: '#47586d' }}>{item.name}</Text>
+                                                <Text type="secondary" style={{ fontSize: '0.75rem', color: '#47586d' }}>{dueDateText}</Text>
+                                            </div>
+                                        </Space>
+                                        <Text strong style={{ fontSize: '0.875rem', color: '#47586d', flexShrink: 0 }}> {/* FIX: Add flexShrink */}
+                                            ${Number(item.amount).toFixed(2)}
+                                        </Text>
                                     </Space>
-                                    <Text strong style={{ fontSize: '0.875rem', color: '#47586d' }}>
-                                        ${Number(item.amount).toFixed(2)}
-                                    </Text>
-                                </Space>
-                            </List.Item>
-                        );
-                    }}
-                    style={{
-                        backgroundColor: '#ffffff',
-                        color: '#47586d',
-                    }}
-                    />
+                                </List.Item>
+                            );
+                        }}
+                        style={{
+                            backgroundColor: '#ffffff',
+                            color: '#47586d',
+                        }}
+                      />
+                    </div>
                     {upcomingPaymentsInView.length > INITIAL_UPCOMING_LIMIT && (
                         <div style={{ textAlign: 'center', marginTop: 'var(--space-12)', paddingBottom: 'var(--space-4)' }}>
                             <Button
@@ -208,9 +219,9 @@ const UpcomingPayments = ({ style }) => {
                             </Button>
                         </div>
                     )}
-                </>
+                </div>
                 )}
-            </>
+            </div>
         )}
       </Card>
     </Spin>

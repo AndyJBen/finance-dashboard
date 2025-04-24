@@ -1,6 +1,5 @@
 // src/components/RecentActivity/ActivityFeed.jsx
-// COMPLETE FILE CODE
-// Updated with Tabler icons
+// COMPLETE FILE CODE WITH FIXES
 
 import React, { useContext, useState } from 'react';
 import { Timeline, Card, Spin, Alert, Typography, Empty, Button, Tooltip } from 'antd';
@@ -37,7 +36,7 @@ const INITIAL_ACTIVITY_LIMIT = 5;
 const ActivityFeed = ({ style }) => {
   const { loading, error, bills } = useContext(FinanceContext);
   const [showAllActivities, setShowAllActivities] = useState(false);
-  // State for collapse
+  // State for collapse - default to expanded (false)
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   // Toggle function
@@ -55,7 +54,7 @@ const ActivityFeed = ({ style }) => {
        dot: <IconCircleCheckFilled size={16} style={{ color: 'var(--success-500)' }} />,
        style: { paddingBottom: 'var(--space-16)'},
        children: (
-         <div className="activity-content">
+         <div className="activity-content" style={{ padding: '8px 0' }}>
              <Text strong style={{ display: 'block', fontSize: '0.875rem', marginBottom: 'var(--space-4)' }}>
                  {getActivityDetails(item)}
              </Text>
@@ -95,7 +94,19 @@ const ActivityFeed = ({ style }) => {
   return (
     <Spin spinning={loading} size="small">
       <Card
-        style={style}
+        style={{
+          ...style,
+          height: '100%',
+          minHeight: '350px', // FIX: Set minimum height
+          display: 'flex',
+          flexDirection: 'column'
+        }}
+        bodyStyle={{ 
+          flexGrow: 1,
+          padding: isCollapsed ? '16px' : '8px 16px 16px 16px', 
+          display: 'flex',
+          flexDirection: 'column'
+        }}
         title={
             <Title level={4} style={{ margin: 0, display: 'flex', alignItems: 'center' }}>
                 <IconTimeDuration15 size={26} style={{ marginRight: 'var(--space-8)', color: 'var(--primary-600)' }} />
@@ -107,16 +118,28 @@ const ActivityFeed = ({ style }) => {
       >
         {/* Conditionally render content based on isCollapsed */}
         {!isCollapsed && (
-            <>
+            <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
                 {/* Show Empty state if no items and not loading */}
                 {timelineItems.length === 0 && !loading ? (
-                    <Empty description="No recent activity" image={Empty.PRESENTED_IMAGE_SIMPLE} style={{ padding: 'var(--space-32) 0' }}/>
+                    <Empty 
+                      description="No recent activity" 
+                      image={Empty.PRESENTED_IMAGE_SIMPLE} 
+                      style={{ 
+                        padding: 'var(--space-32) 0',
+                        margin: 'auto',
+                        flexGrow: 1,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'center'
+                      }}
+                    />
                 ) : (
                 <> {/* Use Fragment to wrap Timeline and Button */}
-                    <Timeline
-                    items={displayedTimelineItems}
-                    style={{ paddingTop: 'var(--space-16)'}}
-                    />
+                    <div style={{ flexGrow: 1, overflowY: 'auto', padding: '16px 8px 8px 8px' }}>
+                      <Timeline
+                        items={displayedTimelineItems}
+                      />
+                    </div>
                     {/* Conditionally render the "Display All" / "Show Less" button */}
                     {timelineItems.length > INITIAL_ACTIVITY_LIMIT && (
                         <div style={{ textAlign: 'center', marginTop: 'var(--space-8)' }}>
@@ -130,7 +153,7 @@ const ActivityFeed = ({ style }) => {
                     )}
                 </>
                 )}
-            </>
+            </div>
         )}
       </Card>
     </Spin>
