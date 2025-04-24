@@ -65,14 +65,16 @@ const BankBalanceCard = ({ isMobile, styles, isComponentLoading }) => {
       <Card
         style={{
           background: 'white',
-          minHeight: styles.cardHeight,
+          minHeight: isMobile ? '90px' : styles.cardHeight,
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between',
           border: 'none',
+          borderRadius: isMobile ? 10 : undefined,
+          marginBottom: isMobile ? 8 : undefined,
         }}
         bodyStyle={{
-          padding: styles.cardPadding,
+          padding: isMobile ? '8px 10px' : styles.cardPadding,
           flexGrow: 1,
           display: 'flex',
           flexDirection: 'column',
@@ -83,15 +85,15 @@ const BankBalanceCard = ({ isMobile, styles, isComponentLoading }) => {
           <Space
             align="center"
             justify="space-between"
-            style={{ width: '100%', marginBottom: styles.spaceMargin }}
+            style={{ width: '100%', marginBottom: isMobile ? 4 : styles.spaceMargin }}
           >
             <Space align="center">
               <IconBuildingBank
-                size={styles.iconSize.standard}
+                size={isMobile ? 16 : styles.iconSize.standard}
                 style={{ color: '#47586d', opacity: 0.8, display: 'flex' }}
               />
               <Text style={{ 
-                fontSize: styles.fontSize.title, 
+                fontSize: isMobile ? '0.6rem' : styles.fontSize.title, 
                 fontWeight: 500, 
                 color: '#47586d',
                 display: 'flex',
@@ -147,10 +149,11 @@ const BankBalanceCard = ({ isMobile, styles, isComponentLoading }) => {
             <Statistic
               value={loadingBalance || isComponentLoading ? null : (bankBalance ?? 0)}
               valueStyle={{
-                fontSize: styles.fontSize.value,
+                fontSize: isMobile ? '18px' : styles.fontSize.value,
                 fontWeight: 700,
-                lineHeight: 1.2,
+                lineHeight: 1,
                 marginBottom: 0,
+                marginTop: isMobile ? 4 : 0,
                 color: bankBalanceColor,
               }}
               formatter={formatCurrencySuperscript}
@@ -178,13 +181,13 @@ const BankBalanceCard = ({ isMobile, styles, isComponentLoading }) => {
         }
         
         .cents-superscript {
-          font-size: 45%;
+          font-size: ${isMobile ? '40%' : '45%'};
           margin-left: 2px;
           font-weight: inherit;
           line-height: 1;
           opacity: 0.85;
           vertical-align: text-top;
-          margin-top: 4px;
+          margin-top: ${isMobile ? '2px' : '4px'};
         }
 
         /* Hide edit button on mobile explicitly */

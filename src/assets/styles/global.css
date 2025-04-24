@@ -397,92 +397,97 @@ main.ant-layout-content {
   opacity: 0.85;
 }
 
-@media (max-width: 767.98px) {
-  /* Root container max-width removal */
-  #root {
-    max-width: 100% !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    overflow-x: hidden !important;
-  }
+/* Updated mobile styles for financial overview cards */
+@media (max-width: 768px) {
+    /* Make all 3 cards span full width of container with equal width */
+    .financial-overview-row {
+      display: flex !important;
+      flex-wrap: nowrap !important;
+      margin: 0 !important;
+      width: 100% !important;
+      justify-content: space-between !important;
+    }
+    
+    .financial-overview-row .ant-col {
+      flex: 1 1 0 !important;
+      width: 33.33% !important;
+      max-width: 33.33% !important;
+      padding: 0 3px !important;
+    }
+    
+    /* More compact card height */
+    .financial-overview-row .ant-card {
+      border-radius: 10px !important;
+      margin-bottom: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+      min-height: 90px !important; /* Reduced height */
+    }
+    
+    /* Reduce padding to make cards more compact */
+    .financial-overview-row .ant-card-body {
+      padding: 8px 10px !important;
+    }
+    
+    /* Adjust font sizes for mobile readability */
+    .financial-overview-row .ant-statistic-content {
+      font-size: 18px !important;
+      line-height: 1 !important;
+      margin-top: 4px !important;
+    }
+    
+    /* Smaller superscript for cents */
+    .financial-overview-row .cents-superscript {
+      font-size: 40% !important;
+      margin-top: 2px !important;
+    }
+    
+    /* More compact header spacing */
+    .financial-overview-row .ant-space {
+      margin-bottom: 4px !important;
+    }
+    
+    /* Hide due balance subtext on mobile */
+    .financial-overview-row .due-balance-subtext {
+      display: none !important;
+    }
+    
+    /* Smaller title text */
+    .financial-overview-row .ant-typography {
+      font-size: 0.6rem !important;
+    }
+    
+    /* Smaller icons */
+    .financial-overview-row .tabler-icon {
+      width: 16px !important;
+      height: 16px !important;
+    }
+    
+    /* Adjust content container to expand full width */
+    main.ant-layout-content {
+      padding-left: var(--space-8) !important;
+      padding-right: var(--space-8) !important;
+      max-width: 100% !important;
+      width: 100% !important;
+      overflow-x: hidden !important;
+    }
+    
+    /* Reset any row margins to ensure full width */
+    .ant-row {
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+      width: 100% !important;
+    }
   
-  /* Main Layout adjustments */
-  .ant-layout {
-    padding: 0 !important;
-    margin: 0 !important;
-    width: 100% !important;
-    max-width: 100% !important;
+    /* Ensure the row container takes full available width */
+    .ant-layout-content > div {
+      width: 100% !important;
+      max-width: 100% !important;
+      padding: 0 !important;
+    }
+    
+    /* Ensure main layout has no extra padding */
+    .ant-layout {
+      padding: 0 !important;
+      width: 100% !important;
+    }
   }
-  
-  /* Content area adjustments - INCREASED SIDE PADDING */
-  main.ant-layout-content {
-    padding: var(--space-4) var(--space-12) var(--space-24) !important; /* Increased sides from 8px to 12px */
-    margin: 0 !important;
-    width: 100% !important;
-    max-width: 100% !important;
-  }
-  
-  /* Row and column adjustments with balanced margins */
-  .ant-row {
-    margin-left: 0 !important;
-    margin-right: 0 !important;
-    width: 100% !important;
-    max-width: 100% !important;
-  }
-  
-  /* Increased column gutters for a bit more space */
-  .ant-col {
-    padding-left: 6px !important;
-    padding-right: 6px !important;
-  }
-  
-  /* Card adjustments with slightly more internal padding */
-  .ant-card {
-    width: 100% !important;
-    margin-bottom: 12px !important;
-  }
-  
-  .ant-card-body {
-    padding: 14px !important; /* Increased internal card padding */
-  }
-  
-  /* Space component adjustments */
-  .ant-space {
-    width: 100% !important;
-  }
-  
-  /* Layout container adjustments */
-  .ant-layout > div {
-    padding: 0 !important;
-    margin: 0 !important;
-    max-width: 100% !important;
-  }
-  
-  /* Container size adjustments - adding slight padding */
-  .ant-layout-content > div,
-  .ant-layout-content > * {
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-    max-width: 100% !important;
-  }
-  
-  /* Adjust any fixed width components to be responsive but not too wide */
-  [style*="width"] {
-    max-width: 100% !important;
-  }
-
-  /* Fix for AntD components with internal spacing */
-  .ant-table-wrapper, 
-  .ant-list-wrapper,
-  .ant-form {
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-  }
-
-  /* Ensure even internal padding in layout sections */
-  .ant-layout-content > section,
-  .ant-layout-content > div > div {
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-  }
-}

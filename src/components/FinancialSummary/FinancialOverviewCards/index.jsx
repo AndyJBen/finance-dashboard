@@ -35,13 +35,13 @@ const FinancialOverviewCardsContainer = () => {
   };
 
   const mobileStyles = {
-    cardHeight: '110px',
-    cardPadding: '12px',
+    cardHeight: '90px', // Reduced from 110px to 90px
+    cardPadding: '8px 10px', // Reduced padding
     gutter: [8, 8],
-    marginBottom: 8, // Applied to individual cards now
-    spaceMargin: 8,
-    fontSize: { title: '0.75rem', value: '1.25rem', subtext: '0.65rem' },
-    iconSize: { standard: 18, small: 16, edit: 14 },
+    marginBottom: 8,
+    spaceMargin: 4, // Reduced from 8px to 4px
+    fontSize: { title: '0.6rem', value: '18px', subtext: '0.65rem' }, // Smaller title font
+    iconSize: { standard: 16, small: 14, edit: 14 }, // Smaller icons
     editButtonStyle: { padding: '0px', minWidth: '24px', height: '24px' }
   };
 
@@ -71,7 +71,11 @@ const FinancialOverviewCardsContainer = () => {
       {/* Row container for the cards */}
       <Row
         gutter={styles.gutter}
-        style={{ marginBottom: isMobile ? 0 : styles.marginBottom }} // Apply margin only on desktop row
+        style={{ 
+          marginBottom: isMobile ? 0 : styles.marginBottom,
+          margin: isMobile ? 0 : undefined,
+          width: '100%'
+        }}
         className="financial-overview-row"
       >
         {/* Render each card component, passing necessary props */}
@@ -129,36 +133,67 @@ const FinancialOverviewCardsContainer = () => {
         
         /* Mobile only changes - won't affect desktop */
         @media (max-width: 768px) {
-          /* Keep all 3 cards in a row on mobile */
+          /* Keep all 3 cards in a row on mobile with equal width */
           .financial-overview-row {
             display: flex !important;
             flex-wrap: nowrap !important;
-            margin: 0 -4px !important;
+            margin: 0 !important;
             width: 100% !important;
+            justify-content: space-between !important;
           }
           
           .financial-overview-row .ant-col {
-            flex: 1 1 33.3333% !important;
-            width: 33.3333% !important;
-            padding: 0 4px !important;
-            max-width: none !important;
+            flex: 1 1 0 !important;
+            width: 33.33% !important;
+            max-width: 33.33% !important;
+            padding: 0 3px !important;
           }
           
-          /* Modern styling for mobile cards */
+          /* More compact cards on mobile */
           .financial-overview-row .ant-card {
-            border-radius: 12px !important;
+            border-radius: 10px !important;
             margin-bottom: 8px;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            min-height: 90px !important;
           }
           
-          /* Adjust font sizes for mobile readability */
-          .financial-overview-row .ant-statistic-content-value {
-            font-size: 105% !important;
+          /* Reduced internal padding */
+          .financial-overview-row .ant-card-body {
+            padding: 8px 10px !important;
           }
           
-          /* More compact subtext on mobile */
+          /* Adjust statistic size */
+          .financial-overview-row .ant-statistic-content {
+            font-size: 18px !important;
+            line-height: 1 !important;
+            margin-top: 4px !important;
+          }
+          
+          /* Smaller cents indication */
+          .financial-overview-row .cents-superscript {
+            font-size: 40% !important;
+            margin-top: 2px !important;
+          }
+          
+          /* Smaller spacing in header */
+          .financial-overview-row .ant-space {
+            margin-bottom: 4px !important;
+          }
+          
+          /* Hide bill prep subtext on mobile */
+          .financial-overview-row .due-balance-subtext {
+            display: none !important;
+          }
+          
+          /* Smaller title text */
           .financial-overview-row .ant-typography {
-            font-size: 0.65rem !important;
+            font-size: 0.6rem !important;
+          }
+          
+          /* Smaller icons */
+          .financial-overview-row .tabler-icon {
+            width: 16px !important;
+            height: 16px !important;
           }
         }
       `}</style>

@@ -54,23 +54,21 @@ const DueBalanceCard = ({ isMobile, styles, isComponentLoading }) => {
   );
 
   const generateDueSubtext = () => {
+    // Don't generate subtext for mobile view
+    if (isMobile) return null;
+    
     const hasCC = (totalCreditCardBalance ?? 0) > 0;
     const past = formatCurrency(pastDueAmountFromPreviousMonths);
     const cc = formatCurrency(totalCreditCardBalance);
     let subtext = '';
 
-    if (isMobile) {
-      if (hasAnyPastDueBills && hasCC) subtext = `${past} Past | ${cc} CC`;
-      else if (hasAnyPastDueBills) subtext = `${past} Past`;
-      else if (hasCC) subtext = `${cc} CC`;
-    } else {
-      if (hasAnyPastDueBills && hasCC) subtext = `Incl. ${past} in Bill Prep | ${cc} CC`;
-      else if (hasAnyPastDueBills) subtext = `Incl. ${past} in Bill Prep`;
-      else if (hasCC) subtext = `Incl. ${cc} CC`;
-    }
+    if (hasAnyPastDueBills && hasCC) subtext = `Incl. ${past} in Bill Prep | ${cc} CC`;
+    else if (hasAnyPastDueBills) subtext = `Incl. ${past} in Bill Prep`;
+    else if (hasCC) subtext = `Incl. ${cc} CC`;
 
     return subtext ? (
       <Text
+        className="due-balance-subtext"
         style={{
           fontSize: styles.fontSize.subtext,
           fontWeight: 500,
@@ -93,16 +91,16 @@ const DueBalanceCard = ({ isMobile, styles, isComponentLoading }) => {
             ? 'linear-gradient(145deg, var(--danger-500), var(--danger-700))'
             : 'linear-gradient(145deg, var(--success-500), var(--success-700))',
           color: 'white',
-          minHeight: styles.cardHeight,
+          minHeight: isMobile ? '90px' : styles.cardHeight,
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between',
           border: 'none',
-          borderRadius: isMobile ? 8 : undefined,
+          borderRadius: isMobile ? 10 : undefined,
           marginBottom: isMobile ? 8 : undefined,
         }}
         bodyStyle={{
-          padding: styles.cardPadding,
+          padding: isMobile ? '8px 10px' : styles.cardPadding,
           flexGrow: 1,
           display: 'flex',
           flexDirection: 'column',
@@ -110,13 +108,13 @@ const DueBalanceCard = ({ isMobile, styles, isComponentLoading }) => {
         }}
       >
         <div>
-          <Space align="center" style={{ marginBottom: styles.spaceMargin, height: "22px" }}>
+          <Space align="center" style={{ marginBottom: isMobile ? 4 : styles.spaceMargin, height: isMobile ? '18px' : '22px' }}>
             {React.cloneElement(dueCardIcon, {
               style: { opacity: 0.9, color: 'white', display: 'flex' },
             })}
             <Text
               style={{
-                fontSize: styles.fontSize.title,
+                fontSize: isMobile ? '0.6rem' : styles.fontSize.title,
                 fontWeight: 500,
                 color: 'rgba(255, 255, 255, 0.9)',
                 display: 'flex',
@@ -132,10 +130,11 @@ const DueBalanceCard = ({ isMobile, styles, isComponentLoading }) => {
             value={isComponentLoading ? null : combinedTotalDue}
             valueStyle={{
               color: 'white',
-              fontSize: styles.fontSize.value,
+              fontSize: isMobile ? '18px' : styles.fontSize.value,
               fontWeight: 700,
-              lineHeight: 1.2,
+              lineHeight: 1,
               marginBottom: 0,
+              marginTop: isMobile ? 4 : 0,
             }}
             formatter={formatCurrencySuperscript}
           />
@@ -150,13 +149,13 @@ const DueBalanceCard = ({ isMobile, styles, isComponentLoading }) => {
         }
         
         .cents-superscript {
-          font-size: 45%;
+          font-size: ${isMobile ? '40%' : '45%'};
           margin-left: 2px;
           font-weight: inherit;
           line-height: 1;
           opacity: 0.85;
           vertical-align: text-top;
-          margin-top: 4px;
+          margin-top: ${isMobile ? '2px' : '4px'};
         }
       `}</style>
     </Col>
