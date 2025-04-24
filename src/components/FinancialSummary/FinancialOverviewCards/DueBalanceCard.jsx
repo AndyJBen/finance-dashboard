@@ -86,8 +86,9 @@ const DueBalanceCard = ({ isMobile, styles, isComponentLoading }) => {
   };
 
   return (
-    <Col xs={24} md={8}>
+    <Col className="finance-card-col">
       <Card
+        className="finance-card due-balance-card"
         style={{
           background: showDueWarning
             ? 'linear-gradient(145deg, var(--danger-500), var(--danger-700))'
@@ -98,8 +99,6 @@ const DueBalanceCard = ({ isMobile, styles, isComponentLoading }) => {
           flexDirection: 'column',
           justifyContent: 'space-between',
           border: 'none',
-          borderRadius: isMobile ? 8 : undefined,
-          marginBottom: isMobile ? 8 : undefined,
         }}
         bodyStyle={{
           padding: styles.cardPadding,
