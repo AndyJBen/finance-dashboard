@@ -34,9 +34,8 @@ const NetPositionCard = ({ isMobile, styles, isComponentLoading }) => {
   const grandTotalIsNegative = grandTotal !== null && grandTotal < 0;
 
   return (
-    <Col className="finance-card-col">
+    <Col xs={24} md={8}>
       <Card
-        className="finance-card net-position-card"
         style={{
           background:
             grandTotal === null || isComponentLoading
@@ -50,6 +49,8 @@ const NetPositionCard = ({ isMobile, styles, isComponentLoading }) => {
           flexDirection: 'column',
           justifyContent: 'space-between',
           border: 'none',
+          borderRadius: isMobile ? 8 : undefined,
+          marginBottom: isMobile ? 8 : undefined,
         }}
         bodyStyle={{
           padding: styles.cardPadding,

@@ -61,9 +61,8 @@ const BankBalanceCard = ({ isMobile, styles, isComponentLoading }) => {
       : 'var(--danger-500)';
 
   return (
-    <Col className="finance-card-col">
+    <Col xs={24} md={8}>
       <Card
-        className="finance-card bank-balance-card"
         style={{
           background: 'white',
           minHeight: styles.cardHeight,
@@ -71,6 +70,7 @@ const BankBalanceCard = ({ isMobile, styles, isComponentLoading }) => {
           flexDirection: 'column',
           justifyContent: 'space-between',
           border: 'none',
+          borderRadius: isMobile ? 8 : undefined,
         }}
         bodyStyle={{
           padding: styles.cardPadding,
