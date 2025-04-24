@@ -105,11 +105,11 @@ function MyApp() {
     switch (selectedMenuKey) {
       case 'dashboard':
         return (
-          <Row gutter={[24, 24]}>
+          <Row gutter={isMobileView ? [8, 16] : [24, 24]}>
             <Col xs={24} lg={17}>
               {/* Use the imported (now single) component */}
               <FinancialOverviewCards />
-              <div style={{ marginTop: 24 }}>
+              <div style={{ marginTop: isMobileView ? 16 : 24 }}>
                 <CombinedBillsOverview
                   style={{ height: '100%' }}
                   onEditBill={handleOpenEditBillModal} // Pass handler for editing
@@ -118,7 +118,7 @@ function MyApp() {
               </div>
             </Col>
             <Col xs={24} lg={7}>
-              <Space direction="vertical" size={24} style={{ width: '100%' }}>
+              <Space direction="vertical" size={isMobileView ? 16 : 24} style={{ width: '100%' }}>
                 <BillPrepCard style={{ height: '100%' }} />
                 <PastDuePayments style={{ height: '100%' }} />
                 <UpcomingPayments style={{ height: '100%' }} />
@@ -143,15 +143,18 @@ function MyApp() {
     }
   };
 
+  // Updated contentStyle with consistent padding on both sides
   const contentStyle = {
-      padding: 'var(--space-24)',
-      margin: 0,
-      flexGrow: 1,
-      paddingBottom: isMobileView ? '80px' : 'var(--space-24)' // Add space for bottom nav
+    padding: isMobileView ? 'var(--space-4) var(--space-8)' : 'var(--space-24)',
+    margin: 0,
+    flexGrow: 1,
+    width: '100%',
+    maxWidth: '100%',
+    paddingBottom: isMobileView ? '80px' : 'var(--space-24)', // Add space for bottom nav
   };
 
   return (
-    <Layout style={{ minHeight: '100vh' }}>
+    <Layout style={{ minHeight: '100vh', maxWidth: '100vw', overflow: 'hidden' }}>
       {!isMobileView && (
           <Sidebar
             selectedKey={selectedMenuKey}
@@ -171,6 +174,9 @@ function MyApp() {
           display: 'flex',
           flexDirection: 'column',
           backgroundColor: 'var(--neutral-100)',
+          width: '100%',
+          maxWidth: '100%',
+          padding: 0,
         }}
       >
         <Content style={contentStyle}>

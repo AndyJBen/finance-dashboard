@@ -355,8 +355,8 @@ main.ant-layout-content {
     display: none !important; /* Use !important to override potential inline styles or specificity issues */
   }
 
-  /* START: Mobile Category Carousel Styles */
-  .category-tags-container {
+/* START: Mobile Category Carousel Styles */
+.category-tags-container {
     /* Override defaults for mobile */
     flex-wrap: nowrap; /* Prevent wrapping */
     overflow-x: auto; /* Enable horizontal scrolling */
@@ -395,4 +395,94 @@ main.ant-layout-content {
   font-weight: inherit;
   vertical-align: super;
   opacity: 0.85;
+}
+
+@media (max-width: 767.98px) {
+  /* Root container max-width removal */
+  #root {
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow-x: hidden !important;
+  }
+  
+  /* Main Layout adjustments */
+  .ant-layout {
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  
+  /* Content area adjustments */
+  main.ant-layout-content {
+    padding: var(--space-4) var(--space-8) var(--space-24) !important; /* Reduced top and sides */
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  
+  /* Row and column adjustments to expand width */
+  .ant-row {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  
+  /* Reset column gutters to be smaller and even */
+  .ant-col {
+    padding-left: 4px !important;
+    padding-right: 4px !important;
+  }
+  
+  /* Card adjustments for more content space */
+  .ant-card {
+    width: 100% !important;
+    margin-bottom: 8px !important;
+  }
+  
+  .ant-card-body {
+    padding: 12px !important; /* Reduced internal card padding */
+  }
+  
+  /* Space component adjustments */
+  .ant-space {
+    width: 100% !important;
+  }
+  
+  /* Layout container adjustments */
+  .ant-layout > div {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+  }
+  
+  /* Force container to expand to edges with even padding */
+  .ant-layout-content > div,
+  .ant-layout-content > * {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    max-width: 100% !important;
+  }
+  
+  /* Adjust any fixed width components to be responsive */
+  [style*="width"] {
+    max-width: 100% !important;
+  }
+
+  /* Fix for AntD components with internal spacing */
+  .ant-table-wrapper, 
+  .ant-list-wrapper,
+  .ant-form {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  /* Ensure even internal padding in layout sections */
+  .ant-layout-content > section,
+  .ant-layout-content > div > div {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
 }
