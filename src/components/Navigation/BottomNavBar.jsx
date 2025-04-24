@@ -11,7 +11,7 @@ import {
     IconEdit
 } from '@tabler/icons-react';
 
-// Existing styles...
+// Styles remain the same...
 const navStyle = {
     position: 'fixed',
     bottom: 0,
@@ -40,7 +40,7 @@ const itemStyle = {
     color: 'var(--neutral-500)',
     flex: 1,
     maxWidth: '20%',
-    backgroundColor: 'transparent',
+    backgroundColor: 'transparent', // Ensure background is transparent for text buttons
 };
 
 const activeItemStyle = {
@@ -63,38 +63,37 @@ const centerButtonStyle = {
     zIndex: 1001,
 };
 
-// ALTERNATIVE MENU STYLES - FLAT DESIGN WITH HORIZONTAL ICONS
+// IMPROVED ACTION MENU STYLES
 const actionMenuStyle = {
     borderRadius: '16px',
-    overflow: 'hidden',
+    padding: '6px',
     backgroundColor: 'white',
-    boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
-    padding: '8px',
+    boxShadow: '0 10px 25px rgba(0,0,0,0.15)',
 };
 
 const actionItemStyle = {
     display: 'flex',
     alignItems: 'center',
-    padding: '16px',
+    padding: '14px 16px',
     color: 'var(--neutral-800)',
     cursor: 'pointer',
     transition: 'all 0.2s',
     borderRadius: '12px',
-    marginBottom: '4px',
+    margin: '2px 0',
 };
 
-// No margin on last item
 const lastActionItemStyle = {
     ...actionItemStyle,
-    marginBottom: '0',
+    margin: '2px 0 0 0',
 };
 
-const iconStyle = {
+const iconContainerStyle = {
+    width: '36px',
+    height: '36px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: '16px',
-    color: 'var(--primary-600)',
+    marginRight: '12px',
 };
 
 const actionItemTextStyle = {
@@ -106,7 +105,7 @@ const actionItemHoverStyle = {
     backgroundColor: 'var(--neutral-50)',
 };
 
-// Bottom Nav component
+// Accept onAddClick and onEditBalanceClick props
 const BottomNavBar = ({ selectedKey, onSelect, onAddClick, onEditBalanceClick }) => {
     const [hoverItem, setHoverItem] = useState(null);
 
@@ -124,8 +123,8 @@ const BottomNavBar = ({ selectedKey, onSelect, onAddClick, onEditBalanceClick })
                 onMouseEnter={() => setHoverItem('addBill')}
                 onMouseLeave={() => setHoverItem(null)}
             >
-                <div style={iconStyle}>
-                    <IconPlus size={20} strokeWidth={2} />
+                <div style={iconContainerStyle}>
+                    <IconPlus size={20} style={{ color: 'var(--primary-600)' }} />
                 </div>
                 <span style={actionItemTextStyle}>Add a Bill</span>
             </div>
@@ -140,8 +139,8 @@ const BottomNavBar = ({ selectedKey, onSelect, onAddClick, onEditBalanceClick })
                 onMouseEnter={() => setHoverItem('editBalance')}
                 onMouseLeave={() => setHoverItem(null)}
             >
-                <div style={iconStyle}>
-                    <IconEdit size={20} strokeWidth={2} />
+                <div style={iconContainerStyle}>
+                    <IconEdit size={20} style={{ color: 'var(--primary-600)' }} />
                 </div>
                 <span style={actionItemTextStyle}>Edit Bank Balance</span>
             </div>
