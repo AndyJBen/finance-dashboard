@@ -145,12 +145,12 @@ function MyApp() {
 
   // Updated contentStyle with consistent padding on both sides
   const contentStyle = {
-    padding: isMobileView ? 'var(--space-4) var(--space-8)' : 'var(--space-24)',
+    padding: isMobileView ? 'var(--space-4) var(--space-12)' : 'var(--space-24)',
     margin: 0,
     flexGrow: 1,
     width: '100%',
     maxWidth: '100%',
-    paddingBottom: isMobileView ? '80px' : 'var(--space-24)', // Add space for bottom nav
+    paddingBottom: isMobileView ? '80px' : 'var(--space-24)' // Add space for bottom nav
   };
 
   return (

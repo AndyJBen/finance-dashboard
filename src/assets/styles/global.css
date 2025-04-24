@@ -414,15 +414,15 @@ main.ant-layout-content {
     max-width: 100% !important;
   }
   
-  /* Content area adjustments */
+  /* Content area adjustments - INCREASED SIDE PADDING */
   main.ant-layout-content {
-    padding: var(--space-4) var(--space-8) var(--space-24) !important; /* Reduced top and sides */
+    padding: var(--space-4) var(--space-12) var(--space-24) !important; /* Increased sides from 8px to 12px */
     margin: 0 !important;
     width: 100% !important;
     max-width: 100% !important;
   }
   
-  /* Row and column adjustments to expand width */
+  /* Row and column adjustments with balanced margins */
   .ant-row {
     margin-left: 0 !important;
     margin-right: 0 !important;
@@ -430,20 +430,20 @@ main.ant-layout-content {
     max-width: 100% !important;
   }
   
-  /* Reset column gutters to be smaller and even */
+  /* Increased column gutters for a bit more space */
   .ant-col {
-    padding-left: 4px !important;
-    padding-right: 4px !important;
+    padding-left: 6px !important;
+    padding-right: 6px !important;
   }
   
-  /* Card adjustments for more content space */
+  /* Card adjustments with slightly more internal padding */
   .ant-card {
     width: 100% !important;
-    margin-bottom: 8px !important;
+    margin-bottom: 12px !important;
   }
   
   .ant-card-body {
-    padding: 12px !important; /* Reduced internal card padding */
+    padding: 14px !important; /* Increased internal card padding */
   }
   
   /* Space component adjustments */
@@ -458,7 +458,7 @@ main.ant-layout-content {
     max-width: 100% !important;
   }
   
-  /* Force container to expand to edges with even padding */
+  /* Container size adjustments - adding slight padding */
   .ant-layout-content > div,
   .ant-layout-content > * {
     padding-left: 0 !important;
@@ -466,7 +466,7 @@ main.ant-layout-content {
     max-width: 100% !important;
   }
   
-  /* Adjust any fixed width components to be responsive */
+  /* Adjust any fixed width components to be responsive but not too wide */
   [style*="width"] {
     max-width: 100% !important;
   }
