@@ -462,14 +462,13 @@ main.ant-layout-content {
       height: 16px !important;
     }
     
-    /* Adjust content container to expand full width */
-    main.ant-layout-content {
-      padding-left: var(--space-7) !important;
-      padding-right: var(--space-7) !important;
-      max-width: 100% !important;
-      width: 100% !important;
-      overflow-x: hidden !important;
-    }
+  /* Content area adjustments - INCREASED SIDE PADDING */
+  main.ant-layout-content {
+    padding: var(--space-4) var(--space-12) var(--space-24) !important; /* Increased sides from 8px to 12px */
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
     
     /* Reset any row margins to ensure full width */
     .ant-row {
