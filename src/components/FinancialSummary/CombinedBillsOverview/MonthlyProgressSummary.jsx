@@ -145,7 +145,7 @@ const MonthlyProgressSummary = ({
 
             {/* Progress Bar */}
             {totalAmountForAllBillsInDisplayedMonth > 0 && (
-                <div style={{ width: '90%', margin: '0 auto', marginBottom: 'var(--space-20)' }}>
+                <div style={{ width: '90%', margin: '0 auto', marginBottom: 'var(--space-5)' }}>
                     <Progress percent={percentAmountPaid} strokeColor="var(--success-500)" trailColor="var(--neutral-200)" showInfo={false} size={['100%', 12]} />
                 </div>
             )}

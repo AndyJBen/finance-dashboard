@@ -27,7 +27,7 @@ const BillsListSection = ({
     return (
         <div>
             {/* Filter Section */}
-            <div style={{ marginBottom: '16px', width: '100%' }}>
+            <div style={{ marginBottom: '20px', width: '100%' }}>
                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
                     {/* Filter controls */}
                     <Space align="center">
