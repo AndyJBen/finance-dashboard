@@ -1,4 +1,4 @@
-// src/components/shared/CardLayout.js
+// src/components/shared/CardLayout.jsx (Changed from .js to .jsx)
 import React from 'react';
 import { Card, Spin, Button, Tooltip, Alert } from 'antd';
 import { IconMinus, IconChevronDown } from '@tabler/icons-react';
@@ -39,14 +39,12 @@ const CardLayout = ({
       <Card
         style={{
           ...style,
-          width: '100%', // Ensure full width 
+          width: '100%', 
           height: 'auto',
-          minHeight: isCollapsed ? 'auto' : '240px', // Adjusted min-height
+          minHeight: isCollapsed ? 'auto' : '240px',
           display: 'flex',
           flexDirection: 'column',
-          // Remove any max-width constraints
           maxWidth: 'none',
-          // Apply existing app styles based on global.css
           boxShadow: 'var(--shadow-md) !important',
           border: '1px solid var(--neutral-200) !important'
         }}
@@ -55,8 +53,8 @@ const CardLayout = ({
           display: 'flex',
           flexDirection: 'column',
           padding: isCollapsed ? '16px' : '16px',
-          width: '100%', // Ensure body takes full width
-          overflow: 'hidden' // Prevent overflow
+          width: '100%',
+          overflow: 'hidden'
         }}
         title={title}
         extra={collapseButton}
@@ -67,8 +65,8 @@ const CardLayout = ({
               flexGrow: 1, 
               display: 'flex', 
               flexDirection: 'column',
-              width: '100%', // Ensure content takes full width
-              overflow: 'hidden' // Prevent overflow
+              width: '100%',
+              overflow: 'hidden'
             }}
           >
             {children}
