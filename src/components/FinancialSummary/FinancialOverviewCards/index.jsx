@@ -40,7 +40,7 @@ const FinancialOverviewCardsContainer = () => {
     gutter: [8, 8],
     marginBottom: 8,
     spaceMargin: 4, // Reduced from 8px to 4px
-    fontSize: { title: '0.6rem', value: '18px', subtext: '0.65rem' }, // Smaller title font
+    fontSize: { title: '0.7rem', value: '18px', subtext: '0.65rem' }, // Updated from 0.6rem to 0.7rem
     iconSize: { standard: 16, small: 14, edit: 14 }, // Smaller icons
     editButtonStyle: { padding: '0px', minWidth: '24px', height: '24px' }
   };
@@ -185,9 +185,9 @@ const FinancialOverviewCardsContainer = () => {
             display: none !important;
           }
           
-          /* Smaller title text */
+          /* Smaller title text - updated from 0.6rem to 0.7rem */
           .financial-overview-row .ant-typography {
-            font-size: 0.6rem !important;
+            font-size: 0.7rem !important;
           }
           
           /* Smaller icons */

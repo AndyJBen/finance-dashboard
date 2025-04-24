@@ -44,7 +44,7 @@ const NetPositionCard = ({ isMobile, styles, isComponentLoading }) => {
               ? 'linear-gradient(145deg, var(--danger-700), #A51F49)'
               : 'linear-gradient(145deg, var(--success-500), var(--success-700))',
           color: 'white',
-          minHeight: styles.cardHeight,
+          minHeight: isMobile ? '90px' : styles.cardHeight,
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between',
@@ -53,7 +53,7 @@ const NetPositionCard = ({ isMobile, styles, isComponentLoading }) => {
           marginBottom: isMobile ? 8 : undefined,
         }}
         bodyStyle={{
-          padding: styles.cardPadding,
+          padding: isMobile ? '8px 10px' : styles.cardPadding,
           flexGrow: 1,
           display: 'flex',
           flexDirection: 'column',
@@ -62,14 +62,14 @@ const NetPositionCard = ({ isMobile, styles, isComponentLoading }) => {
         }}
       >
         <div>
-          <Space align="center" style={{ marginBottom: styles.spaceMargin, height: "22px" }}>
+          <Space align="center" style={{ marginBottom: isMobile ? 4 : styles.spaceMargin, height: isMobile ? '18px' : '22px' }}>
             <IconCoinFilled
               size={styles.iconSize.standard}
               style={{ opacity: 0.9, color: 'white', display: 'flex' }}
             />
             <Text
               style={{
-                fontSize: styles.fontSize.title,
+                fontSize: isMobile ? '0.7rem' : styles.fontSize.title,
                 fontWeight: 500,
                 color: 'rgba(255, 255, 255, 0.9)',
                 display: 'flex',
@@ -85,7 +85,7 @@ const NetPositionCard = ({ isMobile, styles, isComponentLoading }) => {
             value={isComponentLoading ? null : (grandTotal ?? 0)}
             valueStyle={{
               color: 'white',
-              fontSize: styles.fontSize.value,
+              fontSize: isMobile ? '18px' : styles.fontSize.value,
               fontWeight: 700,
               lineHeight: 1.2,
               marginBottom: 0,
@@ -102,13 +102,13 @@ const NetPositionCard = ({ isMobile, styles, isComponentLoading }) => {
         }
         
         .cents-superscript {
-          font-size: 45%;
+          font-size: ${isMobile ? '40%' : '45%'};
           margin-left: 2px;
           font-weight: inherit;
           line-height: 1;
           opacity: 0.85;
           vertical-align: text-top;
-          margin-top: 4px;
+          margin-top: ${isMobile ? '2px' : '4px'};
         }
       `}</style>
     </Col>
