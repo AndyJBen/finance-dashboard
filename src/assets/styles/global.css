@@ -987,66 +987,91 @@ main.ant-layout-content {
     display: none !important;
   }
 }
-/* Fix card components on mobile devices */
+/* Mobile responsive fixes */
 @media (max-width: 768px) {
-  /* Keep cards compact but restore font sizes */
-  .ant-row .ant-col .ant-card {
-    min-height: auto !important; /* Keep compact height */
-  }
-
-  /* Remove top padding from balance cards */
-  .ant-row .ant-col .ant-card .ant-card-body {
-    padding: 12px !important; /* Keep reduced padding */
-    padding-top: 8px !important; /* Reduce top padding specifically */
-  }
-
-  /* IMPORTANT: Reset statistic value font sizes to original */
-  /* This targets the dollar amounts in the top cards */
-  .ant-row .ant-col .ant-card .ant-statistic-content,
-  .ant-statistic .ant-statistic-content .ant-statistic-content-value {
-    font-size: 1.75rem !important; /* Restore to original size */
-    line-height: 1.2 !important; /* Restore original line height */
-  }
-
-  /* Specifically target the Monthly Bills section statistics */
-  .ant-row .ant-col .ant-statistic .ant-statistic-content-value {
-    font-size: 1rem !important; /* Restore to original size for stats under progress bar */
-  }
-
-  /* Fix the Paid, Total, Remaining values from Monthly Bills section */
-  .stat-card-item .ant-statistic .ant-statistic-content-value,
-  .stat-card-item .ant-statistic .ant-statistic-content-value-decimal {
-    font-size: 1rem !important; /* Restore to original size */
-  }
-
-  /* Keep compact spacing in card headers */
-  .ant-row .ant-col .ant-card .ant-space {
-    margin-bottom: 8px !important; /* Keep reduced spacing */
-  }
-
-  /* Keep these cards compact */
-  .ant-row .ant-col .ant-card[style*="min-height: 160px"] {
-    min-height: 120px !important; /* Keep reduced minimum height */
-  }
-
-  /* Fix the spacing of bank balance card as well */
-  .ant-card .ant-space[style*="justify-content: space-between"] {
-    margin-bottom: 4px !important; /* Keep compact */
-  }
-  
-  /* Ensure top cards (Net Position, Due Balance, Bank Balance) maintain exact height */
-  .ant-row:first-of-type .ant-col .ant-card {
-    height: 120px !important;
+  /* Preserve existing financial overview card styling from the HTML */
+  .financial-overview-row {
     display: flex !important;
-    flex-direction: column !important;
-  }
-  
-  .ant-row:first-of-type .ant-col .ant-card .ant-card-body {
-    display: flex !important;
-    flex-direction: column !important;
+    flex-wrap: nowrap !important;
+    margin: 0 !important;
+    width: 100% !important;
     justify-content: space-between !important;
-    height: 100% !important;
-    padding-top: 10px !important;
-    padding-bottom: 10px !important;
+  }
+  
+  .financial-overview-row .ant-col {
+    flex: 1 1 0 !important;
+    width: 33.33% !important;
+    max-width: 33.33% !important;
+    padding: 0 3px !important;
+  }
+  
+  /* Adjusted card styling with border radius */
+  .financial-overview-row .ant-card {
+    border-radius: 10px !important;
+    margin-bottom: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    min-height: 90px !important;
+  }
+  
+  /* Ensure text size remains consistent */
+  .financial-overview-row .ant-statistic-content {
+    font-size: 18px !important;
+    line-height: 1 !important;
+    margin-top: 4px !important;
+  }
+  
+  /* Fix for the progress stats section */
+  .ant-statistic .ant-statistic-title {
+    font-size: 0.75rem !important;
+  }
+  
+  .ant-row .ant-col .ant-statistic .ant-statistic-content-value {
+    font-size: 0.9rem !important;
+  }
+  
+  /* Fix spacing in monthly progress card */
+  .ant-row .month-navigation {
+    margin-bottom: 12px !important;
+  }
+  
+  /* Hide any tooltips on mobile */
+  [data-tooltip-id], 
+  [data-tooltip], 
+  [aria-describedby],
+  *[title] {
+    pointer-events: auto !important;
+  }
+  
+  .ant-tooltip {
+    display: none !important;
+  }
+  
+  /* Hide scrollbars but keep scrolling functionality */
+  html, body, .ant-layout, .ant-layout-content, 
+  .ant-table-content, .ant-table-body {
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+  }
+  
+  html::-webkit-scrollbar,
+  body::-webkit-scrollbar,
+  .ant-layout::-webkit-scrollbar,
+  .ant-layout-content::-webkit-scrollbar,
+  .ant-table-content::-webkit-scrollbar,
+  .ant-table-body::-webkit-scrollbar {
+    width: 0 !important;
+    height: 0 !important;
+    display: none !important;
+    background: transparent !important;
+  }
+  
+  /* Fix for the currency wrapper and text size */
+  .currency-wrapper {
+    align-items: baseline !important;
+  }
+  
+  .cents-superscript {
+    font-size: 40% !important;
+    margin-top: 2px !important;
   }
 }
