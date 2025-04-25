@@ -709,7 +709,7 @@ main.ant-layout-content {
   }
   
   .bills-overview-table .ant-table-thead > tr > th:nth-child(3) { /* Amount */
-    width: 45px !important; /* Even narrower */
+    width: 35px !important; /* Even narrower */
     max-width: 45px !important;
   }
   
