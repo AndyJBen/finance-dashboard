@@ -40,7 +40,7 @@ const FinancialOverviewCardsContainer = () => {
     gutter: [8, 8],
     marginBottom: 8,
     spaceMargin: 4, 
-    fontSize: { title: '0.75rem', value: '18px', subtext: '0.65rem' }, // Set to 0.7rem
+    fontSize: { title: '0.75rem', value: '22px', subtext: '0.65rem' }, // Set to 0.7rem
     iconSize: { standard: 16, small: 14, edit: 14 },
     editButtonStyle: { padding: '0px', minWidth: '24px', height: '24px' }
   };
