@@ -96,7 +96,7 @@ function MyApp() {
             <Col xs={24} lg={17}>
               {/* Use the imported (now single) component */}
               <FinancialOverviewCards />
-              <div style={{ marginTop: isMobileView ? 16 : 24 }}>
+              <div style={{ marginTop: isMobileView ? 5 : 24 }}>
                 <CombinedBillsOverview
                   style={{ height: '100%' }}
                   onEditBill={handleOpenEditBillModal} // Pass handler for editing
