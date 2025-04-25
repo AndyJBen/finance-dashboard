@@ -834,7 +834,7 @@ main.ant-layout-content {
   
   /* Remove extra space in rows */
   .bills-overview-table .ant-table-tbody > tr {
-    height: 50px !important;
+    height: 40px !important;
   }
   
   .bills-overview-table .ant-typography strong {
