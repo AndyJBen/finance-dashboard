@@ -347,7 +347,7 @@ const CombinedBillsOverview = ({ style }) => {
                         >
                             {showPaidBills ? 
                                 `Hide Paid Bills (${paidVisibleCount})` : 
-                                `Show All Bills (${unpaidVisibleCount} Unpaid + ${paidVisibleCount} Paid)`
+                                `Show All Bills`
                             }
                         </Button>
                     </div>
