@@ -662,7 +662,7 @@ main.ant-layout-content {
   }
   
   .financial-overview-row .cents-superscript {
-    font-size: 40% !important;
+    font-size: 50% !important;
     margin-top: 2px !important;
   }
   
@@ -1047,7 +1047,6 @@ nav.bottom-navbar {
 
   /* Adjust the position of the currency values */
   .financial-overview-row .currency-wrapper {
-    align-items: baseline !important;
     line-height: 1 !important;
   }
   
