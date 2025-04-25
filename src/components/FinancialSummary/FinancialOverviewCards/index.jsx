@@ -154,7 +154,7 @@ const FinancialOverviewCardsContainer = () => {
             border-radius: 10px !important;
             margin-bottom: 8px;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-            min-height: 60px !important;
+            min-height: 70px !important;
           }
           
           /* Reduced internal padding */
