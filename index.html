@@ -6,8 +6,24 @@
     <meta name="format-detection" content="telephone=no"/>
     <meta name="apple-mobile-web-app-capable" content="yes"/>
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+    <!-- Additional iOS-specific meta tags -->
+    <meta name="mobile-web-app-capable" content="yes"/>
+    <meta name="apple-touch-fullscreen" content="yes"/>
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <title>Finance Dashboard</title>
+    
+    <style>
+      /* Inline critical CSS to prevent selection and magnification */
+      html, body, #root, * {
+        -webkit-user-select: none !important;
+        user-select: none !important;
+        -webkit-touch-callout: none !important;
+        -webkit-tap-highlight-color: rgba(0,0,0,0) !important;
+        touch-action: manipulation !important;
+        -webkit-user-drag: none !important;
+        cursor: default !important;
+      }
+    </style>
 
     <script>
       // Prevent pinch-zoom on iOS
@@ -25,8 +41,16 @@
       
       // Prevent text selection on touch devices
       document.addEventListener('touchstart', function(e) {
-        if (e.touches.length > 1) {
-          e.preventDefault(); // Prevent pinch
+        // Force clear any selection
+        if (window.getSelection) {
+          window.getSelection().removeAllRanges();
+        }
+      }, { passive: false });
+      
+      // Cancel any ongoing selection
+      document.addEventListener('touchmove', function(e) {
+        if (window.getSelection) {
+          window.getSelection().removeAllRanges();
         }
       }, { passive: false });
       
@@ -40,12 +64,49 @@
       // Disable long press selection
       document.addEventListener('contextmenu', e => {
         e.preventDefault();
+        return false;
       }, false);
+      
+      // Additional setup when document is ready
+      document.addEventListener('DOMContentLoaded', function() {
+        document.body.setAttribute('unselectable', 'on');
+        document.body.setAttribute('onselectstart', 'return false;');
+        
+        // Apply to all elements dynamically added to the DOM
+        const observer = new MutationObserver(function(mutations) {
+          mutations.forEach(function(mutation) {
+            if (mutation.addedNodes) {
+              mutation.addedNodes.forEach(function(node) {
+                if (node.nodeType === 1) { // Element node
+                  node.addEventListener('touchstart', function(e) {
+                    // Prevent default only for non-input elements
+                    if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+                      if (window.getSelection) {
+                        window.getSelection().removeAllRanges();
+                      }
+                    }
+                  }, { passive: false });
+                  
+                  node.addEventListener('contextmenu', function(e) {
+                    e.preventDefault();
+                    return false;
+                  });
+                }
+              });
+            }
+          });
+        });
+        
+        // Start observing the document
+        observer.observe(document.body, { 
+          childList: true,
+          subtree: true
+        });
+      });
     </script>
-
-    </head>
-  <body>
-    <div id="root"></div>
+  </head>
+  <body unselectable="on" onselectstart="return false;" class="no-magnify">
+    <div id="root" unselectable="on"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
