@@ -413,7 +413,7 @@ main.ant-layout-content {
     display: none !important; /* Use !important to override potential inline styles or specificity issues */
   }
 
-  /* Currency display styles */
+/* Currency display styles */
 .currency-wrapper {
   position: relative;
   display: inline-flex;
@@ -661,98 +661,110 @@ main.ant-layout-content {
     padding: 25px 15px !important;
   }
   
-  /* Bill table optimizations */
-  .bills-overview-table .ant-table-thead {
-    margin-bottom: 0 !important;
+  /* Fix the table row spacing issues */
+  /* CRITICAL: Remove extra row that creates a gap */
+  .bills-overview-table .ant-table-measure-row {
+    display: none !important;
+    height: 0 !important;
   }
   
-  /* IMPORTANT: Remove space between header and content */
+  /* Remove any table header/body spacing issues */
   .bills-overview-table .ant-table-header {
     margin-bottom: 0 !important;
     padding-bottom: 0 !important;
   }
   
-  .bills-overview-table .ant-table-tbody {
+  .bills-overview-table .ant-table-body {
     margin-top: 0 !important;
     padding-top: 0 !important;
   }
   
-  /* Remove any border spacing or margin */
   .bills-overview-table table {
     border-spacing: 0 !important;
     border-collapse: collapse !important;
   }
   
+  /* Table header styling */
   .bills-overview-table .ant-table-thead > tr > th {
-    padding: 4px 4px !important;
+    padding: 3px 2px !important;
     font-size: 0.65rem !important;
     padding-bottom: 2px !important;
     border-bottom: 1px solid var(--neutral-200) !important;
-    height: 24px !important;
+    height: 20px !important; /* Shorter height */
   }
   
   /* Hide the "STATUS" column title text */
   .bills-overview-table .ant-table-thead > tr > th:first-child {
     font-size: 0 !important;
-    width: 28px !important; /* More compact */
-    max-width: 28px !important;
+    width: 24px !important; /* More compact */
+    max-width: 24px !important;
     padding-left: 2px !important;
     padding-right: 2px !important;
   }
   
-  /* Column width adjustments - narrower */
+  /* Column width adjustments - even narrower */
   .bills-overview-table .ant-table-thead > tr > th:nth-child(2) { /* Name */
-    width: 80px !important;
-    max-width: 80px !important;
+    width: 85px !important;
+    max-width: 85px !important;
   }
   
   .bills-overview-table .ant-table-thead > tr > th:nth-child(3) { /* Amount */
-    width: 50px !important;
-    max-width: 50px !important;
+    width: 45px !important; /* Even narrower */
+    max-width: 45px !important;
   }
   
   .bills-overview-table .ant-table-thead > tr > th:nth-child(4) { /* Category */
-    width: 80px !important;
-    max-width: 80px !important;
+    width: 75px !important;
+    max-width: 75px !important;
   }
   
   .bills-overview-table .ant-table-thead > tr > th:nth-child(5) { /* Due Date */
-    width: 70px !important;
-    max-width: 70px !important;
+    width: 65px !important;
+    max-width: 65px !important;
   }
   
   .bills-overview-table .ant-table-thead > tr > th:nth-child(6) { /* Due In */
-    width: 50px !important;
-    max-width: 50px !important;
+    width: 45px !important; /* Even narrower */
+    max-width: 45px !important;
   }
   
   .bills-overview-table .ant-table-thead > tr > th:last-child { /* Actions */
-    width: 26px !important;
-    max-width: 26px !important;
+    width: 24px !important;
+    max-width: 24px !important;
     padding-left: 2px !important;
     padding-right: 2px !important;
   }
   
-  /* Table cell styling */
+  /* Table cell styling - more compact */
   .bills-overview-table .ant-table-tbody > tr > td:first-child {
-    width: 28px !important;
-    max-width: 28px !important;
+    width: 24px !important;
+    max-width: 24px !important;
     padding-left: 2px !important;
     padding-right: 2px !important;
+  }
+  
+  .bills-overview-table .ant-table-tbody > tr > td:nth-child(3) {
+    width: 45px !important;
+    max-width: 45px !important;
   }
   
   .bills-overview-table .ant-table-tbody > tr > td:last-child {
-    width: 26px !important;
-    max-width: 26px !important;
+    width: 24px !important;
+    max-width: 24px !important;
     padding-left: 2px !important;
     padding-right: 2px !important;
   }
   
   .bills-overview-table .ant-table-tbody > tr > td {
-    padding: 6px 4px !important; /* Slightly taller rows */
+    padding: 5px 2px !important; /* Smaller vertical padding */
     font-size: 0.8rem !important;
     line-height: 1.2 !important;
-    height: 32px !important; /* Slightly taller rows */
+    height: 28px !important; /* Shorter rows */
+  }
+  
+  /* Remove extra space in rows */
+  .bills-overview-table .ant-table-tbody > tr {
+    height: 28px !important;
   }
   
   .bills-overview-table .ant-typography strong {
