@@ -753,3 +753,90 @@ main.ant-layout-content {
     padding: 25px 15px !important;
   }
 }
+/* Mobile Bills List Fixes - Add to your existing CSS file */
+@media (max-width: 767.98px) {
+  /* Remove space between column headers and first row */
+  .bills-overview-table .ant-table-thead {
+    margin-bottom: 0 !important;
+  }
+
+  .bills-overview-table .ant-table-thead > tr > th {
+    padding-bottom: 4px !important;
+    border-bottom: 1px solid var(--neutral-200) !important;
+  }
+
+  /* Hide the "STATUS" column title text */
+  .bills-overview-table .ant-table-thead > tr > th:first-child {
+    font-size: 0 !important; /* Hide text but keep column */
+    width: 36px !important; /* Make status column narrower */
+    max-width: 36px !important;
+    padding-left: 4px !important;
+    padding-right: 4px !important;
+  }
+
+  /* Make other columns narrower */
+  .bills-overview-table .ant-table-thead > tr > th:nth-child(2) { /* Name */
+    width: 90px !important;
+    max-width: 90px !important;
+  }
+
+  .bills-overview-table .ant-table-thead > tr > th:nth-child(3) { /* Amount */
+    width: 60px !important;
+    max-width: 60px !important;
+  }
+
+  .bills-overview-table .ant-table-thead > tr > th:nth-child(4) { /* Category */
+    width: 90px !important;
+    max-width: 90px !important;
+  }
+
+  .bills-overview-table .ant-table-thead > tr > th:nth-child(5) { /* Due Date */
+    width: 80px !important;
+    max-width: 80px !important;
+  }
+
+  .bills-overview-table .ant-table-thead > tr > th:nth-child(6) { /* Due In */
+    width: 60px !important;
+    max-width: 60px !important;
+  }
+
+  .bills-overview-table .ant-table-thead > tr > th:last-child { /* Actions */
+    width: 30px !important;
+    max-width: 30px !important;
+  }
+
+  /* Make table cells follow the same width constraints */
+  .bills-overview-table .ant-table-tbody > tr > td:first-child {
+    width: 36px !important;
+    max-width: 36px !important;
+    padding-left: 4px !important;
+    padding-right: 4px !important;
+  }
+
+  /* Slightly increase font size for bills list */
+  .bills-overview-table .ant-typography strong {
+    font-size: 0.8rem !important; /* Slightly larger than previous 0.75rem */
+  }
+
+  .bills-overview-table .ant-table-tbody > tr > td {
+    padding: 5px 8px !important;
+    font-size: 0.8rem !important; /* Slightly larger than previous 0.75rem */
+  }
+
+  /* Remove bottom navbar if present */
+  .ant-layout-footer,
+  nav.bottom-navbar {
+    display: none !important;
+  }
+  
+  /* Remove any unnecessary bottom padding/margin that might create space for navbar */
+  .ant-layout-content {
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+  }
+  
+  /* Ensure the main layout takes full height without accounting for navbar */
+  .ant-layout {
+    min-height: 100vh !important;
+  }
+}
