@@ -346,7 +346,7 @@ const CombinedBillsOverview = ({ style }) => {
                             style={{ color: 'var(--neutral-600)' }}
                         >
                             {showPaidBills ? 
-                                `Hide Paid Bills (${paidVisibleCount})` : 
+                                `Hide Paid Bills` : 
                                 `Show All Bills`
                             }
                         </Button>
