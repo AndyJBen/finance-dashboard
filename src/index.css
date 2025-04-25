@@ -175,4 +175,14 @@ html, body, #root, * {
 
   /* disable iOS callout menus */
   -webkit-touch-callout: none !important;
+  
+  /* prevent highlighting behavior */
+  -webkit-tap-highlight-color: rgba(0,0,0,0) !important;
+  
+  /* disable text selection when dragging */
+  -webkit-user-drag: none !important;
+  -khtml-user-drag: none !important;
+  -moz-user-drag: none !important;
+  -o-user-drag: none !important;
+  user-drag: none !important;
 }
