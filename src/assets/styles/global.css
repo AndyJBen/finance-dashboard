@@ -696,8 +696,8 @@ main.ant-layout-content {
   /* Hide the "STATUS" column title text */
   .bills-overview-table .ant-table-thead > tr > th:first-child {
     font-size: 0 !important;
-    width: 24px !important; /* More compact */
-    max-width: 24px !important;
+    width: 15px !important; /* More compact */
+    max-width: 15px !important;
     padding-left: 2px !important;
     padding-right: 2px !important;
   }
@@ -710,7 +710,7 @@ main.ant-layout-content {
   
   .bills-overview-table .ant-table-thead > tr > th:nth-child(3) { /* Amount */
     width: 35px !important; /* Even narrower */
-    max-width: 45px !important;
+    max-width: 35px !important;
   }
   
   .bills-overview-table .ant-table-thead > tr > th:nth-child(4) { /* Category */
