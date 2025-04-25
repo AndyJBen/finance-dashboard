@@ -1,8 +1,4 @@
 // src/components/FinancialSummary/CombinedBillsOverview/CombinedBillsOverview.jsx
-// Fixed import path for FinanceContext after moving the file.
-// Highlight: Updated 'Due In' column render logic to show '-' for past due 'Bill Prep' category items.
-// Highlight: Modified tableDataSource logic to return an empty array when isTableCollapsed is true.
-
 import React, { useState, useContext, useMemo, useEffect } from 'react';
 import {
     Table, Button, Space, Spin, Alert, Tooltip, Checkbox, Tag, Card,
@@ -21,7 +17,9 @@ import {
     IconDotsVertical,
     IconChevronDown,
     IconChevronUp,
-    IconPlaylistAdd
+    IconPlaylistAdd,
+    IconEye, // New icon for showing all bills
+    IconEyeOff  // New icon for hiding paid bills
 } from '@tabler/icons-react';
 // Corrected the relative path for FinanceContext (up 3 levels)
 import { FinanceContext } from '../../../contexts/FinanceContext';
@@ -111,9 +109,10 @@ const CombinedBillsOverview = ({ style }) => {
     const [editingBill, setEditingBill] = useState(null);
     const [selectedCategory, setSelectedCategory] = useState('All');
     const [isTableCollapsed, setIsTableCollapsed] = useState(false); // State for collapse/expand
+    const [showPaidBills, setShowPaidBills] = useState(false); // New state for showing/hiding paid bills
     const defaultPageSize = 10; // Kept for reference, but not used for slicing when collapsed
 
-    // --- Derived State (Remains the same logic, except tableDataSource) ---
+    // --- Derived State (Modified to filter out paid bills by default) ---
     const validBills = Array.isArray(bills) ? bills : [];
     const startOfDisplayedMonth = displayedMonth.startOf('month');
     const endOfDisplayedMonth = displayedMonth.endOf('month');
@@ -125,11 +124,20 @@ const CombinedBillsOverview = ({ style }) => {
         });
     }, [validBills, displayedMonth, startOfDisplayedMonth, endOfDisplayedMonth]);
 
+    // Filter bills by paid status and category
+    const filteredBillsByPaidStatus = useMemo(() => {
+        // If showPaidBills is true, return all bills, otherwise only return unpaid bills
+        return showPaidBills 
+            ? billsDueInDisplayedMonth 
+            : billsDueInDisplayedMonth.filter(bill => !bill.isPaid);
+    }, [billsDueInDisplayedMonth, showPaidBills]);
+
+    // Then apply the category filter
     const mainTableDataSourceFiltered = useMemo(() => {
-        return billsDueInDisplayedMonth.filter(bill =>
+        return filteredBillsByPaidStatus.filter(bill =>
             selectedCategory === 'All' || bill.category === selectedCategory
         );
-    }, [billsDueInDisplayedMonth, selectedCategory]);
+    }, [filteredBillsByPaidStatus, selectedCategory]);
 
     const categories = useMemo(() => {
         return [...new Set(billsDueInDisplayedMonth.map(bill => bill.category).filter(Boolean))].sort((a, b) => a.localeCompare(b));
@@ -149,19 +157,17 @@ const CombinedBillsOverview = ({ style }) => {
 
     const totalBillsInDisplayedMonth = billsDueInDisplayedMonth.length;
     const paidBillsInDisplayedMonth = billsDueInDisplayedMonth.filter(b => b.isPaid).length;
+    const unpaidBillsInDisplayedMonth = totalBillsInDisplayedMonth - paidBillsInDisplayedMonth;
     const totalExpensesInDisplayedMonth = totalAmountPaidInDisplayedMonth;
     const totalAmountDueInDisplayedMonth = useMemo(() => {
         return billsDueInDisplayedMonth.reduce((sum, bill) => (!bill.isPaid && typeof bill.amount === 'number' ? sum + bill.amount : sum), 0);
     }, [billsDueInDisplayedMonth]);
 
-    // --- START: MODIFIED LOGIC FOR COLLAPSE ---
-    // Data source for the table, considering collapse state
-     const tableDataSource = isTableCollapsed
+    // --- MODIFIED LOGIC FOR COLLAPSE & BILL VISIBILITY ---
+    const tableDataSource = isTableCollapsed
         ? [] // Provide an empty array when collapsed to hide all rows
-        : mainTableDataSourceFiltered; // Show all filtered bills when not collapsed
-    // --- END: MODIFIED LOGIC FOR COLLAPSE ---
-    // --- End Derived State ---
-
+        : mainTableDataSourceFiltered; // Show filtered bills when not collapsed
+    // --- END MODIFIED LOGIC ---
 
     // --- Event Handlers (Remain in parent) ---
      const handleAddSingle = () => {
@@ -191,6 +197,11 @@ const CombinedBillsOverview = ({ style }) => {
         if (e.key === 'add-multiple') {
             handleOpenMultiModal();
         }
+     };
+
+     // New handler for toggling paid bills visibility
+     const togglePaidBillsVisibility = () => {
+         setShowPaidBills(prev => !prev);
      };
      // --- End Event Handlers ---
 
@@ -273,6 +284,15 @@ const CombinedBillsOverview = ({ style }) => {
     // --- Render Logic ---
     if (error && !loading) { return (<Card style={style}><Alert message="Error Loading Bills Data" description={error.message || 'Unknown error'} type="error" showIcon closable /></Card>); }
 
+    // Calculate the number of unpaid and paid bills with the current category filter applied
+    const unpaidVisibleCount = billsDueInDisplayedMonth.filter(bill => 
+        !bill.isPaid && (selectedCategory === 'All' || bill.category === selectedCategory)
+    ).length;
+    
+    const paidVisibleCount = billsDueInDisplayedMonth.filter(bill => 
+        bill.isPaid && (selectedCategory === 'All' || bill.category === selectedCategory)
+    ).length;
+
     return (
      <> {/* Fragment to wrap Card and Modals */}
         <Card
@@ -310,6 +330,28 @@ const CombinedBillsOverview = ({ style }) => {
                     selectedAllButtonStyle={selectedAllButtonStyle}
                     defaultAllButtonStyle={defaultAllButtonStyle}
                 />
+
+                {/* Show/Hide Paid Bills Toggle Button - Only displayed when table is not collapsed */}
+                {!isTableCollapsed && billsDueInDisplayedMonth.length > 0 && paidVisibleCount > 0 && (
+                    <div style={{ 
+                        textAlign: 'center', 
+                        marginTop: 'var(--space-16)',
+                        borderTop: '1px solid var(--neutral-200)',
+                        paddingTop: 'var(--space-12)'
+                    }}>
+                        <Button
+                            type="text"
+                            icon={showPaidBills ? <IconEyeOff size={16} /> : <IconEye size={16} />}
+                            onClick={togglePaidBillsVisibility}
+                            style={{ color: 'var(--neutral-600)' }}
+                        >
+                            {showPaidBills ? 
+                                `Hide Paid Bills (${paidVisibleCount})` : 
+                                `Show All Bills (${unpaidVisibleCount} Unpaid + ${paidVisibleCount} Paid)`
+                            }
+                        </Button>
+                    </div>
+                )}
 
             </Spin>
 
