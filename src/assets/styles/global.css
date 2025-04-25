@@ -413,31 +413,7 @@ main.ant-layout-content {
     display: none !important; /* Use !important to override potential inline styles or specificity issues */
   }
 
-  /* START: Mobile Category Carousel Styles */
-  .category-tags-container {
-    /* Override defaults for mobile */
-    flex-wrap: nowrap; /* Prevent wrapping */
-    overflow-x: auto; /* Enable horizontal scrolling */
-    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
-    padding-bottom: 8px; /* Add some space for the scrollbar if visible */
-    margin-bottom: -8px; /* Counteract the padding-bottom visually */
-    gap: 8px; /* Adjust gap for horizontal layout if needed */
-
-    /* Hide scrollbar for a cleaner look */
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none;  /* IE and Edge */
-  }
-  .category-tags-container::-webkit-scrollbar {
-    display: none; /* Chrome, Safari, Opera */
-  }
-
-  /* Ensure individual tags don't shrink */
-  .category-tags-container > .ant-tag {
-      flex-shrink: 0;
-  }
-  /* END: Mobile Category Carousel Styles */
-}
-
+  /* Currency display styles */
 .currency-wrapper {
   position: relative;
   display: inline-flex;
@@ -453,100 +429,6 @@ main.ant-layout-content {
   opacity: 0.85;
 }
 
-/* Updated mobile styles for financial overview cards */
-@media (max-width: 768px) {
-  /* Make all 3 cards span full width of container with equal width */
-  .financial-overview-row {
-    display: flex !important;
-    flex-wrap: nowrap !important;
-    margin: 0 !important;
-    width: 100% !important;
-    justify-content: space-between !important;
-  }
-  
-  .financial-overview-row .ant-col {
-    flex: 1 1 0 !important;
-    width: 33.33% !important;
-    max-width: 33.33% !important;
-    padding: 0 3px !important;
-  }
-  
-  /* More compact card height */
-  .financial-overview-row .ant-card {
-    border-radius: 10px !important;
-    margin-bottom: 8px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-    min-height: 90px !important; /* Reduced height */
-  }
-  
-  /* Reduce padding to make cards more compact */
-  .financial-overview-row .ant-card-body {
-    padding: 8px 10px !important;
-  }
-  
-  /* Adjust font sizes for mobile readability */
-  .financial-overview-row .ant-statistic-content {
-    font-size: 18px !important;
-    line-height: 1 !important;
-    margin-top: 4px !important;
-  }
-  
-  /* Smaller superscript for cents */
-  .financial-overview-row .cents-superscript {
-    font-size: 40% !important;
-    margin-top: 2px !important;
-  }
-  
-  /* More compact header spacing */
-  .financial-overview-row .ant-space {
-    margin-bottom: 4px !important;
-  }
-  
-  /* Hide due balance subtext on mobile */
-  .financial-overview-row .due-balance-subtext {
-    display: none !important;
-  }
-  
-  /* Smaller title text */
-  .financial-overview-row .ant-typography {
-    font-size: 0.6rem !important;
-  }
-  
-  /* Smaller icons */
-  .financial-overview-row .tabler-icon {
-    width: 16px !important;
-    height: 16px !important;
-  }
-  
-    /* Adjust content container to expand full width */
-    main.ant-layout-content {
-      padding-left: var(--space-8) !important;
-      padding-right: var(--space-8) !important;
-      max-width: 100% !important;
-      width: 100% !important;
-      overflow-x: hidden !important;
-    }
-  
-  /* Reset any row margins to ensure full width */
-  .ant-row {
-    margin-left: 0 !important;
-    margin-right: 0 !important;
-    width: 100% !important;
-  }
-
-  /* Ensure the row container takes full available width */
-  .ant-layout-content > div {
-    width: 100% !important;
-    max-width: 100% !important;
-    padding: 0 !important;
-  }
-  
-  /* Ensure main layout has no extra padding */
-  .ant-layout {
-    padding: 0 !important;
-    width: 100% !important;
-  }
-}
 /* Redesigned Monthly Bills Progress Header Styles */
 .bills-header-container {
   display: flex;
@@ -566,6 +448,16 @@ main.ant-layout-content {
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.nav-button:hover {
+  background-color: var(--primary-50);
+  transform: translateY(-1px);
+}
+
+.nav-button:active {
+  transform: translateY(0px);
 }
 
 .month-display {
@@ -633,64 +525,42 @@ main.ant-layout-content {
   white-space: nowrap;
 }
 
-/* Mobile responsive overrides for bills header */
+/* Mobile styles for various screen sizes */
 @media (max-width: 480px) {
   .main-title {
-      font-size: 0.9rem;
+    font-size: 0.9rem;
   }
   
   .nav-button {
-      margin: 0 8px;
+    margin: 0 8px;
   }
   
   .progress-badge {
-      font-size: 0.7rem;
-      padding: 3px 6px;
+    font-size: 0.7rem;
+    padding: 3px 6px;
   }
 }
 
-/* Hover effects for navigation buttons */
-.nav-button {
-  transition: all 0.15s ease;
-}
-
-.nav-button:hover {
-  background-color: var(--primary-50);
-  transform: translateY(-1px);
-}
-
-.nav-button:active {
-  transform: translateY(0px);
-}
-
-/* Mobile-Optimized Bills Overview CSS */
-@media (max-width: 767.98px) {
-  /* Bill table optimization - text only, keeping row heights the same */
-  .bills-overview-table .ant-table-tbody > tr > td {
-    padding: 5px 8px !important;
-    font-size: 0.75rem !important;
-    line-height: 1.2 !important;
-  }
-  
-  .bills-overview-table .ant-table-thead > tr > th {
-    padding: 6px 8px !important;
-    font-size: 0.65rem !important;
-  }
-  
-  /* Better spacing for checkboxes */
-  .bills-overview-table .ant-checkbox-inner {
-    width: 14px !important;
-    height: 14px !important;
-  }
-  
-  /* Category tag styling */
+/* Mobile styles for tablets and phones */
+@media (max-width: 768px) {
+  /* Category tag carousel for mobile */
   .category-tags-container {
-    padding-bottom: 6px !important;
-    margin-bottom: -4px !important;
-    gap: 6px !important;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 8px;
+    margin-bottom: -8px;
+    gap: 8px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  
+  .category-tags-container::-webkit-scrollbar {
+    display: none;
   }
   
   .category-tags-container > .ant-tag {
+    flex-shrink: 0;
     padding: 0 6px !important;
     font-size: 0.7rem !important;
     height: 22px !important;
@@ -700,6 +570,197 @@ main.ant-layout-content {
   .category-tags-container .tabler-icon {
     width: 12px !important;
     height: 12px !important;
+  }
+  
+  /* Financial overview cards */
+  .financial-overview-row {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    margin: 0 !important;
+    width: 100% !important;
+    justify-content: space-between !important;
+  }
+  
+  .financial-overview-row .ant-col {
+    flex: 1 1 0 !important;
+    width: 33.33% !important;
+    max-width: 33.33% !important;
+    padding: 0 3px !important;
+  }
+  
+  .financial-overview-row .ant-card {
+    border-radius: 10px !important;
+    margin-bottom: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    min-height: 90px !important;
+  }
+  
+  .financial-overview-row .ant-card-body {
+    padding: 8px 10px !important;
+  }
+  
+  .financial-overview-row .ant-statistic-content {
+    font-size: 18px !important;
+    line-height: 1 !important;
+    margin-top: 4px !important;
+  }
+  
+  .financial-overview-row .cents-superscript {
+    font-size: 40% !important;
+    margin-top: 2px !important;
+  }
+  
+  .financial-overview-row .ant-space {
+    margin-bottom: 4px !important;
+  }
+  
+  .financial-overview-row .due-balance-subtext {
+    display: none !important;
+  }
+  
+  .financial-overview-row .ant-typography {
+    font-size: 0.6rem !important;
+  }
+  
+  .financial-overview-row .tabler-icon {
+    width: 16px !important;
+    height: 16px !important;
+  }
+  
+  /* Layout adjustments */
+  main.ant-layout-content {
+    padding-left: var(--space-8) !important;
+    padding-right: var(--space-8) !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    overflow-x: hidden !important;
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+  }
+  
+  .ant-row {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    width: 100% !important;
+  }
+  
+  .ant-layout-content > div {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+  }
+  
+  .ant-layout {
+    padding: 0 !important;
+    width: 100% !important;
+    min-height: 100vh !important;
+  }
+  
+  /* Card body padding */
+  .ant-card-body {
+    padding: 25px 15px !important;
+  }
+  
+  /* Bill table optimizations */
+  .bills-overview-table .ant-table-thead {
+    margin-bottom: 0 !important;
+  }
+  
+  .bills-overview-table .ant-table-thead > tr > th {
+    padding: 6px 8px !important;
+    font-size: 0.65rem !important;
+    padding-bottom: 4px !important;
+    border-bottom: 1px solid var(--neutral-200) !important;
+  }
+  
+  /* Hide the "STATUS" column title text */
+  .bills-overview-table .ant-table-thead > tr > th:first-child {
+    font-size: 0 !important;
+    width: 36px !important;
+    max-width: 36px !important;
+    padding-left: 4px !important;
+    padding-right: 4px !important;
+  }
+  
+  /* Column width adjustments */
+  .bills-overview-table .ant-table-thead > tr > th:nth-child(2) { /* Name */
+    width: 90px !important;
+    max-width: 90px !important;
+  }
+  
+  .bills-overview-table .ant-table-thead > tr > th:nth-child(3) { /* Amount */
+    width: 60px !important;
+    max-width: 60px !important;
+  }
+  
+  .bills-overview-table .ant-table-thead > tr > th:nth-child(4) { /* Category */
+    width: 90px !important;
+    max-width: 90px !important;
+  }
+  
+  .bills-overview-table .ant-table-thead > tr > th:nth-child(5) { /* Due Date */
+    width: 80px !important;
+    max-width: 80px !important;
+  }
+  
+  .bills-overview-table .ant-table-thead > tr > th:nth-child(6) { /* Due In */
+    width: 60px !important;
+    max-width: 60px !important;
+  }
+  
+  .bills-overview-table .ant-table-thead > tr > th:last-child { /* Actions */
+    width: 30px !important;
+    max-width: 30px !important;
+  }
+  
+  /* Table cell styling */
+  .bills-overview-table .ant-table-tbody > tr > td:first-child {
+    width: 36px !important;
+    max-width: 36px !important;
+    padding-left: 4px !important;
+    padding-right: 4px !important;
+  }
+  
+  .bills-overview-table .ant-table-tbody > tr > td {
+    padding: 5px 8px !important;
+    font-size: 0.8rem !important;
+    line-height: 1.2 !important;
+  }
+  
+  .bills-overview-table .ant-typography strong {
+    font-size: 0.8rem !important;
+  }
+  
+  .bills-overview-table .ant-checkbox-inner {
+    width: 14px !important;
+    height: 14px !important;
+  }
+  
+  /* Table content styling */
+  .bills-overview-table .ant-tag {
+    padding: 0 4px !important;
+    font-size: 0.65rem !important;
+    line-height: 1.2 !important;
+    height: 20px !important;
+  }
+  
+  .bills-overview-table .tabler-icon-dots-vertical {
+    width: 14px !important;
+    height: 14px !important;
+  }
+  
+  .bills-overview-table td:nth-child(2) .ant-typography strong {
+    font-size: 0.8rem !important;
+  }
+  
+  .bills-overview-table td:nth-child(3) .ant-typography strong {
+    font-size: 0.8rem !important;
+    color: var(--neutral-800) !important;
+  }
+  
+  .bills-overview-table td:nth-child(6) {
+    font-size: 0.7rem !important;
+    font-weight: 500 !important;
   }
   
   /* Filter controls */
@@ -713,130 +774,9 @@ main.ant-layout-content {
     padding: 0 8px !important;
   }
   
-  /* Table data - optimizing text only */
-  .bills-overview-table .ant-typography strong {
-    font-size: 0.75rem !important;
-  }
-  
-  /* Action buttons */
-  .bills-overview-table .tabler-icon-dots-vertical {
-    width: 14px !important;
-    height: 14px !important;
-  }
-  
-  /* Compact category tags in table cells */
-  .bills-overview-table .ant-tag {
-    padding: 0 4px !important;
-    font-size: 0.65rem !important;
-    line-height: 1.2 !important;
-    height: 20px !important;
-  }
-  
-  /* Style the name and amount columns for better readability */
-  .bills-overview-table td:nth-child(2) .ant-typography strong {
-    font-size: 0.75rem !important;
-  }
-  
-  .bills-overview-table td:nth-child(3) .ant-typography strong {
-    font-size: 0.75rem !important;
-    color: var(--neutral-800) !important;
-  }
-  
-  /* Clean up "Due In" column for better readability */
-  .bills-overview-table td:nth-child(6) {
-    font-size: 0.7rem !important;
-    font-weight: 500 !important;
-  }
-  
-  /* Improve overall card body padding */
-  .ant-card-body {
-    padding: 25px 15px !important;
-  }
-}
-/* Mobile Bills List Fixes - Add to your existing CSS file */
-@media (max-width: 767.98px) {
-  /* Remove space between column headers and first row */
-  .bills-overview-table .ant-table-thead {
-    margin-bottom: 0 !important;
-  }
-
-  .bills-overview-table .ant-table-thead > tr > th {
-    padding-bottom: 4px !important;
-    border-bottom: 1px solid var(--neutral-200) !important;
-  }
-
-  /* Hide the "STATUS" column title text */
-  .bills-overview-table .ant-table-thead > tr > th:first-child {
-    font-size: 0 !important; /* Hide text but keep column */
-    width: 36px !important; /* Make status column narrower */
-    max-width: 36px !important;
-    padding-left: 4px !important;
-    padding-right: 4px !important;
-  }
-
-  /* Make other columns narrower */
-  .bills-overview-table .ant-table-thead > tr > th:nth-child(2) { /* Name */
-    width: 90px !important;
-    max-width: 90px !important;
-  }
-
-  .bills-overview-table .ant-table-thead > tr > th:nth-child(3) { /* Amount */
-    width: 60px !important;
-    max-width: 60px !important;
-  }
-
-  .bills-overview-table .ant-table-thead > tr > th:nth-child(4) { /* Category */
-    width: 90px !important;
-    max-width: 90px !important;
-  }
-
-  .bills-overview-table .ant-table-thead > tr > th:nth-child(5) { /* Due Date */
-    width: 80px !important;
-    max-width: 80px !important;
-  }
-
-  .bills-overview-table .ant-table-thead > tr > th:nth-child(6) { /* Due In */
-    width: 60px !important;
-    max-width: 60px !important;
-  }
-
-  .bills-overview-table .ant-table-thead > tr > th:last-child { /* Actions */
-    width: 30px !important;
-    max-width: 30px !important;
-  }
-
-  /* Make table cells follow the same width constraints */
-  .bills-overview-table .ant-table-tbody > tr > td:first-child {
-    width: 36px !important;
-    max-width: 36px !important;
-    padding-left: 4px !important;
-    padding-right: 4px !important;
-  }
-
-  /* Slightly increase font size for bills list */
-  .bills-overview-table .ant-typography strong {
-    font-size: 0.8rem !important; /* Slightly larger than previous 0.75rem */
-  }
-
-  .bills-overview-table .ant-table-tbody > tr > td {
-    padding: 5px 8px !important;
-    font-size: 0.8rem !important; /* Slightly larger than previous 0.75rem */
-  }
-
-  /* Remove bottom navbar if present */
+  /* Hide bottom navbar */
   .ant-layout-footer,
   nav.bottom-navbar {
     display: none !important;
   }
-  
-  /* Remove any unnecessary bottom padding/margin that might create space for navbar */
-  .ant-layout-content {
-    padding-bottom: 0 !important;
-    margin-bottom: 0 !important;
-  }
-  
-  /* Ensure the main layout takes full height without accounting for navbar */
-  .ant-layout {
-    min-height: 100vh !important;
-  }
-}
+}}
