@@ -913,3 +913,77 @@ main.ant-layout-content {
     opacity: 0 !important;
   }
 }
+/* iOS-specific scrollbar fixes for mobile devices */
+@media (max-width: 768px) {
+  /* Hide horizontal scrollbar in Ant Design tables but preserve the content and grid lines */
+  .ant-table-content {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  /* These will hide the actual scrollbar on iOS while keeping functionality */
+  .ant-table-content::-webkit-scrollbar,
+  .ant-table-body::-webkit-scrollbar {
+    width: 0 !important;
+    height: 0 !important;
+    display: none !important;
+    background: transparent !important;
+  }
+  
+  /* For Firefox */
+  .ant-table-content,
+  .ant-table-body {
+    scrollbar-width: none !important;
+  }
+  
+  /* Hide the main page scrollbar */
+  html, body {
+    scrollbar-width: none !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+  
+  html::-webkit-scrollbar,
+  body::-webkit-scrollbar {
+    width: 0 !important;
+    height: 0 !important;
+    display: none !important;
+    background: transparent !important;
+  }
+  
+  /* Ensure table borders remain visible */
+  .ant-table-cell {
+    border-bottom: 1px solid var(--neutral-200) !important;
+  }
+  
+  /* Make sure the layout doesn't have extra scrollbars */
+  .ant-layout {
+    overflow-x: hidden !important;
+  }
+  
+  /* Target any scrollable areas in the app */
+  div[style*="overflow"], 
+  div[style*="overflow-y"], 
+  div[style*="overflow-x"] {
+    -webkit-overflow-scrolling: touch !important;
+  }
+  
+  div[style*="overflow"]::-webkit-scrollbar,
+  div[style*="overflow-y"]::-webkit-scrollbar,
+  div[style*="overflow-x"]::-webkit-scrollbar {
+    width: 0 !important;
+    height: 0 !important;
+    display: none !important;
+  }
+  
+  /* Target the specific layout area in your App.jsx */
+  .ant-layout-content {
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+  
+  .ant-layout-content::-webkit-scrollbar {
+    width: 0 !important;
+    height: 0 !important;
+    display: none !important;
+  }
+}
