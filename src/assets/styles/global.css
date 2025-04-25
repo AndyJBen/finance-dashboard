@@ -666,65 +666,93 @@ main.ant-layout-content {
     margin-bottom: 0 !important;
   }
   
+  /* IMPORTANT: Remove space between header and content */
+  .bills-overview-table .ant-table-header {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+  }
+  
+  .bills-overview-table .ant-table-tbody {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+  
+  /* Remove any border spacing or margin */
+  .bills-overview-table table {
+    border-spacing: 0 !important;
+    border-collapse: collapse !important;
+  }
+  
   .bills-overview-table .ant-table-thead > tr > th {
-    padding: 6px 8px !important;
+    padding: 4px 4px !important;
     font-size: 0.65rem !important;
-    padding-bottom: 4px !important;
+    padding-bottom: 2px !important;
     border-bottom: 1px solid var(--neutral-200) !important;
+    height: 24px !important;
   }
   
   /* Hide the "STATUS" column title text */
   .bills-overview-table .ant-table-thead > tr > th:first-child {
     font-size: 0 !important;
-    width: 36px !important;
-    max-width: 36px !important;
-    padding-left: 4px !important;
-    padding-right: 4px !important;
+    width: 28px !important; /* More compact */
+    max-width: 28px !important;
+    padding-left: 2px !important;
+    padding-right: 2px !important;
   }
   
-  /* Column width adjustments */
+  /* Column width adjustments - narrower */
   .bills-overview-table .ant-table-thead > tr > th:nth-child(2) { /* Name */
-    width: 90px !important;
-    max-width: 90px !important;
-  }
-  
-  .bills-overview-table .ant-table-thead > tr > th:nth-child(3) { /* Amount */
-    width: 60px !important;
-    max-width: 60px !important;
-  }
-  
-  .bills-overview-table .ant-table-thead > tr > th:nth-child(4) { /* Category */
-    width: 90px !important;
-    max-width: 90px !important;
-  }
-  
-  .bills-overview-table .ant-table-thead > tr > th:nth-child(5) { /* Due Date */
     width: 80px !important;
     max-width: 80px !important;
   }
   
+  .bills-overview-table .ant-table-thead > tr > th:nth-child(3) { /* Amount */
+    width: 50px !important;
+    max-width: 50px !important;
+  }
+  
+  .bills-overview-table .ant-table-thead > tr > th:nth-child(4) { /* Category */
+    width: 80px !important;
+    max-width: 80px !important;
+  }
+  
+  .bills-overview-table .ant-table-thead > tr > th:nth-child(5) { /* Due Date */
+    width: 70px !important;
+    max-width: 70px !important;
+  }
+  
   .bills-overview-table .ant-table-thead > tr > th:nth-child(6) { /* Due In */
-    width: 60px !important;
-    max-width: 60px !important;
+    width: 50px !important;
+    max-width: 50px !important;
   }
   
   .bills-overview-table .ant-table-thead > tr > th:last-child { /* Actions */
-    width: 30px !important;
-    max-width: 30px !important;
+    width: 26px !important;
+    max-width: 26px !important;
+    padding-left: 2px !important;
+    padding-right: 2px !important;
   }
   
   /* Table cell styling */
   .bills-overview-table .ant-table-tbody > tr > td:first-child {
-    width: 36px !important;
-    max-width: 36px !important;
-    padding-left: 4px !important;
-    padding-right: 4px !important;
+    width: 28px !important;
+    max-width: 28px !important;
+    padding-left: 2px !important;
+    padding-right: 2px !important;
+  }
+  
+  .bills-overview-table .ant-table-tbody > tr > td:last-child {
+    width: 26px !important;
+    max-width: 26px !important;
+    padding-left: 2px !important;
+    padding-right: 2px !important;
   }
   
   .bills-overview-table .ant-table-tbody > tr > td {
-    padding: 5px 8px !important;
+    padding: 6px 4px !important; /* Slightly taller rows */
     font-size: 0.8rem !important;
     line-height: 1.2 !important;
+    height: 32px !important; /* Slightly taller rows */
   }
   
   .bills-overview-table .ant-typography strong {
