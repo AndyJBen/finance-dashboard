@@ -987,47 +987,66 @@ main.ant-layout-content {
     display: none !important;
   }
 }
-/* Make card components more compact on mobile devices */
+/* Fix card components on mobile devices */
 @media (max-width: 768px) {
-  /* Target the financial overview cards in FinancialOverviewCards.jsx */
-  /* These target the three main cards - Due Balance, Bank Balance, Net Position */
+  /* Keep cards compact but restore font sizes */
   .ant-row .ant-col .ant-card {
-    min-height: auto !important; /* Override the min-height setting */
+    min-height: auto !important; /* Keep compact height */
   }
 
-  /* Reduce card body padding */
+  /* Remove top padding from balance cards */
   .ant-row .ant-col .ant-card .ant-card-body {
-    padding: 12px !important; /* Reduced from 20px */
+    padding: 12px !important; /* Keep reduced padding */
+    padding-top: 8px !important; /* Reduce top padding specifically */
   }
 
-  /* Make the text and values more compact */
-  .ant-row .ant-col .ant-card .ant-statistic-content {
-    font-size: 1.5rem !important; /* Slightly smaller font size */
-    line-height: 1.1 !important; /* Tighter line height */
+  /* IMPORTANT: Reset statistic value font sizes to original */
+  /* This targets the dollar amounts in the top cards */
+  .ant-row .ant-col .ant-card .ant-statistic-content,
+  .ant-statistic .ant-statistic-content .ant-statistic-content-value {
+    font-size: 1.75rem !important; /* Restore to original size */
+    line-height: 1.2 !important; /* Restore original line height */
   }
 
-  /* Reduce space between icon and label */
+  /* Specifically target the Monthly Bills section statistics */
+  .ant-row .ant-col .ant-statistic .ant-statistic-content-value {
+    font-size: 1rem !important; /* Restore to original size for stats under progress bar */
+  }
+
+  /* Fix the Paid, Total, Remaining values from Monthly Bills section */
+  .stat-card-item .ant-statistic .ant-statistic-content-value,
+  .stat-card-item .ant-statistic .ant-statistic-content-value-decimal {
+    font-size: 1rem !important; /* Restore to original size */
+  }
+
+  /* Keep compact spacing in card headers */
   .ant-row .ant-col .ant-card .ant-space {
-    margin-bottom: 8px !important; /* Reduced from 16px */
+    margin-bottom: 8px !important; /* Keep reduced spacing */
   }
 
-  /* Additional specific targeting for the card styles in FinancialOverviewCards.jsx */
+  /* Keep these cards compact */
   .ant-row .ant-col .ant-card[style*="min-height: 160px"] {
-    min-height: 120px !important; /* Reduce minimum height */
+    min-height: 120px !important; /* Keep reduced minimum height */
   }
 
-  /* For cards with white background (Bank Balance card) */
-  .ant-row .ant-col .ant-card[style*="background: white"] .ant-card-body,
-  /* For gradient background cards (Net Position & Due Balance) */
-  .ant-row .ant-col .ant-card[style*="background: linear-gradient"] .ant-card-body {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+  /* Fix the spacing of bank balance card as well */
+  .ant-card .ant-space[style*="justify-content: space-between"] {
+    margin-bottom: 4px !important; /* Keep compact */
+  }
+  
+  /* Ensure top cards (Net Position, Due Balance, Bank Balance) maintain exact height */
+  .ant-row:first-of-type .ant-col .ant-card {
+    height: 120px !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  
+  .ant-row:first-of-type .ant-col .ant-card .ant-card-body {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    height: 100% !important;
     padding-top: 10px !important;
     padding-bottom: 10px !important;
   }
-
-  /* Optimize any subtext in cards (like in Due Balance card) */
-  .ant-card .ant-typography[style*="font-size: 0.75rem"] {
-    margin-top: 2px !important;
-  }}
+}
