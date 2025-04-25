@@ -829,12 +829,12 @@ main.ant-layout-content {
     padding: 5px 2px !important; /* Smaller vertical padding */
     font-size: 0.8rem !important;
     line-height: 1.2 !important;
-    height: 28px !important; /* Shorter rows */
+    height: 32px !important; /* Shorter rows */
   }
   
   /* Remove extra space in rows */
   .bills-overview-table .ant-table-tbody > tr {
-    height: 28px !important;
+    height: 32px !important;
   }
   
   .bills-overview-table .ant-typography strong {
