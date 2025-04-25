@@ -889,3 +889,27 @@ main.ant-layout-content {
     display: none !important;
   }
 }}
+/* Hide tooltips on mobile devices */
+@media (max-width: 768px) {
+  /* Override Ant Design tooltip visibility */
+  .ant-tooltip {
+    display: none !important;
+  }
+  
+  /* This prevents the tooltip trigger attribute from working on mobile */
+  *[data-tour], 
+  *[data-tooltip-id], 
+  *[data-tooltip], 
+  *[data-tip], 
+  *[aria-describedby] {
+    pointer-events: auto !important;
+  }
+  
+  /* For React Tooltip libraries that use data attributes */
+  [data-tooltip-root],
+  [data-tooltip-container] {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+  }
+}
