@@ -412,7 +412,7 @@ main.ant-layout-content {
   .hide-on-mobile {
     display: none !important; /* Use !important to override potential inline styles or specificity issues */
   }
-
+}
 /* Currency display styles */
 .currency-wrapper {
   position: relative;
@@ -840,55 +840,56 @@ main.ant-layout-content {
     font-size: 0.8rem !important;
   }
   
-  .bills-overview-table .ant-checkbox-inner {
-    width: 14px !important;
-    height: 14px !important;
-  }
-  
-  /* Table content styling */
-  .bills-overview-table .ant-tag {
-    padding: 0 4px !important;
-    font-size: 0.65rem !important;
-    line-height: 1.2 !important;
-    height: 20px !important;
-  }
-  
-  .bills-overview-table .tabler-icon-dots-vertical {
-    width: 14px !important;
-    height: 14px !important;
-  }
-  
-  .bills-overview-table td:nth-child(2) .ant-typography strong {
-    font-size: 0.8rem !important;
-  }
-  
-  .bills-overview-table td:nth-child(3) .ant-typography strong {
-    font-size: 0.8rem !important;
-    color: var(--neutral-800) !important;
-  }
-  
-  .bills-overview-table td:nth-child(6) {
-    font-size: 0.7rem !important;
-    font-weight: 500 !important;
-  }
-  
-  /* Filter controls */
-  .ant-space-align-center .ant-typography strong {
-    font-size: 0.75rem !important;
-  }
-  
-  button[type="button"].ant-btn-sm {
-    height: 24px !important;
-    font-size: 0.7rem !important;
-    padding: 0 8px !important;
-  }
-  
-  /* Hide bottom navbar */
-  .ant-layout-footer,
-  nav.bottom-navbar {
-    display: none !important;
-  }
-}}
+/* Bills table styling */
+.bills-overview-table .ant-checkbox-inner {
+  width: 14px !important;
+  height: 14px !important;
+}
+
+/* Table content styling */
+.bills-overview-table .ant-tag {
+  padding: 0 4px !important;
+  font-size: 0.65rem !important;
+  line-height: 1.2 !important;
+  height: 20px !important;
+}
+
+.bills-overview-table .tabler-icon-dots-vertical {
+  width: 14px !important;
+  height: 14px !important;
+}
+
+.bills-overview-table td:nth-child(2) .ant-typography strong {
+  font-size: 0.8rem !important;
+}
+
+.bills-overview-table td:nth-child(3) .ant-typography strong {
+  font-size: 0.8rem !important;
+  color: var(--neutral-800) !important;
+}
+
+.bills-overview-table td:nth-child(6) {
+  font-size: 0.7rem !important;
+  font-weight: 500 !important;
+}
+
+/* Filter controls */
+.ant-space-align-center .ant-typography strong {
+  font-size: 0.75rem !important;
+}
+
+button[type="button"].ant-btn-sm {
+  height: 24px !important;
+  font-size: 0.7rem !important;
+  padding: 0 8px !important;
+}
+
+/* Hide bottom navbar */
+.ant-layout-footer,
+nav.bottom-navbar {
+  display: none !important;
+}
+
 /* Hide tooltips on mobile devices */
 @media (max-width: 768px) {
   /* Override Ant Design tooltip visibility */
@@ -913,6 +914,7 @@ main.ant-layout-content {
     opacity: 0 !important;
   }
 }
+
 /* iOS-specific scrollbar fixes for mobile devices */
 @media (max-width: 768px) {
   /* Hide horizontal scrollbar in Ant Design tables but preserve the content and grid lines */
@@ -987,9 +989,10 @@ main.ant-layout-content {
     display: none !important;
   }
 }
-/* Mobile responsive fixes */
+
+/* Mobile responsive fixes for financial cards */
 @media (max-width: 768px) {
-  /* Preserve existing financial overview card styling from the HTML */
+  /* Preserve existing financial overview card styling but make more compact */
   .financial-overview-row {
     display: flex !important;
     flex-wrap: nowrap !important;
@@ -1005,73 +1008,72 @@ main.ant-layout-content {
     padding: 0 3px !important;
   }
   
-  /* Adjusted card styling with border radius */
+  /* Make cards more compact and consistent */
   .financial-overview-row .ant-card {
     border-radius: 10px !important;
-    margin-bottom: 8px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    margin-bottom: 8px !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05) !important;
     min-height: 90px !important;
+    height: 90px !important;  /* Force height */
   }
   
-  /* Ensure text size remains consistent */
+  /* Reduce card body padding to make more compact */
+  .financial-overview-row .ant-card-body {
+    padding: 6px 8px !important;
+    height: 90px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+  }
+
+  /* LARGER font size for top card amounts */
   .financial-overview-row .ant-statistic-content {
-    font-size: 18px !important;
-    line-height: 1 !important;
-    margin-top: 4px !important;
-  }
-  
-  /* Fix for the progress stats section */
-  .ant-statistic .ant-statistic-title {
-    font-size: 0.75rem !important;
-  }
-  
-  .ant-row .ant-col .ant-statistic .ant-statistic-content-value {
-    font-size: 0.9rem !important;
-  }
-  
-  /* Fix spacing in monthly progress card */
-  .ant-row .month-navigation {
-    margin-bottom: 12px !important;
-  }
-  
-  /* Hide any tooltips on mobile */
-  [data-tooltip-id], 
-  [data-tooltip], 
-  [aria-describedby],
-  *[title] {
-    pointer-events: auto !important;
-  }
-  
-  .ant-tooltip {
-    display: none !important;
-  }
-  
-  /* Hide scrollbars but keep scrolling functionality */
-  html, body, .ant-layout, .ant-layout-content, 
-  .ant-table-content, .ant-table-body {
-    scrollbar-width: none !important;
-    -ms-overflow-style: none !important;
-  }
-  
-  html::-webkit-scrollbar,
-  body::-webkit-scrollbar,
-  .ant-layout::-webkit-scrollbar,
-  .ant-layout-content::-webkit-scrollbar,
-  .ant-table-content::-webkit-scrollbar,
-  .ant-table-body::-webkit-scrollbar {
-    width: 0 !important;
-    height: 0 !important;
-    display: none !important;
-    background: transparent !important;
-  }
-  
-  /* Fix for the currency wrapper and text size */
-  .currency-wrapper {
-    align-items: baseline !important;
-  }
-  
-  .cents-superscript {
-    font-size: 40% !important;
+    font-size: 22px !important;  /* Increased from 18px */
+    line-height: 1.1 !important;
     margin-top: 2px !important;
   }
-}
+  
+  /* Smaller header for more compact layout */
+  .financial-overview-row .ant-space {
+    margin-bottom: 2px !important;
+    height: 20px !important;
+  }
+  
+  /* Smaller header text */
+  .financial-overview-row .ant-typography {
+    font-size: 0.75rem !important;
+  }
+
+  /* Adjust the position of the currency values */
+  .financial-overview-row .currency-wrapper {
+    align-items: baseline !important;
+    line-height: 1 !important;
+  }
+  
+  .financial-overview-row .cents-superscript {
+    font-size: 40% !important;
+    margin-top: 2px !important;
+    line-height: 1 !important;
+  }
+  
+  /* Fix for the progress stats section - LARGER FONT */
+  .ant-col-xs-8 .ant-statistic .ant-statistic-title {
+    font-size: 0.75rem !important;
+    margin-bottom: 2px !important;
+  }
+  
+  .ant-col-xs-8 .ant-statistic .ant-statistic-content {
+    font-size: 1.1rem !important;  /* Increased from 0.9rem */
+    font-weight: 600 !important;
+  }
+  
+  /* Adjust spacing in monthly progress card */
+  .month-navigation {
+    margin-bottom: 10px !important;
+  }
+  
+  /* Fix table layout */
+  .bills-overview-table {
+    margin-top: 8px !important;
+  }
+}}
