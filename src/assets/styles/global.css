@@ -648,7 +648,7 @@ main.ant-layout-content {
     border-radius: 10px !important;
     margin-bottom: 5px !important; /* Reduced from 8px */
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-    min-height: 70px !important;
+    min-height: 75px !important;
   }
   
   .financial-overview-row .ant-card-body {
@@ -692,7 +692,7 @@ main.ant-layout-content {
     overflow-x: hidden !important;
     padding-bottom: 0 !important;
     margin-bottom: 0 !important;
-    padding-top: 0px !important; /* Add minimal padding */
+    padding-top: 2px !important; /* Add minimal padding */
   }
   
   .ant-row {
@@ -1014,14 +1014,14 @@ nav.bottom-navbar {
     border-radius: 10px !important;
     margin-bottom: 8px !important;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05) !important;
-    min-height: 70px !important;
+    min-height: 75 !important;
     height: 60;  /* Force height */
   }
   
   /* Reduce card body padding to make more compact */
   .financial-overview-row .ant-card-body {
     padding: 6px 8px !important;
-    height: 70px !important;
+    height: 75px !important;
     display: flex !important;
     flex-direction: column !important;
     justify-content: space-between !important;
