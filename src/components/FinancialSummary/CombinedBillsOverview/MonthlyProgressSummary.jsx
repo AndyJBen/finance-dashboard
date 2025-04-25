@@ -276,6 +276,7 @@ const MonthlyProgressSummary = ({
                     .bills-count {
                         font-size: 0.8rem;
                         opacity: 0.7;
+                        font-weight: 600;
                     }
 
                     .progress-badge {
