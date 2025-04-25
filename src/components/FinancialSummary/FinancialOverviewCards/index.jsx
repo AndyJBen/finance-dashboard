@@ -106,7 +106,7 @@ const FinancialOverviewCardsContainer = () => {
         }
         
         .cents-superscript {
-          font-size: 45%;
+          font-size: 50%;
           margin-left: 2px;
           font-weight: inherit;
           line-height: 1;
@@ -171,7 +171,7 @@ const FinancialOverviewCardsContainer = () => {
           
           /* Smaller cents indication */
           .financial-overview-row .cents-superscript {
-            font-size: 40% !important;
+            font-size: 50% !important;
             margin-top: 2px !important;
           }
           
