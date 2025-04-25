@@ -335,7 +335,6 @@ const CombinedBillsOverview = ({ style }) => {
                 {!isTableCollapsed && billsDueInDisplayedMonth.length > 0 && paidVisibleCount > 0 && (
                     <div style={{ 
                         textAlign: 'center', 
-                        marginTop: 'var(--space-16)',
                         borderTop: '1px solid var(--neutral-200)',
                         paddingTop: 'var(--space-12)'
                     }}>
