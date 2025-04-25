@@ -1063,7 +1063,7 @@ nav.bottom-navbar {
   }
   
   .ant-col-xs-8 .ant-statistic .ant-statistic-content {
-    font-size: 1.1rem !important;  /* Increased from 0.9rem */
+    font-size: 0.9rem !important;  /* Increased from 0.9rem */
     font-weight: 600 !important;
   }
   
