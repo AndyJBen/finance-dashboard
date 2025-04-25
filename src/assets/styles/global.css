@@ -467,6 +467,60 @@ main.ant-layout-content {
   min-width: 80px;
 }
 
+/* Currency display styles */
+.currency-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: flex-start;
+}
+
+.cents-superscript {
+  font-size: 45%;
+  line-height: 1;
+  margin-left: 2px;
+  font-weight: inherit;
+  vertical-align: super;
+  opacity: 0.85;
+}
+
+/* Redesigned Monthly Bills Progress Header Styles */
+.bills-header-container {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 12px;
+}
+
+.month-navigation {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.nav-button {
+  margin: 0 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.nav-button:hover {
+  background-color: var(--primary-50);
+  transform: translateY(-1px);
+}
+
+.nav-button:active {
+  transform: translateY(0px);
+}
+
+.month-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 80px;
+}
+
 .month-text {
   font-size: 1.1rem;
   line-height: 1.2;
@@ -579,6 +633,7 @@ main.ant-layout-content {
     margin: 0 !important;
     width: 100% !important;
     justify-content: space-between !important;
+    margin-bottom: 5px !important; /* Reduce margin between finance cards and bills card */
   }
   
   .financial-overview-row .ant-col {
@@ -590,7 +645,7 @@ main.ant-layout-content {
   
   .financial-overview-row .ant-card {
     border-radius: 10px !important;
-    margin-bottom: 8px;
+    margin-bottom: 5px !important; /* Reduced from 8px */
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
     min-height: 90px !important;
   }
@@ -636,6 +691,7 @@ main.ant-layout-content {
     overflow-x: hidden !important;
     padding-bottom: 0 !important;
     margin-bottom: 0 !important;
+    padding-top: 5px !important; /* Add minimal padding */
   }
   
   .ant-row {
@@ -644,10 +700,17 @@ main.ant-layout-content {
     width: 100% !important;
   }
   
+  /* Reduce spacing between cards */
   .ant-layout-content > div {
     width: 100% !important;
     max-width: 100% !important;
     padding: 0 !important;
+    gap: 5px !important;
+  }
+  
+  /* Apply spacing between main container elements */
+  .ant-layout-content > div > div {
+    margin-bottom: 5px !important;
   }
   
   .ant-layout {
@@ -656,9 +719,15 @@ main.ant-layout-content {
     min-height: 100vh !important;
   }
   
-  /* Card body padding */
-  .ant-card-body {
-    padding: 25px 15px !important;
+  /* Card body padding - but only for bills overview */
+  .ant-layout-content > div > div:nth-child(2) .ant-card-body {
+    padding: 15px 15px 25px 15px !important; /* Reduced top padding */
+  }
+  
+  /* General card settings */
+  .ant-card {
+    margin-top: 5px !important;
+    margin-bottom: 5px !important;
   }
   
   /* Fix the table row spacing issues */
