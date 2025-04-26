@@ -11,7 +11,20 @@
     <meta name="apple-touch-fullscreen" content="yes"/>
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <title>Finance Dashboard</title>
-    
+    <style>
+     @media (max-width: 768px) {
+        html, body, #root, * {
+          -webkit-user-select: none !important;
+            user-select: none !important;
+            -webkit-touch-callout: none !important;
+           }
+          
+          input, textarea, [contenteditable="true"] {
+            -webkit-user-select: text !important;
+            user-select: text !important;
+         }
+         }
+       </style>
     <style>
       /* Inline critical CSS to prevent selection and magnification */
       html, body, #root, * {
@@ -96,7 +109,89 @@
             }
           });
         });
-        
+                  // Mobile device detection and prevention logic
+          document.addEventListener('DOMContentLoaded', function() {
+            // iOS/mobile device detection
+            const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+            const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
+            const isAndroid = /android/i.test(userAgent);
+            const isMobile = isIOS || isAndroid || window.innerWidth < 768;
+            
+            // Only apply prevention techniques on mobile devices
+            if (isMobile) {
+              console.log('Mobile device detected, applying text selection prevention');
+              
+              // Add class to body for CSS targeting
+              document.body.classList.add('mobile-device');
+              
+              // --- iOS-specific event handlers ---
+              
+              // Prevent pinch zoom
+              document.addEventListener('gesturestart', function(e) {
+                e.preventDefault();
+              });
+              
+              // Prevent double-tap zoom
+              let lastTouchEnd = 0;
+              document.addEventListener('touchend', function(e) {
+                const now = Date.now();
+                if (now - lastTouchEnd < 300) {
+                  e.preventDefault();
+                }
+                lastTouchEnd = now;
+              }, false);
+              
+              // Function to determine if an element is an input that should allow selection
+              function isInputElement(el) {
+                return el.tagName === 'INPUT' || 
+                      el.tagName === 'TEXTAREA' || 
+                      el.isContentEditable ||
+                      el.classList.contains('allow-selection');
+              }
+              
+              // Clear selection on touch start (prevents loupe)
+              document.addEventListener('touchstart', function(e) {
+                if (!isInputElement(e.target)) {
+                  if (window.getSelection) {
+                    window.getSelection().removeAllRanges();
+                  }
+                }
+              }, { passive: false });
+              
+              // Clear selection during touch (prevents selection building up)
+              document.addEventListener('touchmove', function(e) {
+                if (!isInputElement(document.activeElement)) {
+                  if (window.getSelection) {
+                    window.getSelection().removeAllRanges();
+                  }
+                }
+              }, { passive: true });
+              
+              // Prevent selection change unless in input field
+              document.addEventListener('selectionchange', function() {
+                if (!isInputElement(document.activeElement)) {
+                  if (window.getSelection) {
+                    window.getSelection().removeAllRanges();
+                  }
+                }
+              });
+              
+              // Prevent context menu (long press menu)
+              document.addEventListener('contextmenu', function(e) {
+                if (!isInputElement(e.target)) {
+                  e.preventDefault();
+                  return false;
+                }
+              });
+              
+              // Additional iOS-specific attributes
+              document.body.setAttribute('unselectable', 'on');
+            } else {
+              console.log('Desktop device detected, no prevention applied');
+              // For desktop devices, we don't apply any prevention
+              // This ensures normal text selection on desktop
+            }
+          });
         // Start observing the document
         observer.observe(document.body, { 
           childList: true,

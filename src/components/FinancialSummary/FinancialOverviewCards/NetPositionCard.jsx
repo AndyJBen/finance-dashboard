@@ -102,7 +102,7 @@ const NetPositionCard = ({ isMobile, styles, isComponentLoading }) => {
         }
         
         .cents-superscript {
-          font-size: ${isMobile ? '40%' : '45%'};
+          font-size: ${isMobile ? '50%' : '50%'};
           margin-left: 2px;
           font-weight: inherit;
           line-height: 1;
