@@ -77,9 +77,9 @@ const styles = {
     backgroundColor: 'transparent' // Use transparent background to show the parent background
   },
   
-  // Container for each section - MADE WIDER
+  // Container for each section - MADE WIDER with MORE SPACE BETWEEN
   sectionContainer: {
-    marginBottom: 20, // Increased space between sections from 12px to 20px
+    marginBottom: 30, // Increased spacing between sections from 20px to 30px
     borderRadius: 12,
     overflow: 'hidden',
     backgroundColor: '#fff',
