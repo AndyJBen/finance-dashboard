@@ -9,6 +9,9 @@ import NonRecurringTransactions from '../RecentActivity/NonRecurringTransactions
 import UpcomingPayments from '../RecentActivity/UpcomingPayments';
 import ActivityFeed from '../RecentActivity/ActivityFeed';
 
+// Import the mobile-optimized Finance Feed component
+import MobileFinanceFeed from './MobileFinanceFeed/MobileFinanceFeed';
+
 const { Title } = Typography;
 
 /**
@@ -29,43 +32,12 @@ const FinanceFeed = ({ isMobileView, onEditBill, onAddBill }) => {
     marginBottom: isMobileView ? 'var(--space-16)' : 'var(--space-24)',
   };
 
-  // For mobile view, we use a single column layout with optimized spacing
+  // For mobile view, use the new optimized MobileFinanceFeed component
   if (isMobileView) {
-    return (
-      <div style={containerStyle} className="finance-feed-container">
-        <Title 
-          level={4} 
-          style={{ 
-            marginBottom: 'var(--space-16)', 
-            fontSize: '1.25rem',
-            textAlign: 'left',
-            color: 'var(--neutral-800)'
-          }}
-        >
-          Finance Feed
-        </Title>
-        
-        {/* Mobile view - Single column layout */}
-        <div 
-          style={{ 
-            display: 'flex', 
-            flexDirection: 'column', 
-            gap: 'var(--space-16)',
-            width: '100%'
-          }}
-        >
-          {/* Order is important for mobile: most urgent/important first */}
-          <PastDuePayments style={{...cardStyle, marginBottom: 0}} />
-          <BillPrepCard style={{...cardStyle, marginBottom: 0}} />
-          <NonRecurringTransactions style={{...cardStyle, marginBottom: 0}} />
-          <UpcomingPayments style={{...cardStyle, marginBottom: 0}} />
-          <ActivityFeed style={{...cardStyle, marginBottom: 0}} />
-        </div>
-      </div>
-    );
+    return <MobileFinanceFeed onEditBill={onEditBill} onAddBill={onAddBill} />;
   }
 
-  // For desktop view, we keep the layout similar to the dashboard
+  // For desktop view, we keep the layout exactly the same as before
   return (
     <div style={containerStyle} className="finance-feed-container">
       <Title 

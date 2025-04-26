@@ -1,0 +1,171 @@
+/* src/components/FinanceFeed/MobileFinanceFeed/MobileFinanceFeed.css */
+
+/* Mobile Finance Feed Container */
+.finance-feed-mobile {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    padding: 12px 12px 80px 12px !important; /* Extra bottom padding for bottom nav */
+    background-color: var(--neutral-100);
+  }
+  
+  /* Card styling for mobile */
+  .finance-feed-mobile .mobile-card {
+    margin-bottom: 12px;
+    border-radius: 12px !important;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05) !important;
+    background-color: #fff;
+    border: 1px solid var(--neutral-200) !important;
+    transition: all 0.2s ease-in-out;
+  }
+  
+  /* Card head styling */
+  .finance-feed-mobile .ant-card-head {
+    min-height: auto !important;
+    padding: 0 !important;
+    border-bottom: 1px solid var(--neutral-200) !important;
+  }
+  
+  .finance-feed-mobile .ant-card-head-title {
+    padding: 0 !important;
+    white-space: normal !important;
+    overflow: visible !important;
+  }
+  
+  /* Card body styling */
+  .finance-feed-mobile .ant-card-body {
+    transition: height 0.3s ease-in-out, padding 0.3s ease-in-out;
+  }
+  
+  /* List styling */
+  .finance-feed-mobile .ant-list-item {
+    padding: 12px 16px !important;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid var(--neutral-200) !important;
+  }
+  
+  .finance-feed-mobile .ant-list-item:last-child {
+    border-bottom: none !important;
+  }
+  
+  /* List item meta styling */
+  .finance-feed-mobile .ant-list-item-meta {
+    align-items: center;
+    margin-bottom: 0 !important;
+  }
+  
+  .finance-feed-mobile .ant-list-item-meta-title {
+    margin-bottom: 0 !important;
+    font-size: 0.85rem !important;
+    line-height: 1.4 !important;
+  }
+  
+  .finance-feed-mobile .ant-list-item-meta-description {
+    font-size: 0.75rem !important;
+    line-height: 1.3 !important;
+  }
+  
+  /* Avatar styling */
+  .finance-feed-mobile .ant-avatar {
+    border-radius: 8px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Tag styling */
+  .finance-feed-mobile .ant-tag {
+    margin-right: 0;
+    font-size: 0.7rem;
+    padding: 0 6px;
+    height: 20px;
+    line-height: 20px;
+    border-radius: 10px;
+  }
+  
+  /* Button styling */
+  .finance-feed-mobile .ant-btn-link {
+    padding: 4px 12px;
+    height: auto;
+    font-size: 0.8rem;
+    color: var(--primary-600);
+  }
+  
+  /* Section toggle buttons */
+  .finance-feed-mobile .section-toggle {
+    padding: 4px !important;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 8px;
+  }
+  
+  /* Typography adjustments */
+  .finance-feed-mobile h4.ant-typography {
+    font-size: 1.2rem !important;
+    margin-bottom: 16px !important;
+    font-weight: 600;
+  }
+  
+  .finance-feed-mobile .ant-typography strong {
+    font-weight: 600;
+  }
+  
+  /* Badge styling */
+  .finance-feed-mobile .ant-badge-count {
+    box-shadow: none !important;
+  }
+  
+  /* Empty state styling */
+  .finance-feed-mobile .empty-section {
+    padding: 16px;
+    text-align: center;
+    color: var(--neutral-500);
+  }
+  
+  /* Recent activity specific styling */
+  .finance-feed-mobile .recent-activity-item {
+    padding-left: 24px !important;
+  }
+  
+  /* Show more/less button container */
+  .finance-feed-mobile .show-more-container {
+    text-align: center;
+    padding: 8px 0;
+    border-top: 1px solid var(--neutral-200);
+  }
+  
+  /* Optimizations for very small screens */
+  @media (max-width: 350px) {
+    .finance-feed-mobile {
+      padding: 8px 8px 80px 8px !important;
+    }
+    
+    .finance-feed-mobile .ant-list-item {
+      padding: 10px 12px !important;
+    }
+    
+    .finance-feed-mobile .ant-avatar {
+      width: 32px !important;
+      height: 32px !important;
+    }
+    
+    .finance-feed-mobile .ant-list-item-meta-title {
+      font-size: 0.8rem !important;
+    }
+  }
+  
+  /* Fix for cards that might overflow on small screens */
+  .finance-feed-mobile .ant-list-item-meta-content {
+    width: 100%;
+    min-width: 0;
+  }
+  
+  /* Ensure proper spacing in Space components */
+  .finance-feed-mobile .ant-space {
+    gap: 8px !important;
+  }
