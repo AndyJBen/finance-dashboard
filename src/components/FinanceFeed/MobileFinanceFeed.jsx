@@ -2,20 +2,19 @@
 import React, { useState, useContext } from 'react';
 import { Typography, Card, List, Badge, Tag, Avatar, Button, Space } from 'antd';
 import {
-  IconAlertOctagonFilled,
+  IconAlertOctagon,
   IconClipboardList,
-  IconRepeatOff,
-  IconHourglassHigh,
-  IconTimeDuration15,
+  IconRepeat,
+  IconHourglass,
+  IconClock,
   IconChevronDown,
   IconChevronUp,
-  IconCircleCheckFilled,
-  IconClock,
-  IconCarFilled,
-  IconHomeFilled,
-  IconDeviceLaptopFilled,
+  IconCircleCheck,
+  IconCar,
+  IconHome,
+  IconDeviceLaptop,
   IconWifi,
-  IconDropletFilled,
+  IconDroplet,
   IconCreditCard,
   IconShoppingBag
 } from '@tabler/icons-react';
@@ -30,17 +29,17 @@ const getCategoryIcon = (category, size = 16) => {
   const lowerCategory = category?.toLowerCase() || '';
   
   if (lowerCategory.includes('car') || lowerCategory.includes('auto')) 
-    return <IconCarFilled size={size} style={{ color: '#FF9233' }} />;
+    return <IconCar size={size} style={{ color: '#FF9233' }} />;
   if (lowerCategory.includes('home') || lowerCategory.includes('rent')) 
-    return <IconHomeFilled size={size} style={{ color: '#F1476F' }} />;
+    return <IconHome size={size} style={{ color: '#F1476F' }} />;
   if (lowerCategory.includes('internet') || lowerCategory.includes('wifi')) 
     return <IconWifi size={size} style={{ color: '#0066FF' }} />;
   if (lowerCategory.includes('water')) 
-    return <IconDropletFilled size={size} style={{ color: '#26C67B' }} />;
+    return <IconDroplet size={size} style={{ color: '#26C67B' }} />;
   if (lowerCategory.includes('gas')) 
-    return <IconDropletFilled size={size} style={{ color: '#FF9233' }} />;
+    return <IconDroplet size={size} style={{ color: '#FF9233' }} />;
   if (lowerCategory.includes('subscription') || lowerCategory.includes('chatgpt')) 
-    return <IconDeviceLaptopFilled size={size} style={{ color: '#0066FF' }} />;
+    return <IconDeviceLaptop size={size} style={{ color: '#0066FF' }} />;
   if (lowerCategory.includes('medical')) 
     return <IconClipboardList size={size} style={{ color: '#F1476F' }} />;
   if (lowerCategory.includes('clothing')) 
@@ -316,7 +315,7 @@ const MobileFinanceFeed = ({ onEditBill, onAddBill }) => {
       {/* Past Due Payments */}
       <SectionCard
         title="Past Due Payments"
-        icon={<IconAlertOctagonFilled size={18} style={{ color: '#F1476F' }} />}
+        icon={<IconAlertOctagon size={18} style={{ color: '#F1476F' }} />}
         section="pastDue"
         empty={pastDueBills.length === 0}
         emptyText="No past due payments"
@@ -386,7 +385,7 @@ const MobileFinanceFeed = ({ onEditBill, onAddBill }) => {
       {/* Non-Recurring Bills */}
       <SectionCard
         title="Non-Recurring Bills"
-        icon={<IconRepeatOff size={18} style={{ color: '#26C67B' }} />}
+        icon={<IconRepeat size={18} style={{ color: '#26C67B' }} />}
         section="nonRecurring"
         empty={nonRecurring.length === 0}
         emptyText="No non-recurring bills"
@@ -446,7 +445,7 @@ const MobileFinanceFeed = ({ onEditBill, onAddBill }) => {
       {/* Upcoming Bills */}
       <SectionCard
         title="Upcoming Bills"
-        icon={<IconHourglassHigh size={18} style={{ color: '#0066FF' }} />}
+        icon={<IconHourglass size={18} style={{ color: '#0066FF' }} />}
         section="upcoming"
         empty={upcoming.length === 0}
         emptyText="No upcoming bills"
@@ -481,7 +480,7 @@ const MobileFinanceFeed = ({ onEditBill, onAddBill }) => {
       {/* Recent Activity */}
       <SectionCard
         title="Recent Activity"
-        icon={<IconTimeDuration15 size={18} style={{ color: '#0066FF' }} />}
+        icon={<IconClock size={18} style={{ color: '#0066FF' }} />}
         section="recentActivity"
         empty={recentActivity.length === 0}
         emptyText="No recent activity"
@@ -494,7 +493,7 @@ const MobileFinanceFeed = ({ onEditBill, onAddBill }) => {
               <Space direction="vertical" size={0} style={{ width: '100%' }}>
                 <Space align="center" style={{ width: '100%', justifyContent: 'space-between' }}>
                   <Space align="center">
-                    <IconCircleCheckFilled size={16} style={{ color: '#26C67B' }} />
+                    <IconCircleCheck size={16} style={{ color: '#26C67B' }} />
                     <Text strong>{item.name}</Text>
                   </Space>
                   <Space direction="vertical" align="end" size={0}>
