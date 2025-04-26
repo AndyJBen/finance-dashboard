@@ -1,6 +1,5 @@
 // src/components/Navigation/BottomNavBar.jsx
 import React, { useState } from 'react';
-import { IconActivityHeartbeat } from '@tabler/icons-react';
 import { Button, Tooltip, Popover } from 'antd';
 import {
     IconLayoutDashboard,
