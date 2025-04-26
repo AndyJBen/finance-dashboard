@@ -73,13 +73,8 @@ const styles = {
     width: '100%',
     maxWidth: '100%',
     overflowX: 'hidden',
-    padding: '12px 12px 80px 12px', // Extra bottom padding for bottom nav
+    padding: '6px 6px 100px 6px', // Reduced horizontal padding to make cards wider
     backgroundColor: '#F0F2F5'
-  },
-  pageTitle: {
-    marginBottom: 20, 
-    fontSize: '1.4rem',
-    fontWeight: 600
   },
   
   // Card styling for the whole page
@@ -92,34 +87,36 @@ const styles = {
     marginBottom: 0
   },
   
-  // Container for each section
+  // Container for each section - MADE WIDER
   sectionContainer: {
-    marginBottom: 16,
+    marginBottom: 12, // Reduced margin between sections
     borderRadius: 12,
     overflow: 'hidden',
     backgroundColor: '#fff',
-    boxShadow: '0 1px 2px rgba(0, 0, 0, 0.06)'
+    boxShadow: '0 1px 2px rgba(0, 0, 0, 0.06)',
+    width: '100%' // Ensure full width
   },
   
-  // Section header styling - made more distinct
+  // Section header styling - MADE NARROWER
   sectionHeader: {
-    padding: '16px',
+    padding: '10px 14px', // Reduced vertical padding from 16px to 10px
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    borderBottom: 'none'
+    borderBottom: 'none',
+    height: 'auto' // Remove fixed height
   },
   
-  // New container for section icon
+  // Icon container - MADE SMALLER
   iconContainer: {
-    width: 36,
-    height: 36,
-    borderRadius: 8,
+    width: 28, // Reduced from 36px
+    height: 28, // Reduced from 36px
+    borderRadius: 6, // Slightly smaller radius
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 12,
-    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
+    marginRight: 10, // Reduced spacing
+    boxShadow: '0 1px 2px rgba(0, 0, 0, 0.08)'
   },
   
   // Updated title container
@@ -128,25 +125,25 @@ const styles = {
     flexDirection: 'column'
   },
   
-  // Updated title text
+  // Updated title text - MADE SMALLER
   titleText: {
-    fontSize: '1rem',
+    fontSize: '0.9rem', // Reduced from 1rem
     lineHeight: 1.2,
     fontWeight: 600
   },
   
-  // Count text below title
+  // Count text below title - MADE SMALLER
   countText: { 
-    fontSize: '0.75rem', 
+    fontSize: '0.7rem', // Reduced from 0.75rem
     opacity: 0.8,
-    marginTop: 2
+    marginTop: 1 // Reduced from 2px
   },
   
-  // Toggle button
+  // Toggle button - MADE SMALLER
   toggleButton: {
-    padding: 4,
-    width: 32,
-    height: 32,
+    padding: 2,
+    width: 24, // Reduced from 32px
+    height: 24, // Reduced from 32px
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -154,40 +151,44 @@ const styles = {
     color: 'rgba(0, 0, 0, 0.45)'
   },
   
-  // Section content
+  // Section content - IMPROVED DISTINCTION
   sectionContent: {
     overflow: 'hidden',
     transition: 'max-height 0.3s ease',
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
+    borderTop: '1px solid rgba(0, 0, 0, 0.03)' // Light separator line
   },
   
   // Empty section styling
   emptySection: {
-    padding: 24,
+    padding: 20, // Reduced from 24px
     textAlign: 'center',
     color: 'rgba(0, 0, 0, 0.45)',
     backgroundColor: '#fafafa'
   },
   
-  // List item styling
+  // List item styling - MADE NARROWER
   listItem: {
-    padding: '12px 16px',
+    padding: '8px 14px', // Reduced from 12px 16px
     display: 'flex',
     alignItems: 'center',
     borderBottom: 'none'
   },
   
-  // Avatar styling
+  // Avatar styling - EXPLICIT SIZING
   avatar: {
-    borderRadius: 8,
+    borderRadius: 6, // Reduced from 8px
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    width: 32, // Explicitly set width
+    height: 32 // Explicitly set height
   },
   
-  // Due date text
+  // Due date text - MADE SMALLER
   dueDateText: {
-    fontSize: '0.75rem'
+    fontSize: '0.7rem', // Reduced from 0.75rem
+    lineHeight: 1.2
   },
   
   // Section for recent activity items
@@ -198,26 +199,26 @@ const styles = {
   // Style for "Show more" button container
   showMoreContainer: {
     textAlign: 'center',
-    padding: '12px 0',
+    padding: '8px 0', // Reduced from 12px
     borderTop: '1px solid rgba(0, 0, 0, 0.06)',
     backgroundColor: '#fafafa'
   },
   
   // Style for action buttons
   actionButton: {
-    padding: '4px 12px',
+    padding: '2px 8px', // Reduced padding
     height: 'auto',
-    fontSize: '0.8rem',
+    fontSize: '0.75rem', // Reduced from 0.8rem
     fontWeight: 500
   },
   
   // Tag styling
   tag: {
     margin: 0, 
-    padding: '0 8px', 
-    height: 20, 
-    lineHeight: '20px',
-    fontSize: '0.7rem',
+    padding: '0 6px', // Reduced from 0 8px
+    height: 18, // Reduced from 20px
+    lineHeight: '18px',
+    fontSize: '0.65rem', // Reduced from 0.7rem
     fontWeight: 700
   },
   
@@ -227,25 +228,27 @@ const styles = {
     justifyContent: 'space-between'
   },
   
-  // Item divider
+  // Item divider - MORE SUBTLE
   itemDivider: {
-    margin: '0 16px',
-    opacity: 0.6
+    margin: '0 14px',
+    opacity: 0.4,
+    height: 1
   },
   
-  // Total section styling - REDESIGNED to be very distinct
+  // Total section styling - DISTINCTIVE
   totalSection: {
-    padding: '12px 16px',
+    padding: '8px 14px', // Reduced from 12px 16px
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#fafafa',
-    borderTop: '1px solid rgba(0, 0, 0, 0.06)'
+    backgroundColor: '#f5f5f5', // Slightly darker than content
+    borderTop: '1px solid rgba(0, 0, 0, 0.06)',
+    height: 'auto' // Let height adjust naturally
   },
   
-  // Total text styling - now more distinct
+  // Total text styling
   totalText: {
-    fontSize: '0.75rem',
+    fontSize: '0.7rem', // Reduced from 0.75rem
     fontWeight: 700,
     color: 'rgba(0, 0, 0, 0.65)',
     textTransform: 'uppercase',
@@ -254,7 +257,7 @@ const styles = {
   
   // Amount text in total section
   totalAmount: {
-    fontSize: '1rem',
+    fontSize: '0.95rem', // Reduced from 1rem
     fontWeight: 700
   }
 };
@@ -370,9 +373,6 @@ const MobileFinanceFeed = ({ onEditBill, onAddBill }) => {
 
   return (
     <div style={styles.container}>
-      <Title level={4} style={styles.pageTitle}>Finance Feed</Title>
-      
-      {/* REDESIGNED: Each section is now in its own container with rounded corners */}
       <Card style={styles.card}>
         {/* Past Due Payments Section - REDESIGNED */}
         <div style={styles.sectionContainer}>
@@ -385,7 +385,7 @@ const MobileFinanceFeed = ({ onEditBill, onAddBill }) => {
                 ...styles.iconContainer,
                 backgroundColor: 'rgba(255, 255, 255, 0.9)'
               }}>
-                <IconAlertOctagon size={20} style={{ color: iconColors.pastDue }} />
+                <IconAlertOctagon size={16} style={{ color: iconColors.pastDue }} />
               </div>
               <div style={styles.titleContainer}>
                 <Text style={styles.titleText}>Past Due Payments</Text>
@@ -400,7 +400,7 @@ const MobileFinanceFeed = ({ onEditBill, onAddBill }) => {
               type="text" 
               size="small"
               style={styles.toggleButton}
-              icon={expanded.pastDue ? <IconChevronUp size={18} /> : <IconChevronDown size={18} />}
+              icon={expanded.pastDue ? <IconChevronUp size={16} /> : <IconChevronDown size={16} />}
               onClick={() => toggleSection('pastDue')}
             />
           </div>
@@ -424,22 +424,22 @@ const MobileFinanceFeed = ({ onEditBill, onAddBill }) => {
                           avatar={
                             <Avatar 
                               shape="square" 
-                              size={40} 
+                              size={32} 
                               style={{ 
                                 ...styles.avatar, 
                                 backgroundColor: 'rgba(245, 34, 45, 0.1)' // Light red background
                               }}
-                              icon={getCategoryIcon(item.category, 20)}
+                              icon={getCategoryIcon(item.category, 16)}
                             />
                           }
-                          title={<Text strong>{item.name}</Text>}
+                          title={<Text strong style={{fontSize: '0.85rem'}}>{item.name}</Text>}
                           description={
                             <Text type="danger" style={styles.dueDateText}>
                               Due {daysAgo(item.dueDate)} days ago
                             </Text>
                           }
                         />
-                        <Text strong style={{ color: iconColors.pastDue }}>${Number(item.amount).toFixed(2)}</Text>
+                        <Text strong style={{ color: iconColors.pastDue, fontSize: '0.85rem' }}>${Number(item.amount).toFixed(2)}</Text>
                       </List.Item>
                       {index < pastDueBills.length - 1 && <Divider style={styles.itemDivider} />}
                     </>
@@ -468,7 +468,7 @@ const MobileFinanceFeed = ({ onEditBill, onAddBill }) => {
                 ...styles.iconContainer,
                 backgroundColor: 'rgba(255, 255, 255, 0.9)'
               }}>
-                <IconClipboardList size={20} style={{ color: iconColors.billPrep }} />
+                <IconClipboardList size={16} style={{ color: iconColors.billPrep }} />
               </div>
               <div style={styles.titleContainer}>
                 <Text style={styles.titleText}>Bill Prep</Text>
@@ -483,7 +483,7 @@ const MobileFinanceFeed = ({ onEditBill, onAddBill }) => {
               type="text" 
               size="small"
               style={styles.toggleButton}
-              icon={expanded.billPrep ? <IconChevronUp size={18} /> : <IconChevronDown size={18} />}
+              icon={expanded.billPrep ? <IconChevronUp size={16} /> : <IconChevronDown size={16} />}
               onClick={() => toggleSection('billPrep')}
             />
           </div>
@@ -507,22 +507,22 @@ const MobileFinanceFeed = ({ onEditBill, onAddBill }) => {
                           avatar={
                             <Avatar 
                               shape="square" 
-                              size={40} 
+                              size={32} 
                               style={{ 
                                 ...styles.avatar, 
                                 backgroundColor: 'rgba(24, 144, 255, 0.1)' // Light blue background
                               }}
-                              icon={getCategoryIcon(item.category, 20)}
+                              icon={getCategoryIcon(item.category, 16)}
                             />
                           }
-                          title={<Text strong>{item.name}</Text>}
+                          title={<Text strong style={{fontSize: '0.85rem'}}>{item.name}</Text>}
                           description={
                             <Text type="secondary" style={styles.dueDateText}>
                               {item.bills.length} {item.bills.length === 1 ? 'Item' : 'Items'}
                             </Text>
                           }
                         />
-                        <Text strong style={{ color: iconColors.billPrep }}>${item.totalAmount.toFixed(2)}</Text>
+                        <Text strong style={{ color: iconColors.billPrep, fontSize: '0.85rem' }}>${item.totalAmount.toFixed(2)}</Text>
                       </List.Item>
                       {index < billPrep.length - 1 && <Divider style={styles.itemDivider} />}
                     </>
@@ -551,7 +551,7 @@ const MobileFinanceFeed = ({ onEditBill, onAddBill }) => {
                 ...styles.iconContainer,
                 backgroundColor: 'rgba(255, 255, 255, 0.9)'
               }}>
-                <IconRepeatOff size={20} style={{ color: iconColors.nonRecurring }} />
+                <IconRepeatOff size={16} style={{ color: iconColors.nonRecurring }} />
               </div>
               <div style={styles.titleContainer}>
                 <Text style={styles.titleText}>Non-Recurring Bills</Text>
@@ -566,7 +566,7 @@ const MobileFinanceFeed = ({ onEditBill, onAddBill }) => {
               type="text" 
               size="small"
               style={styles.toggleButton}
-              icon={expanded.nonRecurring ? <IconChevronUp size={18} /> : <IconChevronDown size={18} />}
+              icon={expanded.nonRecurring ? <IconChevronUp size={16} /> : <IconChevronDown size={16} />}
               onClick={() => toggleSection('nonRecurring')}
             />
           </div>
@@ -590,18 +590,18 @@ const MobileFinanceFeed = ({ onEditBill, onAddBill }) => {
                           avatar={
                             <Avatar 
                               shape="square" 
-                              size={40} 
+                              size={32} 
                               style={{ 
                                 ...styles.avatar, 
                                 backgroundColor: 'rgba(82, 196, 26, 0.1)' // Light green background
                               }}
-                              icon={getCategoryIcon(item.category, 20)}
+                              icon={getCategoryIcon(item.category, 16)}
                             />
                           }
                           title={
                             <div style={styles.itemHeader}>
-                              <Text strong>{item.name}</Text>
-                              <Text strong style={{ color: item.isPaid ? iconColors.nonRecurring : iconColors.pastDue }}>
+                              <Text strong style={{fontSize: '0.85rem'}}>{item.name}</Text>
+                              <Text strong style={{ color: item.isPaid ? iconColors.nonRecurring : iconColors.pastDue, fontSize: '0.85rem' }}>
                                 ${Number(item.amount).toFixed(2)}
                               </Text>
                             </div>
@@ -660,7 +660,7 @@ const MobileFinanceFeed = ({ onEditBill, onAddBill }) => {
                 ...styles.iconContainer,
                 backgroundColor: 'rgba(255, 255, 255, 0.9)'
               }}>
-                <IconHourglass size={20} style={{ color: iconColors.upcoming }} />
+                <IconHourglass size={16} style={{ color: iconColors.upcoming }} />
               </div>
               <div style={styles.titleContainer}>
                 <Text style={styles.titleText}>Upcoming Bills</Text>
@@ -675,7 +675,7 @@ const MobileFinanceFeed = ({ onEditBill, onAddBill }) => {
               type="text" 
               size="small"
               style={styles.toggleButton}
-              icon={expanded.upcoming ? <IconChevronUp size={18} /> : <IconChevronDown size={18} />}
+              icon={expanded.upcoming ? <IconChevronUp size={16} /> : <IconChevronDown size={16} />}
               onClick={() => toggleSection('upcoming')}
             />
           </div>
@@ -699,22 +699,22 @@ const MobileFinanceFeed = ({ onEditBill, onAddBill }) => {
                           avatar={
                             <Avatar 
                               shape="square" 
-                              size={40} 
+                              size={32} 
                               style={{ 
                                 ...styles.avatar, 
                                 backgroundColor: 'rgba(250, 140, 22, 0.1)' // Light orange background
                               }}
-                              icon={getCategoryIcon(item.category, 20)}
+                              icon={getCategoryIcon(item.category, 16)}
                             />
                           }
-                          title={<Text strong>{item.name}</Text>}
+                          title={<Text strong style={{fontSize: '0.85rem'}}>{item.name}</Text>}
                           description={
                             <Text type="secondary" style={styles.dueDateText}>
                               Due {formatDueDate(item.dueDate)}
                             </Text>
                           }
                         />
-                        <Text strong style={{ color: iconColors.upcoming }}>${Number(item.amount).toFixed(2)}</Text>
+                        <Text strong style={{ color: iconColors.upcoming, fontSize: '0.85rem' }}>${Number(item.amount).toFixed(2)}</Text>
                       </List.Item>
                       {index < upcoming.length - 1 && <Divider style={styles.itemDivider} />}
                     </>
@@ -743,7 +743,7 @@ const MobileFinanceFeed = ({ onEditBill, onAddBill }) => {
                 ...styles.iconContainer,
                 backgroundColor: 'rgba(255, 255, 255, 0.9)'
               }}>
-                <IconClock size={20} style={{ color: iconColors.recentActivity }} />
+                <IconClock size={16} style={{ color: iconColors.recentActivity }} />
               </div>
               <div style={styles.titleContainer}>
                 <Text style={styles.titleText}>Recent Activity</Text>
@@ -758,7 +758,7 @@ const MobileFinanceFeed = ({ onEditBill, onAddBill }) => {
               type="text" 
               size="small"
               style={styles.toggleButton}
-              icon={expanded.recentActivity ? <IconChevronUp size={18} /> : <IconChevronDown size={18} />}
+              icon={expanded.recentActivity ? <IconChevronUp size={16} /> : <IconChevronDown size={16} />}
               onClick={() => toggleSection('recentActivity')}
             />
           </div>
@@ -783,23 +783,23 @@ const MobileFinanceFeed = ({ onEditBill, onAddBill }) => {
                             <Space align="center">
                               <Avatar 
                                 shape="square" 
-                                size={40} 
+                                size={32} 
                                 style={{ 
                                   ...styles.avatar, 
                                   backgroundColor: 'rgba(114, 46, 209, 0.1)' // Light purple background
                                 }}
-                                icon={<IconCircleCheck size={20} style={{ color: iconColors.recentActivity }} />}
+                                icon={<IconCircleCheck size={16} style={{ color: iconColors.recentActivity }} />}
                               />
-                              <Text strong>{item.name}</Text>
+                              <Text strong style={{fontSize: '0.85rem'}}>{item.name}</Text>
                             </Space>
                             <Space direction="vertical" align="end" size={0}>
-                              <Text strong>${Number(item.amount).toFixed(2)}</Text>
-                              <Text type="secondary" style={{ fontSize: '0.75rem' }}>{item.category}</Text>
+                              <Text strong style={{fontSize: '0.85rem'}}>${Number(item.amount).toFixed(2)}</Text>
+                              <Text type="secondary" style={{ fontSize: '0.7rem' }}>{item.category}</Text>
                             </Space>
                           </Space>
                           <div style={styles.recentActivityItem}>
-                            <Text type="secondary" style={{ fontSize: '0.75rem', display: 'flex', alignItems: 'center' }}>
-                              <IconClock size={12} style={{ marginRight: 4 }} />
+                            <Text type="secondary" style={{ fontSize: '0.7rem', display: 'flex', alignItems: 'center' }}>
+                              <IconClock size={10} style={{ marginRight: 4 }} />
                               {daysAgo(item.dueDate)} days ago
                             </Text>
                           </div>
