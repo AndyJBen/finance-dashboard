@@ -3,6 +3,7 @@
 // And Dashboard right column hidden on mobile view
 // Added conditional bottom margin for CombinedBillsOverview on mobile when expanded
 // Corrected import path for FinanceContext
+// Increased conditional margin for expanded list on mobile
 
 import React, { useState, useContext, useEffect } from 'react';
 import { Layout, Row, Col, Typography, Grid } from 'antd';
@@ -140,8 +141,9 @@ function MyApp() {
               {/* Wrapper Div for Conditional Margin */}
               {/* This div adds space below CombinedBillsOverview ONLY on mobile when the list is expanded */}
               <div style={{
+                  // *** INCREASED MARGIN BOTTOM ***
                   // Apply margin bottom ONLY when on mobile AND the list is expanded
-                  marginBottom: (isMobileView && isBillsListExpanded) ? '20px' : '0px',
+                  marginBottom: (isMobileView && isBillsListExpanded) ? '40px' : '0px', // Increased from 20px
                   // Optional: Add a smooth transition for the margin change
                   transition: 'margin-bottom 0.2s ease-in-out'
               }}>
