@@ -1,6 +1,7 @@
 // src/App.jsx
 // Updated with Finance Feed tab replacing Bills tab
 // And Dashboard right column hidden on mobile view
+// Increased bottom padding on mobile to prevent overlap with BottomNavBar
 
 import React, { useState, useContext } from 'react';
 import { Layout, Row, Col, Typography, Grid } from 'antd';
@@ -182,12 +183,13 @@ function MyApp() {
 
   // --- Main Content Area Styling ---
   const contentStyle = {
-    padding: isMobileView ? 'var(--space-4) var(--space-12)' : 'var(--space-24)', // Responsive padding
+    padding: isMobileView ? 'var(--space-4) var(--space-12)' : 'var(--space-24)', // Responsive padding (top, left, right)
     margin: 0,
     flexGrow: 1, // Allow content to fill available space
     width: '100%',
     maxWidth: '100%',
-    paddingBottom: isMobileView ? '80px' : 'var(--space-24)' // Add padding at the bottom to avoid overlap with bottom nav
+    // *** UPDATED PADDING BOTTOM FOR MOBILE ***
+    paddingBottom: isMobileView ? '100px' : 'var(--space-24)' // Increased padding at the bottom for mobile to avoid overlap with bottom nav
   };
 
   // --- Component Return JSX ---
