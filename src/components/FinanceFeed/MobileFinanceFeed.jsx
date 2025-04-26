@@ -49,13 +49,13 @@ const getCategoryIcon = (category, size = 16) => {
   return <IconCreditCard size={size} style={{ color: '#0066FF' }} />;
 };
 
-// Section header colors for visual distinction
+// Section header colors for visual distinction - DARKER SHADES
 const sectionColors = {
-  pastDue: '#FFF1F0',       // Lighter red background
-  billPrep: '#E6F7FF',      // Lighter blue background
-  nonRecurring: '#F6FFED',  // Lighter green background
-  upcoming: '#FFF7E6',      // Light orange background
-  recentActivity: '#F9F0FF' // Light purple background
+  pastDue: '#FFEBE6',       // Darker red background
+  billPrep: '#D6F0FF',      // Darker blue background
+  nonRecurring: '#E7F7DE',  // Darker green background
+  upcoming: '#FFF1D9',      // Darker orange background
+  recentActivity: '#F2E6FF' // Darker purple background
 };
 
 // Section header icon colors
@@ -73,7 +73,7 @@ const styles = {
     width: '100%',
     maxWidth: '100%',
     overflowX: 'hidden',
-    padding: '6px 6px 100px 6px', // Reduced horizontal padding to make cards wider
+    padding: '4px 4px 100px 4px', // Further reduced horizontal padding to make cards even wider
     backgroundColor: '#F0F2F5'
   },
   
@@ -89,7 +89,7 @@ const styles = {
   
   // Container for each section - MADE WIDER
   sectionContainer: {
-    marginBottom: 12, // Reduced margin between sections
+    marginBottom: 20, // Increased space between sections from 12px to 20px
     borderRadius: 12,
     overflow: 'hidden',
     backgroundColor: '#fff',
