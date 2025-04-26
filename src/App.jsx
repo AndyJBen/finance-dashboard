@@ -10,6 +10,7 @@ import FinancialOverviewCards from './components/FinancialSummary/FinancialOverv
 import BillsList              from './components/BillsList/BillsList';
 import UpcomingPayments       from './components/RecentActivity/UpcomingPayments';
 import ActivityFeed           from './components/RecentActivity/ActivityFeed';
+import NonRecurringTransactions from './components/RecentActivity/NonRecurringTransactions';
 import Sidebar                from './components/Sidebar/Sidebar';
 import CombinedBillsOverview  from './components/FinancialSummary/CombinedBillsOverview/CombinedBillsOverview';
 import BillPrepCard           from './components/FinancialSummary/BillPrepCard';
@@ -116,6 +117,7 @@ function MyApp() {
               >
                 <BillPrepCard style={{ width: '100%', height: 'auto' }} />
                 <PastDuePayments style={{ width: '100%', height: 'auto' }} />
+                <NonRecurringTransactions style={{ width: '100%', height: 'auto' }} />
                 <UpcomingPayments style={{ width: '100%', height: 'auto' }} />
                 <ActivityFeed style={{ width: '100%', height: 'auto' }} />
               </div>
