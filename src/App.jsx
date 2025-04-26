@@ -143,7 +143,7 @@ function MyApp() {
               <div style={{
                   // *** INCREASED MARGIN BOTTOM ***
                   // Apply margin bottom ONLY when on mobile AND the list is expanded
-                  marginBottom: (isMobileView && isBillsListExpanded) ? '40px' : '0px', // Increased from 20px
+                  marginBottom: (isMobileView && isBillsListExpanded) ? '70px' : '0px', // Increased from 20px
                   // Optional: Add a smooth transition for the margin change
                   transition: 'margin-bottom 0.2s ease-in-out'
               }}>
