@@ -1,6 +1,6 @@
 // src/components/FinanceFeed/MobileFinanceFeed.jsx
 import React, { useState, useContext } from 'react';
-import { Typography, Card, List, Badge, Tag, Avatar, Button, Space, Divider, Statistic } from 'antd';
+import { Typography, List, Badge, Tag, Avatar, Button, Space, Divider } from 'antd';
 import {
   IconAlertOctagon,
   IconClipboardList,
@@ -22,7 +22,7 @@ import {
 // Import the FinanceContext
 import { FinanceContext } from '../../contexts/FinanceContext';
 
-const { Text, Title } = Typography;
+const { Text } = Typography;
 
 // Helper function to get icon based on category
 const getCategoryIcon = (category, size = 16) => {
@@ -74,17 +74,7 @@ const styles = {
     maxWidth: '100%',
     overflowX: 'hidden',
     padding: '4px 4px 100px 4px', // Further reduced horizontal padding to make cards even wider
-    backgroundColor: '#F0F2F5'
-  },
-  
-  // Card styling for the whole page
-  card: {
-    borderRadius: '0',
-    overflow: 'hidden',
-    boxShadow: 'none',
-    backgroundColor: 'transparent',
-    border: 'none',
-    marginBottom: 0
+    backgroundColor: 'transparent' // Use transparent background to show the parent background
   },
   
   // Container for each section - MADE WIDER
@@ -373,467 +363,465 @@ const MobileFinanceFeed = ({ onEditBill, onAddBill }) => {
 
   return (
     <div style={styles.container}>
-      <Card style={styles.card}>
-        {/* Past Due Payments Section - REDESIGNED */}
-        <div style={styles.sectionContainer}>
-          <div style={{
-            ...styles.sectionHeader,
-            backgroundColor: sectionColors.pastDue
-          }}>
-            <div style={{display: 'flex', alignItems: 'center'}}>
-              <div style={{
-                ...styles.iconContainer,
-                backgroundColor: 'rgba(255, 255, 255, 0.9)'
-              }}>
-                <IconAlertOctagon size={16} style={{ color: iconColors.pastDue }} />
-              </div>
-              <div style={styles.titleContainer}>
-                <Text style={styles.titleText}>Past Due Payments</Text>
-                {pastDueBills.length > 0 && (
-                  <Text style={styles.countText}>
-                    {pastDueBills.length} {pastDueBills.length === 1 ? 'item' : 'items'}
-                  </Text>
-                )}
-              </div>
+      {/* Past Due Payments Section - REDESIGNED */}
+      <div style={styles.sectionContainer}>
+        <div style={{
+          ...styles.sectionHeader,
+          backgroundColor: sectionColors.pastDue
+        }}>
+          <div style={{display: 'flex', alignItems: 'center'}}>
+            <div style={{
+              ...styles.iconContainer,
+              backgroundColor: 'rgba(255, 255, 255, 0.9)'
+            }}>
+              <IconAlertOctagon size={16} style={{ color: iconColors.pastDue }} />
             </div>
-            <Button 
-              type="text" 
-              size="small"
-              style={styles.toggleButton}
-              icon={expanded.pastDue ? <IconChevronUp size={16} /> : <IconChevronDown size={16} />}
-              onClick={() => toggleSection('pastDue')}
-            />
+            <div style={styles.titleContainer}>
+              <Text style={styles.titleText}>Past Due Payments</Text>
+              {pastDueBills.length > 0 && (
+                <Text style={styles.countText}>
+                  {pastDueBills.length} {pastDueBills.length === 1 ? 'item' : 'items'}
+                </Text>
+              )}
+            </div>
           </div>
-          
-          <div style={{
-            ...styles.sectionContent,
-            maxHeight: expanded.pastDue ? '1000px' : '0px',
-          }}>
-            {pastDueBills.length === 0 ? (
-              <div style={styles.emptySection}>
-                <Text type="secondary">No past due payments</Text>
-              </div>
-            ) : (
-              <>
-                <List
-                  dataSource={pastDueBills}
-                  renderItem={(item, index) => (
-                    <>
-                      <List.Item style={styles.listItem}>
-                        <List.Item.Meta
-                          avatar={
-                            <Avatar 
-                              shape="square" 
-                              size={32} 
-                              style={{ 
-                                ...styles.avatar, 
-                                backgroundColor: 'rgba(245, 34, 45, 0.1)' // Light red background
-                              }}
-                              icon={getCategoryIcon(item.category, 16)}
-                            />
-                          }
-                          title={<Text strong style={{fontSize: '0.85rem'}}>{item.name}</Text>}
-                          description={
-                            <Text type="danger" style={styles.dueDateText}>
-                              Due {daysAgo(item.dueDate)} days ago
-                            </Text>
-                          }
-                        />
-                        <Text strong style={{ color: iconColors.pastDue, fontSize: '0.85rem' }}>${Number(item.amount).toFixed(2)}</Text>
-                      </List.Item>
-                      {index < pastDueBills.length - 1 && <Divider style={styles.itemDivider} />}
-                    </>
-                  )}
-                />
-                {/* Redesigned total section */}
-                <div style={styles.totalSection}>
-                  <Text style={styles.totalText}>SECTION TOTAL</Text>
-                  <Text style={{...styles.totalAmount, color: iconColors.pastDue}}>
-                    ${pastDueTotal.toFixed(2)}
-                  </Text>
-                </div>
-              </>
-            )}
-          </div>
+          <Button 
+            type="text" 
+            size="small"
+            style={styles.toggleButton}
+            icon={expanded.pastDue ? <IconChevronUp size={16} /> : <IconChevronDown size={16} />}
+            onClick={() => toggleSection('pastDue')}
+          />
         </div>
-
-        {/* Bill Prep Section - REDESIGNED */}
-        <div style={styles.sectionContainer}>
-          <div style={{
-            ...styles.sectionHeader,
-            backgroundColor: sectionColors.billPrep
-          }}>
-            <div style={{display: 'flex', alignItems: 'center'}}>
-              <div style={{
-                ...styles.iconContainer,
-                backgroundColor: 'rgba(255, 255, 255, 0.9)'
-              }}>
-                <IconClipboardList size={16} style={{ color: iconColors.billPrep }} />
-              </div>
-              <div style={styles.titleContainer}>
-                <Text style={styles.titleText}>Bill Prep</Text>
-                {billPrep.length > 0 && (
-                  <Text style={styles.countText}>
-                    {billPrep.length} {billPrep.length === 1 ? 'item' : 'items'}
-                  </Text>
-                )}
-              </div>
+        
+        <div style={{
+          ...styles.sectionContent,
+          maxHeight: expanded.pastDue ? '1000px' : '0px',
+        }}>
+          {pastDueBills.length === 0 ? (
+            <div style={styles.emptySection}>
+              <Text type="secondary">No past due payments</Text>
             </div>
-            <Button 
-              type="text" 
-              size="small"
-              style={styles.toggleButton}
-              icon={expanded.billPrep ? <IconChevronUp size={16} /> : <IconChevronDown size={16} />}
-              onClick={() => toggleSection('billPrep')}
-            />
-          </div>
-          
-          <div style={{
-            ...styles.sectionContent,
-            maxHeight: expanded.billPrep ? '1000px' : '0px',
-          }}>
-            {billPrep.length === 0 ? (
-              <div style={styles.emptySection}>
-                <Text type="secondary">No bills in preparation</Text>
+          ) : (
+            <>
+              <List
+                dataSource={pastDueBills}
+                renderItem={(item, index) => (
+                  <>
+                    <List.Item style={styles.listItem}>
+                      <List.Item.Meta
+                        avatar={
+                          <Avatar 
+                            shape="square" 
+                            size={32} 
+                            style={{ 
+                              ...styles.avatar, 
+                              backgroundColor: 'rgba(245, 34, 45, 0.1)' // Light red background
+                            }}
+                            icon={getCategoryIcon(item.category, 16)}
+                          />
+                        }
+                        title={<Text strong style={{fontSize: '0.85rem'}}>{item.name}</Text>}
+                        description={
+                          <Text type="danger" style={styles.dueDateText}>
+                            Due {daysAgo(item.dueDate)} days ago
+                          </Text>
+                        }
+                      />
+                      <Text strong style={{ color: iconColors.pastDue, fontSize: '0.85rem' }}>${Number(item.amount).toFixed(2)}</Text>
+                    </List.Item>
+                    {index < pastDueBills.length - 1 && <Divider style={styles.itemDivider} />}
+                  </>
+                )}
+              />
+              {/* Redesigned total section */}
+              <div style={styles.totalSection}>
+                <Text style={styles.totalText}>SECTION TOTAL</Text>
+                <Text style={{...styles.totalAmount, color: iconColors.pastDue}}>
+                  ${pastDueTotal.toFixed(2)}
+                </Text>
               </div>
-            ) : (
-              <>
-                <List
-                  dataSource={billPrep}
-                  renderItem={(item, index) => (
-                    <>
-                      <List.Item style={styles.listItem}>
-                        <List.Item.Meta
-                          avatar={
-                            <Avatar 
-                              shape="square" 
-                              size={32} 
-                              style={{ 
-                                ...styles.avatar, 
-                                backgroundColor: 'rgba(24, 144, 255, 0.1)' // Light blue background
-                              }}
-                              icon={getCategoryIcon(item.category, 16)}
-                            />
-                          }
-                          title={<Text strong style={{fontSize: '0.85rem'}}>{item.name}</Text>}
-                          description={
-                            <Text type="secondary" style={styles.dueDateText}>
-                              {item.bills.length} {item.bills.length === 1 ? 'Item' : 'Items'}
-                            </Text>
-                          }
-                        />
-                        <Text strong style={{ color: iconColors.billPrep, fontSize: '0.85rem' }}>${item.totalAmount.toFixed(2)}</Text>
-                      </List.Item>
-                      {index < billPrep.length - 1 && <Divider style={styles.itemDivider} />}
-                    </>
-                  )}
-                />
-                {/* Redesigned total section */}
-                <div style={styles.totalSection}>
-                  <Text style={styles.totalText}>SECTION TOTAL</Text>
-                  <Text style={{...styles.totalAmount, color: iconColors.billPrep}}>
-                    ${billPrepTotal.toFixed(2)}
-                  </Text>
-                </div>
-              </>
-            )}
-          </div>
+            </>
+          )}
         </div>
+      </div>
 
-        {/* Non-Recurring Bills Section - REDESIGNED */}
-        <div style={styles.sectionContainer}>
-          <div style={{
-            ...styles.sectionHeader,
-            backgroundColor: sectionColors.nonRecurring
-          }}>
-            <div style={{display: 'flex', alignItems: 'center'}}>
-              <div style={{
-                ...styles.iconContainer,
-                backgroundColor: 'rgba(255, 255, 255, 0.9)'
-              }}>
-                <IconRepeatOff size={16} style={{ color: iconColors.nonRecurring }} />
-              </div>
-              <div style={styles.titleContainer}>
-                <Text style={styles.titleText}>Non-Recurring Bills</Text>
-                {nonRecurring.length > 0 && (
-                  <Text style={styles.countText}>
-                    {nonRecurring.length} {nonRecurring.length === 1 ? 'item' : 'items'}
-                  </Text>
-                )}
-              </div>
+      {/* Bill Prep Section - REDESIGNED */}
+      <div style={styles.sectionContainer}>
+        <div style={{
+          ...styles.sectionHeader,
+          backgroundColor: sectionColors.billPrep
+        }}>
+          <div style={{display: 'flex', alignItems: 'center'}}>
+            <div style={{
+              ...styles.iconContainer,
+              backgroundColor: 'rgba(255, 255, 255, 0.9)'
+            }}>
+              <IconClipboardList size={16} style={{ color: iconColors.billPrep }} />
             </div>
-            <Button 
-              type="text" 
-              size="small"
-              style={styles.toggleButton}
-              icon={expanded.nonRecurring ? <IconChevronUp size={16} /> : <IconChevronDown size={16} />}
-              onClick={() => toggleSection('nonRecurring')}
-            />
+            <div style={styles.titleContainer}>
+              <Text style={styles.titleText}>Bill Prep</Text>
+              {billPrep.length > 0 && (
+                <Text style={styles.countText}>
+                  {billPrep.length} {billPrep.length === 1 ? 'item' : 'items'}
+                </Text>
+              )}
+            </div>
           </div>
-          
-          <div style={{
-            ...styles.sectionContent,
-            maxHeight: expanded.nonRecurring ? '1000px' : '0px',
-          }}>
-            {nonRecurring.length === 0 ? (
-              <div style={styles.emptySection}>
-                <Text type="secondary">No non-recurring bills</Text>
-              </div>
-            ) : (
-              <>
-                <List
-                  dataSource={limitItems(nonRecurring, 'nonRecurring')}
-                  renderItem={(item, index) => (
-                    <>
-                      <List.Item style={styles.listItem}>
-                        <List.Item.Meta
-                          avatar={
-                            <Avatar 
-                              shape="square" 
-                              size={32} 
-                              style={{ 
-                                ...styles.avatar, 
-                                backgroundColor: 'rgba(82, 196, 26, 0.1)' // Light green background
-                              }}
-                              icon={getCategoryIcon(item.category, 16)}
-                            />
-                          }
-                          title={
-                            <div style={styles.itemHeader}>
-                              <Text strong style={{fontSize: '0.85rem'}}>{item.name}</Text>
-                              <Text strong style={{ color: item.isPaid ? iconColors.nonRecurring : iconColors.pastDue, fontSize: '0.85rem' }}>
-                                ${Number(item.amount).toFixed(2)}
-                              </Text>
-                            </div>
-                          }
-                          description={
-                            <div style={styles.itemHeader}>
-                              <Text type="secondary" style={styles.dueDateText}>
-                                {daysAgo(item.dueDate)} days ago
-                              </Text>
-                              {item.isPaid && (
-                                <Tag color="success" style={styles.tag}>
-                                  Paid
-                                </Tag>
-                              )}
-                            </div>
-                          }
-                        />
-                      </List.Item>
-                      {index < limitItems(nonRecurring, 'nonRecurring').length - 1 && 
-                        <Divider style={styles.itemDivider} />}
-                    </>
-                  )}
-                />
-                {nonRecurring.length > 3 && (
-                  <div style={styles.showMoreContainer}>
-                    <Button 
-                      type="link" 
-                      size="small" 
-                      style={{...styles.actionButton, color: iconColors.nonRecurring}}
-                      onClick={() => toggleShowAll('nonRecurring')}
-                    >
-                      {showAll.nonRecurring ? 'Show Less' : 'Show All'}
-                    </Button>
-                  </div>
-                )}
-                {/* Redesigned total section */}
-                <div style={styles.totalSection}>
-                  <Text style={styles.totalText}>SECTION TOTAL</Text>
-                  <Text style={{...styles.totalAmount, color: iconColors.nonRecurring}}>
-                    ${nonRecurringTotal.toFixed(2)}
-                  </Text>
-                </div>
-              </>
-            )}
-          </div>
+          <Button 
+            type="text" 
+            size="small"
+            style={styles.toggleButton}
+            icon={expanded.billPrep ? <IconChevronUp size={16} /> : <IconChevronDown size={16} />}
+            onClick={() => toggleSection('billPrep')}
+          />
         </div>
-
-        {/* Upcoming Bills Section - REDESIGNED */}
-        <div style={styles.sectionContainer}>
-          <div style={{
-            ...styles.sectionHeader,
-            backgroundColor: sectionColors.upcoming
-          }}>
-            <div style={{display: 'flex', alignItems: 'center'}}>
-              <div style={{
-                ...styles.iconContainer,
-                backgroundColor: 'rgba(255, 255, 255, 0.9)'
-              }}>
-                <IconHourglass size={16} style={{ color: iconColors.upcoming }} />
-              </div>
-              <div style={styles.titleContainer}>
-                <Text style={styles.titleText}>Upcoming Bills</Text>
-                {upcoming.length > 0 && (
-                  <Text style={styles.countText}>
-                    {upcoming.length} {upcoming.length === 1 ? 'item' : 'items'}
-                  </Text>
-                )}
-              </div>
+        
+        <div style={{
+          ...styles.sectionContent,
+          maxHeight: expanded.billPrep ? '1000px' : '0px',
+        }}>
+          {billPrep.length === 0 ? (
+            <div style={styles.emptySection}>
+              <Text type="secondary">No bills in preparation</Text>
             </div>
-            <Button 
-              type="text" 
-              size="small"
-              style={styles.toggleButton}
-              icon={expanded.upcoming ? <IconChevronUp size={16} /> : <IconChevronDown size={16} />}
-              onClick={() => toggleSection('upcoming')}
-            />
-          </div>
-          
-          <div style={{
-            ...styles.sectionContent,
-            maxHeight: expanded.upcoming ? '1000px' : '0px',
-          }}>
-            {upcoming.length === 0 ? (
-              <div style={styles.emptySection}>
-                <Text type="secondary">No upcoming bills</Text>
+          ) : (
+            <>
+              <List
+                dataSource={billPrep}
+                renderItem={(item, index) => (
+                  <>
+                    <List.Item style={styles.listItem}>
+                      <List.Item.Meta
+                        avatar={
+                          <Avatar 
+                            shape="square" 
+                            size={32} 
+                            style={{ 
+                              ...styles.avatar, 
+                              backgroundColor: 'rgba(24, 144, 255, 0.1)' // Light blue background
+                            }}
+                            icon={getCategoryIcon(item.category, 16)}
+                          />
+                        }
+                        title={<Text strong style={{fontSize: '0.85rem'}}>{item.name}</Text>}
+                        description={
+                          <Text type="secondary" style={styles.dueDateText}>
+                            {item.bills.length} {item.bills.length === 1 ? 'Item' : 'Items'}
+                          </Text>
+                        }
+                      />
+                      <Text strong style={{ color: iconColors.billPrep, fontSize: '0.85rem' }}>${item.totalAmount.toFixed(2)}</Text>
+                    </List.Item>
+                    {index < billPrep.length - 1 && <Divider style={styles.itemDivider} />}
+                  </>
+                )}
+              />
+              {/* Redesigned total section */}
+              <div style={styles.totalSection}>
+                <Text style={styles.totalText}>SECTION TOTAL</Text>
+                <Text style={{...styles.totalAmount, color: iconColors.billPrep}}>
+                  ${billPrepTotal.toFixed(2)}
+                </Text>
               </div>
-            ) : (
-              <>
-                <List
-                  dataSource={upcoming}
-                  renderItem={(item, index) => (
-                    <>
-                      <List.Item style={styles.listItem}>
-                        <List.Item.Meta
-                          avatar={
-                            <Avatar 
-                              shape="square" 
-                              size={32} 
-                              style={{ 
-                                ...styles.avatar, 
-                                backgroundColor: 'rgba(250, 140, 22, 0.1)' // Light orange background
-                              }}
-                              icon={getCategoryIcon(item.category, 16)}
-                            />
-                          }
-                          title={<Text strong style={{fontSize: '0.85rem'}}>{item.name}</Text>}
-                          description={
-                            <Text type="secondary" style={styles.dueDateText}>
-                              Due {formatDueDate(item.dueDate)}
-                            </Text>
-                          }
-                        />
-                        <Text strong style={{ color: iconColors.upcoming, fontSize: '0.85rem' }}>${Number(item.amount).toFixed(2)}</Text>
-                      </List.Item>
-                      {index < upcoming.length - 1 && <Divider style={styles.itemDivider} />}
-                    </>
-                  )}
-                />
-                {/* Redesigned total section */}
-                <div style={styles.totalSection}>
-                  <Text style={styles.totalText}>SECTION TOTAL</Text>
-                  <Text style={{...styles.totalAmount, color: iconColors.upcoming}}>
-                    ${upcomingTotal.toFixed(2)}
-                  </Text>
-                </div>
-              </>
-            )}
-          </div>
+            </>
+          )}
         </div>
+      </div>
 
-        {/* Recent Activity Section - REDESIGNED */}
-        <div style={styles.sectionContainer}>
-          <div style={{
-            ...styles.sectionHeader,
-            backgroundColor: sectionColors.recentActivity
-          }}>
-            <div style={{display: 'flex', alignItems: 'center'}}>
-              <div style={{
-                ...styles.iconContainer,
-                backgroundColor: 'rgba(255, 255, 255, 0.9)'
-              }}>
-                <IconClock size={16} style={{ color: iconColors.recentActivity }} />
-              </div>
-              <div style={styles.titleContainer}>
-                <Text style={styles.titleText}>Recent Activity</Text>
-                {recentActivity.length > 0 && (
-                  <Text style={styles.countText}>
-                    {recentActivity.length} {recentActivity.length === 1 ? 'item' : 'items'}
-                  </Text>
-                )}
-              </div>
+      {/* Non-Recurring Bills Section - REDESIGNED */}
+      <div style={styles.sectionContainer}>
+        <div style={{
+          ...styles.sectionHeader,
+          backgroundColor: sectionColors.nonRecurring
+        }}>
+          <div style={{display: 'flex', alignItems: 'center'}}>
+            <div style={{
+              ...styles.iconContainer,
+              backgroundColor: 'rgba(255, 255, 255, 0.9)'
+            }}>
+              <IconRepeatOff size={16} style={{ color: iconColors.nonRecurring }} />
             </div>
-            <Button 
-              type="text" 
-              size="small"
-              style={styles.toggleButton}
-              icon={expanded.recentActivity ? <IconChevronUp size={16} /> : <IconChevronDown size={16} />}
-              onClick={() => toggleSection('recentActivity')}
-            />
+            <div style={styles.titleContainer}>
+              <Text style={styles.titleText}>Non-Recurring Bills</Text>
+              {nonRecurring.length > 0 && (
+                <Text style={styles.countText}>
+                  {nonRecurring.length} {nonRecurring.length === 1 ? 'item' : 'items'}
+                </Text>
+              )}
+            </div>
           </div>
-          
-          <div style={{
-            ...styles.sectionContent,
-            maxHeight: expanded.recentActivity ? '1000px' : '0px',
-          }}>
-            {recentActivity.length === 0 ? (
-              <div style={styles.emptySection}>
-                <Text type="secondary">No recent activity</Text>
-              </div>
-            ) : (
-              <>
-                <List
-                  dataSource={limitItems(recentActivity, 'recentActivity')}
-                  renderItem={(item, index) => (
-                    <>
-                      <List.Item style={styles.listItem}>
-                        <Space direction="vertical" size={0} style={{ width: '100%' }}>
-                          <Space align="center" style={{ width: '100%', justifyContent: 'space-between' }}>
-                            <Space align="center">
-                              <Avatar 
-                                shape="square" 
-                                size={32} 
-                                style={{ 
-                                  ...styles.avatar, 
-                                  backgroundColor: 'rgba(114, 46, 209, 0.1)' // Light purple background
-                                }}
-                                icon={<IconCircleCheck size={16} style={{ color: iconColors.recentActivity }} />}
-                              />
-                              <Text strong style={{fontSize: '0.85rem'}}>{item.name}</Text>
-                            </Space>
-                            <Space direction="vertical" align="end" size={0}>
-                              <Text strong style={{fontSize: '0.85rem'}}>${Number(item.amount).toFixed(2)}</Text>
-                              <Text type="secondary" style={{ fontSize: '0.7rem' }}>{item.category}</Text>
-                            </Space>
-                          </Space>
-                          <div style={styles.recentActivityItem}>
-                            <Text type="secondary" style={{ fontSize: '0.7rem', display: 'flex', alignItems: 'center' }}>
-                              <IconClock size={10} style={{ marginRight: 4 }} />
-                              {daysAgo(item.dueDate)} days ago
+          <Button 
+            type="text" 
+            size="small"
+            style={styles.toggleButton}
+            icon={expanded.nonRecurring ? <IconChevronUp size={16} /> : <IconChevronDown size={16} />}
+            onClick={() => toggleSection('nonRecurring')}
+          />
+        </div>
+        
+        <div style={{
+          ...styles.sectionContent,
+          maxHeight: expanded.nonRecurring ? '1000px' : '0px',
+        }}>
+          {nonRecurring.length === 0 ? (
+            <div style={styles.emptySection}>
+              <Text type="secondary">No non-recurring bills</Text>
+            </div>
+          ) : (
+            <>
+              <List
+                dataSource={limitItems(nonRecurring, 'nonRecurring')}
+                renderItem={(item, index) => (
+                  <>
+                    <List.Item style={styles.listItem}>
+                      <List.Item.Meta
+                        avatar={
+                          <Avatar 
+                            shape="square" 
+                            size={32} 
+                            style={{ 
+                              ...styles.avatar, 
+                              backgroundColor: 'rgba(82, 196, 26, 0.1)' // Light green background
+                            }}
+                            icon={getCategoryIcon(item.category, 16)}
+                          />
+                        }
+                        title={
+                          <div style={styles.itemHeader}>
+                            <Text strong style={{fontSize: '0.85rem'}}>{item.name}</Text>
+                            <Text strong style={{ color: item.isPaid ? iconColors.nonRecurring : iconColors.pastDue, fontSize: '0.85rem' }}>
+                              ${Number(item.amount).toFixed(2)}
                             </Text>
                           </div>
-                        </Space>
-                      </List.Item>
-                      {index < limitItems(recentActivity, 'recentActivity').length - 1 && 
-                        <Divider style={styles.itemDivider} />}
-                    </>
-                  )}
-                />
-                {recentActivity.length > 3 && (
-                  <div style={styles.showMoreContainer}>
-                    <Button 
-                      type="link" 
-                      size="small" 
-                      style={{...styles.actionButton, color: iconColors.recentActivity}}
-                      onClick={() => toggleShowAll('recentActivity')}
-                    >
-                      {showAll.recentActivity ? 'Show Less' : 'Show All'}
-                    </Button>
-                  </div>
+                        }
+                        description={
+                          <div style={styles.itemHeader}>
+                            <Text type="secondary" style={styles.dueDateText}>
+                              {daysAgo(item.dueDate)} days ago
+                            </Text>
+                            {item.isPaid && (
+                              <Tag color="success" style={styles.tag}>
+                                Paid
+                              </Tag>
+                            )}
+                          </div>
+                        }
+                      />
+                    </List.Item>
+                    {index < limitItems(nonRecurring, 'nonRecurring').length - 1 && 
+                      <Divider style={styles.itemDivider} />}
+                  </>
                 )}
-                {/* Redesigned total section */}
-                <div style={styles.totalSection}>
-                  <Text style={styles.totalText}>SECTION TOTAL</Text>
-                  <Text style={{...styles.totalAmount, color: iconColors.recentActivity}}>
-                    ${recentActivityTotal.toFixed(2)}
-                  </Text>
+              />
+              {nonRecurring.length > 3 && (
+                <div style={styles.showMoreContainer}>
+                  <Button 
+                    type="link" 
+                    size="small" 
+                    style={{...styles.actionButton, color: iconColors.nonRecurring}}
+                    onClick={() => toggleShowAll('nonRecurring')}
+                  >
+                    {showAll.nonRecurring ? 'Show Less' : 'Show All'}
+                  </Button>
                 </div>
-              </>
-            )}
-          </div>
+              )}
+              {/* Redesigned total section */}
+              <div style={styles.totalSection}>
+                <Text style={styles.totalText}>SECTION TOTAL</Text>
+                <Text style={{...styles.totalAmount, color: iconColors.nonRecurring}}>
+                  ${nonRecurringTotal.toFixed(2)}
+                </Text>
+              </div>
+            </>
+          )}
         </div>
-      </Card>
+      </div>
+
+      {/* Upcoming Bills Section - REDESIGNED */}
+      <div style={styles.sectionContainer}>
+        <div style={{
+          ...styles.sectionHeader,
+          backgroundColor: sectionColors.upcoming
+        }}>
+          <div style={{display: 'flex', alignItems: 'center'}}>
+            <div style={{
+              ...styles.iconContainer,
+              backgroundColor: 'rgba(255, 255, 255, 0.9)'
+            }}>
+              <IconHourglass size={16} style={{ color: iconColors.upcoming }} />
+            </div>
+            <div style={styles.titleContainer}>
+              <Text style={styles.titleText}>Upcoming Bills</Text>
+              {upcoming.length > 0 && (
+                <Text style={styles.countText}>
+                  {upcoming.length} {upcoming.length === 1 ? 'item' : 'items'}
+                </Text>
+              )}
+            </div>
+          </div>
+          <Button 
+            type="text" 
+            size="small"
+            style={styles.toggleButton}
+            icon={expanded.upcoming ? <IconChevronUp size={16} /> : <IconChevronDown size={16} />}
+            onClick={() => toggleSection('upcoming')}
+          />
+        </div>
+        
+        <div style={{
+          ...styles.sectionContent,
+          maxHeight: expanded.upcoming ? '1000px' : '0px',
+        }}>
+          {upcoming.length === 0 ? (
+            <div style={styles.emptySection}>
+              <Text type="secondary">No upcoming bills</Text>
+            </div>
+          ) : (
+            <>
+              <List
+                dataSource={upcoming}
+                renderItem={(item, index) => (
+                  <>
+                    <List.Item style={styles.listItem}>
+                      <List.Item.Meta
+                        avatar={
+                          <Avatar 
+                            shape="square" 
+                            size={32} 
+                            style={{ 
+                              ...styles.avatar, 
+                              backgroundColor: 'rgba(250, 140, 22, 0.1)' // Light orange background
+                            }}
+                            icon={getCategoryIcon(item.category, 16)}
+                          />
+                        }
+                        title={<Text strong style={{fontSize: '0.85rem'}}>{item.name}</Text>}
+                        description={
+                          <Text type="secondary" style={styles.dueDateText}>
+                            Due {formatDueDate(item.dueDate)}
+                          </Text>
+                        }
+                      />
+                      <Text strong style={{ color: iconColors.upcoming, fontSize: '0.85rem' }}>${Number(item.amount).toFixed(2)}</Text>
+                    </List.Item>
+                    {index < upcoming.length - 1 && <Divider style={styles.itemDivider} />}
+                  </>
+                )}
+              />
+              {/* Redesigned total section */}
+              <div style={styles.totalSection}>
+                <Text style={styles.totalText}>SECTION TOTAL</Text>
+                <Text style={{...styles.totalAmount, color: iconColors.upcoming}}>
+                  ${upcomingTotal.toFixed(2)}
+                </Text>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* Recent Activity Section - REDESIGNED */}
+      <div style={styles.sectionContainer}>
+        <div style={{
+          ...styles.sectionHeader,
+          backgroundColor: sectionColors.recentActivity
+        }}>
+          <div style={{display: 'flex', alignItems: 'center'}}>
+            <div style={{
+              ...styles.iconContainer,
+              backgroundColor: 'rgba(255, 255, 255, 0.9)'
+            }}>
+              <IconClock size={16} style={{ color: iconColors.recentActivity }} />
+            </div>
+            <div style={styles.titleContainer}>
+              <Text style={styles.titleText}>Recent Activity</Text>
+              {recentActivity.length > 0 && (
+                <Text style={styles.countText}>
+                  {recentActivity.length} {recentActivity.length === 1 ? 'item' : 'items'}
+                </Text>
+              )}
+            </div>
+          </div>
+          <Button 
+            type="text" 
+            size="small"
+            style={styles.toggleButton}
+            icon={expanded.recentActivity ? <IconChevronUp size={16} /> : <IconChevronDown size={16} />}
+            onClick={() => toggleSection('recentActivity')}
+          />
+        </div>
+        
+        <div style={{
+          ...styles.sectionContent,
+          maxHeight: expanded.recentActivity ? '1000px' : '0px',
+        }}>
+          {recentActivity.length === 0 ? (
+            <div style={styles.emptySection}>
+              <Text type="secondary">No recent activity</Text>
+            </div>
+          ) : (
+            <>
+              <List
+                dataSource={limitItems(recentActivity, 'recentActivity')}
+                renderItem={(item, index) => (
+                  <>
+                    <List.Item style={styles.listItem}>
+                      <Space direction="vertical" size={0} style={{ width: '100%' }}>
+                        <Space align="center" style={{ width: '100%', justifyContent: 'space-between' }}>
+                          <Space align="center">
+                            <Avatar 
+                              shape="square" 
+                              size={32} 
+                              style={{ 
+                                ...styles.avatar, 
+                                backgroundColor: 'rgba(114, 46, 209, 0.1)' // Light purple background
+                              }}
+                              icon={<IconCircleCheck size={16} style={{ color: iconColors.recentActivity }} />}
+                            />
+                            <Text strong style={{fontSize: '0.85rem'}}>{item.name}</Text>
+                          </Space>
+                          <Space direction="vertical" align="end" size={0}>
+                            <Text strong style={{fontSize: '0.85rem'}}>${Number(item.amount).toFixed(2)}</Text>
+                            <Text type="secondary" style={{ fontSize: '0.7rem' }}>{item.category}</Text>
+                          </Space>
+                        </Space>
+                        <div style={styles.recentActivityItem}>
+                          <Text type="secondary" style={{ fontSize: '0.7rem', display: 'flex', alignItems: 'center' }}>
+                            <IconClock size={10} style={{ marginRight: 4 }} />
+                            {daysAgo(item.dueDate)} days ago
+                          </Text>
+                        </div>
+                      </Space>
+                    </List.Item>
+                    {index < limitItems(recentActivity, 'recentActivity').length - 1 && 
+                      <Divider style={styles.itemDivider} />}
+                  </>
+                )}
+              />
+              {recentActivity.length > 3 && (
+                <div style={styles.showMoreContainer}>
+                  <Button 
+                    type="link" 
+                    size="small" 
+                    style={{...styles.actionButton, color: iconColors.recentActivity}}
+                    onClick={() => toggleShowAll('recentActivity')}
+                  >
+                    {showAll.recentActivity ? 'Show Less' : 'Show All'}
+                  </Button>
+                </div>
+              )}
+              {/* Redesigned total section */}
+              <div style={styles.totalSection}>
+                <Text style={styles.totalText}>SECTION TOTAL</Text>
+                <Text style={{...styles.totalAmount, color: iconColors.recentActivity}}>
+                  ${recentActivityTotal.toFixed(2)}
+                </Text>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
     </div>
   );
 };
