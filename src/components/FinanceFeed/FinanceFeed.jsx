@@ -40,16 +40,6 @@ const FinanceFeed = ({ isMobileView, onEditBill, onAddBill }) => {
   // For desktop view, we keep the layout exactly the same as before
   return (
     <div style={containerStyle} className="finance-feed-container">
-      <Title 
-        level={3} 
-        style={{ 
-          marginBottom: 'var(--space-24)',
-          color: 'var(--neutral-800)'
-        }}
-      >
-        Finance Feed
-      </Title>
-      
       {/* Desktop view - Two column layout */}
       <Row gutter={[24, 24]}>
         {/* Left column - 2/3 width */}
