@@ -73,13 +73,8 @@ const styles = {
     width: '100%',
     maxWidth: '100%',
     overflowX: 'hidden',
-    padding: '12px 12px 80px 12px', // Extra bottom padding for bottom nav
+    padding: '12px 12px 100px 12px', // Increased bottom padding (from 80px to 100px)
     backgroundColor: '#F0F2F5'
-  },
-  pageTitle: {
-    marginBottom: 20, 
-    fontSize: '1.4rem',
-    fontWeight: 600
   },
   
   // Card styling for the whole page
@@ -171,7 +166,7 @@ const styles = {
   
   // List item styling
   listItem: {
-    padding: '12px 16px',
+    padding: '8px 16px', // Reduced padding from 12px to 8px for height reduction
     display: 'flex',
     alignItems: 'center',
     borderBottom: 'none'
@@ -182,12 +177,15 @@ const styles = {
     borderRadius: 8,
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    width: 36, // Set fixed width for avatar
+    height: 36  // Set fixed height for avatar (reduced from 40)
   },
   
   // Due date text
   dueDateText: {
-    fontSize: '0.75rem'
+    fontSize: '0.7rem', // Slightly reduced font size
+    lineHeight: 1.2    // Tighter line height
   },
   
   // Section for recent activity items
@@ -230,7 +228,8 @@ const styles = {
   // Item divider
   itemDivider: {
     margin: '0 16px',
-    opacity: 0.6
+    opacity: 0.4,     // More subtle divider
+    height: 1         // Thinner divider
   },
   
   // Total section styling - REDESIGNED to be very distinct
@@ -370,7 +369,6 @@ const MobileFinanceFeed = ({ onEditBill, onAddBill }) => {
 
   return (
     <div style={styles.container}>
-      <Title level={4} style={styles.pageTitle}>Finance Feed</Title>
       
       {/* REDESIGNED: Each section is now in its own container with rounded corners */}
       <Card style={styles.card}>
@@ -424,12 +422,12 @@ const MobileFinanceFeed = ({ onEditBill, onAddBill }) => {
                           avatar={
                             <Avatar 
                               shape="square" 
-                              size={40} 
+                              size={36} 
                               style={{ 
                                 ...styles.avatar, 
                                 backgroundColor: 'rgba(245, 34, 45, 0.1)' // Light red background
                               }}
-                              icon={getCategoryIcon(item.category, 20)}
+                              icon={getCategoryIcon(item.category, 18)}
                             />
                           }
                           title={<Text strong>{item.name}</Text>}
@@ -507,12 +505,12 @@ const MobileFinanceFeed = ({ onEditBill, onAddBill }) => {
                           avatar={
                             <Avatar 
                               shape="square" 
-                              size={40} 
+                              size={36} 
                               style={{ 
                                 ...styles.avatar, 
                                 backgroundColor: 'rgba(24, 144, 255, 0.1)' // Light blue background
                               }}
-                              icon={getCategoryIcon(item.category, 20)}
+                              icon={getCategoryIcon(item.category, 18)}
                             />
                           }
                           title={<Text strong>{item.name}</Text>}
@@ -590,12 +588,12 @@ const MobileFinanceFeed = ({ onEditBill, onAddBill }) => {
                           avatar={
                             <Avatar 
                               shape="square" 
-                              size={40} 
+                              size={36} 
                               style={{ 
                                 ...styles.avatar, 
                                 backgroundColor: 'rgba(82, 196, 26, 0.1)' // Light green background
                               }}
-                              icon={getCategoryIcon(item.category, 20)}
+                              icon={getCategoryIcon(item.category, 18)}
                             />
                           }
                           title={
@@ -699,12 +697,12 @@ const MobileFinanceFeed = ({ onEditBill, onAddBill }) => {
                           avatar={
                             <Avatar 
                               shape="square" 
-                              size={40} 
+                              size={36} 
                               style={{ 
                                 ...styles.avatar, 
                                 backgroundColor: 'rgba(250, 140, 22, 0.1)' // Light orange background
                               }}
-                              icon={getCategoryIcon(item.category, 20)}
+                              icon={getCategoryIcon(item.category, 18)}
                             />
                           }
                           title={<Text strong>{item.name}</Text>}
@@ -783,12 +781,12 @@ const MobileFinanceFeed = ({ onEditBill, onAddBill }) => {
                             <Space align="center">
                               <Avatar 
                                 shape="square" 
-                                size={40} 
+                                size={36} 
                                 style={{ 
                                   ...styles.avatar, 
                                   backgroundColor: 'rgba(114, 46, 209, 0.1)' // Light purple background
                                 }}
-                                icon={<IconCircleCheck size={20} style={{ color: iconColors.recentActivity }} />}
+                                icon={<IconCircleCheck size={18} style={{ color: iconColors.recentActivity }} />}
                               />
                               <Text strong>{item.name}</Text>
                             </Space>
