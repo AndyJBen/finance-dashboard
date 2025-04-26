@@ -189,7 +189,7 @@ function MyApp() {
     width: '100%',
     maxWidth: '100%',
     // *** UPDATED PADDING BOTTOM FOR MOBILE ***
-    paddingBottom: isMobileView ? '100px' : 'var(--space-24)' // Increased padding at the bottom for mobile to avoid overlap with bottom nav
+    paddingBottom: isMobileView ? '130px' : 'var(--space-24)' // Increased padding at the bottom for mobile to avoid overlap with bottom nav
   };
 
   // --- Component Return JSX ---
