@@ -79,7 +79,7 @@ const styles = {
   
   // Container for each section - MADE WIDER with MORE SPACE BETWEEN
   sectionContainer: {
-    marginBottom: 80, // Increased spacing between sections from 20px to 30px
+    marginBottom: 30, // Increased spacing between sections from 20px to 30px
     borderRadius: 12,
     overflow: 'hidden',
     backgroundColor: '#fff',
