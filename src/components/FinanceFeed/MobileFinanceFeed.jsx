@@ -1,6 +1,6 @@
-// src/components/FinanceFeed/MobileFinanceFeed/MobileFinanceFeed.jsx
+// src/components/FinanceFeed/MobileFinanceFeed.jsx
 import React, { useState, useContext } from 'react';
-import { Typography, Card, List, Badge, Tag, Avatar, Button } from 'antd';
+import { Typography, Card, List, Badge, Tag, Avatar, Button, Space } from 'antd';
 import {
   IconAlertOctagonFilled,
   IconClipboardList,
@@ -21,10 +21,7 @@ import {
 } from '@tabler/icons-react';
 
 // Import the FinanceContext
-import { FinanceContext } from '../../../contexts/FinanceContext';
-
-// Import CSS for mobile-specific styling
-import './MobileFinanceFeed.css';
+import { FinanceContext } from '../../contexts/FinanceContext';
 
 const { Text, Title } = Typography;
 
@@ -51,6 +48,116 @@ const getCategoryIcon = (category, size = 16) => {
   if (lowerCategory.includes('passport') || lowerCategory.includes('photos')) 
     return <IconCreditCard size={size} style={{ color: '#26C67B' }} />;
   return <IconCreditCard size={size} style={{ color: '#0066FF' }} />;
+};
+
+// CSS Styles for Mobile Finance Feed
+const styles = {
+  container: {
+    width: '100%',
+    maxWidth: '100%',
+    overflowX: 'hidden',
+    padding: '12px 12px 80px 12px', // Extra bottom padding for bottom nav
+    backgroundColor: 'var(--neutral-100)'
+  },
+  card: {
+    marginBottom: '12px',
+    borderRadius: '12px',
+    overflow: 'hidden',
+    boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
+    backgroundColor: '#fff',
+    border: '1px solid var(--neutral-200)'
+  },
+  cardHead: {
+    minHeight: 'auto',
+    padding: '10px 16px',
+    borderBottom: '1px solid var(--neutral-200)'
+  },
+  titleContainer: {
+    display: 'flex', 
+    alignItems: 'center', 
+    justifyContent: 'space-between', 
+    padding: 0
+  },
+  titleLeftSection: {
+    display: 'flex', 
+    alignItems: 'center'
+  },
+  titleText: {
+    marginLeft: 8, 
+    fontSize: '0.95rem'
+  },
+  badge: {
+    marginLeft: 8,
+    fontSize: '0.7rem',
+    minWidth: 18,
+    height: 18,
+    borderRadius: 9,
+    color: '#fff',
+    fontWeight: 'bold',
+    lineHeight: '18px'
+  },
+  countText: {
+    marginLeft: 8, 
+    fontSize: '0.75rem'
+  },
+  toggleButton: {
+    padding: 4,
+    width: 24,
+    height: 24,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  emptySection: {
+    padding: 16,
+    textAlign: 'center',
+    color: 'var(--neutral-500)'
+  },
+  listItem: {
+    padding: '12px 16px',
+    display: 'flex',
+    alignItems: 'center',
+    borderBottom: '1px solid var(--neutral-200)'
+  },
+  avatar: {
+    borderRadius: 8,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  recentActivityItem: {
+    paddingLeft: 24
+  },
+  actionButton: {
+    padding: '4px 12px',
+    height: 'auto',
+    fontSize: '0.8rem',
+    color: 'var(--primary-600)'
+  },
+  showMoreContainer: {
+    textAlign: 'center',
+    padding: '8px 0',
+    borderTop: '1px solid var(--neutral-200)'
+  },
+  tag: {
+    margin: 0, 
+    padding: '0 8px', 
+    height: 20, 
+    lineHeight: '20px',
+    fontSize: '0.7rem',
+    fontWeight: 'bold'
+  },
+  dueDateText: {
+    fontSize: '0.75rem'
+  },
+  itemHeader: {
+    display: 'flex', 
+    justifyContent: 'space-between'
+  },
+  pageTitle: {
+    marginBottom: 16, 
+    fontSize: '1.2rem'
+  }
 };
 
 const MobileFinanceFeed = ({ onEditBill, onAddBill }) => {
@@ -158,32 +265,25 @@ const MobileFinanceFeed = ({ onEditBill, onAddBill }) => {
   // Section based on card with title and collapsible content
   const SectionCard = ({ title, icon, children, section, empty = false, count, itemCount, emptyText }) => (
     <Card
-      className="mobile-card"
+      style={styles.card}
       bodyStyle={expanded[section] ? { padding: 0 } : { padding: 0, height: 0, overflow: 'hidden' }}
       title={
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: 0 }}>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
+        <div style={styles.titleContainer}>
+          <div style={styles.titleLeftSection}>
             {icon}
-            <Text strong style={{ marginLeft: 8, fontSize: '0.95rem' }}>{title}</Text>
+            <Text strong style={styles.titleText}>{title}</Text>
             {count && (
               <Badge
                 count={count}
                 showZero={false}
                 style={{ 
+                  ...styles.badge,
                   backgroundColor: empty ? '#e0e0e0' : '#0066FF',
-                  marginLeft: 8,
-                  fontSize: '0.7rem',
-                  minWidth: 18,
-                  height: 18,
-                  borderRadius: 9,
-                  color: '#fff',
-                  fontWeight: 'bold',
-                  lineHeight: '18px'
                 }}
               />
             )}
             {itemCount && (
-              <Text type="secondary" style={{ marginLeft: 8, fontSize: '0.75rem' }}>
+              <Text type="secondary" style={styles.countText}>
                 ({itemCount})
               </Text>
             )}
@@ -191,16 +291,16 @@ const MobileFinanceFeed = ({ onEditBill, onAddBill }) => {
           <Button 
             type="text" 
             size="small"
-            className="section-toggle"
+            style={styles.toggleButton}
             icon={expanded[section] ? <IconChevronUp size={18} /> : <IconChevronDown size={18} />}
             onClick={() => toggleSection(section)}
           />
         </div>
       }
-      headStyle={{ padding: '10px 16px' }}
+      headStyle={styles.cardHead}
     >
       {empty && expanded[section] ? (
-        <div className="empty-section">
+        <div style={styles.emptySection}>
           <Text type="secondary">{emptyText || 'No items to display'}</Text>
         </div>
       ) : (
@@ -210,8 +310,8 @@ const MobileFinanceFeed = ({ onEditBill, onAddBill }) => {
   );
 
   return (
-    <div className="finance-feed-mobile">
-      <Title level={4} style={{ marginBottom: 16, fontSize: '1.2rem' }}>Finance Feed</Title>
+    <div style={styles.container}>
+      <Title level={4} style={styles.pageTitle}>Finance Feed</Title>
       
       {/* Past Due Payments */}
       <SectionCard
@@ -225,19 +325,19 @@ const MobileFinanceFeed = ({ onEditBill, onAddBill }) => {
         <List
           dataSource={pastDueBills}
           renderItem={item => (
-            <List.Item>
+            <List.Item style={styles.listItem}>
               <List.Item.Meta
                 avatar={
                   <Avatar 
                     shape="square" 
                     size={36} 
-                    style={{ backgroundColor: '#FFF5F5', borderRadius: 8 }}
+                    style={{ ...styles.avatar, backgroundColor: '#FFF5F5' }}
                     icon={getCategoryIcon(item.category, 18)}
                   />
                 }
                 title={<Text strong>{item.name}</Text>}
                 description={
-                  <Text type="danger" style={{ fontSize: '0.75rem' }}>
+                  <Text type="danger" style={styles.dueDateText}>
                     Due {daysAgo(item.dueDate)} days ago
                   </Text>
                 }
@@ -260,19 +360,19 @@ const MobileFinanceFeed = ({ onEditBill, onAddBill }) => {
         <List
           dataSource={billPrep}
           renderItem={item => (
-            <List.Item>
+            <List.Item style={styles.listItem}>
               <List.Item.Meta
                 avatar={
                   <Avatar 
                     shape="square" 
                     size={36} 
-                    style={{ backgroundColor: '#EBF5FF', borderRadius: 8 }}
+                    style={{ ...styles.avatar, backgroundColor: '#EBF5FF' }}
                     icon={getCategoryIcon(item.category, 18)}
                   />
                 }
                 title={<Text strong>{item.name}</Text>}
                 description={
-                  <Text type="secondary" style={{ fontSize: '0.75rem' }}>
+                  <Text type="secondary" style={styles.dueDateText}>
                     {item.bills.length} {item.bills.length === 1 ? 'Item' : 'Items'}
                   </Text>
                 }
@@ -295,18 +395,18 @@ const MobileFinanceFeed = ({ onEditBill, onAddBill }) => {
         <List
           dataSource={limitItems(nonRecurring, 'nonRecurring')}
           renderItem={item => (
-            <List.Item>
+            <List.Item style={styles.listItem}>
               <List.Item.Meta
                 avatar={
                   <Avatar 
                     shape="square" 
                     size={36} 
-                    style={{ backgroundColor: '#E5F8EF', borderRadius: 8 }}
+                    style={{ ...styles.avatar, backgroundColor: '#E5F8EF' }}
                     icon={getCategoryIcon(item.category, 18)}
                   />
                 }
                 title={
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <div style={styles.itemHeader}>
                     <Text strong>{item.name}</Text>
                     <Text strong style={{ color: item.isPaid ? '#26C67B' : '#F1476F' }}>
                       ${Number(item.amount).toFixed(2)}
@@ -314,19 +414,12 @@ const MobileFinanceFeed = ({ onEditBill, onAddBill }) => {
                   </div>
                 }
                 description={
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <Text type="secondary" style={{ fontSize: '0.75rem' }}>
+                  <div style={styles.itemHeader}>
+                    <Text type="secondary" style={styles.dueDateText}>
                       {daysAgo(item.dueDate)} days ago
                     </Text>
                     {item.isPaid && (
-                      <Tag color="success" style={{ 
-                        margin: 0, 
-                        padding: '0 8px', 
-                        height: 20, 
-                        lineHeight: '20px',
-                        fontSize: '0.7rem',
-                        fontWeight: 'bold'
-                      }}>
+                      <Tag color="success" style={styles.tag}>
                         Paid
                       </Tag>
                     )}
@@ -337,10 +430,11 @@ const MobileFinanceFeed = ({ onEditBill, onAddBill }) => {
           )}
         />
         {nonRecurring.length > 3 && (
-          <div className="show-more-container">
+          <div style={styles.showMoreContainer}>
             <Button 
               type="link" 
               size="small" 
+              style={styles.actionButton}
               onClick={() => toggleShowAll('nonRecurring')}
             >
               {showAll.nonRecurring ? 'Show Less' : 'Display All'}
@@ -361,19 +455,19 @@ const MobileFinanceFeed = ({ onEditBill, onAddBill }) => {
         <List
           dataSource={upcoming}
           renderItem={item => (
-            <List.Item>
+            <List.Item style={styles.listItem}>
               <List.Item.Meta
                 avatar={
                   <Avatar 
                     shape="square" 
                     size={36} 
-                    style={{ backgroundColor: '#EBF5FF', borderRadius: 8 }}
+                    style={{ ...styles.avatar, backgroundColor: '#EBF5FF' }}
                     icon={getCategoryIcon(item.category, 18)}
                   />
                 }
                 title={<Text strong>{item.name}</Text>}
                 description={
-                  <Text type="secondary" style={{ fontSize: '0.75rem' }}>
+                  <Text type="secondary" style={styles.dueDateText}>
                     Due {formatDueDate(item.dueDate)}
                   </Text>
                 }
@@ -396,7 +490,7 @@ const MobileFinanceFeed = ({ onEditBill, onAddBill }) => {
         <List
           dataSource={limitItems(recentActivity, 'recentActivity')}
           renderItem={item => (
-            <List.Item>
+            <List.Item style={styles.listItem}>
               <Space direction="vertical" size={0} style={{ width: '100%' }}>
                 <Space align="center" style={{ width: '100%', justifyContent: 'space-between' }}>
                   <Space align="center">
@@ -408,7 +502,7 @@ const MobileFinanceFeed = ({ onEditBill, onAddBill }) => {
                     <Text type="secondary" style={{ fontSize: '0.7rem' }}>{item.category}</Text>
                   </Space>
                 </Space>
-                <div className="recent-activity-item">
+                <div style={styles.recentActivityItem}>
                   <Text type="secondary" style={{ fontSize: '0.75rem', display: 'flex', alignItems: 'center' }}>
                     <IconClock size={12} style={{ marginRight: 4 }} />
                     {daysAgo(item.dueDate)} days ago
@@ -419,10 +513,11 @@ const MobileFinanceFeed = ({ onEditBill, onAddBill }) => {
           )}
         />
         {recentActivity.length > 3 && (
-          <div className="show-more-container">
+          <div style={styles.showMoreContainer}>
             <Button 
               type="link" 
               size="small" 
+              style={styles.actionButton}
               onClick={() => toggleShowAll('recentActivity')}
             >
               {showAll.recentActivity ? 'Show Less' : 'Display All'}

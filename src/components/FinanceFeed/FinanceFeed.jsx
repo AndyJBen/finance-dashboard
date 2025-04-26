@@ -9,8 +9,8 @@ import NonRecurringTransactions from '../RecentActivity/NonRecurringTransactions
 import UpcomingPayments from '../RecentActivity/UpcomingPayments';
 import ActivityFeed from '../RecentActivity/ActivityFeed';
 
-// Import the mobile-optimized Finance Feed component
-import MobileFinanceFeed from './MobileFinanceFeed/MobileFinanceFeed';
+// Import the mobile-optimized Finance Feed component directly
+import MobileFinanceFeed from './MobileFinanceFeed';
 
 const { Title } = Typography;
 
