@@ -1,6 +1,7 @@
 // src/components/Sidebar/Sidebar.jsx
 
 import React, { useContext, useState, useMemo } from 'react';
+import { IconActivityHeartbeat } from '@tabler/icons-react';
 import { Layout, Menu, Spin, Button, Tooltip, Space, message, Typography, Dropdown } from 'antd';
 import {
   IconHomeFilled,
@@ -165,9 +166,9 @@ const Sidebar = ({ collapsed, onCollapse, selectedKey, onSelect, width, collapse
 
   const mainMenuItems = [
     { label: 'Dashboard', key: 'dashboard', icon: <IconHomeFilled size={20} /> },
-    { label: 'Bills',     key: 'bills',     icon: <IconReceiptFilled size={20} /> },
+    { label: 'Finance Feed', key: 'finance-feed', icon: <IconActivityHeartbeat size={20} /> }, // New Finance Feed item
     { label: 'Reports',   key: 'reports',   icon: <IconChartPieFilled size={20} /> },
-  ];
+];
 
   const creditCardIds = useMemo(() => creditCards.map(c => c.id), [creditCards]);
   const activeCard = activeId && creditCards.find(c => c.id === activeId);

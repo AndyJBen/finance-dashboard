@@ -8,6 +8,7 @@ import { FinanceContext } from './contexts/FinanceContext';
 // Core pages/components
 import FinancialOverviewCards from './components/FinancialSummary/FinancialOverviewCards';
 import BillsList              from './components/BillsList/BillsList';
+import FinanceFeed            from './components/FinanceFeed/FinanceFeed';
 import UpcomingPayments       from './components/RecentActivity/UpcomingPayments';
 import ActivityFeed           from './components/RecentActivity/ActivityFeed';
 import NonRecurringTransactions from './components/RecentActivity/NonRecurringTransactions';
