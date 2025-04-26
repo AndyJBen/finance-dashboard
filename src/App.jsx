@@ -1,8 +1,8 @@
 // src/App.jsx
-// Updated to use div with gap for right column layout as per instructions.
+// Updated with Finance Feed tab replacing Bills tab
 
 import React, { useState, useContext } from 'react';
-import { Layout, Row, Col, Typography, Grid } from 'antd'; // Removed Space as it's replaced
+import { Layout, Row, Col, Typography, Grid } from 'antd';
 import { FinanceContext } from './contexts/FinanceContext';
 
 // Core pages/components
@@ -19,6 +19,7 @@ import AppFooter              from './components/Footer/Footer';
 import ChartsPage             from './components/ChartsPage/ChartsPage';
 import BottomNavBar           from './components/Navigation/BottomNavBar';
 import EditBillModal          from './components/BillsList/EditBillModal';
+import FinanceFeed            from './components/FinanceFeed/FinanceFeed';
 
 
 const { Content } = Layout;
@@ -100,12 +101,12 @@ function MyApp() {
               <div style={{ marginTop: isMobileView ? 5 : 24 }}>
                 <CombinedBillsOverview
                   style={{ height: '100%' }}
-                  onEditBill={handleOpenEditBillModal} // Pass handler for editing
-                  onAddBill={handleOpenAddBillModal} // Pass handler for adding via dropdown
+                  onEditBill={handleOpenEditBillModal} 
+                  onAddBill={handleOpenAddBillModal} 
                 />
               </div>
             </Col>
-            <Col xs={24} lg={7} style={{ width: '100%' }}> {/* Added width: 100% */}
+            <Col xs={24} lg={7} style={{ width: '100%' }}> 
               {/* Change from Space to div with flexDirection column */}
               <div 
                 style={{ 
@@ -125,8 +126,16 @@ function MyApp() {
           </Row>
         );
 
-      case 'bills':
-        return <BillsList onEditBill={handleOpenEditBillModal} onAddBill={handleOpenAddBillModal} />;
+      case 'finance-feed': // New Finance Feed tab (replacing 'bills')
+        return <FinanceFeed 
+          isMobileView={isMobileView} 
+          onEditBill={handleOpenEditBillModal} 
+          onAddBill={handleOpenAddBillModal} 
+        />;
+
+      // Keeping the hidden bills tab code in case you need it later
+      // case 'bills': 
+      //   return <BillsList onEditBill={handleOpenEditBillModal} onAddBill={handleOpenAddBillModal} />;
 
       case 'reports':
         return <ChartsPage />;

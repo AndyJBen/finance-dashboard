@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Button, Tooltip, Popover } from 'antd';
 import {
     IconLayoutDashboard,
-    IconReceipt,
+    IconActivityHeartbeat, // New icon for Finance Feed
     IconChartBar,
     IconUserCircle,
     IconPlus,
@@ -149,7 +149,7 @@ const BottomNavBar = ({ selectedKey, onSelect, onAddClick, onEditBalanceClick })
 
     const menuItems = [
         { key: 'dashboard', label: 'Dashboard', icon: <IconLayoutDashboard size={24} /> },
-        { key: 'bills', label: 'Bills', icon: <IconReceipt size={24} /> },
+        { key: 'finance-feed', label: 'Finance Feed', icon: <IconActivityHeartbeat size={24} /> }, // Updated key and icon
         { key: 'action', label: 'Actions', icon: <IconPencil size={28} />, isCenter: true },
         { key: 'reports', label: 'Reports', icon: <IconChartBar size={24} /> },
         { key: 'account', label: 'Account', icon: <IconUserCircle size={24} /> },
