@@ -1,23 +1,80 @@
 // src/components/ChartsPage/ChartsPage.jsx
 // Added robust error handling and data validation for chart data fetching
+// Added defensive checks for bill.amount in processing functions
 
 import React, { useState, useEffect, useContext } from 'react';
 import { Row, Col, Card, Spin, Select, Typography, Space } from 'antd';
 import dayjs from 'dayjs';
 
-// Chart components and their data processing helpers
-import ExpenseBreakdownChart, { processBreakdownData } from './ExpenseBreakdownChart';
-import BillTimelineChart,       { processTimelineData }  from './BillTimelineChart';
-import SpendingTrendsChart      from './SpendingTrendsChart';
-import BudgetComparisonChart    from './BudgetComparisonChart';
-import CreditUtilizationGauge   from './CreditUtilizationGauge';
-import ExpenseTypeChart,        { processExpenseTypeData } from './ExpenseTypeChart';
+// Chart components
+import ExpenseBreakdownChart from './ExpenseBreakdownChart';
+import BillTimelineChart from './BillTimelineChart';
+import SpendingTrendsChart from './SpendingTrendsChart';
+import BudgetComparisonChart from './BudgetComparisonChart';
+import CreditUtilizationGauge from './CreditUtilizationGauge';
+import ExpenseTypeChart from './ExpenseTypeChart';
 
 import { fetchBills } from '../../services/api'; // Assuming fetchBills is correctly implemented
 import { FinanceContext } from '../../contexts/FinanceContext';
 
 const { Title }  = Typography;
 const { Option } = Select;
+
+// --- Data Processing Helpers (Made more defensive) ---
+
+const processBreakdownData = (bills = []) => {
+  // Ensure input is an array
+  const validBills = Array.isArray(bills) ? bills : [];
+  const categoryTotals = validBills.reduce((acc, bill) => {
+    // Ensure bill.amount is treated as a number (default to 0 if invalid)
+    const amount = typeof bill?.amount === 'number' && !isNaN(bill.amount) ? bill.amount : 0;
+    const category = bill?.category || 'Uncategorized';
+    acc[category] = (acc[category] || 0) + amount;
+    return acc;
+  }, {});
+
+  return Object.entries(categoryTotals).map(([category, total]) => ({
+    id: category,
+    label: category,
+    value: parseFloat(total.toFixed(2)), // total should now always be a valid number
+  })).filter(d => d.value > 0); // Filter out zero-value categories
+};
+
+const processExpenseTypeData = (bills = []) => {
+  // Ensure input is an array
+  const validBills = Array.isArray(bills) ? bills : [];
+  const typeTotals = validBills.reduce((acc, bill) => {
+    // Ensure bill.amount is treated as a number (default to 0 if invalid)
+    const amount = typeof bill?.amount === 'number' && !isNaN(bill.amount) ? bill.amount : 0;
+    const type = bill?.isRecurring ? 'Recurring' : 'One-Time';
+    acc[type] = (acc[type] || 0) + amount;
+    return acc;
+  }, { Recurring: 0, 'One-Time': 0 });
+
+  return Object.entries(typeTotals).map(([type, total]) => ({
+    id: type,
+    label: type,
+    value: parseFloat(total.toFixed(2)), // total should now always be a valid number
+  })).filter(d => d.value > 0);
+};
+
+const processTimelineData = (bills = [], year) => {
+  // Ensure input is an array
+  const validBills = Array.isArray(bills) ? bills : [];
+  return validBills
+    .filter(bill => bill && dayjs(bill.dueDate).isValid() && dayjs(bill.dueDate).year() === year) // Add check for valid date
+    .map(bill => {
+       // Ensure bill.amount is treated as a number (default to 0 if invalid)
+       const amount = typeof bill?.amount === 'number' && !isNaN(bill.amount) ? bill.amount : 0;
+       return {
+         value: amount,
+         day: bill.dueDate, // Nivo Calendar expects 'YYYY-MM-DD'
+       };
+    }).filter(d => d.value > 0); // Optionally filter out zero-value days
+};
+
+
+// --- ChartsPage Component ---
 
 const ChartsPage = () => {
   // State for raw bills data fetched from API
@@ -45,29 +102,25 @@ const ChartsPage = () => {
       setTimelineData([]);
       setExpenseTypeData([]);
       try {
-        // --- Fetch bills for the selected month ---
+        // Fetch bills for the selected month
         const currentMonthBillsResult = await fetchBills(selectedMonth, true);
-        // Ensure the result is treated as an array, default to empty array if not
         const currentMonthBills = Array.isArray(currentMonthBillsResult) ? currentMonthBillsResult : [];
         setBills(currentMonthBills); // Set state with a guaranteed array
 
-        // --- Process data only if we have a valid array ---
+        // Process data using the more defensive helper functions
         setBreakdownData(processBreakdownData(currentMonthBills));
         setExpenseTypeData(processExpenseTypeData(currentMonthBills));
 
-        // --- Fetch bills for the selected year (adjust API call if possible) ---
-        // Note: Fetching just the first month might not be ideal for a full year timeline.
-        // Ideally, fetchBills could accept a year or fetch all relevant bills.
+        // Fetch bills for the selected year (adjust API call if possible)
         const yearBillsResult = await fetchBills(`${selectedYear}-01`, true); // Placeholder: fetches Jan only
-        // Ensure the result is treated as an array
         const yearBills = Array.isArray(yearBillsResult) ? yearBillsResult : [];
 
-        // --- Process timeline data only if we have a valid array ---
+        // Process timeline data using the more defensive helper function
         setTimelineData(processTimelineData(yearBills, selectedYear));
 
       } catch (error) {
-        console.error("Error fetching chart data:", error);
-        // *** Explicitly reset states to empty arrays on error ***
+        console.error("Error fetching or processing chart data:", error);
+        // Explicitly reset states to empty arrays on error
         setBills([]);
         setBreakdownData([]);
         setTimelineData([]);
@@ -82,26 +135,19 @@ const ChartsPage = () => {
 
   // --- Safely prepare placeholder data ---
 
-  // Placeholder for Spending Trends (replace with actual data processing later)
   const placeholderTrendData = [
     { id: 'Spending', color: '#1890ff', data: [ { x: 'Jan', y: 0 }, { x: 'Feb', y: 0 } ] }
   ];
-
-  // Placeholder for Budget Comparison (replace with actual data processing later)
   const placeholderBudgetData = [ { category: 'Example', budget: 100, actual: 0 } ];
 
-  // Safely create Credit Utilization placeholder data
-  // Ensure creditCards from context is an array before mapping
   const safeCreditCards = Array.isArray(creditCards) ? creditCards : [];
   const placeholderUtilizationData = safeCreditCards.map(card => {
-    // ** IMPORTANT: Assumes 'limit' property exists on card object.
-    //    Add default values if properties might be missing. **
-    const limit = card.limit || 1000; // Default limit if missing
-    const balance = card.balance || 0; // Default balance if missing
+    const limit = card?.limit || 1000; // Default limit if missing/invalid
+    const balance = typeof card?.balance === 'number' ? card.balance : 0; // Default balance if missing/invalid
     const utilization = limit > 0 ? Math.round((balance / limit) * 100) : 0;
 
     return {
-      id: card.name || 'Unknown Card', // Default name
+      id: card?.name || 'Unknown Card', // Default name
       limit: limit,
       balance: balance,
       data: [{ x: 'Util.', y: utilization }]
@@ -111,14 +157,9 @@ const ChartsPage = () => {
   // --- Handlers for dropdown changes ---
   const handleMonthChange = (value) => {
     setSelectedMonth(value);
-    // Optionally update selected year if the month change crosses a year boundary
-    // setSelectedYear(dayjs(value).year());
   };
-
   const handleYearChange = (value) => {
     setSelectedYear(value);
-    // Optionally update selected month if you want it to default to Jan of the new year
-    // setSelectedMonth(`${value}-01`);
   };
 
   // --- Build dropdown options ---
@@ -144,7 +185,7 @@ const ChartsPage = () => {
           options={monthOptions}
           aria-label="Select Month for Charts"
         />
-        {/* Year Selector (Potentially for timeline or annual charts) */}
+        {/* Year Selector */}
         <Select
           value={selectedYear}
           style={{ width: 120 }}
@@ -165,23 +206,22 @@ const ChartsPage = () => {
           {/* Expense Breakdown Chart */}
           <Col xs={24} md={12} lg={8}>
             <Card title={`Expense Breakdown (${dayjs(selectedMonth).format('MMMM YYYY')})`}>
-              {/* Pass the processed breakdownData state */}
-              <ExpenseBreakdownChart data={breakdownData} />
+              {/* Ensure data is an array before passing */}
+              <ExpenseBreakdownChart data={Array.isArray(breakdownData) ? breakdownData : []} />
             </Card>
           </Col>
 
           {/* Recurring vs One-Time Chart */}
           <Col xs={24} md={12} lg={8}>
             <Card title={`Recurring vs One-Time (${dayjs(selectedMonth).format('MMMM YYYY')})`}>
-              {/* Pass the processed expenseTypeData state */}
-              <ExpenseTypeChart data={expenseTypeData} />
+               {/* Ensure data is an array before passing */}
+              <ExpenseTypeChart data={Array.isArray(expenseTypeData) ? expenseTypeData : []} />
             </Card>
           </Col>
 
           {/* Budget vs Actual Chart */}
           <Col xs={24} md={12} lg={8}>
             <Card title="Budget vs Actual (Placeholder)">
-              {/* Pass placeholder data for now */}
               <BudgetComparisonChart data={placeholderBudgetData} />
             </Card>
           </Col>
@@ -189,15 +229,14 @@ const ChartsPage = () => {
           {/* Bill Timeline Chart */}
           <Col xs={24}>
             <Card title={`Bill Timeline (${selectedYear})`}>
-              {/* Pass the processed timelineData state and selected year */}
-              <BillTimelineChart data={timelineData} year={selectedYear} />
+               {/* Ensure data is an array before passing */}
+              <BillTimelineChart data={Array.isArray(timelineData) ? timelineData : []} year={selectedYear} />
             </Card>
           </Col>
 
           {/* Spending Trends Chart */}
           <Col xs={24} md={12}>
             <Card title="Spending Trends (Placeholder)">
-              {/* Pass placeholder data for now */}
               <SpendingTrendsChart data={placeholderTrendData} />
             </Card>
           </Col>
@@ -205,10 +244,8 @@ const ChartsPage = () => {
           {/* Credit Utilization Gauges */}
           <Col xs={24} md={12}>
             <Card title="Credit Card Utilization (Placeholder Limits)">
-              {/* Check if placeholder data exists before mapping */}
               {placeholderUtilizationData.length > 0 ? (
                 <Row gutter={[8, 8]} justify="center" align="middle">
-                  {/* Map over the safely created placeholder data */}
                   {placeholderUtilizationData.map(card => (
                     <Col key={card.id}>
                       <CreditUtilizationGauge cardData={card} />
