@@ -20,7 +20,6 @@ import AppFooter              from './components/Footer/Footer';
 import ChartsPage             from './components/ChartsPage/ChartsPage';
 import BottomNavBar           from './components/Navigation/BottomNavBar';
 import EditBillModal          from './components/BillsList/EditBillModal';
-import FinanceFeed            from './components/FinanceFeed/FinanceFeed';
 
 
 const { Content } = Layout;
