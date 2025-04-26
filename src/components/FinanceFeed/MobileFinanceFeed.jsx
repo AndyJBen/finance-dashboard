@@ -4,7 +4,7 @@ import { Typography, Card, List, Badge, Tag, Avatar, Button, Space, Divider, Sta
 import {
   IconAlertOctagon,
   IconClipboardList,
-  IconRepeat,
+  IconRepeatOff,
   IconHourglass,
   IconClock,
   IconChevronDown,
@@ -51,20 +51,20 @@ const getCategoryIcon = (category, size = 16) => {
 
 // Section header colors for visual distinction
 const sectionColors = {
-  pastDue: '#FFF5F5',
-  billPrep: '#EBF5FF', 
-  nonRecurring: '#E5F8EF',
-  upcoming: '#FFF7E6',
-  recentActivity: '#F0F5FF'
+  pastDue: '#FFF1F0',       // Lighter red background
+  billPrep: '#E6F7FF',      // Lighter blue background
+  nonRecurring: '#F6FFED',  // Lighter green background
+  upcoming: '#FFF7E6',      // Light orange background
+  recentActivity: '#F9F0FF' // Light purple background
 };
 
 // Section header icon colors
 const iconColors = {
-  pastDue: '#F1476F',
-  billPrep: '#0066FF',
-  nonRecurring: '#26C67B',
-  upcoming: '#FF9233',
-  recentActivity: '#3388FF'
+  pastDue: '#F5222D',      // Brighter red for icons
+  billPrep: '#1890FF',     // Brighter blue
+  nonRecurring: '#52C41A', // Brighter green
+  upcoming: '#FA8C16',     // Brighter orange
+  recentActivity: '#722ED1' // Brighter purple
 };
 
 // CSS Styles for Mobile Finance Feed
@@ -74,125 +74,188 @@ const styles = {
     maxWidth: '100%',
     overflowX: 'hidden',
     padding: '12px 12px 80px 12px', // Extra bottom padding for bottom nav
-    backgroundColor: 'var(--neutral-100)'
+    backgroundColor: '#F0F2F5'
   },
+  pageTitle: {
+    marginBottom: 20, 
+    fontSize: '1.4rem',
+    fontWeight: 600
+  },
+  
+  // Card styling for the whole page
   card: {
-    borderRadius: '12px',
+    borderRadius: '0',
     overflow: 'hidden',
-    boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
-    backgroundColor: '#fff',
-    border: '1px solid var(--neutral-200)',
-    marginBottom: 20
+    boxShadow: 'none',
+    backgroundColor: 'transparent',
+    border: 'none',
+    marginBottom: 0
   },
+  
+  // Container for each section
+  sectionContainer: {
+    marginBottom: 16,
+    borderRadius: 12,
+    overflow: 'hidden',
+    backgroundColor: '#fff',
+    boxShadow: '0 1px 2px rgba(0, 0, 0, 0.06)'
+  },
+  
+  // Section header styling - made more distinct
   sectionHeader: {
-    padding: '12px 16px',
+    padding: '16px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    borderBottom: '1px solid var(--neutral-200)'
+    borderBottom: 'none'
   },
-  titleLeftSection: {
-    display: 'flex', 
-    alignItems: 'center'
-  },
-  titleText: {
-    marginLeft: 8, 
-    fontSize: '0.95rem'
-  },
-  badge: {
-    marginLeft: 8,
-    fontSize: '0.7rem',
-    minWidth: 18,
-    height: 18,
-    borderRadius: 9,
-    color: '#fff',
-    fontWeight: 'bold',
-    lineHeight: '18px'
-  },
-  countText: {
-    marginLeft: 8, 
-    fontSize: '0.75rem'
-  },
-  toggleButton: {
-    padding: 4,
-    width: 24,
-    height: 24,
+  
+  // New container for section icon
+  iconContainer: {
+    width: 36,
+    height: 36,
+    borderRadius: 8,
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    marginRight: 12,
+    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
   },
+  
+  // Updated title container
+  titleContainer: {
+    display: 'flex',
+    flexDirection: 'column'
+  },
+  
+  // Updated title text
+  titleText: {
+    fontSize: '1rem',
+    lineHeight: 1.2,
+    fontWeight: 600
+  },
+  
+  // Count text below title
+  countText: { 
+    fontSize: '0.75rem', 
+    opacity: 0.8,
+    marginTop: 2
+  },
+  
+  // Toggle button
+  toggleButton: {
+    padding: 4,
+    width: 32,
+    height: 32,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: '50%',
+    color: 'rgba(0, 0, 0, 0.45)'
+  },
+  
+  // Section content
+  sectionContent: {
+    overflow: 'hidden',
+    transition: 'max-height 0.3s ease',
+    backgroundColor: '#fff'
+  },
+  
+  // Empty section styling
   emptySection: {
-    padding: 16,
+    padding: 24,
     textAlign: 'center',
-    color: 'var(--neutral-500)'
+    color: 'rgba(0, 0, 0, 0.45)',
+    backgroundColor: '#fafafa'
   },
+  
+  // List item styling
   listItem: {
     padding: '12px 16px',
     display: 'flex',
     alignItems: 'center',
-    borderBottom: '1px solid var(--neutral-200)'
+    borderBottom: 'none'
   },
+  
+  // Avatar styling
   avatar: {
     borderRadius: 8,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center'
   },
+  
+  // Due date text
+  dueDateText: {
+    fontSize: '0.75rem'
+  },
+  
+  // Section for recent activity items
   recentActivityItem: {
     paddingLeft: 24
   },
+  
+  // Style for "Show more" button container
+  showMoreContainer: {
+    textAlign: 'center',
+    padding: '12px 0',
+    borderTop: '1px solid rgba(0, 0, 0, 0.06)',
+    backgroundColor: '#fafafa'
+  },
+  
+  // Style for action buttons
   actionButton: {
     padding: '4px 12px',
     height: 'auto',
     fontSize: '0.8rem',
-    color: 'var(--primary-600)'
+    fontWeight: 500
   },
-  showMoreContainer: {
-    textAlign: 'center',
-    padding: '8px 0',
-    borderTop: '1px solid var(--neutral-200)'
-  },
+  
+  // Tag styling
   tag: {
     margin: 0, 
     padding: '0 8px', 
     height: 20, 
     lineHeight: '20px',
-    fontSize: '0.75rem',
-    fontWeight: 'bold'
+    fontSize: '0.7rem',
+    fontWeight: 700
   },
-  dueDateText: {
-    fontSize: '0.75rem'
-  },
+  
+  // Item header with flex layout
   itemHeader: {
     display: 'flex', 
     justifyContent: 'space-between'
   },
-  pageTitle: {
-    marginBottom: 16, 
-    fontSize: '1.2rem'
+  
+  // Item divider
+  itemDivider: {
+    margin: '0 16px',
+    opacity: 0.6
   },
-  sectionContent: {
-    overflow: 'hidden',
-    transition: 'max-height 0.3s ease',
-  },
+  
+  // Total section styling - REDESIGNED to be very distinct
   totalSection: {
     padding: '12px 16px',
-    borderTop: '1px solid var(--neutral-200)',
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.02)'
+    backgroundColor: '#fafafa',
+    borderTop: '1px solid rgba(0, 0, 0, 0.06)'
   },
+  
+  // Total text styling - now more distinct
   totalText: {
-    fontSize: '0.85rem',
-    fontWeight: 600
+    fontSize: '0.75rem',
+    fontWeight: 700,
+    color: 'rgba(0, 0, 0, 0.65)',
+    textTransform: 'uppercase',
+    letterSpacing: '0.5px'
   },
+  
+  // Amount text in total section
   totalAmount: {
-    fontSize: '0.85rem',
-    fontWeight: 600
-  },
-  divider: {
-    margin: '0'
+    fontSize: '1rem',
+    fontWeight: 700
   }
 };
 
@@ -309,28 +372,29 @@ const MobileFinanceFeed = ({ onEditBill, onAddBill }) => {
     <div style={styles.container}>
       <Title level={4} style={styles.pageTitle}>Finance Feed</Title>
       
+      {/* REDESIGNED: Each section is now in its own container with rounded corners */}
       <Card style={styles.card}>
-        {/* Past Due Payments Section */}
-        <div>
-          <div 
-            style={{
-              ...styles.sectionHeader,
-              backgroundColor: sectionColors.pastDue
-            }}
-          >
-            <div style={styles.titleLeftSection}>
-              <IconAlertOctagon size={18} style={{ color: iconColors.pastDue }} />
-              <Text strong style={styles.titleText}>Past Due Payments</Text>
-              {pastDueBills.length > 0 && (
-                <Badge
-                  count={pastDueBills.length}
-                  showZero={false}
-                  style={{ 
-                    ...styles.badge,
-                    backgroundColor: iconColors.pastDue
-                  }}
-                />
-              )}
+        {/* Past Due Payments Section - REDESIGNED */}
+        <div style={styles.sectionContainer}>
+          <div style={{
+            ...styles.sectionHeader,
+            backgroundColor: sectionColors.pastDue
+          }}>
+            <div style={{display: 'flex', alignItems: 'center'}}>
+              <div style={{
+                ...styles.iconContainer,
+                backgroundColor: 'rgba(255, 255, 255, 0.9)'
+              }}>
+                <IconAlertOctagon size={20} style={{ color: iconColors.pastDue }} />
+              </div>
+              <div style={styles.titleContainer}>
+                <Text style={styles.titleText}>Past Due Payments</Text>
+                {pastDueBills.length > 0 && (
+                  <Text style={styles.countText}>
+                    {pastDueBills.length} {pastDueBills.length === 1 ? 'item' : 'items'}
+                  </Text>
+                )}
+              </div>
             </div>
             <Button 
               type="text" 
@@ -341,12 +405,10 @@ const MobileFinanceFeed = ({ onEditBill, onAddBill }) => {
             />
           </div>
           
-          <div 
-            style={{
-              ...styles.sectionContent,
-              maxHeight: expanded.pastDue ? '1000px' : '0px',
-            }}
-          >
+          <div style={{
+            ...styles.sectionContent,
+            maxHeight: expanded.pastDue ? '1000px' : '0px',
+          }}>
             {pastDueBills.length === 0 ? (
               <div style={styles.emptySection}>
                 <Text type="secondary">No past due payments</Text>
@@ -355,30 +417,37 @@ const MobileFinanceFeed = ({ onEditBill, onAddBill }) => {
               <>
                 <List
                   dataSource={pastDueBills}
-                  renderItem={item => (
-                    <List.Item style={styles.listItem}>
-                      <List.Item.Meta
-                        avatar={
-                          <Avatar 
-                            shape="square" 
-                            size={36} 
-                            style={{ ...styles.avatar, backgroundColor: sectionColors.pastDue }}
-                            icon={getCategoryIcon(item.category, 18)}
-                          />
-                        }
-                        title={<Text strong>{item.name}</Text>}
-                        description={
-                          <Text type="danger" style={styles.dueDateText}>
-                            Due {daysAgo(item.dueDate)} days ago
-                          </Text>
-                        }
-                      />
-                      <Text strong style={{ color: iconColors.pastDue }}>${Number(item.amount).toFixed(2)}</Text>
-                    </List.Item>
+                  renderItem={(item, index) => (
+                    <>
+                      <List.Item style={styles.listItem}>
+                        <List.Item.Meta
+                          avatar={
+                            <Avatar 
+                              shape="square" 
+                              size={40} 
+                              style={{ 
+                                ...styles.avatar, 
+                                backgroundColor: 'rgba(245, 34, 45, 0.1)' // Light red background
+                              }}
+                              icon={getCategoryIcon(item.category, 20)}
+                            />
+                          }
+                          title={<Text strong>{item.name}</Text>}
+                          description={
+                            <Text type="danger" style={styles.dueDateText}>
+                              Due {daysAgo(item.dueDate)} days ago
+                            </Text>
+                          }
+                        />
+                        <Text strong style={{ color: iconColors.pastDue }}>${Number(item.amount).toFixed(2)}</Text>
+                      </List.Item>
+                      {index < pastDueBills.length - 1 && <Divider style={styles.itemDivider} />}
+                    </>
                   )}
                 />
+                {/* Redesigned total section */}
                 <div style={styles.totalSection}>
-                  <Text style={styles.totalText}>Past Due Total</Text>
+                  <Text style={styles.totalText}>SECTION TOTAL</Text>
                   <Text style={{...styles.totalAmount, color: iconColors.pastDue}}>
                     ${pastDueTotal.toFixed(2)}
                   </Text>
@@ -388,27 +457,27 @@ const MobileFinanceFeed = ({ onEditBill, onAddBill }) => {
           </div>
         </div>
 
-        {/* Bill Prep Section */}
-        <div>
-          <div 
-            style={{
-              ...styles.sectionHeader,
-              backgroundColor: sectionColors.billPrep
-            }}
-          >
-            <div style={styles.titleLeftSection}>
-              <IconClipboardList size={18} style={{ color: iconColors.billPrep }} />
-              <Text strong style={styles.titleText}>Bill Prep</Text>
-              {billPrep.length > 0 && (
-                <Badge
-                  count={billPrep.length}
-                  showZero={false}
-                  style={{ 
-                    ...styles.badge,
-                    backgroundColor: iconColors.billPrep
-                  }}
-                />
-              )}
+        {/* Bill Prep Section - REDESIGNED */}
+        <div style={styles.sectionContainer}>
+          <div style={{
+            ...styles.sectionHeader,
+            backgroundColor: sectionColors.billPrep
+          }}>
+            <div style={{display: 'flex', alignItems: 'center'}}>
+              <div style={{
+                ...styles.iconContainer,
+                backgroundColor: 'rgba(255, 255, 255, 0.9)'
+              }}>
+                <IconClipboardList size={20} style={{ color: iconColors.billPrep }} />
+              </div>
+              <div style={styles.titleContainer}>
+                <Text style={styles.titleText}>Bill Prep</Text>
+                {billPrep.length > 0 && (
+                  <Text style={styles.countText}>
+                    {billPrep.length} {billPrep.length === 1 ? 'item' : 'items'}
+                  </Text>
+                )}
+              </div>
             </div>
             <Button 
               type="text" 
@@ -419,12 +488,10 @@ const MobileFinanceFeed = ({ onEditBill, onAddBill }) => {
             />
           </div>
           
-          <div 
-            style={{
-              ...styles.sectionContent,
-              maxHeight: expanded.billPrep ? '1000px' : '0px',
-            }}
-          >
+          <div style={{
+            ...styles.sectionContent,
+            maxHeight: expanded.billPrep ? '1000px' : '0px',
+          }}>
             {billPrep.length === 0 ? (
               <div style={styles.emptySection}>
                 <Text type="secondary">No bills in preparation</Text>
@@ -433,30 +500,37 @@ const MobileFinanceFeed = ({ onEditBill, onAddBill }) => {
               <>
                 <List
                   dataSource={billPrep}
-                  renderItem={item => (
-                    <List.Item style={styles.listItem}>
-                      <List.Item.Meta
-                        avatar={
-                          <Avatar 
-                            shape="square" 
-                            size={36} 
-                            style={{ ...styles.avatar, backgroundColor: sectionColors.billPrep }}
-                            icon={getCategoryIcon(item.category, 18)}
-                          />
-                        }
-                        title={<Text strong>{item.name}</Text>}
-                        description={
-                          <Text type="secondary" style={styles.dueDateText}>
-                            {item.bills.length} {item.bills.length === 1 ? 'Item' : 'Items'}
-                          </Text>
-                        }
-                      />
-                      <Text strong>${item.totalAmount.toFixed(2)}</Text>
-                    </List.Item>
+                  renderItem={(item, index) => (
+                    <>
+                      <List.Item style={styles.listItem}>
+                        <List.Item.Meta
+                          avatar={
+                            <Avatar 
+                              shape="square" 
+                              size={40} 
+                              style={{ 
+                                ...styles.avatar, 
+                                backgroundColor: 'rgba(24, 144, 255, 0.1)' // Light blue background
+                              }}
+                              icon={getCategoryIcon(item.category, 20)}
+                            />
+                          }
+                          title={<Text strong>{item.name}</Text>}
+                          description={
+                            <Text type="secondary" style={styles.dueDateText}>
+                              {item.bills.length} {item.bills.length === 1 ? 'Item' : 'Items'}
+                            </Text>
+                          }
+                        />
+                        <Text strong style={{ color: iconColors.billPrep }}>${item.totalAmount.toFixed(2)}</Text>
+                      </List.Item>
+                      {index < billPrep.length - 1 && <Divider style={styles.itemDivider} />}
+                    </>
                   )}
                 />
+                {/* Redesigned total section */}
                 <div style={styles.totalSection}>
-                  <Text style={styles.totalText}>Bill Prep Total</Text>
+                  <Text style={styles.totalText}>SECTION TOTAL</Text>
                   <Text style={{...styles.totalAmount, color: iconColors.billPrep}}>
                     ${billPrepTotal.toFixed(2)}
                   </Text>
@@ -466,27 +540,27 @@ const MobileFinanceFeed = ({ onEditBill, onAddBill }) => {
           </div>
         </div>
 
-        {/* Non-Recurring Bills Section */}
-        <div>
-          <div 
-            style={{
-              ...styles.sectionHeader,
-              backgroundColor: sectionColors.nonRecurring
-            }}
-          >
-            <div style={styles.titleLeftSection}>
-              <IconRepeat size={18} style={{ color: iconColors.nonRecurring }} />
-              <Text strong style={styles.titleText}>Non-Recurring Bills</Text>
-              {nonRecurring.length > 0 && (
-                <Badge
-                  count={nonRecurring.length}
-                  showZero={false}
-                  style={{ 
-                    ...styles.badge,
-                    backgroundColor: iconColors.nonRecurring
-                  }}
-                />
-              )}
+        {/* Non-Recurring Bills Section - REDESIGNED */}
+        <div style={styles.sectionContainer}>
+          <div style={{
+            ...styles.sectionHeader,
+            backgroundColor: sectionColors.nonRecurring
+          }}>
+            <div style={{display: 'flex', alignItems: 'center'}}>
+              <div style={{
+                ...styles.iconContainer,
+                backgroundColor: 'rgba(255, 255, 255, 0.9)'
+              }}>
+                <IconRepeatOff size={20} style={{ color: iconColors.nonRecurring }} />
+              </div>
+              <div style={styles.titleContainer}>
+                <Text style={styles.titleText}>Non-Recurring Bills</Text>
+                {nonRecurring.length > 0 && (
+                  <Text style={styles.countText}>
+                    {nonRecurring.length} {nonRecurring.length === 1 ? 'item' : 'items'}
+                  </Text>
+                )}
+              </div>
             </div>
             <Button 
               type="text" 
@@ -497,12 +571,10 @@ const MobileFinanceFeed = ({ onEditBill, onAddBill }) => {
             />
           </div>
           
-          <div 
-            style={{
-              ...styles.sectionContent,
-              maxHeight: expanded.nonRecurring ? '1000px' : '0px',
-            }}
-          >
+          <div style={{
+            ...styles.sectionContent,
+            maxHeight: expanded.nonRecurring ? '1000px' : '0px',
+          }}>
             {nonRecurring.length === 0 ? (
               <div style={styles.emptySection}>
                 <Text type="secondary">No non-recurring bills</Text>
@@ -511,39 +583,46 @@ const MobileFinanceFeed = ({ onEditBill, onAddBill }) => {
               <>
                 <List
                   dataSource={limitItems(nonRecurring, 'nonRecurring')}
-                  renderItem={item => (
-                    <List.Item style={styles.listItem}>
-                      <List.Item.Meta
-                        avatar={
-                          <Avatar 
-                            shape="square" 
-                            size={36} 
-                            style={{ ...styles.avatar, backgroundColor: sectionColors.nonRecurring }}
-                            icon={getCategoryIcon(item.category, 18)}
-                          />
-                        }
-                        title={
-                          <div style={styles.itemHeader}>
-                            <Text strong>{item.name}</Text>
-                            <Text strong style={{ color: item.isPaid ? iconColors.nonRecurring : iconColors.pastDue }}>
-                              ${Number(item.amount).toFixed(2)}
-                            </Text>
-                          </div>
-                        }
-                        description={
-                          <div style={styles.itemHeader}>
-                            <Text type="secondary" style={styles.dueDateText}>
-                              {daysAgo(item.dueDate)} days ago
-                            </Text>
-                            {item.isPaid && (
-                              <Tag color="success" style={styles.tag}>
-                                Paid
-                              </Tag>
-                            )}
-                          </div>
-                        }
-                      />
-                    </List.Item>
+                  renderItem={(item, index) => (
+                    <>
+                      <List.Item style={styles.listItem}>
+                        <List.Item.Meta
+                          avatar={
+                            <Avatar 
+                              shape="square" 
+                              size={40} 
+                              style={{ 
+                                ...styles.avatar, 
+                                backgroundColor: 'rgba(82, 196, 26, 0.1)' // Light green background
+                              }}
+                              icon={getCategoryIcon(item.category, 20)}
+                            />
+                          }
+                          title={
+                            <div style={styles.itemHeader}>
+                              <Text strong>{item.name}</Text>
+                              <Text strong style={{ color: item.isPaid ? iconColors.nonRecurring : iconColors.pastDue }}>
+                                ${Number(item.amount).toFixed(2)}
+                              </Text>
+                            </div>
+                          }
+                          description={
+                            <div style={styles.itemHeader}>
+                              <Text type="secondary" style={styles.dueDateText}>
+                                {daysAgo(item.dueDate)} days ago
+                              </Text>
+                              {item.isPaid && (
+                                <Tag color="success" style={styles.tag}>
+                                  Paid
+                                </Tag>
+                              )}
+                            </div>
+                          }
+                        />
+                      </List.Item>
+                      {index < limitItems(nonRecurring, 'nonRecurring').length - 1 && 
+                        <Divider style={styles.itemDivider} />}
+                    </>
                   )}
                 />
                 {nonRecurring.length > 3 && (
@@ -551,15 +630,16 @@ const MobileFinanceFeed = ({ onEditBill, onAddBill }) => {
                     <Button 
                       type="link" 
                       size="small" 
-                      style={styles.actionButton}
+                      style={{...styles.actionButton, color: iconColors.nonRecurring}}
                       onClick={() => toggleShowAll('nonRecurring')}
                     >
-                      {showAll.nonRecurring ? 'Show Less' : 'Display All'}
+                      {showAll.nonRecurring ? 'Show Less' : 'Show All'}
                     </Button>
                   </div>
                 )}
+                {/* Redesigned total section */}
                 <div style={styles.totalSection}>
-                  <Text style={styles.totalText}>Non-Recurring Total</Text>
+                  <Text style={styles.totalText}>SECTION TOTAL</Text>
                   <Text style={{...styles.totalAmount, color: iconColors.nonRecurring}}>
                     ${nonRecurringTotal.toFixed(2)}
                   </Text>
@@ -569,27 +649,27 @@ const MobileFinanceFeed = ({ onEditBill, onAddBill }) => {
           </div>
         </div>
 
-        {/* Upcoming Bills Section */}
-        <div>
-          <div 
-            style={{
-              ...styles.sectionHeader,
-              backgroundColor: sectionColors.upcoming
-            }}
-          >
-            <div style={styles.titleLeftSection}>
-              <IconHourglass size={18} style={{ color: iconColors.upcoming }} />
-              <Text strong style={styles.titleText}>Upcoming Bills</Text>
-              {upcoming.length > 0 && (
-                <Badge
-                  count={upcoming.length}
-                  showZero={false}
-                  style={{ 
-                    ...styles.badge,
-                    backgroundColor: iconColors.upcoming
-                  }}
-                />
-              )}
+        {/* Upcoming Bills Section - REDESIGNED */}
+        <div style={styles.sectionContainer}>
+          <div style={{
+            ...styles.sectionHeader,
+            backgroundColor: sectionColors.upcoming
+          }}>
+            <div style={{display: 'flex', alignItems: 'center'}}>
+              <div style={{
+                ...styles.iconContainer,
+                backgroundColor: 'rgba(255, 255, 255, 0.9)'
+              }}>
+                <IconHourglass size={20} style={{ color: iconColors.upcoming }} />
+              </div>
+              <div style={styles.titleContainer}>
+                <Text style={styles.titleText}>Upcoming Bills</Text>
+                {upcoming.length > 0 && (
+                  <Text style={styles.countText}>
+                    {upcoming.length} {upcoming.length === 1 ? 'item' : 'items'}
+                  </Text>
+                )}
+              </div>
             </div>
             <Button 
               type="text" 
@@ -600,12 +680,10 @@ const MobileFinanceFeed = ({ onEditBill, onAddBill }) => {
             />
           </div>
           
-          <div 
-            style={{
-              ...styles.sectionContent,
-              maxHeight: expanded.upcoming ? '1000px' : '0px',
-            }}
-          >
+          <div style={{
+            ...styles.sectionContent,
+            maxHeight: expanded.upcoming ? '1000px' : '0px',
+          }}>
             {upcoming.length === 0 ? (
               <div style={styles.emptySection}>
                 <Text type="secondary">No upcoming bills</Text>
@@ -614,30 +692,37 @@ const MobileFinanceFeed = ({ onEditBill, onAddBill }) => {
               <>
                 <List
                   dataSource={upcoming}
-                  renderItem={item => (
-                    <List.Item style={styles.listItem}>
-                      <List.Item.Meta
-                        avatar={
-                          <Avatar 
-                            shape="square" 
-                            size={36} 
-                            style={{ ...styles.avatar, backgroundColor: sectionColors.upcoming }}
-                            icon={getCategoryIcon(item.category, 18)}
-                          />
-                        }
-                        title={<Text strong>{item.name}</Text>}
-                        description={
-                          <Text type="secondary" style={styles.dueDateText}>
-                            Due {formatDueDate(item.dueDate)}
-                          </Text>
-                        }
-                      />
-                      <Text strong>${Number(item.amount).toFixed(2)}</Text>
-                    </List.Item>
+                  renderItem={(item, index) => (
+                    <>
+                      <List.Item style={styles.listItem}>
+                        <List.Item.Meta
+                          avatar={
+                            <Avatar 
+                              shape="square" 
+                              size={40} 
+                              style={{ 
+                                ...styles.avatar, 
+                                backgroundColor: 'rgba(250, 140, 22, 0.1)' // Light orange background
+                              }}
+                              icon={getCategoryIcon(item.category, 20)}
+                            />
+                          }
+                          title={<Text strong>{item.name}</Text>}
+                          description={
+                            <Text type="secondary" style={styles.dueDateText}>
+                              Due {formatDueDate(item.dueDate)}
+                            </Text>
+                          }
+                        />
+                        <Text strong style={{ color: iconColors.upcoming }}>${Number(item.amount).toFixed(2)}</Text>
+                      </List.Item>
+                      {index < upcoming.length - 1 && <Divider style={styles.itemDivider} />}
+                    </>
                   )}
                 />
+                {/* Redesigned total section */}
                 <div style={styles.totalSection}>
-                  <Text style={styles.totalText}>Upcoming Total</Text>
+                  <Text style={styles.totalText}>SECTION TOTAL</Text>
                   <Text style={{...styles.totalAmount, color: iconColors.upcoming}}>
                     ${upcomingTotal.toFixed(2)}
                   </Text>
@@ -647,27 +732,27 @@ const MobileFinanceFeed = ({ onEditBill, onAddBill }) => {
           </div>
         </div>
 
-        {/* Recent Activity Section */}
-        <div>
-          <div 
-            style={{
-              ...styles.sectionHeader,
-              backgroundColor: sectionColors.recentActivity
-            }}
-          >
-            <div style={styles.titleLeftSection}>
-              <IconClock size={18} style={{ color: iconColors.recentActivity }} />
-              <Text strong style={styles.titleText}>Recent Activity</Text>
-              {recentActivity.length > 0 && (
-                <Badge
-                  count={recentActivity.length}
-                  showZero={false}
-                  style={{ 
-                    ...styles.badge,
-                    backgroundColor: iconColors.recentActivity
-                  }}
-                />
-              )}
+        {/* Recent Activity Section - REDESIGNED */}
+        <div style={styles.sectionContainer}>
+          <div style={{
+            ...styles.sectionHeader,
+            backgroundColor: sectionColors.recentActivity
+          }}>
+            <div style={{display: 'flex', alignItems: 'center'}}>
+              <div style={{
+                ...styles.iconContainer,
+                backgroundColor: 'rgba(255, 255, 255, 0.9)'
+              }}>
+                <IconClock size={20} style={{ color: iconColors.recentActivity }} />
+              </div>
+              <div style={styles.titleContainer}>
+                <Text style={styles.titleText}>Recent Activity</Text>
+                {recentActivity.length > 0 && (
+                  <Text style={styles.countText}>
+                    {recentActivity.length} {recentActivity.length === 1 ? 'item' : 'items'}
+                  </Text>
+                )}
+              </div>
             </div>
             <Button 
               type="text" 
@@ -678,12 +763,10 @@ const MobileFinanceFeed = ({ onEditBill, onAddBill }) => {
             />
           </div>
           
-          <div 
-            style={{
-              ...styles.sectionContent,
-              maxHeight: expanded.recentActivity ? '1000px' : '0px',
-            }}
-          >
+          <div style={{
+            ...styles.sectionContent,
+            maxHeight: expanded.recentActivity ? '1000px' : '0px',
+          }}>
             {recentActivity.length === 0 ? (
               <div style={styles.emptySection}>
                 <Text type="secondary">No recent activity</Text>
@@ -692,27 +775,39 @@ const MobileFinanceFeed = ({ onEditBill, onAddBill }) => {
               <>
                 <List
                   dataSource={limitItems(recentActivity, 'recentActivity')}
-                  renderItem={item => (
-                    <List.Item style={styles.listItem}>
-                      <Space direction="vertical" size={0} style={{ width: '100%' }}>
-                        <Space align="center" style={{ width: '100%', justifyContent: 'space-between' }}>
-                          <Space align="center">
-                            <IconCircleCheck size={16} style={{ color: iconColors.nonRecurring }} />
-                            <Text strong>{item.name}</Text>
+                  renderItem={(item, index) => (
+                    <>
+                      <List.Item style={styles.listItem}>
+                        <Space direction="vertical" size={0} style={{ width: '100%' }}>
+                          <Space align="center" style={{ width: '100%', justifyContent: 'space-between' }}>
+                            <Space align="center">
+                              <Avatar 
+                                shape="square" 
+                                size={40} 
+                                style={{ 
+                                  ...styles.avatar, 
+                                  backgroundColor: 'rgba(114, 46, 209, 0.1)' // Light purple background
+                                }}
+                                icon={<IconCircleCheck size={20} style={{ color: iconColors.recentActivity }} />}
+                              />
+                              <Text strong>{item.name}</Text>
+                            </Space>
+                            <Space direction="vertical" align="end" size={0}>
+                              <Text strong>${Number(item.amount).toFixed(2)}</Text>
+                              <Text type="secondary" style={{ fontSize: '0.75rem' }}>{item.category}</Text>
+                            </Space>
                           </Space>
-                          <Space direction="vertical" align="end" size={0}>
-                            <Text strong>${Number(item.amount).toFixed(2)}</Text>
-                            <Text type="secondary" style={{ fontSize: '0.75rem' }}>{item.category}</Text>
-                          </Space>
+                          <div style={styles.recentActivityItem}>
+                            <Text type="secondary" style={{ fontSize: '0.75rem', display: 'flex', alignItems: 'center' }}>
+                              <IconClock size={12} style={{ marginRight: 4 }} />
+                              {daysAgo(item.dueDate)} days ago
+                            </Text>
+                          </div>
                         </Space>
-                        <div style={styles.recentActivityItem}>
-                          <Text type="secondary" style={{ fontSize: '0.75rem', display: 'flex', alignItems: 'center' }}>
-                            <IconClock size={12} style={{ marginRight: 4 }} />
-                            {daysAgo(item.dueDate)} days ago
-                          </Text>
-                        </div>
-                      </Space>
-                    </List.Item>
+                      </List.Item>
+                      {index < limitItems(recentActivity, 'recentActivity').length - 1 && 
+                        <Divider style={styles.itemDivider} />}
+                    </>
                   )}
                 />
                 {recentActivity.length > 3 && (
@@ -720,15 +815,16 @@ const MobileFinanceFeed = ({ onEditBill, onAddBill }) => {
                     <Button 
                       type="link" 
                       size="small" 
-                      style={styles.actionButton}
+                      style={{...styles.actionButton, color: iconColors.recentActivity}}
                       onClick={() => toggleShowAll('recentActivity')}
                     >
-                      {showAll.recentActivity ? 'Show Less' : 'Display All'}
+                      {showAll.recentActivity ? 'Show Less' : 'Show All'}
                     </Button>
                   </div>
                 )}
+                {/* Redesigned total section */}
                 <div style={styles.totalSection}>
-                  <Text style={styles.totalText}>Recent Activity Total</Text>
+                  <Text style={styles.totalText}>SECTION TOTAL</Text>
                   <Text style={{...styles.totalAmount, color: iconColors.recentActivity}}>
                     ${recentActivityTotal.toFixed(2)}
                   </Text>
