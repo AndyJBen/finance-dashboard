@@ -1,0 +1,89 @@
+/* src/assets/styles/fix-selection.css */
+/* Fix for text selection and input field issues */
+
+/* Enable selection on the document for desktop */
+@media (min-width: 769px) {
+    html, body, #root, * {
+      -webkit-user-select: auto !important;
+      -moz-user-select: auto !important;
+      -ms-user-select: auto !important;
+      user-select: auto !important;
+      -webkit-touch-callout: auto !important;
+      -webkit-tap-highlight-color: initial !important;
+      touch-action: auto !important;
+      -webkit-user-drag: auto !important;
+      cursor: auto !important;
+    }
+  
+    /* Reset input field behavior */
+    input, textarea, [contenteditable="true"] {
+      -webkit-user-select: text !important;
+      -moz-user-select: text !important;
+      -ms-user-select: text !important;
+      user-select: text !important;
+      -webkit-touch-callout: default !important;
+      touch-action: auto !important;
+      cursor: text !important;
+    }
+  }
+  
+  /* Fix input field issues on mobile */
+  @media (max-width: 768px) {
+    /* Allow continuous typing in inputs without re-focusing */
+    input, textarea, [contenteditable="true"] {
+      -webkit-user-select: text !important;
+      -moz-user-select: text !important;
+      -ms-user-select: text !important;
+      user-select: text !important;
+      -webkit-touch-callout: default !important;
+      touch-action: auto !important;
+      /* Enable automatic keyboard showing */
+      -webkit-user-modify: read-write !important;
+      -webkit-tap-highlight-color: rgba(0,0,0,0.1) !important; /* Subtle highlight to show focus */
+    }
+    
+    /* Fix keyboard appearing/disappearing issues */
+    input:focus, textarea:focus {
+      -webkit-user-select: text !important;
+      user-select: text !important;
+      /* Ensure iOS doesn't hide the keyboard between taps */
+      -webkit-user-modify: read-write-plaintext-only !important;
+    }
+  }
+  
+  /* Additional fix for right-click context menu */
+  html {
+    /* This will counter any other rules that disable context menus */
+    -webkit-context-menu: initial !important;
+    -moz-context-menu: initial !important;
+    -ms-context-menu: initial !important;
+    context-menu: initial !important;
+  }
+  
+  /* Fix cursor on all interactive elements */
+  button, a, input, textarea, [role="button"], [contenteditable="true"] {
+    cursor: pointer !important;
+  }
+  
+  input, textarea, [contenteditable="true"] {
+    cursor: text !important;
+  }
+  
+  /* Ensure all form elements have proper interactive behavior */
+  input[type="text"],
+  input[type="number"],
+  input[type="email"],
+  input[type="password"],
+  input[type="search"],
+  input[type="tel"],
+  input[type="url"],
+  textarea {
+    -webkit-user-select: text !important;
+    -moz-user-select: text !important;
+    -ms-user-select: text !important;
+    user-select: text !important;
+    -webkit-touch-callout: default !important;
+    touch-action: auto !important;
+    cursor: text !important;
+    -webkit-user-modify: read-write !important;
+  }

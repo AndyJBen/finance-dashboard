@@ -15,8 +15,8 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <title>Financely - Finance Dashboard</title>
 
+    <!-- Mobile-only Style with better input handling -->
     <style>
-      /* Mobile-only prevention */
       @media (max-width: 768px) {
         html, body, #root, * {
           -webkit-user-select: none;
@@ -40,164 +40,50 @@
     </style>
 
     <script>
-      // Prevent pinch-zoom on iOS
-      document.addEventListener('gesturestart', e => e.preventDefault());
-
-      // Prevent double-tap zoom on all WebKit/modern browsers
-      let lastTouchEnd = 0;
-      document.addEventListener('touchend', e => {
-        const now = Date.now();
-        if (now - lastTouchEnd < 300) {
-          e.preventDefault();
-        }
-        lastTouchEnd = now;
-      }, false);
-
-      // Prevent text selection on touch devices
-      document.addEventListener('touchstart', function(e) {
-        // Force clear any selection
-        if (window.getSelection) {
-          window.getSelection().removeAllRanges();
-        }
-      }, { passive: false });
-
-      // Cancel any ongoing selection
-      document.addEventListener('touchmove', function(e) {
-        if (window.getSelection) {
-          window.getSelection().removeAllRanges();
-        }
-      }, { passive: false });
-
-      // Prevent iOS text selection popup
-      document.addEventListener('selectionchange', function() {
-        if (window.getSelection) {
-          window.getSelection().removeAllRanges();
-        }
-      });
-
-      // Disable long press selection
-      document.addEventListener('contextmenu', e => {
-        e.preventDefault();
-        return false;
-      }, false);
-
-      // Additional setup when document is ready
+      // Simplified mobile detection and minimal restrictions
       document.addEventListener('DOMContentLoaded', function() {
-        document.body.setAttribute('unselectable', 'on');
-        document.body.setAttribute('onselectstart', 'return false;');
+        // iOS/mobile device detection
+        const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+        const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
+        const isAndroid = /android/i.test(userAgent);
+        const isMobile = isIOS || isAndroid || window.innerWidth < 768;
 
-        // Apply to all elements dynamically added to the DOM
-        const observer = new MutationObserver(function(mutations) {
-          mutations.forEach(function(mutation) {
-            if (mutation.addedNodes) {
-              mutation.addedNodes.forEach(function(node) {
-                if (node.nodeType === 1) { // Element node
-                  node.addEventListener('touchstart', function(e) {
-                    // Prevent default only for non-input elements
-                    if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
-                      if (window.getSelection) {
-                        window.getSelection().removeAllRanges();
-                      }
-                    }
-                  }, { passive: false });
-
-                  node.addEventListener('contextmenu', function(e) {
-                    e.preventDefault();
-                    return false;
-                  });
-                }
-              });
+        // Only apply minimal prevention techniques on mobile devices
+        if (isMobile) {
+          console.log('Mobile device detected');
+          
+          // Add class to body for CSS targeting
+          document.body.classList.add('mobile-device');
+          
+          // Function to determine if an element is an input that should allow selection
+          function isInputElement(el) {
+            return el.tagName === 'INPUT' ||
+                  el.tagName === 'TEXTAREA' ||
+                  el.isContentEditable ||
+                  el.classList.contains('allow-selection');
+          }
+          
+          // ONLY prevent zooming behavior - nothing more
+          document.addEventListener('gesturestart', function(e) {
+            if (!isInputElement(e.target)) {
+              e.preventDefault();
             }
           });
-        });
-                  // Mobile device detection and prevention logic
-          document.addEventListener('DOMContentLoaded', function() {
-            // iOS/mobile device detection
-            const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-            const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
-            const isAndroid = /android/i.test(userAgent);
-            const isMobile = isIOS || isAndroid || window.innerWidth < 768;
-
-            // Only apply prevention techniques on mobile devices
-            if (isMobile) {
-              console.log('Mobile device detected, applying text selection prevention');
-
-              // Add class to body for CSS targeting
-              document.body.classList.add('mobile-device');
-
-              // --- iOS-specific event handlers ---
-
-              // Prevent pinch zoom
-              document.addEventListener('gesturestart', function(e) {
+          
+          // For iOS: Prevent double-tap zoom ONLY
+          let lastTouchEnd = 0;
+          document.addEventListener('touchend', function(e) {
+            if (!isInputElement(e.target)) {
+              const now = Date.now();
+              if (now - lastTouchEnd < 300) {
                 e.preventDefault();
-              });
-
-              // Prevent double-tap zoom
-              let lastTouchEnd = 0;
-              document.addEventListener('touchend', function(e) {
-                const now = Date.now();
-                if (now - lastTouchEnd < 300) {
-                  e.preventDefault();
-                }
-                lastTouchEnd = now;
-              }, false);
-
-              // Function to determine if an element is an input that should allow selection
-              function isInputElement(el) {
-                return el.tagName === 'INPUT' ||
-                      el.tagName === 'TEXTAREA' ||
-                      el.isContentEditable ||
-                      el.classList.contains('allow-selection');
               }
-
-              // Clear selection on touch start (prevents loupe)
-              document.addEventListener('touchstart', function(e) {
-                if (!isInputElement(e.target)) {
-                  if (window.getSelection) {
-                    window.getSelection().removeAllRanges();
-                  }
-                }
-              }, { passive: false });
-
-              // Clear selection during touch (prevents selection building up)
-              document.addEventListener('touchmove', function(e) {
-                if (!isInputElement(document.activeElement)) {
-                  if (window.getSelection) {
-                    window.getSelection().removeAllRanges();
-                  }
-                }
-              }, { passive: true });
-
-              // Prevent selection change unless in input field
-              document.addEventListener('selectionchange', function() {
-                if (!isInputElement(document.activeElement)) {
-                  if (window.getSelection) {
-                    window.getSelection().removeAllRanges();
-                  }
-                }
-              });
-
-              // Prevent context menu (long press menu)
-              document.addEventListener('contextmenu', function(e) {
-                if (!isInputElement(e.target)) {
-                  e.preventDefault();
-                  return false;
-                }
-              });
-
-              // Additional iOS-specific attributes
-              document.body.setAttribute('unselectable', 'on');
-            } else {
-              console.log('Desktop device detected, no prevention applied');
-              // For desktop devices, we don't apply any prevention
-              // This ensures normal text selection on desktop
+              lastTouchEnd = now;
             }
-          });
-        // Start observing the document
-        observer.observe(document.body, {
-          childList: true,
-          subtree: true
-        });
+          }, { passive: false });
+        } else {
+          console.log('Desktop device detected - normal behavior enabled');
+        }
       });
 
       // Register Service Worker for PWA
@@ -213,9 +99,13 @@
         });
       }
     </script>
+    
+    <!-- Link to the fix-selection.css file -->
+    <link rel="stylesheet" href="/src/assets/styles/fix-selection.css" />
   </head>
-  <body unselectable="on" onselectstart="return false;" class="no-magnify">
-    <div id="root" unselectable="on"></div>
+  
+  <body>
+    <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
