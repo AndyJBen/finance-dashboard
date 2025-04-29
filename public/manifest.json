@@ -1,7 +1,7 @@
 {
     "name": "Financely",
     "short_name": "Financely",
-    "theme_color": "#0066FF",
+    "theme_color": "#F5F7FA",
     "background_color": "#F5F7FA",
     "display": "standalone",
     "scope": "/",
