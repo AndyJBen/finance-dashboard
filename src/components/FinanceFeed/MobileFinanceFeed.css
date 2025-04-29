@@ -1,0 +1,383 @@
+/* src/components/FinanceFeed/MobileFinanceFeed.css */
+
+/* Mobile Finance Feed Container */
+.finance-feed-mobile {
+    background-color: var(--neutral-100, #f1f5f9);
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    padding: 16px 12px 100px 12px !important;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: none;
+  }
+  
+  /* Card styling with depth effect */
+  .finance-section-card {
+    margin-bottom: 24px;
+    border-radius: 16px !important;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    background-color: #fff;
+    border: none !important;
+    transition: all 0.2s ease-in-out;
+  }
+  
+  /* Section header styling with distinctive colors */
+  .section-header {
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+  }
+  
+  .section-header-pastdue {
+    background-color: #FFEBE6;
+  }
+  
+  .section-header-billprep {
+    background-color: #D6F0FF;
+  }
+  
+  .section-header-nonrecurring {
+    background-color: #E7F7DE;
+  }
+  
+  .section-header-upcoming {
+    background-color: #FFF1D9;
+  }
+  
+  .section-header-activity {
+    background-color: #F2E6FF;
+  }
+  
+  /* Title container */
+  .section-title-container {
+    display: flex;
+    align-items: center;
+  }
+  
+  /* Icon container with floating effect */
+  .section-icon-container {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+    background-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  }
+  
+  /* Icon colors */
+  .icon-pastdue {
+    color: #F5222D;
+  }
+  
+  .icon-billprep {
+    color: #1890FF;
+  }
+  
+  .icon-nonrecurring {
+    color: #52C41A;
+  }
+  
+  .icon-upcoming {
+    color: #FA8C16;
+  }
+  
+  .icon-activity {
+    color: #722ED1;
+  }
+  
+  /* Title styling */
+  .section-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.2;
+    margin: 0;
+  }
+  
+  .section-subtitle {
+    font-size: 0.75rem;
+    color: rgba(0, 0, 0, 0.5);
+    line-height: 1.2;
+    margin-top: 2px;
+  }
+  
+  /* Toggle button styling */
+  .section-toggle-button {
+    padding: 0;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.8);
+    color: rgba(0, 0, 0, 0.45);
+    border: none;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  }
+  
+  /* List item styling */
+  .feed-list-item {
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+    display: flex;
+    align-items: center;
+  }
+  
+  .feed-list-item:last-child {
+    border-bottom: none;
+  }
+  
+  /* Avatar styling */
+  .feed-item-avatar {
+    border-radius: 8px;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Item content styling */
+  .feed-item-content {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .feed-item-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: rgba(0, 0, 0, 0.85);
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .feed-item-subtitle {
+    font-size: 0.75rem;
+    color: rgba(0, 0, 0, 0.45);
+    margin-top: 2px;
+  }
+  
+  /* Show more button container */
+  .show-more-container {
+    text-align: center;
+    padding: 8px 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    background-color: #fafafa;
+  }
+  
+  .show-more-button {
+    font-size: 0.8rem;
+    font-weight: 500;
+    padding: 4px 12px;
+    height: auto;
+    border: none;
+    color: #0066FF;
+    background: transparent;
+  }
+  
+  /* Empty section styling */
+  .empty-section {
+    padding: 20px;
+    text-align: center;
+    color: rgba(0, 0, 0, 0.45);
+    background-color: #fafafa;
+  }
+  
+  /* Due date text styling */
+  .due-date-text {
+    font-size: 0.75rem;
+    line-height: 1.2;
+    display: flex;
+    align-items: center;
+  }
+  
+  .due-date-text svg {
+    margin-right: 4px;
+  }
+  
+  /* Total section styling with improved contrast */
+  .section-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background-color: rgba(0, 0, 0, 0.03);
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    border-bottom-left-radius: 16px;
+    border-bottom-right-radius: 16px;
+  }
+  
+  .total-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: rgba(0, 0, 0, 0.65);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .total-amount {
+    font-size: 1rem;
+    font-weight: 700;
+  }
+  
+  .total-amount-pastdue {
+    color: #F5222D;
+  }
+  
+  .total-amount-billprep {
+    color: #1890FF;
+  }
+  
+  .total-amount-nonrecurring {
+    color: #52C41A;
+  }
+  
+  .total-amount-upcoming {
+    color: #FA8C16;
+  }
+  
+  .total-amount-activity {
+    color: #722ED1;
+  }
+  
+  /* Fixed item spacing */
+  .item-divider {
+    margin: 0 16px;
+    opacity: 0.5;
+    height: 1px;
+  }
+  
+  /* Transition for smooth expansion/collapse */
+  .section-content {
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+  
+  /* Apple-style lists */
+  .apple-style-list .feed-list-item {
+    padding-left: 16px;
+    padding-right: 16px;
+    margin-bottom: 1px;
+  }
+  
+  .apple-style-list .feed-item-title {
+    font-weight: 500;
+  }
+  
+  /* Loading state */
+  .loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 32px 0;
+  }
+  
+  /* Tag styling */
+  .status-tag {
+    font-size: 0.7rem;
+    padding: 0 8px;
+    height: 20px;
+    line-height: 20px;
+    border-radius: 10px;
+    font-weight: 600;
+    background-color: #e6f7ff;
+    color: #1890ff;
+    border: none;
+  }
+  
+  .status-tag-paid {
+    background-color: #f6ffed;
+    color: #52c41a;
+  }
+  
+  .status-tag-unpaid {
+    background-color: #fff2e8;
+    color: #fa8c16;
+  }
+  
+  /* Animation for item appearances */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .feed-list-item {
+    animation: fadeIn 0.3s ease-out;
+  }
+  
+  /* Optimizations for very small screens */
+  @media (max-width: 350px) {
+    .finance-feed-mobile {
+      padding: 12px 8px 80px 8px !important;
+    }
+    
+    .section-icon-container {
+      width: 28px;
+      height: 28px;
+      margin-right: 8px;
+    }
+    
+    .section-title {
+      font-size: 0.85rem;
+    }
+    
+    .feed-list-item {
+      padding: 10px;
+    }
+    
+    .feed-item-avatar {
+      width: 32px;
+      height: 32px;
+      margin-right: 8px;
+    }
+    
+    .feed-item-title {
+      font-size: 0.8rem;
+    }
+    
+    .section-total {
+      padding: 10px;
+    }
+  }
+  
+  /* Enhanced accessibility focus states */
+  .section-toggle-button:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.3);
+  }
+  
+  .show-more-button:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+  }
+  
+  /* iOS-specific overrides */
+  @supports (-webkit-touch-callout: none) {
+    .finance-feed-mobile {
+      /* iOS-specific padding adjustments */
+      padding-bottom: 120px !important;
+    }
+    
+    /* Fix for scrolling on iOS */
+    .section-content {
+      -webkit-overflow-scrolling: touch;
+    }
+  }

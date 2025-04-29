@@ -12,6 +12,9 @@ import ActivityFeed from '../RecentActivity/ActivityFeed';
 // Import the mobile-optimized Finance Feed component directly
 import MobileFinanceFeed from './MobileFinanceFeed';
 
+// Import the CSS file for mobile styling
+import './MobileFinanceFeed.css';
+
 const { Title } = Typography;
 
 /**
@@ -21,7 +24,7 @@ const { Title } = Typography;
 const FinanceFeed = ({ isMobileView, onEditBill, onAddBill }) => {
   // Define styles for the container
   const containerStyle = {
-    padding: isMobileView ? 'var(--space-8) var(--space-4)' : 'var(--space-16)',
+    padding: isMobileView ? '0' : 'var(--space-16)',
     maxWidth: '100%',
   };
 
@@ -34,7 +37,11 @@ const FinanceFeed = ({ isMobileView, onEditBill, onAddBill }) => {
 
   // For mobile view, use the new optimized MobileFinanceFeed component
   if (isMobileView) {
-    return <MobileFinanceFeed onEditBill={onEditBill} onAddBill={onAddBill} />;
+    return (
+      <div className="finance-feed-mobile">
+        <MobileFinanceFeed onEditBill={onEditBill} onAddBill={onAddBill} />
+      </div>
+    );
   }
 
   // For desktop view, we keep the layout exactly the same as before
