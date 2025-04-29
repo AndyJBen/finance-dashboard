@@ -1,4 +1,4 @@
-/* src/components/FinanceFeed/styles/MobileFinanceFeed.css */
+/* MobileFinanceFeed.css */
 
 /* --- Global Redesign Variables --- */
 :root {
@@ -135,7 +135,7 @@
 .feed-item-avatar {
   width: 40px !important;
   height: 40px !important;
-  border-radius: 12px !important;
+  border-radius: 30px !important;
 }
 
 .feed-item-content {
