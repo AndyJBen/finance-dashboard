@@ -1,23 +1,29 @@
-// src/components/MobileFinanceFeed/MobileFinanceFeed.jsx
-import React, { useState, useContext } from 'react';
-import { Typography, Card, Space, List, Badge, Tag, Avatar, Button } from 'antd';
 import {
-  IconAlertOctagonFilled, // Changed from IconAlertOctagon
+  IconAlertOctagon,        // Changed from Filled
   IconClipboardList,
   IconRepeatOff,
-  IconHourglassHigh, // Changed from IconHourglass
-  IconTimeDuration15, // Changed from IconClock
+  IconHourglassHigh,
+  IconTimeDuration15,
   IconChevronDown,
   IconChevronUp,
-  IconCircleCheckFilled, // Changed from IconCircleCheck
-  IconClock, // Keep for subtitle
-  IconCarFilled, // Changed from IconCar
-  IconHomeFilled, // Changed from IconHome
-  IconDeviceLaptopFilled, // Changed from IconDeviceLaptop
+  IconCircleCheck,         // Changed from Filled
+  IconClock,
+  IconCar,                 // Changed from Filled
+  IconHome,                // Changed from Filled
+  IconDeviceLaptop,        // Changed from Filled
   IconWifi,
-  IconDropletFilled, // Changed from IconDroplet
+  IconDroplet,             // Changed from Filled
   IconCreditCard,
-  IconShoppingBag
+  IconShoppingBag,
+  // Keep other necessary non-filled icons like:
+  IconHelp, 
+  IconCalendar,
+  IconCurrencyDollar,
+  IconCertificate, 
+  IconMedicineSyrup, 
+  IconScissors,            // You might need this for Personal Care if you add it
+  IconCalendarTime,
+  IconUser                 // You might need this for Personal Care if you add it
 } from '@tabler/icons-react';
 
 // FIXED: Uncommented this line
@@ -33,17 +39,17 @@ const getCategoryIcon = (category, size = 16) => {
   const lowerCategory = category?.toLowerCase() || '';
 
   if (lowerCategory.includes('car') || lowerCategory.includes('auto')) 
-    return <IconCarFilled size={size} style={{ color: '#FF9233' }} />;
+    return <IconCar size={size} style={{ color: '#FF9233' }} />;
   if (lowerCategory.includes('home') || lowerCategory.includes('rent')) 
-    return <IconHomeFilled size={size} style={{ color: '#F1476F' }} />;
+    return <IconHome size={size} style={{ color: '#F1476F' }} />;
   if (lowerCategory.includes('internet') || lowerCategory.includes('wifi')) 
     return <IconWifi size={size} style={{ color: '#0066FF' }} />;
   if (lowerCategory.includes('water')) 
-    return <IconDropletFilled size={size} style={{ color: '#26C67B' }} />;
+    return <IconDroplet size={size} style={{ color: '#26C67B' }} />;
   if (lowerCategory.includes('gas')) 
-    return <IconDropletFilled size={size} style={{ color: '#FF9233' }} />;
+    return <IconDroplet size={size} style={{ color: '#FF9233' }} />;
   if (lowerCategory.includes('subscription') || lowerCategory.includes('chatgpt')) 
-    return <IconDeviceLaptopFilled size={size} style={{ color: '#0066FF' }} />;
+    return <IconDeviceLaptop size={size} style={{ color: '#0066FF' }} />;
   if (lowerCategory.includes('medical')) 
     return <IconClipboardList size={size} style={{ color: '#F1476F' }} />;
   if (lowerCategory.includes('clothing')) 
@@ -237,7 +243,7 @@ const MobileFinanceFeed = () => {
       {/* Past Due Payments */}
       <SectionCard
         title="Past Due Payments"
-        icon={<IconAlertOctagonFilled size={18} style={{ color: '#F1476F' }} />} // Use Filled version
+        icon={<IconAlertOctagon size={18} style={{ color: '#F1476F' }} />} // Use Filled version
         section="pastDue"
         empty={pastDueBills.length === 0}
         emptyText="No past due payments"
@@ -433,7 +439,7 @@ const MobileFinanceFeed = () => {
                       shape="square" 
                       className="feed-item-avatar"
                       style={{ backgroundColor: 'rgba(114, 46, 209, 0.1)' }}
-                      icon={<IconCircleCheckFilled size={16} style={{ color: '#722ED1' }} />} // Use Filled version
+                      icon={<IconCircleCheck size={16} style={{ color: '#722ED1' }} />} // Use Filled version
                     />
                     <Text strong>{item.name}</Text>
                   </Space>
