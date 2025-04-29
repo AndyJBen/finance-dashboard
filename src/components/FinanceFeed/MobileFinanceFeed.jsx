@@ -1,40 +1,35 @@
 // src/components/FinanceFeed/MobileFinanceFeed.jsx
+
 import React, { useState, useContext } from 'react';
-// **** ADD THIS LINE ****
-import { Typography, Card, Space, List, Badge, Tag, Avatar, Button } from 'antd'; 
-// **** END ADD ****
+import { Typography, Card, Space, List, Badge, Tag, Avatar, Button } from 'antd';
 import {
-  IconAlertOctagon,        // Changed from Filled
+  IconAlertOctagon,
   IconClipboardList,
   IconRepeatOff,
   IconHourglassHigh,
   IconTimeDuration15,
   IconChevronDown,
   IconChevronUp,
-  IconCircleCheck,         // Changed from Filled
+  IconCircleCheck,
   IconClock,
-  IconCar,                 // Changed from Filled
-  IconHome,                // Changed from Filled
-  IconDeviceLaptop,        // Changed from Filled
+  IconCar,
+  IconHome,
+  IconDeviceLaptop,
   IconWifi,
-  IconDroplet,             // Changed from Filled
+  IconDroplet,
   IconCreditCard,
   IconShoppingBag,
-  // Keep other necessary non-filled icons like:
-  IconHelp, 
+  IconHelp,
   IconCalendar,
   IconCurrencyDollar,
-  IconCertificate, 
-  IconMedicineSyrup, 
-  IconScissors,            // You might need this for Personal Care if you add it
+  IconCertificate,
+  IconMedicineSyrup,
+  IconScissors,
   IconCalendarTime,
-  IconUser                 // You might need this for Personal Care if you add it
+  IconUser
 } from '@tabler/icons-react';
 
-// FIXED: Uncommented this line
-import { FinanceContext } from '../../contexts/FinanceContext'; // Adjust path if needed
-
-// Import the CSS file for mobile styling
+import { FinanceContext } from '../../contexts/FinanceContext';
 import './styles/MobileFinanceFeed.css';
 
 const { Text, Title } = Typography;
@@ -56,7 +51,7 @@ const getCategoryIcon = (category, size = 16) => {
   if (lowerCategory.includes('subscription') || lowerCategory.includes('chatgpt')) 
     return <IconDeviceLaptop size={size} style={{ color: '#0066FF' }} />;
   if (lowerCategory.includes('medical')) 
-    return <IconClipboardList size={size} style={{ color: '#F1476F' }} />;
+    return <IconMedicineSyrup size={size} style={{ color: '#F1476F' }} />;
   if (lowerCategory.includes('clothing')) 
     return <IconShoppingBag size={size} style={{ color: '#0066FF' }} />;
   if (lowerCategory.includes('passport') || lowerCategory.includes('photos')) 
@@ -64,13 +59,10 @@ const getCategoryIcon = (category, size = 16) => {
   return <IconCreditCard size={size} style={{ color: '#0066FF' }} />;
 };
 
-// Sample data (replace with context data in real implementation)
 const MobileFinanceFeed = () => {
-  // Use context for real implementation
-  const financeContext = useContext(FinanceContext); // Now this should work
+  const financeContext = useContext(FinanceContext);
 
   // Get the data we need for each section
-  // Past Due Bills
   const pastDueBills = financeContext.pastDueBills || [];
 
   // Bill Prep items
@@ -175,9 +167,9 @@ const MobileFinanceFeed = () => {
   };
 
   // Section card component with improved collapse button
-  const SectionCard = ({ title, icon, children, section, empty = false, count, itemCount, emptyText }) => (
+  const SectionCard = ({ title, icon, children, section, empty = false, count, itemCount, emptyText, className }) => (
     <Card
-      className="finance-section-card"
+      className={`finance-section-card ${className || section}`}
       bodyStyle={expanded[section] ? { padding: 0 } : { padding: 0, height: 0, overflow: 'hidden' }}
       title={
         <div className="section-header">
@@ -216,17 +208,6 @@ const MobileFinanceFeed = () => {
             className="section-toggle-button"
             icon={expanded[section] ? <IconChevronUp size={16} /> : <IconChevronDown size={16} />}
             onClick={() => toggleSection(section)}
-            style={{ 
-              width: '32px',
-              height: '20px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              borderRadius: '16px',
-              backgroundColor: 'var(--neutral-50)',
-              border: '1px solid var(--neutral-200)',
-              boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)'
-            }}
           />
         </div>
       }
@@ -248,8 +229,9 @@ const MobileFinanceFeed = () => {
       {/* Past Due Payments */}
       <SectionCard
         title="Past Due Payments"
-        icon={<IconAlertOctagon size={18} style={{ color: '#F1476F' }} />} // Use Filled version
+        icon={<IconAlertOctagon size={18} style={{ color: '#E54D60' }} />}
         section="pastDue"
+        className="past-due"
         empty={pastDueBills.length === 0}
         emptyText="No past due payments"
         count={pastDueBills.length}
@@ -261,7 +243,7 @@ const MobileFinanceFeed = () => {
               <Avatar 
                 shape="square" 
                 className="feed-item-avatar"
-                style={{ backgroundColor: '#FFF5F5', borderRadius: 8 }}
+                style={{ backgroundColor: 'var(--past-due-bg)', borderRadius: 12 }}
                 icon={getCategoryIcon(item.category, 18)}
               />
               <div className="feed-item-content">
@@ -270,7 +252,7 @@ const MobileFinanceFeed = () => {
                   Due {daysAgo(item.dueDate)} days ago
                 </Text>
               </div>
-              <Text strong style={{color: '#F1476F'}}>${Number(item.amount).toFixed(2)}</Text>
+              <Text strong style={{color: 'var(--past-due-color)'}}>${Number(item.amount).toFixed(2)}</Text>
             </List.Item>
           )}
         />
@@ -289,6 +271,7 @@ const MobileFinanceFeed = () => {
         title="Bill Prep"
         icon={<IconClipboardList size={18} style={{ color: '#0066FF' }} />}
         section="billPrep"
+        className="bill-prep"
         empty={billPrep.length === 0}
         emptyText="No bills in preparation"
         count={billPrep.length}
@@ -300,7 +283,7 @@ const MobileFinanceFeed = () => {
               <Avatar 
                 shape="square" 
                 className="feed-item-avatar"
-                style={{ backgroundColor: '#EBF5FF', borderRadius: 8 }}
+                style={{ backgroundColor: 'var(--bill-prep-bg)', borderRadius: 12 }}
                 icon={getCategoryIcon(item.category, 18)}
               />
               <div className="feed-item-content">
@@ -309,7 +292,7 @@ const MobileFinanceFeed = () => {
                   {item.bills.length} {item.bills.length === 1 ? 'Item' : 'Items'}
                 </Text>
               </div>
-              <Text strong style={{color: '#1890FF'}}>${item.totalAmount.toFixed(2)}</Text>
+              <Text strong style={{color: 'var(--bill-prep-color)'}}>${item.totalAmount.toFixed(2)}</Text>
             </List.Item>
           )}
         />
@@ -326,8 +309,9 @@ const MobileFinanceFeed = () => {
       {/* Non-Recurring Bills */}
       <SectionCard
         title="Non-Recurring Bills"
-        icon={<IconRepeatOff size={18} style={{ color: '#26C67B' }} />}
+        icon={<IconRepeatOff size={18} style={{ color: '#1CAB55' }} />}
         section="nonRecurring"
+        className="non-recurring"
         empty={nonRecurring.length === 0}
         emptyText="No non-recurring bills"
         count={nonRecurring.length}
@@ -339,13 +323,13 @@ const MobileFinanceFeed = () => {
               <Avatar 
                 shape="square" 
                 className="feed-item-avatar"
-                style={{ backgroundColor: '#E5F8EF', borderRadius: 8 }}
+                style={{ backgroundColor: 'var(--non-recurring-bg)', borderRadius: 12 }}
                 icon={getCategoryIcon(item.category, 18)}
               />
               <div className="feed-item-content">
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                   <Text className="feed-item-title">{item.name}</Text>
-                  <Text strong style={{ color: item.isPaid ? '#26C67B' : '#F1476F' }}>
+                  <Text strong style={{ color: item.isPaid ? 'var(--non-recurring-color)' : 'var(--past-due-color)' }}>
                     ${Number(item.amount).toFixed(2)}
                   </Text>
                 </div>
@@ -368,7 +352,7 @@ const MobileFinanceFeed = () => {
             <Button 
               type="link" 
               className="show-more-button"
-              style={{color: '#52C41A'}}
+              style={{color: 'var(--non-recurring-color)'}}
               onClick={() => toggleShowAll('nonRecurring')}
             >
               {showAll.nonRecurring ? 'Show Less' : 'Show All'}
@@ -388,8 +372,9 @@ const MobileFinanceFeed = () => {
       {/* Upcoming Bills */}
       <SectionCard
         title="Upcoming Bills"
-        icon={<IconHourglassHigh size={18} style={{ color: '#0066FF' }} />}
+        icon={<IconHourglassHigh size={18} style={{ color: '#5E5AF6' }} />}
         section="upcoming"
+        className="upcoming"
         empty={upcoming.length === 0}
         emptyText="No upcoming bills"
         count={upcoming.length}
@@ -401,7 +386,7 @@ const MobileFinanceFeed = () => {
               <Avatar 
                 shape="square" 
                 className="feed-item-avatar"
-                style={{ backgroundColor: '#EBF5FF', borderRadius: 8 }}
+                style={{ backgroundColor: 'var(--upcoming-bg)', borderRadius: 12 }}
                 icon={getCategoryIcon(item.category, 18)}
               />
               <div className="feed-item-content">
@@ -410,7 +395,7 @@ const MobileFinanceFeed = () => {
                   Due {formatDueDate(item.dueDate)}
                 </Text>
               </div>
-              <Text strong style={{color: '#0066FF'}}>${Number(item.amount).toFixed(2)}</Text>
+              <Text strong style={{color: 'var(--upcoming-color)'}}>${Number(item.amount).toFixed(2)}</Text>
             </List.Item>
           )}
         />
@@ -427,8 +412,9 @@ const MobileFinanceFeed = () => {
       {/* Recent Activity */}
       <SectionCard
         title="Recent Activity"
-        icon={<IconTimeDuration15 size={18} style={{ color: '#0066FF' }} />}
+        icon={<IconTimeDuration15 size={18} style={{ color: '#F1814D' }} />}
         section="recentActivity"
+        className="activity"
         empty={recentActivity.length === 0}
         emptyText="No recent activity"
         count={recentActivity.length}
@@ -443,8 +429,8 @@ const MobileFinanceFeed = () => {
                     <Avatar 
                       shape="square" 
                       className="feed-item-avatar"
-                      style={{ backgroundColor: 'rgba(114, 46, 209, 0.1)' }}
-                      icon={<IconCircleCheck size={16} style={{ color: '#722ED1' }} />} // Use Filled version
+                      style={{ backgroundColor: 'var(--activity-bg)', borderRadius: 12 }}
+                      icon={<IconCircleCheck size={16} style={{ color: 'var(--activity-color)' }} />}
                     />
                     <Text strong>{item.name}</Text>
                   </Space>
@@ -468,7 +454,7 @@ const MobileFinanceFeed = () => {
             <Button 
               type="link" 
               className="show-more-button"
-              style={{color: '#722ED1'}}
+              style={{color: 'var(--activity-color)'}}
               onClick={() => toggleShowAll('recentActivity')}
             >
               {showAll.recentActivity ? 'Show Less' : 'Show All'}

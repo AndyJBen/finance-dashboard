@@ -1,319 +1,268 @@
-/* src/components/FinanceFeed/MobileFinanceFeed.css */
+/* src/components/FinanceFeed/styles/MobileFinanceFeed.css */
 
-/* Mobile Finance Feed Container */
+/* --- Global Redesign Variables --- */
+:root {
+  --card-radius: 20px;
+  --section-spacing: 18px;
+  --item-spacing: 14px;
+  --header-font-weight: 600;
+  --title-font-size: 17px;
+  --subtitle-font-size: 13px;
+  --label-font-size: 12px;
+  --button-radius: 14px;
+  --shadow-ambient: 0 8px 24px -12px rgba(0, 0, 0, 0.12);
+  
+  /* Refined color palette */
+  --past-due-bg: #FFF0F0;
+  --past-due-color: #E54D60;
+  --bill-prep-bg: #F0F7FF;
+  --bill-prep-color: #0066FF;
+  --non-recurring-bg: #F1FCF5;
+  --non-recurring-color: #1CAB55;
+  --upcoming-bg: #F6F5FF;
+  --upcoming-color: #5E5AF6;
+  --activity-bg: #FFF8F0;
+  --activity-color: #F1814D;
+}
+
+/* --- Finance Feed Container --- */
 .finance-feed-mobile {
-    background-color: var(--neutral-100, #f1f5f9);
-    width: 100%;
-    max-width: 100%;
-    overflow-x: hidden;
-    padding: 16px 12px 40px 12px !important;
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior-y: none;
+  background-color: var(--neutral-100, #f1f5f9);
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  padding: 16px 16px 40px 16px !important;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: none;
+}
+
+/* --- Section Card Redesign --- */
+.finance-section-card {
+  margin-bottom: var(--section-spacing);
+  border-radius: var(--card-radius) !important;
+  box-shadow: var(--shadow-ambient) !important;
+  overflow: hidden;
+  border: none !important;
+}
+
+.finance-section-card .ant-card-head {
+  background: linear-gradient(to right, rgba(255,255,255,0.7), rgba(255,255,255,0.95));
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(0,0,0,0.04);
+  padding: 16px !important;
+}
+
+/* --- Section Headers --- */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.section-title-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.section-icon-container {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Apply custom backgrounds for each section icon */
+.past-due .section-icon-container {
+  background-color: var(--past-due-bg);
+}
+
+.bill-prep .section-icon-container {
+  background-color: var(--bill-prep-bg);
+}
+
+.non-recurring .section-icon-container {
+  background-color: var(--non-recurring-bg);
+}
+
+.upcoming .section-icon-container {
+  background-color: var(--upcoming-bg);
+}
+
+.activity .section-icon-container {
+  background-color: var(--activity-bg);
+}
+
+.section-title {
+  font-size: var(--title-font-size) !important;
+  font-weight: var(--header-font-weight) !important;
+  line-height: 1.3 !important;
+  letter-spacing: -0.01em;
+}
+
+.section-subtitle {
+  font-size: var(--label-font-size) !important;
+  margin-left: 4px;
+  opacity: 0.7;
+}
+
+/* --- Section Toggle Button --- */
+.section-toggle-button {
+  width: 32px !important;
+  height: 20px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 16px !important;
+  background-color: var(--neutral-50) !important;
+  border: 1px solid var(--neutral-200) !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+  color: rgba(0, 0, 0, 0.45);
+}
+
+/* --- List Items Redesign --- */
+.feed-list-item {
+  padding: 14px 16px !important;
+  border-bottom: 1px solid rgba(0,0,0,0.04) !important;
+}
+
+.feed-list-item:last-child {
+  border-bottom: none !important;
+}
+
+.feed-item-avatar {
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 12px !important;
+}
+
+.feed-item-content {
+  padding-left: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+.feed-item-title {
+  font-size: 15px !important;
+  font-weight: 500 !important;
+  margin-bottom: 2px !important;
+  display: block;
+  line-height: 1.3 !important;
+}
+
+.feed-item-subtitle {
+  font-size: var(--subtitle-font-size) !important;
+  color: rgba(0,0,0,0.65) !important;
+}
+
+.due-date-text {
+  font-size: var(--label-font-size) !important;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* --- Section Totals --- */
+.section-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background-color: rgba(0,0,0,0.02);
+  border-top: 1px solid rgba(0,0,0,0.04);
+}
+
+.total-label {
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: rgba(0,0,0,0.5) !important;
+}
+
+.total-amount {
+  font-size: 15px !important;
+  font-weight: 600 !important;
+}
+
+/* Custom colors for each section total */
+.total-amount-pastdue { color: var(--past-due-color) !important; }
+.total-amount-billprep { color: var(--bill-prep-color) !important; }
+.total-amount-nonrecurring { color: var(--non-recurring-color) !important; }
+.total-amount-upcoming { color: var(--upcoming-color) !important; }
+.total-amount-activity { color: var(--activity-color) !important; }
+
+/* --- Status Tags --- */
+.status-tag {
+  border-radius: 6px !important;
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  padding: 2px 6px !important;
+  line-height: 1.2 !important;
+}
+
+.status-tag-paid {
+  background-color: var(--non-recurring-bg) !important;
+  color: var(--non-recurring-color) !important;
+}
+
+.status-tag-unpaid {
+  background-color: var(--upcoming-bg) !important;
+  color: var(--upcoming-color) !important;
+}
+
+/* --- Show More Button --- */
+.show-more-container {
+  padding: 8px 0;
+  text-align: center;
+  border-top: 1px solid rgba(0,0,0,0.04);
+}
+
+.show-more-button {
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  height: 32px !important;
+  padding: 0 16px !important;
+  border-radius: var(--button-radius) !important;
+}
+
+/* --- Empty Section --- */
+.empty-section {
+  padding: 32px 16px;
+  text-align: center;
+}
+
+/* Optimizations for very small screens */
+@media (max-width: 350px) {
+  .finance-feed-mobile {
+    padding: 12px 12px 40px 12px !important;
   }
   
-  /* Card styling with depth effect */
-  .finance-section-card {
-    margin-bottom: 24px;
-    border-radius: 16px !important;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    background-color: #fff;
-    border: none !important;
-    transition: all 0.2s ease-in-out;
-  }
-  
-  /* Section header styling with distinctive colors */
-  .section-header {
-    padding: 12px 16px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.04);
-  }
-  
-  .section-header-pastdue {
-    background-color: #FFEBE6;
-  }
-  
-  .section-header-billprep {
-    background-color: #D6F0FF;
-  }
-  
-  .section-header-nonrecurring {
-    background-color: #E7F7DE;
-  }
-  
-  .section-header-upcoming {
-    background-color: #FFF1D9;
-  }
-  
-  .section-header-activity {
-    background-color: #F2E6FF;
-  }
-  
-  /* Title container */
-  .section-title-container {
-    display: flex;
-    align-items: center;
-  }
-  
-  /* Icon container with floating effect */
   .section-icon-container {
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 12px;
-    background-color: rgba(255, 255, 255, 0.9);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+    width: 28px;
+    height: 28px;
   }
   
-  /* Icon colors */
-  .icon-pastdue {
-    color: #F5222D;
-  }
-  
-  .icon-billprep {
-    color: #1890FF;
-  }
-  
-  .icon-nonrecurring {
-    color: #52C41A;
-  }
-  
-  .icon-upcoming {
-    color: #FA8C16;
-  }
-  
-  .icon-activity {
-    color: #722ED1;
-  }
-  
-  /* Title styling */
   .section-title {
-    font-size: 0.95rem;
-    font-weight: 600;
-    line-height: 1.2;
-    margin: 0;
+    font-size: 15px !important;
   }
   
-  .section-subtitle {
-    font-size: 0.75rem;
-    color: rgba(0, 0, 0, 0.5);
-    line-height: 1.2;
-    margin-top: 2px;
-    margin-left: 6px;
-    font-weight: 500;
-  }
-  
-  /* Toggle button styling - UPDATED for better mobile experience */
-  .section-toggle-button {
-    width: 32px !important;
-    height: 20px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    border-radius: 16px !important;
-    background-color: var(--neutral-50) !important;
-    border: 1px solid var(--neutral-200) !important;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
-    color: rgba(0, 0, 0, 0.45);
-  }
-  
-  /* List item styling */
   .feed-list-item {
-    padding: 12px 16px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.03);
-    display: flex;
-    align-items: center;
+    padding: 12px !important;
   }
   
-  .feed-list-item:last-child {
-    border-bottom: none;
-  }
-  
-  /* Avatar styling */
   .feed-item-avatar {
-    border-radius: 8px;
-    width: 36px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 12px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  }
-  
-  /* Item content styling */
-  .feed-item-content {
-    flex: 1;
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
+    width: 36px !important;
+    height: 36px !important;
   }
   
   .feed-item-title {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: rgba(0, 0, 0, 0.85);
-    margin: 0;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    font-size: 14px !important;
   }
   
-  .feed-item-subtitle {
-    font-size: 0.75rem;
-    color: rgba(0, 0, 0, 0.45);
-    margin-top: 2px;
-  }
-  
-  /* Show more button container */
-  .show-more-container {
-    text-align: center;
-    padding: 8px 0;
-    border-top: 1px solid rgba(0, 0, 0, 0.05);
-    background-color: #fafafa;
-  }
-  
-  .show-more-button {
-    font-size: 0.8rem;
-    font-weight: 500;
-    padding: 4px 12px;
-    height: auto;
-    border: none;
-    color: #0066FF;
-    background: transparent;
-  }
-  
-  /* Empty section styling */
-  .empty-section {
-    padding: 20px;
-    text-align: center;
-    color: rgba(0, 0, 0, 0.45);
-    background-color: #fafafa;
-  }
-  
-  /* Due date text styling */
-  .due-date-text {
-    font-size: 0.75rem;
-    line-height: 1.2;
-    display: flex;
-    align-items: center;
-  }
-  
-  .due-date-text svg {
-    margin-right: 4px;
-  }
-  
-  /* Total section styling with improved contrast */
   .section-total {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 16px;
-    background-color: rgba(0, 0, 0, 0.03);
-    border-top: 1px solid rgba(0, 0, 0, 0.05);
-    border-bottom-left-radius: 16px;
-    border-bottom-right-radius: 16px;
+    padding: 10px 14px;
   }
-  
-  .total-label {
-    font-size: 0.75rem;
-    font-weight: 700;
-    color: rgba(0, 0, 0, 0.65);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-  
-  .total-amount {
-    font-size: 1rem;
-    font-weight: 700;
-  }
-  
-  .total-amount-pastdue {
-    color: #F5222D;
-  }
-  
-  .total-amount-billprep {
-    color: #1890FF;
-  }
-  
-  .total-amount-nonrecurring {
-    color: #52C41A;
-  }
-  
-  .total-amount-upcoming {
-    color: #FA8C16;
-  }
-  
-  .total-amount-activity {
-    color: #722ED1;
-  }
-  
-  /* Fixed item spacing */
-  .item-divider {
-    margin: 0 16px;
-    opacity: 0.5;
-    height: 1px;
-  }
-  
-  /* Tag styling */
-  .status-tag {
-    font-size: 0.7rem;
-    padding: 0 8px;
-    height: 20px;
-    line-height: 20px;
-    border-radius: 10px;
-    font-weight: 600;
-    background-color: #e6f7ff;
-    color: #1890ff;
-    border: none;
-  }
-  
-  .status-tag-paid {
-    background-color: #f6ffed;
-    color: #52c41a;
-  }
-  
-  .status-tag-unpaid {
-    background-color: #fff2e8;
-    color: #fa8c16;
-  }
-  
-  /* Optimizations for very small screens */
-  @media (max-width: 350px) {
-    .finance-feed-mobile {
-      padding: 12px 8px 40px 8px !important;
-    }
-    
-    .section-icon-container {
-      width: 28px;
-      height: 28px;
-      margin-right: 8px;
-    }
-    
-    .section-title {
-      font-size: 0.85rem;
-    }
-    
-    .feed-list-item {
-      padding: 10px;
-    }
-    
-    .feed-item-avatar {
-      width: 32px;
-      height: 32px;
-      margin-right: 8px;
-    }
-    
-    .feed-item-title {
-      font-size: 0.8rem;
-    }
-    
-    .section-total {
-      padding: 10px;
-    }
-  }
+}
