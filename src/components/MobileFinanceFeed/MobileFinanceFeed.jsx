@@ -1,33 +1,37 @@
+// src/components/MobileFinanceFeed/MobileFinanceFeed.jsx
 import React, { useState, useContext } from 'react';
 import { Typography, Card, Space, List, Badge, Tag, Avatar, Button } from 'antd';
 import {
-  IconAlertOctagonFilled,
+  IconAlertOctagonFilled, // Changed from IconAlertOctagon
   IconClipboardList,
   IconRepeatOff,
-  IconHourglassHigh,
-  IconTimeDuration15,
+  IconHourglassHigh, // Changed from IconHourglass
+  IconTimeDuration15, // Changed from IconClock
   IconChevronDown,
   IconChevronUp,
-  IconCircleCheckFilled,
-  IconClock,
-  IconCarFilled,
-  IconHomeFilled,
-  IconDeviceLaptopFilled,
+  IconCircleCheckFilled, // Changed from IconCircleCheck
+  IconClock, // Keep for subtitle
+  IconCarFilled, // Changed from IconCar
+  IconHomeFilled, // Changed from IconHome
+  IconDeviceLaptopFilled, // Changed from IconDeviceLaptop
   IconWifi,
-  IconDropletFilled,
+  IconDropletFilled, // Changed from IconDroplet
   IconCreditCard,
   IconShoppingBag
 } from '@tabler/icons-react';
 
-// Import context (assuming you have a FinanceContext)
-// import { FinanceContext } from '../../contexts/FinanceContext';
+// --- UNCOMMENT THIS LINE ---
+import { FinanceContext } from '../../contexts/FinanceContext'; // Adjust path if needed
+
+// Import the CSS file for mobile styling
+import './MobileFinanceFeed.css';
 
 const { Text, Title } = Typography;
 
 // Helper function to get icon based on category
 const getCategoryIcon = (category, size = 16) => {
   const lowerCategory = category?.toLowerCase() || '';
-  
+
   if (lowerCategory.includes('car') || lowerCategory.includes('auto')) 
     return <IconCarFilled size={size} style={{ color: '#FF9233' }} />;
   if (lowerCategory.includes('home') || lowerCategory.includes('rent')) 
@@ -50,41 +54,59 @@ const getCategoryIcon = (category, size = 16) => {
 };
 
 // Sample data (replace with context data in real implementation)
-const sampleData = {
-  pastDue: [],
-  billPrep: [
-    { id: 1, name: 'Car Tax', category: 'Auto', totalAmount: 140.00, itemCount: 2 },
-    { id: 2, name: 'Medical Deductible', category: 'Medical', totalAmount: 20.00, itemCount: 1 }
-  ],
-  nonRecurring: [
-    { id: 3, name: '1Password', category: 'Subscription', amount: 35.88, isPaid: true, dueDate: '2023-04-14', daysAgo: 12 },
-    { id: 4, name: 'Initial Psych Visit', category: 'Medical', amount: 58.48, isPaid: true, dueDate: '2023-04-15', daysAgo: 11 },
-    { id: 5, name: 'Plant Fitness', category: 'Subscription', amount: 10.00, isPaid: true, dueDate: '2023-04-17', daysAgo: 9 },
-    { id: 6, name: 'Clothing', category: 'Shopping', amount: 101.00, isPaid: true, dueDate: '2023-04-23', daysAgo: 3 },
-    { id: 7, name: 'Passport Photos', category: 'Other', amount: 19.00, isPaid: true, dueDate: '2023-04-24', daysAgo: 2 }
-  ],
-  upcoming: [
-    { id: 8, name: 'Gas 3', category: 'Utilities', amount: 50.00, dueDate: 'Today' },
-    { id: 9, name: 'Car Payment', category: 'Auto', amount: 410.00, dueDate: 'In a day' },
-    { id: 10, name: 'Internet', category: 'Utilities', amount: 50.00, dueDate: 'In a day' },
-    { id: 11, name: 'Water Purifier', category: 'Utilities', amount: 42.00, dueDate: 'In 2 days' }
-  ],
-  recentActivity: [
-    { id: 12, name: 'E-ZPass', category: 'Auto', amount: 35.00, daysAgo: 4 },
-    { id: 13, name: 'Passport Photos', category: 'Other', amount: 19.00, daysAgo: 2 },
-    { id: 14, name: 'Clothing', category: 'Other', amount: 101.00, daysAgo: 3 },
-    { id: 15, name: 'State Farm', category: 'Auto', amount: 191.35, daysAgo: 4 },
-    { id: 16, name: 'ChatGPT', category: 'Subscription', amount: 20.00, daysAgo: 5 }
-  ]
-};
+const MobileFinanceFeed = () => {
+  // Use context for real implementation
+  const financeContext = useContext(FinanceContext); // Now this should work
 
-const FinanceFeedMobile = () => {
-  // In a real implementation, you'd use your FinanceContext
-  // const financeContext = useContext(FinanceContext);
-  // const { pastDue, billPrep, nonRecurring, upcoming, recentActivity } = financeContext;
-  
-  // For demonstration, we're using the sample data
-  const { pastDue, billPrep, nonRecurring, upcoming, recentActivity } = sampleData;
+  // Get the data we need for each section
+  // Past Due Bills
+  const pastDueBills = financeContext.pastDueBills || [];
+
+  // Bill Prep items
+  const billPrepItems = financeContext.bills?.filter(bill => 
+    bill.category?.toLowerCase() === 'bill prep' && !bill.isPaid
+  ) || [];
+
+  // Group Bill Prep items by name
+  const groupedBillPrepItems = billPrepItems.reduce((acc, bill) => {
+    const name = bill.name;
+    if (!acc[name]) {
+      acc[name] = {
+        id: `group-<span class="math-inline">\{name\}\-</span>{bill.category}`,
+        name: name,
+        category: bill.category,
+        totalAmount: 0,
+        bills: [],
+        isCombined: false,
+      };
+    }
+    acc[name].totalAmount += Number(bill.amount || 0);
+    acc[name].bills.push(bill);
+    acc[name].isCombined = acc[name].bills.length > 1;
+    return acc;
+  }, {});
+  const billPrep = Object.values(groupedBillPrepItems);
+
+  // Non-Recurring Bills
+  const nonRecurring = financeContext.bills?.filter(bill => !bill.isRecurring) || [];
+
+  // Upcoming Bills (unpaid bills with future due dates)
+  const today = new Date();
+  const upcoming = financeContext.bills?.filter(bill => 
+    !bill.isPaid && new Date(bill.dueDate) >= today
+  ) || [];
+
+  // Recent Activity (paid bills, ordered by payment date)
+  const recentActivity = financeContext.bills?.filter(bill => 
+    bill.isPaid
+  ).sort((a, b) => new Date(b.dueDate) - new Date(a.dueDate)).slice(0, 10) || [];
+
+  // Calculate totals for each section
+  const pastDueTotal = pastDueBills.reduce((sum, bill) => sum + Number(bill.amount || 0), 0);
+  const billPrepTotal = billPrep.reduce((sum, item) => sum + Number(item.totalAmount || 0), 0);
+  const nonRecurringTotal = nonRecurring.reduce((sum, bill) => sum + Number(bill.amount || 0), 0);
+  const upcomingTotal = upcoming.reduce((sum, bill) => sum + Number(bill.amount || 0), 0);
+  const recentActivityTotal = recentActivity.reduce((sum, bill) => sum + Number(bill.amount || 0), 0);
 
   // State to track expanded/collapsed sections
   const [expanded, setExpanded] = useState({
@@ -122,69 +144,84 @@ const FinanceFeedMobile = () => {
     return showAll[section] ? items : items.slice(0, limit);
   };
 
-  // Mobile card styling - more compact than desktop
-  const cardStyle = {
-    marginBottom: 12,
-    borderRadius: 12,
-    overflow: 'hidden',
-    boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+  // Calculate how many days ago a date was
+  const daysAgo = (dateString) => {
+    const date = new Date(dateString);
+    const diffTime = Math.abs(today - date);
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   };
 
-  // Card head style with icon
-  const cardHeadStyle = (iconColor) => ({
-    display: 'flex',
-    alignItems: 'center',
-    padding: '10px 16px',
-    borderBottom: '1px solid #f0f0f0',
-    backgroundColor: '#fff'
-  });
+  // Format due date text for upcoming bills
+  const formatDueDate = (dateString) => {
+    const date = new Date(dateString);
+    const diffDays = Math.ceil((date - today) / (1000 * 60 * 60 * 24));
 
-  // Section based on card with title and collapsible content
+    if (diffDays === 0) return 'Today';
+    if (diffDays === 1) return 'Tomorrow';
+    if (diffDays <= 7) return `In ${diffDays} days`;
+
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  };
+
+  // Section card component with improved collapse button
   const SectionCard = ({ title, icon, children, section, empty = false, count, itemCount, emptyText }) => (
     <Card
-      style={cardStyle}
+      className="finance-section-card"
       bodyStyle={expanded[section] ? { padding: 0 } : { padding: 0, height: 0, overflow: 'hidden' }}
       title={
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: 0 }}>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            {icon}
-            <Text strong style={{ marginLeft: 8, fontSize: '0.95rem' }}>{title}</Text>
-            {count && (
-              <Badge
-                count={count}
-                showZero={false}
-                style={{ 
-                  backgroundColor: empty ? '#e0e0e0' : '#0066FF',
-                  marginLeft: 8,
-                  fontSize: '0.7rem',
-                  minWidth: 18,
-                  height: 18,
-                  borderRadius: 9,
-                  color: '#fff',
-                  fontWeight: 'bold',
-                  lineHeight: '18px'
-                }}
-              />
-            )}
-            {itemCount && (
-              <Text type="secondary" style={{ marginLeft: 8, fontSize: '0.75rem' }}>
-                ({itemCount})
-              </Text>
-            )}
+        <div className="section-header">
+          <div className="section-title-container">
+            <div className="section-icon-container">
+              {icon}
+            </div>
+            <div>
+              <Text className="section-title">{title}</Text>
+              {count && (
+                <Badge
+                  count={count}
+                  showZero={false}
+                  style={{ 
+                    backgroundColor: empty ? '#e0e0e0' : '#0066FF',
+                    marginLeft: 8,
+                    fontSize: '0.7rem',
+                    minWidth: 18,
+                    height: 18,
+                    borderRadius: 9,
+                    color: '#fff',
+                    fontWeight: 'bold',
+                    lineHeight: '18px'
+                  }}
+                />
+              )}
+              {itemCount && (
+                <Text type="secondary" className="section-subtitle">
+                  ({itemCount})
+                </Text>
+              )}
+            </div>
           </div>
           <Button 
-            type="text" 
-            size="small"
-            icon={expanded[section] ? <IconChevronUp size={18} /> : <IconChevronDown size={18} />}
+            type="default"
+            className="section-toggle-button"
+            icon={expanded[section] ? <IconChevronUp size={16} /> : <IconChevronDown size={16} />}
             onClick={() => toggleSection(section)}
-            style={{ padding: 4 }}
+            style={{ 
+              width: '32px',
+              height: '32px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderRadius: '16px',
+              backgroundColor: 'var(--neutral-50)',
+              border: '1px solid var(--neutral-200)',
+              boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)'
+            }}
           />
         </div>
       }
-      headStyle={{ padding: '10px 16px' }}
     >
       {empty && expanded[section] ? (
-        <div style={{ padding: 16, textAlign: 'center' }}>
+        <div className="empty-section">
           <Text type="secondary">{emptyText || 'No items to display'}</Text>
         </div>
       ) : (
@@ -194,44 +231,46 @@ const FinanceFeedMobile = () => {
   );
 
   return (
-    <div className="finance-feed-mobile" style={{ padding: '12px 12px 80px 12px' }}>
-      <Title level={4} style={{ marginBottom: 16, fontSize: '1.2rem' }}>Finance Feed</Title>
-      
+    <div className="finance-feed-mobile">
+      <Title level={4} style={{ marginBottom: 16 }}>Finance Feed</Title>
+
       {/* Past Due Payments */}
       <SectionCard
         title="Past Due Payments"
-        icon={<IconAlertOctagonFilled size={18} style={{ color: '#F1476F' }} />}
+        icon={<IconAlertOctagonFilled size={18} style={{ color: '#F1476F' }} />} // Use Filled version
         section="pastDue"
-        empty={pastDue.length === 0}
+        empty={pastDueBills.length === 0}
         emptyText="No past due payments"
-        count={pastDue.length}
+        count={pastDueBills.length}
       >
         <List
-          dataSource={pastDue}
+          dataSource={pastDueBills}
           renderItem={item => (
-            <List.Item
-              style={{ padding: '12px 16px', borderBottom: '1px solid #f0f0f0' }}
-            >
-              <List.Item.Meta
-                avatar={
-                  <Avatar 
-                    shape="square" 
-                    size={36} 
-                    style={{ backgroundColor: '#FFF5F5', borderRadius: 8 }}
-                    icon={getCategoryIcon(item.category, 18)}
-                  />
-                }
-                title={<Text strong>{item.name}</Text>}
-                description={
-                  <Text type="danger" style={{ fontSize: '0.75rem' }}>
-                    Due {item.daysOverdue} days ago
-                  </Text>
-                }
+            <List.Item className="feed-list-item">
+              <Avatar 
+                shape="square" 
+                className="feed-item-avatar"
+                style={{ backgroundColor: '#FFF5F5', borderRadius: 8 }}
+                icon={getCategoryIcon(item.category, 18)}
               />
-              <Text strong style={{ color: '#F1476F' }}>${item.amount.toFixed(2)}</Text>
+              <div className="feed-item-content">
+                <Text className="feed-item-title">{item.name}</Text>
+                <Text type="danger" className="due-date-text">
+                  Due {daysAgo(item.dueDate)} days ago
+                </Text>
+              </div>
+              <Text strong style={{color: '#F1476F'}}>${Number(item.amount).toFixed(2)}</Text>
             </List.Item>
           )}
         />
+        {pastDueBills.length > 0 && (
+          <div className="section-total">
+            <Text className="total-label">SECTION TOTAL</Text>
+            <Text className="total-amount total-amount-pastdue">
+              ${pastDueTotal.toFixed(2)}
+            </Text>
+          </div>
+        )}
       </SectionCard>
 
       {/* Bill Prep */}
@@ -246,29 +285,31 @@ const FinanceFeedMobile = () => {
         <List
           dataSource={billPrep}
           renderItem={item => (
-            <List.Item
-              style={{ padding: '12px 16px', borderBottom: '1px solid #f0f0f0' }}
-            >
-              <List.Item.Meta
-                avatar={
-                  <Avatar 
-                    shape="square" 
-                    size={36} 
-                    style={{ backgroundColor: '#EBF5FF', borderRadius: 8 }}
-                    icon={getCategoryIcon(item.category, 18)}
-                  />
-                }
-                title={<Text strong>{item.name}</Text>}
-                description={
-                  <Text type="secondary" style={{ fontSize: '0.75rem' }}>
-                    {item.itemCount} {item.itemCount === 1 ? 'Item' : 'Items'}
-                  </Text>
-                }
+            <List.Item className="feed-list-item">
+              <Avatar 
+                shape="square" 
+                className="feed-item-avatar"
+                style={{ backgroundColor: '#EBF5FF', borderRadius: 8 }}
+                icon={getCategoryIcon(item.category, 18)}
               />
-              <Text strong>${item.totalAmount.toFixed(2)}</Text>
+              <div className="feed-item-content">
+                <Text className="feed-item-title">{item.name}</Text>
+                <Text type="secondary" className="feed-item-subtitle">
+                  {item.bills.length} {item.bills.length === 1 ? 'Item' : 'Items'}
+                </Text>
+              </div>
+              <Text strong style={{color: '#1890FF'}}>${item.totalAmount.toFixed(2)}</Text>
             </List.Item>
           )}
         />
+        {billPrep.length > 0 && (
+          <div className="section-total">
+            <Text className="total-label">SECTION TOTAL</Text>
+            <Text className="total-amount total-amount-billprep">
+              ${billPrepTotal.toFixed(2)}
+            </Text>
+          </div>
+        )}
       </SectionCard>
 
       {/* Non-Recurring Bills */}
@@ -283,59 +324,52 @@ const FinanceFeedMobile = () => {
         <List
           dataSource={limitItems(nonRecurring, 'nonRecurring')}
           renderItem={item => (
-            <List.Item
-              style={{ padding: '12px 16px', borderBottom: '1px solid #f0f0f0' }}
-            >
-              <List.Item.Meta
-                avatar={
-                  <Avatar 
-                    shape="square" 
-                    size={36} 
-                    style={{ backgroundColor: '#E5F8EF', borderRadius: 8 }}
-                    icon={getCategoryIcon(item.category, 18)}
-                  />
-                }
-                title={
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <Text strong>{item.name}</Text>
-                    <Text strong style={{ color: item.isPaid ? '#26C67B' : '#F1476F' }}>
-                      ${item.amount.toFixed(2)}
-                    </Text>
-                  </div>
-                }
-                description={
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <Text type="secondary" style={{ fontSize: '0.75rem' }}>
-                      {item.daysAgo} days ago (Apr {item.daysAgo})
-                    </Text>
-                    {item.isPaid && (
-                      <Tag color="success" style={{ 
-                        margin: 0, 
-                        padding: '0 8px', 
-                        height: 20, 
-                        lineHeight: '20px',
-                        fontSize: '0.7rem',
-                        fontWeight: 'bold'
-                      }}>
-                        Paid
-                      </Tag>
-                    )}
-                  </div>
-                }
+            <List.Item className="feed-list-item">
+              <Avatar 
+                shape="square" 
+                className="feed-item-avatar"
+                style={{ backgroundColor: '#E5F8EF', borderRadius: 8 }}
+                icon={getCategoryIcon(item.category, 18)}
               />
+              <div className="feed-item-content">
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <Text className="feed-item-title">{item.name}</Text>
+                  <Text strong style={{ color: item.isPaid ? '#26C67B' : '#F1476F' }}>
+                    ${Number(item.amount).toFixed(2)}
+                  </Text>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 4 }}>
+                  <Text type="secondary" className="due-date-text">
+                    {daysAgo(item.dueDate)} days ago
+                  </Text>
+                  {item.isPaid && (
+                    <Tag className="status-tag status-tag-paid">
+                      Paid
+                    </Tag>
+                  )}
+                </div>
+              </div>
             </List.Item>
           )}
         />
         {nonRecurring.length > 3 && (
-          <div style={{ textAlign: 'center', padding: '8px 0' }}>
+          <div className="show-more-container">
             <Button 
               type="link" 
-              size="small" 
+              className="show-more-button"
+              style={{color: '#52C41A'}}
               onClick={() => toggleShowAll('nonRecurring')}
-              style={{ fontSize: '0.8rem', fontWeight: 500 }}
             >
-              {showAll.nonRecurring ? 'Show Less' : 'Display All'}
+              {showAll.nonRecurring ? 'Show Less' : 'Show All'}
             </Button>
+          </div>
+        )}
+        {nonRecurring.length > 0 && (
+          <div className="section-total">
+            <Text className="total-label">SECTION TOTAL</Text>
+            <Text className="total-amount total-amount-nonrecurring">
+              ${nonRecurringTotal.toFixed(2)}
+            </Text>
           </div>
         )}
       </SectionCard>
@@ -352,29 +386,31 @@ const FinanceFeedMobile = () => {
         <List
           dataSource={upcoming}
           renderItem={item => (
-            <List.Item
-              style={{ padding: '12px 16px', borderBottom: '1px solid #f0f0f0' }}
-            >
-              <List.Item.Meta
-                avatar={
-                  <Avatar 
-                    shape="square" 
-                    size={36} 
-                    style={{ backgroundColor: '#EBF5FF', borderRadius: 8 }}
-                    icon={getCategoryIcon(item.category, 18)}
-                  />
-                }
-                title={<Text strong>{item.name}</Text>}
-                description={
-                  <Text type="secondary" style={{ fontSize: '0.75rem' }}>
-                    Due {item.dueDate}
-                  </Text>
-                }
+            <List.Item className="feed-list-item">
+              <Avatar 
+                shape="square" 
+                className="feed-item-avatar"
+                style={{ backgroundColor: '#EBF5FF', borderRadius: 8 }}
+                icon={getCategoryIcon(item.category, 18)}
               />
-              <Text strong>${item.amount.toFixed(2)}</Text>
+              <div className="feed-item-content">
+                <Text className="feed-item-title">{item.name}</Text>
+                <Text type="secondary" className="feed-item-subtitle">
+                  Due {formatDueDate(item.dueDate)}
+                </Text>
+              </div>
+              <Text strong style={{color: '#0066FF'}}>${Number(item.amount).toFixed(2)}</Text>
             </List.Item>
           )}
         />
+        {upcoming.length > 0 && (
+          <div className="section-total">
+            <Text className="total-label">SECTION TOTAL</Text>
+            <Text className="total-amount total-amount-upcoming">
+              ${upcomingTotal.toFixed(2)}
+            </Text>
+          </div>
+        )}
       </SectionCard>
 
       {/* Recent Activity */}
@@ -389,24 +425,27 @@ const FinanceFeedMobile = () => {
         <List
           dataSource={limitItems(recentActivity, 'recentActivity')}
           renderItem={item => (
-            <List.Item
-              style={{ padding: '12px 16px', borderBottom: '1px solid #f0f0f0' }}
-            >
+            <List.Item className="feed-list-item">
               <Space direction="vertical" size={0} style={{ width: '100%' }}>
                 <Space align="center" style={{ width: '100%', justifyContent: 'space-between' }}>
                   <Space align="center">
-                    <IconCircleCheckFilled size={16} style={{ color: '#26C67B' }} />
+                    <Avatar 
+                      shape="square" 
+                      className="feed-item-avatar"
+                      style={{ backgroundColor: 'rgba(114, 46, 209, 0.1)' }}
+                      icon={<IconCircleCheckFilled size={16} style={{ color: '#722ED1' }} />} // Use Filled version
+                    />
                     <Text strong>{item.name}</Text>
                   </Space>
                   <Space direction="vertical" align="end" size={0}>
-                    <Text strong>${item.amount.toFixed(2)}</Text>
+                    <Text strong>${Number(item.amount).toFixed(2)}</Text>
                     <Text type="secondary" style={{ fontSize: '0.7rem' }}>{item.category}</Text>
                   </Space>
                 </Space>
-                <div style={{ marginLeft: 24 }}>
+                <div style={{ paddingLeft: 48 }}>
                   <Text type="secondary" style={{ fontSize: '0.75rem', display: 'flex', alignItems: 'center' }}>
-                    <IconClock size={12} style={{ marginRight: 4 }} />
-                    {item.daysAgo} days ago
+                    <IconClock size={10} style={{ marginRight: 4 }} />
+                    {daysAgo(item.dueDate)} days ago
                   </Text>
                 </div>
               </Space>
@@ -414,15 +453,23 @@ const FinanceFeedMobile = () => {
           )}
         />
         {recentActivity.length > 3 && (
-          <div style={{ textAlign: 'center', padding: '8px 0' }}>
+          <div className="show-more-container">
             <Button 
               type="link" 
-              size="small" 
+              className="show-more-button"
+              style={{color: '#722ED1'}}
               onClick={() => toggleShowAll('recentActivity')}
-              style={{ fontSize: '0.8rem', fontWeight: 500 }}
             >
-              {showAll.recentActivity ? 'Show Less' : 'Display All'}
+              {showAll.recentActivity ? 'Show Less' : 'Show All'}
             </Button>
+          </div>
+        )}
+        {recentActivity.length > 0 && (
+          <div className="section-total">
+            <Text className="total-label">SECTION TOTAL</Text>
+            <Text className="total-amount total-amount-activity">
+              ${recentActivityTotal.toFixed(2)}
+            </Text>
           </div>
         )}
       </SectionCard>
@@ -430,4 +477,4 @@ const FinanceFeedMobile = () => {
   );
 };
 
-export default FinanceFeedMobile;
+export default MobileFinanceFeed;
