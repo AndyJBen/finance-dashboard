@@ -328,7 +328,7 @@
   /* Optimizations for very small screens */
   @media (max-width: 350px) {
     .finance-feed-mobile {
-      padding: 12px 8px 80px 8px !important;
+      padding: 12px 8px 30px 8px !important;
     }
     
     .section-icon-container {
