@@ -89,17 +89,6 @@
         document.body.setAttribute('unselectable', 'on');
         document.body.setAttribute('onselectstart', 'return false;');
 
-        // Hide splash screen after app is loaded
-        setTimeout(() => {
-          const splash = document.getElementById('splash-screen');
-          if (splash) {
-            splash.style.opacity = '0';
-            setTimeout(() => {
-              splash.style.display = 'none';
-            }, 500);
-          }
-        }, 2000);
-
         // Apply to all elements dynamically added to the DOM
         const observer = new MutationObserver(function(mutations) {
           mutations.forEach(function(mutation) {
@@ -229,16 +218,6 @@
     </script>
   </head>
   <body unselectable="on" onselectstart="return false;" class="no-magnify">
-    <div id="splash-screen" class="splash-screen">
-      <div class="splash-logo">
-        <svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="50" cy="50" r="45" fill="#ffffff" />
-          <path d="M35 65V35H55C60.5228 35 65 39.4772 65 45C65 50.5228 60.5228 55 55 55H40" stroke="#0066FF" stroke-width="5" stroke-linecap="round" />
-        </svg>
-      </div>
-      <div class="splash-text">Financely</div>
-    </div>
-
     <div id="root" unselectable="on"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
