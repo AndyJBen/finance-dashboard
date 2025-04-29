@@ -143,15 +143,6 @@ a:hover {
     border: 1px solid var(--neutral-200) !important;
 }
 
-/* Ensure enough contrast for text */
-.ant-statistic-content-value {
-  color: var(--neutral-900);
-}
-
-.ant-typography.ant-typography-secondary {
-  color: var(--neutral-700); /* Darker than default for better contrast */
-}
-
 /* *** MODIFIED HEADER STYLES *** */
 .ant-layout-header {
     /* Sticky positioning */
