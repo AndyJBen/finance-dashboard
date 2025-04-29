@@ -655,7 +655,6 @@ main.ant-layout-content {
     margin: 0 !important;
     width: 100% !important;
     justify-content: space-between !important;
-    margin-bottom: 5px !important; /* Reduce margin between finance cards and bills card */
   }
   
   .financial-overview-row .ant-col {
