@@ -160,7 +160,7 @@
 }
 
 .feed-item-title {
-  font-size: 14px !important; /* Reduced from 15px */
+  font-size: 20px !important; /* Reduced from 15px */
   font-weight: 500 !important;
   margin-bottom: 0px !important;
   display: block !important;
