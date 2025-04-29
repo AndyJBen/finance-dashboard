@@ -1,3 +1,8 @@
+// src/components/FinanceFeed/MobileFinanceFeed.jsx
+import React, { useState, useContext } from 'react';
+// **** ADD THIS LINE ****
+import { Typography, Card, Space, List, Badge, Tag, Avatar, Button } from 'antd'; 
+// **** END ADD ****
 import {
   IconAlertOctagon,        // Changed from Filled
   IconClipboardList,

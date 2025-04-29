@@ -2,7 +2,6 @@ const CACHE_NAME = 'financely-v1';
 const urlsToCache = [
   '/',
   '/index.html',
-  '/manifest.json',
   '/src/main.jsx',
   '/src/assets/styles/global.css',
   // Add other important assets here
