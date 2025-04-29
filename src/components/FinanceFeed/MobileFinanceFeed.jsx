@@ -35,7 +35,7 @@ import {
 import { FinanceContext } from '../../contexts/FinanceContext'; // Adjust path if needed
 
 // Import the CSS file for mobile styling
-import './MobileFinanceFeed.css';
+import './styles/MobileFinanceFeed.css';
 
 const { Text, Title } = Typography;
 
