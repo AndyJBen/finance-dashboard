@@ -232,7 +232,6 @@
   
   /* Avatar styling */
   .finance-feed-mobile .ant-avatar {
-    border-radius: 8px !important;
     display: flex;
     align-items: center;
     justify-content: center;
