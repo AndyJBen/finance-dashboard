@@ -1,18 +1,18 @@
-/* MobileFinanceFeed.css */
+/* src/components/FinanceFeed/styles/MobileFinanceFeed.css */
 
-/* --- Global Redesign Variables --- */
+/* --- Global Design Variables --- */
 :root {
   --card-radius: 20px;
-  --section-spacing: 18px;
-  --item-spacing: 14px;
+  --section-spacing: 24px; /* Increased from 18px */
+  --item-spacing: 18px; /* Increased from 14px */
   --header-font-weight: 600;
-  --title-font-size: 17px;
+  --title-font-size: 16px; /* Reduced from 17px */
   --subtitle-font-size: 13px;
   --label-font-size: 12px;
   --button-radius: 14px;
   --shadow-ambient: 0 8px 24px -12px rgba(0, 0, 0, 0.12);
   
-  /* Refined color palette */
+  /* Color palette */
   --past-due-bg: #FFF0F0;
   --past-due-color: #E54D60;
   --bill-prep-bg: #F0F7FF;
@@ -27,26 +27,27 @@
 
 /* --- Finance Feed Container --- */
 .finance-feed-mobile {
-  background-color: var(--neutral-100, #f1f5f9);
+  background-color: var(--neutral-100, #f5f7fa);
   width: 100%;
   max-width: 100%;
   overflow-x: hidden;
-  padding: 16px 16px 40px 16px !important;
+  padding: 16px 16px 60px 16px !important; /* Increased bottom padding */
   -webkit-overflow-scrolling: touch;
   overscroll-behavior-y: none;
 }
 
 /* --- Section Card Redesign --- */
 .finance-section-card {
-  margin-bottom: var(--section-spacing);
+  margin-bottom: var(--section-spacing) !important; /* Important to override other styles */
   border-radius: var(--card-radius) !important;
   box-shadow: var(--shadow-ambient) !important;
   overflow: hidden;
   border: none !important;
+  transition: transform 0.2s ease;
 }
 
 .finance-section-card .ant-card-head {
-  background: linear-gradient(to right, rgba(255,255,255,0.7), rgba(255,255,255,0.95));
+  background: linear-gradient(to right, rgba(255,255,255,0.8), rgba(255,255,255,0.95));
   backdrop-filter: blur(8px);
   border-bottom: 1px solid rgba(0,0,0,0.04);
   padding: 16px !important;
@@ -57,21 +58,23 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 2px 0; /* Add a bit of padding */
 }
 
 .section-title-container {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 14px; /* Increased from 10px */
 }
 
 .section-icon-container {
-  width: 32px;
-  height: 32px;
-  border-radius: 10px;
+  width: 36px; /* Increased from 32px */
+  height: 36px; /* Increased from 32px */
+  border-radius: 50%; /* Make it circular */
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
 }
 
 /* Apply custom backgrounds for each section icon */
@@ -111,21 +114,25 @@
 /* --- Section Toggle Button --- */
 .section-toggle-button {
   width: 32px !important;
-  height: 20px !important;
+  height: 32px !important; /* Increased from 20px */
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  border-radius: 16px !important;
+  border-radius: 50% !important; /* Make button circular */
   background-color: var(--neutral-50) !important;
   border: 1px solid var(--neutral-200) !important;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
   color: rgba(0, 0, 0, 0.45);
+  margin-left: 8px; /* Add some space */
 }
 
 /* --- List Items Redesign --- */
 .feed-list-item {
-  padding: 14px 16px !important;
+  padding: 18px 16px !important; /* Increased from 14px */
   border-bottom: 1px solid rgba(0,0,0,0.04) !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 14px !important; /* Add gap between items */
 }
 
 .feed-list-item:last-child {
@@ -133,23 +140,34 @@
 }
 
 .feed-item-avatar {
-  width: 40px !important;
-  height: 40px !important;
-  border-radius: 30px !important;
+  width: 44px !important; /* Increased from 40px */
+  height: 44px !important; /* Increased from 40px */
+  border-radius: 50% !important; /* Ensure it's perfectly circular */
+  flex-shrink: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08) !important;
 }
 
 .feed-item-content {
-  padding-left: 12px;
-  flex: 1;
-  min-width: 0;
+  padding-left: 0 !important; /* Remove left padding, we use gap instead */
+  flex: 1 !important;
+  min-width: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px !important;
 }
 
 .feed-item-title {
-  font-size: 15px !important;
+  font-size: 14px !important; /* Reduced from 15px */
   font-weight: 500 !important;
-  margin-bottom: 2px !important;
-  display: block;
+  margin-bottom: 0px !important;
+  display: block !important;
   line-height: 1.3 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
 }
 
 .feed-item-subtitle {
@@ -159,26 +177,26 @@
 
 .due-date-text {
   font-size: var(--label-font-size) !important;
-  display: flex;
-  align-items: center;
-  gap: 4px;
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
 }
 
 /* --- Section Totals --- */
 .section-total {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 16px;
-  background-color: rgba(0,0,0,0.02);
-  border-top: 1px solid rgba(0,0,0,0.04);
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  padding: 14px 16px !important; /* Increased from 12px */
+  background-color: rgba(0,0,0,0.02) !important;
+  border-top: 1px solid rgba(0,0,0,0.04) !important;
 }
 
 .total-label {
   font-size: 11px !important;
   font-weight: 500 !important;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
   color: rgba(0,0,0,0.5) !important;
 }
 
@@ -196,11 +214,12 @@
 
 /* --- Status Tags --- */
 .status-tag {
-  border-radius: 6px !important;
+  border-radius: 12px !important; /* More rounded */
   font-size: 11px !important;
   font-weight: 500 !important;
-  padding: 2px 6px !important;
+  padding: 2px 8px !important; /* Increased horizontal padding */
   line-height: 1.2 !important;
+  margin-top: 4px !important;
 }
 
 .status-tag-paid {
@@ -215,9 +234,9 @@
 
 /* --- Show More Button --- */
 .show-more-container {
-  padding: 8px 0;
-  text-align: center;
-  border-top: 1px solid rgba(0,0,0,0.04);
+  padding: 12px 0 !important; /* Increased from 8px */
+  text-align: center !important;
+  border-top: 1px solid rgba(0,0,0,0.04) !important;
 }
 
 .show-more-button {
@@ -230,19 +249,41 @@
 
 /* --- Empty Section --- */
 .empty-section {
-  padding: 32px 16px;
-  text-align: center;
+  padding: 32px 16px !important;
+  text-align: center !important;
+}
+
+/* --- Special styles for the Recent Activity section --- */
+.feed-list-item .ant-space {
+  width: 100% !important;
+}
+
+/* For non-recurring bill item layout */
+.feed-list-item .feed-item-content > div {
+  display: flex !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+}
+
+.feed-list-item .feed-item-content > div:first-child {
+  margin-bottom: 4px !important;
+}
+
+/* Fix for padding in recent activity section */
+div[style="padding-left: 48px;"] {
+  padding-left: 0 !important;
+  margin-top: 2px !important;
 }
 
 /* Optimizations for very small screens */
 @media (max-width: 350px) {
   .finance-feed-mobile {
-    padding: 12px 12px 40px 12px !important;
+    padding: 12px 12px 60px 12px !important;
   }
   
   .section-icon-container {
-    width: 28px;
-    height: 28px;
+    width: 32px !important;
+    height: 32px !important;
   }
   
   .section-title {
@@ -250,19 +291,37 @@
   }
   
   .feed-list-item {
-    padding: 12px !important;
+    padding: 14px 12px !important;
   }
   
   .feed-item-avatar {
-    width: 36px !important;
-    height: 36px !important;
+    width: 40px !important;
+    height: 40px !important;
   }
   
   .feed-item-title {
-    font-size: 14px !important;
+    font-size: 13px !important;
   }
   
   .section-total {
-    padding: 10px 14px;
+    padding: 12px 14px !important;
   }
+}
+
+/* Additional spacing for consistent padding */
+.ant-layout-content {
+  padding-bottom: 80px !important; /* Ensure enough space at bottom */
+}
+
+/* Fix for the specific Space component issue */
+.ant-space-vertical {
+  width: 100% !important;
+}
+
+/* Important fix for the amount display in list items */
+.feed-list-item > .ant-typography {
+  margin-left: auto !important; /* Push to the right */
+  min-width: 70px !important; /* Ensure consistent width */
+  text-align: right !important;
+  flex-shrink: 0 !important;
 }
