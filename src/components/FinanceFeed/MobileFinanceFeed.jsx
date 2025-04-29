@@ -1,48 +1,45 @@
-// src/components/FinanceFeed/MobileFinanceFeed.jsx
 import React, { useState, useContext } from 'react';
-import { Typography, List, Badge, Tag, Avatar, Button, Space, Divider } from 'antd';
+import { Typography, Card, Space, List, Badge, Tag, Avatar, Button, Divider } from 'antd';
 import {
-  IconAlertOctagon,
+  IconAlertOctagonFilled,
   IconClipboardList,
   IconRepeatOff,
-  IconHourglass,
-  IconClock,
+  IconHourglassHigh,
+  IconTimeDuration15,
   IconChevronDown,
   IconChevronUp,
-  IconCircleCheck,
-  IconCar,
-  IconHome,
-  IconDeviceLaptop,
+  IconCircleCheckFilled,
+  IconClock,
+  IconCarFilled,
+  IconHomeFilled,
+  IconDeviceLaptopFilled,
   IconWifi,
-  IconDroplet,
+  IconDropletFilled,
   IconCreditCard,
   IconShoppingBag
 } from '@tabler/icons-react';
 
-// Import the FinanceContext
+// Import context
 import { FinanceContext } from '../../contexts/FinanceContext';
 
-// Import the CSS file
-import './MobileFinanceFeed.css';
-
-const { Text } = Typography;
+const { Text, Title } = Typography;
 
 // Helper function to get icon based on category
 const getCategoryIcon = (category, size = 16) => {
   const lowerCategory = category?.toLowerCase() || '';
   
   if (lowerCategory.includes('car') || lowerCategory.includes('auto')) 
-    return <IconCar size={size} style={{ color: '#FF9233' }} />;
+    return <IconCarFilled size={size} style={{ color: '#FF9233' }} />;
   if (lowerCategory.includes('home') || lowerCategory.includes('rent')) 
-    return <IconHome size={size} style={{ color: '#F1476F' }} />;
+    return <IconHomeFilled size={size} style={{ color: '#F1476F' }} />;
   if (lowerCategory.includes('internet') || lowerCategory.includes('wifi')) 
     return <IconWifi size={size} style={{ color: '#0066FF' }} />;
   if (lowerCategory.includes('water')) 
-    return <IconDroplet size={size} style={{ color: '#26C67B' }} />;
+    return <IconDropletFilled size={size} style={{ color: '#26C67B' }} />;
   if (lowerCategory.includes('gas')) 
-    return <IconDroplet size={size} style={{ color: '#FF9233' }} />;
+    return <IconDropletFilled size={size} style={{ color: '#FF9233' }} />;
   if (lowerCategory.includes('subscription') || lowerCategory.includes('chatgpt')) 
-    return <IconDeviceLaptop size={size} style={{ color: '#0066FF' }} />;
+    return <IconDeviceLaptopFilled size={size} style={{ color: '#0066FF' }} />;
   if (lowerCategory.includes('medical')) 
     return <IconClipboardList size={size} style={{ color: '#F1476F' }} />;
   if (lowerCategory.includes('clothing')) 
@@ -52,8 +49,8 @@ const getCategoryIcon = (category, size = 16) => {
   return <IconCreditCard size={size} style={{ color: '#0066FF' }} />;
 };
 
-const MobileFinanceFeed = ({ onEditBill, onAddBill }) => {
-  // Use the FinanceContext to get data
+const MobileFinanceFeed = () => {
+  // Get data from context
   const financeContext = useContext(FinanceContext);
   
   // Get the data we need for each section
@@ -161,384 +158,341 @@ const MobileFinanceFeed = ({ onEditBill, onAddBill }) => {
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   };
 
+  // Mobile card styling - more compact than desktop
+  const cardStyle = {
+    marginBottom: 12,
+    borderRadius: 12,
+    overflow: 'hidden',
+    boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+  };
+
+  // Section card component with improved collapse button
+  const SectionCard = ({ title, icon, children, section, empty = false, count, itemCount, emptyText }) => (
+    <Card
+      style={cardStyle}
+      bodyStyle={expanded[section] ? { padding: 0 } : { padding: 0, height: 0, overflow: 'hidden' }}
+      title={
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            {icon}
+            <Text strong style={{ marginLeft: 8, fontSize: '0.95rem' }}>{title}</Text>
+            {count && (
+              <Badge
+                count={count}
+                showZero={false}
+                style={{ 
+                  backgroundColor: empty ? '#e0e0e0' : '#0066FF',
+                  marginLeft: 8,
+                  fontSize: '0.7rem',
+                  minWidth: 18,
+                  height: 18,
+                  borderRadius: 9,
+                  color: '#fff',
+                  fontWeight: 'bold',
+                  lineHeight: '18px'
+                }}
+              />
+            )}
+            {itemCount && (
+              <Text type="secondary" style={{ marginLeft: 8, fontSize: '0.75rem' }}>
+                ({itemCount})
+              </Text>
+            )}
+          </div>
+          <Button 
+            type="default"
+            className="section-toggle-button"
+            icon={expanded[section] ? <IconChevronUp size={16} /> : <IconChevronDown size={16} />}
+            onClick={() => toggleSection(section)}
+            style={{ 
+              width: '32px',
+              height: '32px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderRadius: '16px',
+              backgroundColor: 'var(--neutral-50)',
+              border: '1px solid var(--neutral-200)',
+              boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)'
+            }}
+          />
+        </div>
+      }
+      headStyle={{ padding: '10px 16px' }}
+    >
+      {empty && expanded[section] ? (
+        <div style={{ padding: 16, textAlign: 'center' }}>
+          <Text type="secondary">{emptyText || 'No items to display'}</Text>
+        </div>
+      ) : (
+        children
+      )}
+    </Card>
+  );
+
   return (
-    <div className="finance-feed-mobile">
-      {/* Past Due Payments Section */}
-      <section className="finance-section-card">
-        <div className="section-header section-header-pastdue">
-          <div className="section-title-container">
-            <div className="section-icon-container">
-              <IconAlertOctagon size={16} className="icon-pastdue" />
-            </div>
-            <div>
-              <Text className="section-title">Past Due Payments</Text>
-              {pastDueBills.length > 0 && (
-                <Text className="section-subtitle">
-                  {pastDueBills.length} {pastDueBills.length === 1 ? 'item' : 'items'}
-                </Text>
-              )}
-            </div>
-          </div>
-          <Button 
-            type="text" 
-            className="section-toggle-button"
-            icon={expanded.pastDue ? <IconChevronUp size={16} /> : <IconChevronDown size={16} />}
-            onClick={() => toggleSection('pastDue')}
-          />
-        </div>
-        
-        <div className="section-content" style={{maxHeight: expanded.pastDue ? '1000px' : '0px'}}>
-          {pastDueBills.length === 0 ? (
-            <div className="empty-section">
-              <Text type="secondary">No past due payments</Text>
-            </div>
-          ) : (
+    <div className="finance-feed-mobile" style={{ padding: '12px 12px 80px 12px' }}>
+      <Title level={4} style={{ marginBottom: 16, fontSize: '1.2rem' }}>Finance Feed</Title>
+      
+      {/* Past Due Payments */}
+      <SectionCard
+        title="Past Due Payments"
+        icon={<IconAlertOctagonFilled size={18} style={{ color: '#F1476F' }} />}
+        section="pastDue"
+        empty={pastDueBills.length === 0}
+        emptyText="No past due payments"
+        count={pastDueBills.length}
+      >
+        <List
+          dataSource={pastDueBills}
+          renderItem={(item, index) => (
             <>
-              <List
-                className="apple-style-list"
-                dataSource={pastDueBills}
-                renderItem={(item, index) => (
-                  <>
-                    <List.Item className="feed-list-item">
-                      <Avatar 
-                        shape="square" 
-                        className="feed-item-avatar"
-                        style={{backgroundColor: 'rgba(245, 34, 45, 0.1)'}}
-                        icon={getCategoryIcon(item.category, 16)}
-                      />
-                      <div className="feed-item-content">
-                        <Text className="feed-item-title">{item.name}</Text>
-                        <Text type="danger" className="due-date-text">
-                          Due {daysAgo(item.dueDate)} days ago
-                        </Text>
-                      </div>
-                      <Text strong style={{color: '#F5222D'}}>${Number(item.amount).toFixed(2)}</Text>
-                    </List.Item>
-                    {index < pastDueBills.length - 1 && <Divider className="item-divider" />}
-                  </>
-                )}
-              />
-              <div className="section-total">
-                <Text className="total-label">SECTION TOTAL</Text>
-                <Text className="total-amount total-amount-pastdue">
-                  ${pastDueTotal.toFixed(2)}
-                </Text>
-              </div>
-            </>
-          )}
-        </div>
-      </section>
-
-      {/* Bill Prep Section */}
-      <section className="finance-section-card">
-        <div className="section-header section-header-billprep">
-          <div className="section-title-container">
-            <div className="section-icon-container">
-              <IconClipboardList size={16} className="icon-billprep" />
-            </div>
-            <div>
-              <Text className="section-title">Bill Prep</Text>
-              {billPrep.length > 0 && (
-                <Text className="section-subtitle">
-                  {billPrep.length} {billPrep.length === 1 ? 'item' : 'items'}
-                </Text>
-              )}
-            </div>
-          </div>
-          <Button 
-            type="text" 
-            className="section-toggle-button"
-            icon={expanded.billPrep ? <IconChevronUp size={16} /> : <IconChevronDown size={16} />}
-            onClick={() => toggleSection('billPrep')}
-          />
-        </div>
-        
-        <div className="section-content" style={{maxHeight: expanded.billPrep ? '1000px' : '0px'}}>
-          {billPrep.length === 0 ? (
-            <div className="empty-section">
-              <Text type="secondary">No bills in preparation</Text>
-            </div>
-          ) : (
-            <>
-              <List
-                className="apple-style-list"
-                dataSource={billPrep}
-                renderItem={(item, index) => (
-                  <>
-                    <List.Item className="feed-list-item">
-                      <Avatar 
-                        shape="square" 
-                        className="feed-item-avatar"
-                        style={{backgroundColor: 'rgba(24, 144, 255, 0.1)'}}
-                        icon={getCategoryIcon(item.category, 16)}
-                      />
-                      <div className="feed-item-content">
-                        <Text className="feed-item-title">{item.name}</Text>
-                        <Text type="secondary" className="feed-item-subtitle">
-                          {item.bills.length} {item.bills.length === 1 ? 'Item' : 'Items'}
-                        </Text>
-                      </div>
-                      <Text strong style={{color: '#1890FF'}}>${item.totalAmount.toFixed(2)}</Text>
-                    </List.Item>
-                    {index < billPrep.length - 1 && <Divider className="item-divider" />}
-                  </>
-                )}
-              />
-              <div className="section-total">
-                <Text className="total-label">SECTION TOTAL</Text>
-                <Text className="total-amount total-amount-billprep">
-                  ${billPrepTotal.toFixed(2)}
-                </Text>
-              </div>
-            </>
-          )}
-        </div>
-      </section>
-
-      {/* Non-Recurring Bills Section */}
-      <section className="finance-section-card">
-        <div className="section-header section-header-nonrecurring">
-          <div className="section-title-container">
-            <div className="section-icon-container">
-              <IconRepeatOff size={16} className="icon-nonrecurring" />
-            </div>
-            <div>
-              <Text className="section-title">Non-Recurring Bills</Text>
-              {nonRecurring.length > 0 && (
-                <Text className="section-subtitle">
-                  {nonRecurring.length} {nonRecurring.length === 1 ? 'item' : 'items'}
-                </Text>
-              )}
-            </div>
-          </div>
-          <Button 
-            type="text" 
-            className="section-toggle-button"
-            icon={expanded.nonRecurring ? <IconChevronUp size={16} /> : <IconChevronDown size={16} />}
-            onClick={() => toggleSection('nonRecurring')}
-          />
-        </div>
-        
-        <div className="section-content" style={{maxHeight: expanded.nonRecurring ? '1000px' : '0px'}}>
-          {nonRecurring.length === 0 ? (
-            <div className="empty-section">
-              <Text type="secondary">No non-recurring bills</Text>
-            </div>
-          ) : (
-            <>
-              <List
-                className="apple-style-list"
-                dataSource={limitItems(nonRecurring, 'nonRecurring')}
-                renderItem={(item, index) => (
-                  <>
-                    <List.Item className="feed-list-item">
-                      <Avatar 
-                        shape="square" 
-                        className="feed-item-avatar"
-                        style={{backgroundColor: 'rgba(82, 196, 26, 0.1)'}}
-                        icon={getCategoryIcon(item.category, 16)}
-                      />
-                      <div className="feed-item-content">
-                        <div style={{display: 'flex', justifyContent: 'space-between'}}>
-                          <Text className="feed-item-title">{item.name}</Text>
-                          <Text strong style={{color: item.isPaid ? '#52C41A' : '#F5222D'}}>
-                            ${Number(item.amount).toFixed(2)}
-                          </Text>
-                        </div>
-                        <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 4}}>
-                          <Text type="secondary" className="due-date-text">
-                            {daysAgo(item.dueDate)} days ago
-                          </Text>
-                          {item.isPaid && (
-                            <Tag className="status-tag status-tag-paid">
-                              Paid
-                            </Tag>
-                          )}
-                        </div>
-                      </div>
-                    </List.Item>
-                    {index < limitItems(nonRecurring, 'nonRecurring').length - 1 && 
-                      <Divider className="item-divider" />}
-                  </>
-                )}
-              />
-              {nonRecurring.length > 3 && (
-                <div className="show-more-container">
-                  <Button 
-                    type="link" 
-                    className="show-more-button"
-                    style={{color: '#52C41A'}}
-                    onClick={() => toggleShowAll('nonRecurring')}
-                  >
-                    {showAll.nonRecurring ? 'Show Less' : 'Show All'}
-                  </Button>
+              <List.Item
+                style={{ padding: '12px 16px', borderBottom: index < pastDueBills.length - 1 ? '1px solid #f0f0f0' : 'none' }}
+              >
+                <Avatar 
+                  shape="square" 
+                  className="feed-item-avatar"
+                  style={{ backgroundColor: '#FFF5F5', borderRadius: 8 }}
+                  icon={getCategoryIcon(item.category, 18)}
+                />
+                <div className="feed-item-content">
+                  <Text strong className="feed-item-title">{item.name}</Text>
+                  <Text type="danger" className="due-date-text">
+                    Due {daysAgo(item.dueDate)} days ago
+                  </Text>
                 </div>
-              )}
-              <div className="section-total">
-                <Text className="total-label">SECTION TOTAL</Text>
-                <Text className="total-amount total-amount-nonrecurring">
-                  ${nonRecurringTotal.toFixed(2)}
-                </Text>
-              </div>
+                <Text strong style={{ color: '#F1476F' }}>${Number(item.amount).toFixed(2)}</Text>
+              </List.Item>
             </>
           )}
-        </div>
-      </section>
-
-      {/* Upcoming Bills Section */}
-      <section className="finance-section-card">
-        <div className="section-header section-header-upcoming">
-          <div className="section-title-container">
-            <div className="section-icon-container">
-              <IconHourglass size={16} className="icon-upcoming" />
-            </div>
-            <div>
-              <Text className="section-title">Upcoming Bills</Text>
-              {upcoming.length > 0 && (
-                <Text className="section-subtitle">
-                  {upcoming.length} {upcoming.length === 1 ? 'item' : 'items'}
-                </Text>
-              )}
-            </div>
+        />
+        {pastDueBills.length > 0 && (
+          <div className="section-total">
+            <Text className="total-label">SECTION TOTAL</Text>
+            <Text className="total-amount total-amount-pastdue">
+              ${pastDueTotal.toFixed(2)}
+            </Text>
           </div>
-          <Button 
-            type="text" 
-            className="section-toggle-button"
-            icon={expanded.upcoming ? <IconChevronUp size={16} /> : <IconChevronDown size={16} />}
-            onClick={() => toggleSection('upcoming')}
-          />
-        </div>
-        
-        <div className="section-content" style={{maxHeight: expanded.upcoming ? '1000px' : '0px'}}>
-          {upcoming.length === 0 ? (
-            <div className="empty-section">
-              <Text type="secondary">No upcoming bills</Text>
-            </div>
-          ) : (
+        )}
+      </SectionCard>
+
+      {/* Bill Prep */}
+      <SectionCard
+        title="Bill Prep"
+        icon={<IconClipboardList size={18} style={{ color: '#0066FF' }} />}
+        section="billPrep"
+        empty={billPrep.length === 0}
+        emptyText="No bills in preparation"
+        count={billPrep.length}
+      >
+        <List
+          dataSource={billPrep}
+          renderItem={(item, index) => (
             <>
-              <List
-                className="apple-style-list"
-                dataSource={upcoming}
-                renderItem={(item, index) => (
-                  <>
-                    <List.Item className="feed-list-item">
+              <List.Item
+                style={{ padding: '12px 16px', borderBottom: index < billPrep.length - 1 ? '1px solid #f0f0f0' : 'none' }}
+              >
+                <Avatar 
+                  shape="square" 
+                  className="feed-item-avatar"
+                  style={{ backgroundColor: '#EBF5FF', borderRadius: 8 }}
+                  icon={getCategoryIcon(item.category, 18)}
+                />
+                <div className="feed-item-content">
+                  <Text strong className="feed-item-title">{item.name}</Text>
+                  <Text type="secondary" className="feed-item-subtitle">
+                    {item.bills.length} {item.bills.length === 1 ? 'Item' : 'Items'}
+                  </Text>
+                </div>
+                <Text strong>${item.totalAmount.toFixed(2)}</Text>
+              </List.Item>
+            </>
+          )}
+        />
+        {billPrep.length > 0 && (
+          <div className="section-total">
+            <Text className="total-label">SECTION TOTAL</Text>
+            <Text className="total-amount total-amount-billprep">
+              ${billPrepTotal.toFixed(2)}
+            </Text>
+          </div>
+        )}
+      </SectionCard>
+
+      {/* Non-Recurring Bills */}
+      <SectionCard
+        title="Non-Recurring Bills"
+        icon={<IconRepeatOff size={18} style={{ color: '#26C67B' }} />}
+        section="nonRecurring"
+        empty={nonRecurring.length === 0}
+        emptyText="No non-recurring bills"
+        count={nonRecurring.length}
+      >
+        <List
+          dataSource={limitItems(nonRecurring, 'nonRecurring')}
+          renderItem={(item, index) => (
+            <>
+              <List.Item
+                style={{ padding: '12px 16px', borderBottom: index < limitItems(nonRecurring, 'nonRecurring').length - 1 ? '1px solid #f0f0f0' : 'none' }}
+              >
+                <Avatar 
+                  shape="square" 
+                  className="feed-item-avatar"
+                  style={{ backgroundColor: '#E5F8EF', borderRadius: 8 }}
+                  icon={getCategoryIcon(item.category, 18)}
+                />
+                <div className="feed-item-content">
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <Text strong className="feed-item-title">{item.name}</Text>
+                    <Text strong style={{ color: item.isPaid ? '#26C67B' : '#F1476F' }}>
+                      ${Number(item.amount).toFixed(2)}
+                    </Text>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 4 }}>
+                    <Text type="secondary" className="due-date-text">
+                      {daysAgo(item.dueDate)} days ago
+                    </Text>
+                    {item.isPaid && (
+                      <Tag className="status-tag status-tag-paid">
+                        Paid
+                      </Tag>
+                    )}
+                  </div>
+                </div>
+              </List.Item>
+            </>
+          )}
+        />
+        {nonRecurring.length > 3 && (
+          <div className="show-more-container">
+            <Button 
+              type="link" 
+              className="show-more-button"
+              style={{color: '#52C41A'}}
+              onClick={() => toggleShowAll('nonRecurring')}
+            >
+              {showAll.nonRecurring ? 'Show Less' : 'Show All'}
+            </Button>
+          </div>
+        )}
+        {nonRecurring.length > 0 && (
+          <div className="section-total">
+            <Text className="total-label">SECTION TOTAL</Text>
+            <Text className="total-amount total-amount-nonrecurring">
+              ${nonRecurringTotal.toFixed(2)}
+            </Text>
+          </div>
+        )}
+      </SectionCard>
+
+      {/* Upcoming Bills */}
+      <SectionCard
+        title="Upcoming Bills"
+        icon={<IconHourglassHigh size={18} style={{ color: '#0066FF' }} />}
+        section="upcoming"
+        empty={upcoming.length === 0}
+        emptyText="No upcoming bills"
+        count={upcoming.length}
+      >
+        <List
+          dataSource={upcoming}
+          renderItem={(item, index) => (
+            <>
+              <List.Item
+                style={{ padding: '12px 16px', borderBottom: index < upcoming.length - 1 ? '1px solid #f0f0f0' : 'none' }}
+              >
+                <Avatar 
+                  shape="square" 
+                  className="feed-item-avatar"
+                  style={{ backgroundColor: '#EBF5FF', borderRadius: 8 }}
+                  icon={getCategoryIcon(item.category, 18)}
+                />
+                <div className="feed-item-content">
+                  <Text strong className="feed-item-title">{item.name}</Text>
+                  <Text type="secondary" className="feed-item-subtitle">
+                    Due {formatDueDate(item.dueDate)}
+                  </Text>
+                </div>
+                <Text strong>${Number(item.amount).toFixed(2)}</Text>
+              </List.Item>
+            </>
+          )}
+        />
+        {upcoming.length > 0 && (
+          <div className="section-total">
+            <Text className="total-label">SECTION TOTAL</Text>
+            <Text className="total-amount total-amount-upcoming">
+              ${upcomingTotal.toFixed(2)}
+            </Text>
+          </div>
+        )}
+      </SectionCard>
+
+      {/* Recent Activity */}
+      <SectionCard
+        title="Recent Activity"
+        icon={<IconTimeDuration15 size={18} style={{ color: '#0066FF' }} />}
+        section="recentActivity"
+        empty={recentActivity.length === 0}
+        emptyText="No recent activity"
+        count={recentActivity.length}
+      >
+        <List
+          dataSource={limitItems(recentActivity, 'recentActivity')}
+          renderItem={(item, index) => (
+            <>
+              <List.Item
+                style={{ padding: '12px 16px', borderBottom: index < limitItems(recentActivity, 'recentActivity').length - 1 ? '1px solid #f0f0f0' : 'none' }}
+              >
+                <Space direction="vertical" size={0} style={{ width: '100%' }}>
+                  <Space align="center" style={{ width: '100%', justifyContent: 'space-between' }}>
+                    <Space align="center">
                       <Avatar 
                         shape="square" 
                         className="feed-item-avatar"
-                        style={{backgroundColor: 'rgba(250, 140, 22, 0.1)'}}
-                        icon={getCategoryIcon(item.category, 16)}
+                        style={{ backgroundColor: 'rgba(114, 46, 209, 0.1)' }}
+                        icon={<IconCircleCheckFilled size={16} style={{ color: '#722ED1' }} />}
                       />
-                      <div className="feed-item-content">
-                        <Text className="feed-item-title">{item.name}</Text>
-                        <Text type="secondary" className="feed-item-subtitle">
-                          Due {formatDueDate(item.dueDate)}
-                        </Text>
-                      </div>
-                      <Text strong style={{color: '#FA8C16'}}>${Number(item.amount).toFixed(2)}</Text>
-                    </List.Item>
-                    {index < upcoming.length - 1 && <Divider className="item-divider" />}
-                  </>
-                )}
-              />
-              <div className="section-total">
-                <Text className="total-label">SECTION TOTAL</Text>
-                <Text className="total-amount total-amount-upcoming">
-                  ${upcomingTotal.toFixed(2)}
-                </Text>
-              </div>
+                      <Text strong>{item.name}</Text>
+                    </Space>
+                    <Space direction="vertical" align="end" size={0}>
+                      <Text strong>${Number(item.amount).toFixed(2)}</Text>
+                      <Text type="secondary" style={{ fontSize: '0.7rem' }}>{item.category}</Text>
+                    </Space>
+                  </Space>
+                  <div style={{ paddingLeft: 48 }}>
+                    <Text type="secondary" style={{ fontSize: '0.75rem', display: 'flex', alignItems: 'center' }}>
+                      <IconClock size={10} style={{ marginRight: 4 }} />
+                      {daysAgo(item.dueDate)} days ago
+                    </Text>
+                  </div>
+                </Space>
+              </List.Item>
             </>
           )}
-        </div>
-      </section>
-
-      {/* Recent Activity Section */}
-      <section className="finance-section-card">
-        <div className="section-header section-header-activity">
-          <div className="section-title-container">
-            <div className="section-icon-container">
-              <IconClock size={16} className="icon-activity" />
-            </div>
-            <div>
-              <Text className="section-title">Recent Activity</Text>
-              {recentActivity.length > 0 && (
-                <Text className="section-subtitle">
-                  {recentActivity.length} {recentActivity.length === 1 ? 'item' : 'items'}
-                </Text>
-              )}
-            </div>
+        />
+        {recentActivity.length > 3 && (
+          <div className="show-more-container">
+            <Button 
+              type="link" 
+              className="show-more-button"
+              style={{color: '#722ED1'}}
+              onClick={() => toggleShowAll('recentActivity')}
+            >
+              {showAll.recentActivity ? 'Show Less' : 'Show All'}
+            </Button>
           </div>
-          <Button 
-            type="text" 
-            className="section-toggle-button"
-            icon={expanded.recentActivity ? <IconChevronUp size={16} /> : <IconChevronDown size={16} />}
-            onClick={() => toggleSection('recentActivity')}
-          />
-        </div>
-        
-        <div className="section-content" style={{maxHeight: expanded.recentActivity ? '1000px' : '0px'}}>
-          {recentActivity.length === 0 ? (
-            <div className="empty-section">
-              <Text type="secondary">No recent activity</Text>
-            </div>
-          ) : (
-            <>
-              <List
-                className="apple-style-list"
-                dataSource={limitItems(recentActivity, 'recentActivity')}
-                renderItem={(item, index) => (
-                  <>
-                    <List.Item className="feed-list-item">
-                      <Space direction="vertical" size={0} style={{ width: '100%' }}>
-                        <Space align="center" style={{ width: '100%', justifyContent: 'space-between' }}>
-                          <Space align="center">
-                            <Avatar 
-                              shape="square" 
-                              className="feed-item-avatar"
-                              style={{backgroundColor: 'rgba(114, 46, 209, 0.1)'}}
-                              icon={<IconCircleCheck size={16} style={{ color: '#722ED1' }} />}
-                            />
-                            <Text strong style={{fontSize: '0.9rem'}}>{item.name}</Text>
-                          </Space>
-                          <Space direction="vertical" align="end" size={0}>
-                            <Text strong style={{fontSize: '0.9rem'}}>${Number(item.amount).toFixed(2)}</Text>
-                            <Text type="secondary" style={{ fontSize: '0.7rem' }}>{item.category}</Text>
-                          </Space>
-                        </Space>
-                        <div style={{paddingLeft: 48}}>
-                          <Text type="secondary" style={{ fontSize: '0.75rem', display: 'flex', alignItems: 'center' }}>
-                            <IconClock size={10} style={{ marginRight: 4 }} />
-                            {daysAgo(item.dueDate)} days ago
-                          </Text>
-                        </div>
-                      </Space>
-                    </List.Item>
-                    {index < limitItems(recentActivity, 'recentActivity').length - 1 && 
-                      <Divider className="item-divider" />}
-                  </>
-                )}
-              />
-              {recentActivity.length > 3 && (
-                <div className="show-more-container">
-                  <Button 
-                    type="link" 
-                    className="show-more-button"
-                    style={{color: '#722ED1'}}
-                    onClick={() => toggleShowAll('recentActivity')}
-                  >
-                    {showAll.recentActivity ? 'Show Less' : 'Show All'}
-                  </Button>
-                </div>
-              )}
-              <div className="section-total">
-                <Text className="total-label">SECTION TOTAL</Text>
-                <Text className="total-amount total-amount-activity">
-                  ${recentActivityTotal.toFixed(2)}
-                </Text>
-              </div>
-            </>
-          )}
-        </div>
-      </section>
+        )}
+        {recentActivity.length > 0 && (
+          <div className="section-total">
+            <Text className="total-label">SECTION TOTAL</Text>
+            <Text className="total-amount total-amount-activity">
+              ${recentActivityTotal.toFixed(2)}
+            </Text>
+          </div>
+        )}
+      </SectionCard>
     </div>
   );
 };

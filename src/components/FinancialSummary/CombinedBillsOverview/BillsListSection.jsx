@@ -20,9 +20,29 @@ const BillsListSection = ({
     handleMenuClick, // Function to handle dropdown menu clicks (for multi-modal)
     addBillMenuItems, // Menu items for the dropdown
     getCategoryIcon,
-    selectedAllButtonStyle,
-    defaultAllButtonStyle
+    selectedAllButtonStyle: propSelectedAllButtonStyle,
+    defaultAllButtonStyle: propDefaultAllButtonStyle
 }) => {
+    // Define updated button styles with thinner profile for mobile
+    const selectedAllButtonStyle = {
+        fontWeight: 500, 
+        padding: '0 8px', 
+        height: '24px', 
+        borderColor: 'var(--primary-500)', 
+        color: 'var(--primary-600)',
+        fontSize: '0.75rem',
+        borderRadius: '12px',
+        ...propSelectedAllButtonStyle
+    };
+
+    const defaultAllButtonStyle = {
+        fontWeight: 500, 
+        padding: '0 8px', 
+        height: '24px',
+        fontSize: '0.75rem',
+        borderRadius: '12px',
+        ...propDefaultAllButtonStyle
+    };
 
     return (
         <div>
@@ -31,8 +51,13 @@ const BillsListSection = ({
                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
                     {/* Filter controls */}
                     <Space align="center">
-                        <Text strong style={{ color: 'var(--neutral-600)', whiteSpace: 'nowrap' }}> Filter by: </Text>
-                        <Button size="small" type="default" onClick={() => setSelectedCategory('All')} style={selectedCategory === 'All' ? selectedAllButtonStyle : defaultAllButtonStyle} >
+                        <Text strong style={{ color: 'var(--neutral-600)', whiteSpace: 'nowrap', fontSize: '0.8rem' }}> Filter by: </Text>
+                        <Button 
+                            size="small" 
+                            type="default" 
+                            onClick={() => setSelectedCategory('All')} 
+                            style={selectedCategory === 'All' ? selectedAllButtonStyle : defaultAllButtonStyle}
+                        >
                             All Categories
                         </Button>
                     </Space>
@@ -57,7 +82,6 @@ const BillsListSection = ({
                  {/* Category Tags Container - Apply specific class, REMOVE inline style */}
                  <div
                     className="category-tags-container" // Class for styling (mobile and desktop)
-                    // Removed inline style: style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}
                  >
                     {categories.map((category) => (
                         <Tag.CheckableTag
@@ -65,7 +89,22 @@ const BillsListSection = ({
                             checked={selectedCategory === category}
                             onChange={(checked) => { setSelectedCategory(checked ? category : 'All'); }}
                             // Inline styles for individual tags are fine
-                            style={{ padding: '2px 8px', borderRadius: '12px', display: 'inline-flex', alignItems: 'center', gap: '6px', cursor: 'pointer', border: '1px solid', borderColor: selectedCategory === category ? 'var(--primary-500)' : 'var(--neutral-300)', backgroundColor: selectedCategory === category ? 'var(--primary-50)' : 'var(--neutral-50)', color: selectedCategory === category ? 'var(--primary-600)' : 'var(--neutral-700)', lineHeight: '1.4', fontSize: '0.8rem' }} >
+                            style={{ 
+                                padding: '1px 8px', 
+                                borderRadius: '12px', 
+                                display: 'inline-flex', 
+                                alignItems: 'center', 
+                                gap: '4px', 
+                                cursor: 'pointer', 
+                                border: '1px solid', 
+                                borderColor: selectedCategory === category ? 'var(--primary-500)' : 'var(--neutral-300)', 
+                                backgroundColor: selectedCategory === category ? 'var(--primary-50)' : 'var(--neutral-50)', 
+                                color: selectedCategory === category ? 'var(--primary-600)' : 'var(--neutral-700)', 
+                                lineHeight: '1.4', 
+                                fontSize: '0.7rem',
+                                height: '22px',
+                            }}
+                        >
                             {/* Ensure getCategoryIcon is available and correct */}
                             {getCategoryIcon && getCategoryIcon(category)} <span>{category}</span>
                         </Tag.CheckableTag>
@@ -106,6 +145,8 @@ const BillsListSection = ({
 BillsListSection.defaultProps = {
   handleAddSingle: () => console.warn("handleAddSingle handler not provided to BillsListSection"),
   getCategoryIcon: () => null, // Provide a default fallback for the icon function
+  selectedAllButtonStyle: {},
+  defaultAllButtonStyle: {},
 };
 
 
