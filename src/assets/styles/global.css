@@ -612,7 +612,7 @@ main.ant-layout-content {
   .ant-select-selector,
   .ant-input,
   .ant-input-affix-wrapper {
-    min-height: 44px; /* Apple's recommended minimum */
+    min-height: 24px; /* Apple's recommended minimum */
   }
   
   .ant-table-cell {
