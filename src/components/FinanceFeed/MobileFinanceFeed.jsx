@@ -29,6 +29,7 @@ import {
 } from '@tabler/icons-react';
 
 import { FinanceContext } from '../../contexts/FinanceContext';
+import './styles/MobileFinanceFeed.css';
 
 const { Text, Title } = Typography;
 
