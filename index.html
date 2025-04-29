@@ -4,9 +4,9 @@
     <meta charset="UTF-8" />
     
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <meta name="theme-color" content="#0066FF" />
+    <meta name="theme-color" content="#F5F7FA" /> 
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="mobile-web-app-capable" content="yes"/>
     <meta name="apple-touch-fullscreen" content="yes"/>
     <meta name="format-detection" content="telephone=no"/>
@@ -20,7 +20,7 @@
     <link rel="apple-touch-icon" sizes="167x167" href="/icons/icon-152x152.png" />
     
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <title>Financely - Finance Dashboard</title>
+    <title>Finance Dashboard</title>
     
     <style>
      @media (max-width: 768px) {
@@ -48,41 +48,43 @@
         cursor: default !important;
       }
       
-      /* Splash screen styling */
-      .splash-screen {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        background-color: #0066FF;
-        color: white;
-        z-index: 9999;
-        opacity: 1;
-        transition: opacity 0.5s ease-in-out;
+      /* Ensure proper spacing for iOS PWA bottom bar */
+      @supports (-webkit-touch-callout: none) {
+        body.standalone {
+          /* Add padding to prevent content from being hidden behind the home indicator */
+          padding-bottom: env(safe-area-inset-bottom, 0);
+        }
+        
+        /* Fix for bottom navbar in standalone mode */
+        body.standalone .bottom-navbar {
+          padding-bottom: env(safe-area-inset-bottom, 0);
+          height: 60px !important;  /* Force the original height */
+          bottom: 0 !important;     /* Ensure it stays at the bottom */
+          position: fixed !important;
+        }
+        
+        /* Specifically target the bottom navigation elements */
+        body.standalone .bottom-navbar .ant-btn {
+          margin-bottom: 0 !important;
+          padding-top: 8px !important;
+          padding-bottom: 8px !important;
+        }
       }
       
-      .splash-logo {
-        width: 120px;
-        height: 120px;
-        margin-bottom: 20px;
-        animation: pulse 1.5s infinite ease-in-out;
+      /* Style fixes for buttons and filters */
+      .category-filter-button {
+        /* Original smaller button style */
+        padding: 2px 8px !important;
+        height: auto !important;
+        font-size: 0.8rem !important;
+        line-height: 1.5 !important;
       }
       
-      @keyframes pulse {
-        0% { transform: scale(0.95); }
-        50% { transform: scale(1.05); }
-        100% { transform: scale(0.95); }
-      }
-      
-      .splash-text {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-        font-size: 24px;
-        font-weight: bold;
+      .category-tag {
+        /* Original tag style */
+        padding: 4px 8px !important;
+        margin: 2px !important;
+        border-radius: 16px !important;
       }
     </style>
 
@@ -133,16 +135,30 @@
         document.body.setAttribute('unselectable', 'on');
         document.body.setAttribute('onselectstart', 'return false;');
         
-        // Hide splash screen after app is loaded
-        setTimeout(() => {
-          const splash = document.getElementById('splash-screen');
-          if (splash) {
-            splash.style.opacity = '0';
+        // Detect if the app is in standalone mode (PWA)
+        if (window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches) {
+          document.body.classList.add('standalone');
+          console.log('Running in standalone/PWA mode');
+          
+          // Apply specific fixes for iOS PWA mode
+          const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+          if (isIOS) {
+            console.log('iOS standalone mode detected - applying position fixes');
+            // This will ensure we add specific iOS PWA fixes
+            document.body.classList.add('ios-pwa');
+            
+            // Adjust bottom navbar positioning
             setTimeout(() => {
-              splash.style.display = 'none';
-            }, 500);
+              const navBar = document.querySelector('.bottom-navbar');
+              if (navBar) {
+                console.log('Fixing bottom navbar position for iOS PWA');
+                navBar.style.bottom = '0';
+                navBar.style.height = '60px';
+                navBar.style.paddingBottom = 'env(safe-area-inset-bottom, 0)';
+              }
+            }, 1000); // Slight delay to ensure DOM is fully loaded
           }
-        }, 2000);
+        }
         
         // Apply to all elements dynamically added to the DOM
         const observer = new MutationObserver(function(mutations) {
@@ -163,94 +179,106 @@
                     e.preventDefault();
                     return false;
                   });
+                  
+                  // Fix category buttons that might be dynamically added
+                  if (node.classList && (
+                      node.classList.contains('ant-btn') || 
+                      node.classList.contains('ant-tag-checkable')
+                  )) {
+                    if (node.closest('.category-tags-container')) {
+                      node.classList.add('category-tag');
+                    }
+                  }
                 }
               });
             }
           });
         });
-                  // Mobile device detection and prevention logic
-          document.addEventListener('DOMContentLoaded', function() {
-            // iOS/mobile device detection
-            const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-            const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
-            const isAndroid = /android/i.test(userAgent);
-            const isMobile = isIOS || isAndroid || window.innerWidth < 768;
+        
+        // Mobile device detection and prevention logic
+        document.addEventListener('DOMContentLoaded', function() {
+          // iOS/mobile device detection
+          const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+          const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
+          const isAndroid = /android/i.test(userAgent);
+          const isMobile = isIOS || isAndroid || window.innerWidth < 768;
+          
+          // Only apply prevention techniques on mobile devices
+          if (isMobile) {
+            console.log('Mobile device detected, applying text selection prevention');
             
-            // Only apply prevention techniques on mobile devices
-            if (isMobile) {
-              console.log('Mobile device detected, applying text selection prevention');
-              
-              // Add class to body for CSS targeting
-              document.body.classList.add('mobile-device');
-              
-              // --- iOS-specific event handlers ---
-              
-              // Prevent pinch zoom
-              document.addEventListener('gesturestart', function(e) {
+            // Add class to body for CSS targeting
+            document.body.classList.add('mobile-device');
+            
+            // --- iOS-specific event handlers ---
+            
+            // Prevent pinch zoom
+            document.addEventListener('gesturestart', function(e) {
+              e.preventDefault();
+            });
+            
+            // Prevent double-tap zoom
+            let lastTouchEnd = 0;
+            document.addEventListener('touchend', function(e) {
+              const now = Date.now();
+              if (now - lastTouchEnd < 300) {
                 e.preventDefault();
-              });
-              
-              // Prevent double-tap zoom
-              let lastTouchEnd = 0;
-              document.addEventListener('touchend', function(e) {
-                const now = Date.now();
-                if (now - lastTouchEnd < 300) {
-                  e.preventDefault();
-                }
-                lastTouchEnd = now;
-              }, false);
-              
-              // Function to determine if an element is an input that should allow selection
-              function isInputElement(el) {
-                return el.tagName === 'INPUT' || 
-                      el.tagName === 'TEXTAREA' || 
-                      el.isContentEditable ||
-                      el.classList.contains('allow-selection');
               }
-              
-              // Clear selection on touch start (prevents loupe)
-              document.addEventListener('touchstart', function(e) {
-                if (!isInputElement(e.target)) {
-                  if (window.getSelection) {
-                    window.getSelection().removeAllRanges();
-                  }
-                }
-              }, { passive: false });
-              
-              // Clear selection during touch (prevents selection building up)
-              document.addEventListener('touchmove', function(e) {
-                if (!isInputElement(document.activeElement)) {
-                  if (window.getSelection) {
-                    window.getSelection().removeAllRanges();
-                  }
-                }
-              }, { passive: true });
-              
-              // Prevent selection change unless in input field
-              document.addEventListener('selectionchange', function() {
-                if (!isInputElement(document.activeElement)) {
-                  if (window.getSelection) {
-                    window.getSelection().removeAllRanges();
-                  }
-                }
-              });
-              
-              // Prevent context menu (long press menu)
-              document.addEventListener('contextmenu', function(e) {
-                if (!isInputElement(e.target)) {
-                  e.preventDefault();
-                  return false;
-                }
-              });
-              
-              // Additional iOS-specific attributes
-              document.body.setAttribute('unselectable', 'on');
-            } else {
-              console.log('Desktop device detected, no prevention applied');
-              // For desktop devices, we don't apply any prevention
-              // This ensures normal text selection on desktop
+              lastTouchEnd = now;
+            }, false);
+            
+            // Function to determine if an element is an input that should allow selection
+            function isInputElement(el) {
+              return el.tagName === 'INPUT' || 
+                    el.tagName === 'TEXTAREA' || 
+                    el.isContentEditable ||
+                    el.classList.contains('allow-selection');
             }
-          });
+            
+            // Clear selection on touch start (prevents loupe)
+            document.addEventListener('touchstart', function(e) {
+              if (!isInputElement(e.target)) {
+                if (window.getSelection) {
+                  window.getSelection().removeAllRanges();
+                }
+              }
+            }, { passive: false });
+            
+            // Clear selection during touch (prevents selection building up)
+            document.addEventListener('touchmove', function(e) {
+              if (!isInputElement(document.activeElement)) {
+                if (window.getSelection) {
+                  window.getSelection().removeAllRanges();
+                }
+              }
+            }, { passive: true });
+            
+            // Prevent selection change unless in input field
+            document.addEventListener('selectionchange', function() {
+              if (!isInputElement(document.activeElement)) {
+                if (window.getSelection) {
+                  window.getSelection().removeAllRanges();
+                }
+              }
+            });
+            
+            // Prevent context menu (long press menu)
+            document.addEventListener('contextmenu', function(e) {
+              if (!isInputElement(e.target)) {
+                e.preventDefault();
+                return false;
+              }
+            });
+            
+            // Additional iOS-specific attributes
+            document.body.setAttribute('unselectable', 'on');
+          } else {
+            console.log('Desktop device detected, no prevention applied');
+            // For desktop devices, we don't apply any prevention
+            // This ensures normal text selection on desktop
+          }
+        });
+        
         // Start observing the document
         observer.observe(document.body, { 
           childList: true,
@@ -273,17 +301,6 @@
     </script>
   </head>
   <body unselectable="on" onselectstart="return false;" class="no-magnify">
-    <!-- Splash Screen -->
-    <div id="splash-screen" class="splash-screen">
-      <div class="splash-logo">
-        <svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="50" cy="50" r="45" fill="#ffffff" />
-          <path d="M35 65V35H55C60.5228 35 65 39.4772 65 45C65 50.5228 60.5228 55 55 55H40" stroke="#0066FF" stroke-width="5" stroke-linecap="round" />
-        </svg>
-      </div>
-      <div class="splash-text">Financely</div>
-    </div>
-    
     <div id="root" unselectable="on"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

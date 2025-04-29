@@ -1,0 +1,75 @@
+/* iOS PWA Fixes - public/css/ios-fixes.css */
+
+/* Only apply these styles in standalone mode on iOS */
+@media (display-mode: standalone) {
+    /* Add safe area padding to the bottom of the page */
+    body {
+      padding-bottom: env(safe-area-inset-bottom, 0);
+    }
+    
+    /* Fix bottom navigation positioning */
+    .bottom-navbar {
+      height: 60px !important;
+      padding-bottom: env(safe-area-inset-bottom, 0) !important;
+      position: fixed !important;
+      bottom: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      z-index: 1000 !important;
+    }
+    
+    /* Ensure content doesn't get hidden behind the navbar */
+    .ant-layout-content {
+      padding-bottom: calc(60px + env(safe-area-inset-bottom, 0)) !important;
+    }
+    
+    /* Adjust button sizes and spacing in navbar */
+    .bottom-navbar .ant-btn {
+      height: auto !important;
+      padding-top: 8px !important;
+      padding-bottom: 8px !important;
+      margin-bottom: 0 !important;
+    }
+    
+    /* Fix for the center button */
+    .bottom-navbar .center-action-button {
+      bottom: calc(5px + env(safe-area-inset-bottom, 0)) !important;
+    }
+  }
+  
+  /* Category Filter Button Fixes */
+  .ant-tag-checkable {
+    padding: 2px 8px !important;
+    margin: 2px !important;
+    border-radius: 16px !important;
+    line-height: 1.5 !important;
+    font-size: 0.8rem !important;
+  }
+  
+  .category-tags-container {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+  }
+  
+  /* Make sure All Categories button matches size of category tags */
+  .ant-btn-default.category-filter {
+    height: auto !important;
+    padding: 2px 10px !important;
+    font-size: 0.8rem !important;
+    line-height: 1.5 !important;
+    border-radius: 16px !important;
+  }
+  
+  /* Navigation button sizes */
+  .bottom-navbar .ant-btn {
+    height: auto !important;
+    padding: 8px 0 !important;
+    font-size: 0.7rem !important;
+  }
+  
+  .bottom-navbar .ant-btn .tabler-icon,
+  .bottom-navbar .ant-btn .anticon {
+    font-size: 1.2rem !important;
+    margin-bottom: 2px !important;
+  }
