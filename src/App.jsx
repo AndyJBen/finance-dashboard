@@ -6,6 +6,7 @@
 // Increased conditional margin for expanded list on mobile
 // Integrated SettingsPage component
 // Added ErrorBoundary wrapper
+// Added handleOpenEditBalanceModal function and passed to BottomNavBar
 
 import React, { useState, useContext, useEffect } from 'react';
 import { Layout, Row, Col, Typography, Grid } from 'antd';
@@ -57,6 +58,8 @@ function MyApp() {
   // Provide fallback functions to prevent errors if context is not yet available during initial render
   const addBill = financeContext ? financeContext.addBill : () => console.error("FinanceContext not available for addBill");
   const updateBill = financeContext ? financeContext.updateBill : () => console.error("FinanceContext not available for updateBill");
+  // Get the toggle function from context
+  const toggleBankBalanceEdit = financeContext ? financeContext.toggleBankBalanceEdit : () => console.error("FinanceContext not available for toggleBankBalanceEdit");
 
 
   // --- Modal Handlers ---
@@ -108,6 +111,16 @@ function MyApp() {
         console.error("Error submitting bill modal:", error);
     }
   };
+
+  // --- NEW: Handler to open Bank Balance Edit Mode ---
+  const handleOpenEditBalanceModal = () => {
+    console.log("Triggering bank balance edit mode...");
+    // Call the toggle function from context to set the global state
+    if (toggleBankBalanceEdit) {
+      toggleBankBalanceEdit(true);
+    }
+  };
+  // --- END NEW HANDLER ---
 
   // --- Layout Configuration ---
   const SIDEBAR_WIDTH = 240; // Width of the sidebar for desktop view
@@ -268,8 +281,8 @@ function MyApp() {
                 selectedKey={selectedMenuKey}
                 onSelect={handleSelect}
                 onAddClick={handleOpenAddBillModal} // Pass add handler to the center button action
-                // Pass other action handlers if needed, e.g., for editing balance
-                // onEditBalanceClick={handleOpenEditBalanceModal}
+                // Pass the new handler for editing balance
+                onEditBalanceClick={handleOpenEditBalanceModal}
             />
         )}
 

@@ -1,7 +1,7 @@
 // src/contexts/FinanceContext.jsx
 import React, { createContext, useState, useEffect, useCallback } from 'react';
 import dayjs from 'dayjs';
-import { 
+import {
   fetchBills, addBill, updateBill, deleteBill,
   fetchBankBalance, updateBankBalance,
   fetchCreditCards, addCreditCard, updateCreditCard, deleteCreditCard, apiReorderCreditCards
@@ -16,15 +16,15 @@ export const FinanceContext = createContext({
   displayedMonth: dayjs(),
   bankBalance: null,
   creditCards: [],
-  
+
   // Loading States
   loading: true,
   loadingBalance: true,
   loadingCreditCards: true,
-  
+
   // Error States
   error: null,
-  
+
   // Settings States
   settings: {
     showPaidBills: false,
@@ -33,10 +33,14 @@ export const FinanceContext = createContext({
     defaultChartType: 'pie',
     defaultLandingPage: 'dashboard'
   },
-  
+
+  // NEW: Editing State
+  isEditingBankBalance: false, // Add default value for editing state
+
   // Actions
   updateSettings: () => {},
-  
+  toggleBankBalanceEdit: () => {}, // Add default function for toggling edit mode
+
   // Functions
   goToPreviousMonth: () => {},
   goToNextMonth: () => {},
@@ -58,16 +62,16 @@ export const FinanceProvider = ({ children }) => {
   const [displayedMonth, setDisplayedMonth] = useState(dayjs());
   const [bankBalance, setBankBalance] = useState(null);
   const [creditCards, setCreditCards] = useState([]);
-  
+
   // --- Loading States ---
   const [loading, setLoading] = useState(true);
   const [loadingBalance, setLoadingBalance] = useState(true);
   const [loadingCreditCards, setLoadingCreditCards] = useState(true);
-  
+
   // --- Error States ---
   const [error, setError] = useState(null);
-  
-  // --- NEW: Settings State ---
+
+  // --- Settings State ---
   const [settings, setSettings] = useState({
     showPaidBills: false,
     showCreditCards: true,
@@ -75,44 +79,47 @@ export const FinanceProvider = ({ children }) => {
     defaultChartType: 'pie',
     defaultLandingPage: 'dashboard'
   });
-  
+
+  // --- NEW: Bank Balance Editing State ---
+  const [isEditingBankBalance, setIsEditingBankBalance] = useState(false);
+
   // --- Computed Values ---
   // Filter for past due bills
   const pastDueBills = bills.filter(bill => {
     const dueDate = dayjs(bill.dueDate);
     return !bill.isPaid && dueDate.isValid() && dueDate.isBefore(dayjs(), 'day');
   });
-  
+
   // Calculate total credit card balance
   const totalCreditCardBalance = creditCards.reduce((sum, card) => sum + Number(card.balance || 0), 0);
-  
+
   // Check if there are past due bills from previous months
   const hasAnyPastDueBills = pastDueBills.length > 0;
-  
+
   // Calculate any past due amount from previous months
   const pastDueAmountFromPreviousMonths = pastDueBills.reduce((sum, bill) => sum + Number(bill.amount || 0), 0);
-  
+
   // Calculate current amount due (unpaid bills in the current month)
   const currentDueAmt = bills.reduce((sum, bill) => {
     const dueDate = dayjs(bill.dueDate);
-    const isCurrentMonth = dueDate.isValid() && 
-      dueDate.month() === displayedMonth.month() && 
+    const isCurrentMonth = dueDate.isValid() &&
+      dueDate.month() === displayedMonth.month() &&
       dueDate.year() === displayedMonth.year();
-    
+
     return !bill.isPaid && isCurrentMonth ? sum + Number(bill.amount || 0) : sum;
   }, 0);
-  
+
   // --- Month Navigation Functions ---
   const goToPreviousMonth = useCallback(() => {
     setDisplayedMonth(prev => prev.subtract(1, 'month'));
   }, []);
-  
+
   const goToNextMonth = useCallback(() => {
     setDisplayedMonth(prev => prev.add(1, 'month'));
   }, []);
-  
+
   // --- API Functions ---
-  
+
   // Load bills for the current month
   const loadBillsForMonth = useCallback(async (targetMonth = displayedMonth) => {
     setLoading(true);
@@ -134,7 +141,7 @@ export const FinanceProvider = ({ children }) => {
       setLoading(false);
     }
   }, [displayedMonth]);
-  
+
   // Add a new bill
   const handleAddBill = async (billData) => {
     try {
@@ -151,14 +158,15 @@ export const FinanceProvider = ({ children }) => {
       return false;
     }
   };
-  
+
   // Update an existing bill
   const handleUpdateBill = async (existingBill, updates) => {
-    if (!existingBill || !existingBill.id) {
-      message.error('Invalid bill data for update');
+    // Ensure existingBill is an object and has an id
+    if (!existingBill || typeof existingBill !== 'object' || !existingBill.id) {
+      message.error('Invalid bill data provided for update.');
+      console.error('Invalid existingBill:', existingBill);
       return false;
     }
-    
     try {
       const result = await updateBill(existingBill.id, updates);
       if (result) {
@@ -173,14 +181,15 @@ export const FinanceProvider = ({ children }) => {
       return false;
     }
   };
-  
+
+
   // Delete a bill
   const handleDeleteBill = async (billId) => {
     if (!billId) {
       message.error('Invalid bill ID for deletion');
       return false;
     }
-    
+
     try {
       const result = await deleteBill(billId);
       if (result) {
@@ -195,7 +204,7 @@ export const FinanceProvider = ({ children }) => {
       return false;
     }
   };
-  
+
   // Load bank balance
   const loadBankBalance = useCallback(async () => {
     setLoadingBalance(true);
@@ -214,7 +223,7 @@ export const FinanceProvider = ({ children }) => {
       setLoadingBalance(false);
     }
   }, []);
-  
+
   // Update bank balance
   const handleUpdateBalance = async (balanceData) => {
     setLoadingBalance(true);
@@ -223,18 +232,18 @@ export const FinanceProvider = ({ children }) => {
       if (result && typeof result.balance === 'number') {
         setBankBalance(result.balance);
         message.success('Balance updated successfully');
-        return result;
+        return result; // Return the updated balance data
       }
       throw new Error('Failed to update balance');
     } catch (err) {
       console.error('Error updating balance:', err);
       message.error(err.message || 'Failed to update balance');
-      return null;
+      return null; // Return null on failure
     } finally {
       setLoadingBalance(false);
     }
   };
-  
+
   // Load credit cards
   const loadCreditCards = useCallback(async () => {
     setLoadingCreditCards(true);
@@ -253,7 +262,7 @@ export const FinanceProvider = ({ children }) => {
       setLoadingCreditCards(false);
     }
   }, []);
-  
+
   // Create a new credit card
   const handleCreateCreditCard = async (cardData) => {
     try {
@@ -270,14 +279,14 @@ export const FinanceProvider = ({ children }) => {
       return false;
     }
   };
-  
+
   // Edit an existing credit card
   const handleEditCreditCard = async (cardId, updateData) => {
     if (!cardId) {
       message.error('Invalid card ID for update');
       return false;
     }
-    
+
     try {
       const result = await updateCreditCard(cardId, updateData);
       if (result) {
@@ -292,14 +301,14 @@ export const FinanceProvider = ({ children }) => {
       return false;
     }
   };
-  
+
   // Remove a credit card
   const handleRemoveCreditCard = async (cardId) => {
     if (!cardId) {
       message.error('Invalid card ID for deletion');
       return false;
     }
-    
+
     try {
       const result = await deleteCreditCard(cardId);
       if (result) {
@@ -314,7 +323,7 @@ export const FinanceProvider = ({ children }) => {
       return false;
     }
   };
-  
+
   // Reorder credit cards
   const handleReorderCreditCards = async (newOrderedCards) => {
     // Create array with new sort order values
@@ -322,7 +331,7 @@ export const FinanceProvider = ({ children }) => {
       id: card.id,
       sort_order: index
     }));
-    
+
     try {
       const result = await apiReorderCreditCards(reorderPayload);
       if (result) {
@@ -339,34 +348,35 @@ export const FinanceProvider = ({ children }) => {
       return false;
     }
   };
-  
-  // --- NEW: Settings Functions ---
-  
+
+  // --- Settings Functions ---
+
   // Update settings
   const updateSettings = useCallback((newSettings) => {
-    setSettings(prev => ({
-      ...prev,
-      ...newSettings
-    }));
-    
+    setSettings(prev => {
+      const updated = { ...prev, ...newSettings };
+      // Save all settings to localStorage
+      localStorage.setItem('financelySettings', JSON.stringify(updated));
+      return updated;
+    });
+
     // Apply appropriate side effects based on settings changes
     if (newSettings.theme) {
       // Apply theme change logic here
       document.documentElement.setAttribute('data-theme', newSettings.theme);
       localStorage.setItem('theme', newSettings.theme);
     }
-    
-    // Save all settings to localStorage
-    localStorage.setItem('financelySettings', JSON.stringify({
-      ...settings,
-      ...newSettings
-    }));
-    
+
     message.success('Settings updated');
-  }, [settings]);
-  
+  }, []); // Removed 'settings' dependency to avoid potential loops if updateSettings causes re-render
+
+  // --- NEW: Bank Balance Edit Toggle ---
+  const toggleBankBalanceEdit = useCallback((editing) => {
+    setIsEditingBankBalance(editing);
+  }, []);
+
   // --- Load Initial Data ---
-  
+
   // Load settings from localStorage on mount
   useEffect(() => {
     const savedSettings = localStorage.getItem('financelySettings');
@@ -374,7 +384,7 @@ export const FinanceProvider = ({ children }) => {
       try {
         const parsedSettings = JSON.parse(savedSettings);
         setSettings(parsedSettings);
-        
+
         // Apply theme if saved
         if (parsedSettings.theme) {
           document.documentElement.setAttribute('data-theme', parsedSettings.theme);
@@ -384,18 +394,18 @@ export const FinanceProvider = ({ children }) => {
       }
     }
   }, []);
-  
+
   // Load bills when displayedMonth changes
   useEffect(() => {
     loadBillsForMonth();
   }, [displayedMonth, loadBillsForMonth]);
-  
+
   // Load bank balance and credit cards on mount
   useEffect(() => {
     loadBankBalance();
     loadCreditCards();
   }, [loadBankBalance, loadCreditCards]);
-  
+
   // Construct the context value
   const contextValue = {
     // Data
@@ -404,25 +414,29 @@ export const FinanceProvider = ({ children }) => {
     displayedMonth,
     bankBalance,
     creditCards,
-    
+
     // Computed values
     totalCreditCardBalance,
     hasAnyPastDueBills,
     pastDueAmountFromPreviousMonths,
     currentDueAmt,
-    
+
     // Loading states
     loading,
     loadingBalance,
     loadingCreditCards,
-    
+
     // Error state
     error,
-    
+
     // Settings
     settings,
     updateSettings,
-    
+
+    // NEW: Editing State & Function
+    isEditingBankBalance,
+    toggleBankBalanceEdit,
+
     // Functions
     goToPreviousMonth,
     goToNextMonth,
@@ -436,7 +450,7 @@ export const FinanceProvider = ({ children }) => {
     reorderCreditCards: handleReorderCreditCards,
     loadBillsForMonth
   };
-  
+
   return (
     <FinanceContext.Provider value={contextValue}>
       {children}

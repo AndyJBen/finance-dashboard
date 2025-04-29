@@ -8,7 +8,7 @@ import {
     IconSettings,
     IconPlus,
     IconPencil,
-    IconEdit
+    IconEdit // Keep IconEdit for the menu item
 } from '@tabler/icons-react';
 
 // Styles remain the same...
@@ -60,7 +60,8 @@ const centerButtonStyle = {
     justifyContent: 'center',
     border: 'none',
     boxShadow: '0 4px 8px rgba(0,0,0,0.15)',
-    zIndex: 1001,
+    zIndex: 1001, // Ensure it's above the nav bar itself
+    transform: 'translateY(-10px)' // Lift the button slightly
 };
 
 // IMPROVED ACTION MENU STYLES
@@ -108,17 +109,23 @@ const actionItemHoverStyle = {
 // Accept onAddClick and onEditBalanceClick props
 const BottomNavBar = ({ selectedKey, onSelect, onAddClick, onEditBalanceClick }) => {
     const [hoverItem, setHoverItem] = useState(null);
+    const [popoverVisible, setPopoverVisible] = useState(false); // State to control popover visibility
+
+    // Function to close the popover
+    const closePopover = () => setPopoverVisible(false);
 
     // Improved action menu content
     const actionMenu = (
         <div style={actionMenuStyle}>
-            <div 
+            {/* Add a Bill Action */}
+            <div
                 style={{
                     ...actionItemStyle,
                     ...(hoverItem === 'addBill' ? actionItemHoverStyle : {})
                 }}
                 onClick={() => {
                     if (onAddClick) onAddClick();
+                    closePopover(); // Close popover after action
                 }}
                 onMouseEnter={() => setHoverItem('addBill')}
                 onMouseLeave={() => setHoverItem(null)}
@@ -128,13 +135,16 @@ const BottomNavBar = ({ selectedKey, onSelect, onAddClick, onEditBalanceClick })
                 </div>
                 <span style={actionItemTextStyle}>Add a Bill</span>
             </div>
-            <div 
+            {/* Edit Bank Balance Action */}
+            <div
                 style={{
                     ...lastActionItemStyle,
                     ...(hoverItem === 'editBalance' ? actionItemHoverStyle : {})
                 }}
                 onClick={() => {
+                    // Call the passed onEditBalanceClick handler
                     if (onEditBalanceClick) onEditBalanceClick();
+                    closePopover(); // Close popover after action
                 }}
                 onMouseEnter={() => setHoverItem('editBalance')}
                 onMouseLeave={() => setHoverItem(null)}
@@ -150,7 +160,7 @@ const BottomNavBar = ({ selectedKey, onSelect, onAddClick, onEditBalanceClick })
     const menuItems = [
         { key: 'dashboard', label: 'Dashboard', icon: <IconLayoutDashboard size={24} /> },
         { key: 'finance-feed', label: 'Finance Feed', icon: <IconActivityHeartbeat size={24} /> },
-        { key: 'action', label: 'Actions', icon: <IconPencil size={28} />, isCenter: true },
+        { key: 'action', label: 'Actions', icon: <IconPlus size={28} />, isCenter: true }, // Changed icon to Plus
         { key: 'reports', label: 'Reports', icon: <IconChartBar size={24} /> },
         { key: 'settings', label: 'Settings', icon: <IconSettings size={24} /> },
     ];
@@ -158,15 +168,18 @@ const BottomNavBar = ({ selectedKey, onSelect, onAddClick, onEditBalanceClick })
     return (
         <div style={navStyle}>
             {menuItems.map(item => {
+                // Center Action Button (Popover Trigger)
                 if (item.isCenter) {
                     return (
-                        <Popover 
+                        <Popover
                             key={item.key}
                             content={actionMenu}
                             trigger="click"
                             placement="top"
                             arrow={{ pointAtCenter: true }}
-                            overlayStyle={{ width: '250px' }}
+                            overlayStyle={{ width: '250px', paddingBottom: '10px' }} // Add padding to lift menu above button
+                            open={popoverVisible} // Control visibility with state
+                            onOpenChange={setPopoverVisible} // Update state on visibility change
                         >
                             <Button
                                 style={centerButtonStyle}
@@ -176,6 +189,7 @@ const BottomNavBar = ({ selectedKey, onSelect, onAddClick, onEditBalanceClick })
                         </Popover>
                     );
                 } else {
+                    // Regular Navigation Buttons
                     const isActive = selectedKey === item.key;
                     return (
                         <Button

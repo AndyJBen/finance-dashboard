@@ -3,7 +3,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { Card, Col, Space, Statistic, Typography, InputNumber, Button, Tooltip, message } from 'antd';
 import { IconBuildingBank, IconCircleCheck, IconEdit, IconX } from '@tabler/icons-react';
-import { FinanceContext } from '../../../contexts/FinanceContext';
+import { FinanceContext } from '../../../contexts/FinanceContext'; // Adjust path as needed
 
 const { Text } = Typography;
 
@@ -28,33 +28,49 @@ const formatCurrencySuperscript = (value) => {
 };
 
 const BankBalanceCard = ({ isMobile, styles, isComponentLoading }) => {
-  const { bankBalance, updateBalance, loadingBalance } = useContext(FinanceContext);
+  // Consume context, including the new state and toggle function
+  const { bankBalance, updateBalance, loadingBalance, isEditingBankBalance, toggleBankBalanceEdit } = useContext(FinanceContext);
 
-  const [isEditing, setIsEditing] = useState(false);
+  // Local state ONLY for the input field value while editing
   const [editValue, setEditValue] = useState(0);
 
+  // Effect to sync local editValue with bankBalance when not editing or when bankBalance changes
   useEffect(() => {
-    if (!isEditing && typeof bankBalance === 'number') {
+    if (!isEditingBankBalance && typeof bankBalance === 'number') {
       setEditValue(bankBalance);
     }
-  }, [bankBalance, isEditing]);
+    // If editing starts externally (e.g., via bottom nav), sync the editValue
+    if (isEditingBankBalance && typeof bankBalance === 'number' && editValue !== bankBalance) {
+       setEditValue(bankBalance);
+    }
+  }, [bankBalance, isEditingBankBalance]); // Add isEditingBankBalance dependency
 
+  // Handler for clicking the edit button (desktop)
   const handleEditClick = () => {
-    setEditValue(bankBalance ?? 0);
-    setIsEditing(true);
+    setEditValue(bankBalance ?? 0); // Pre-fill input with current balance
+    toggleBankBalanceEdit(true); // Set global editing state to true
   };
 
-  const handleCancelClick = () => setIsEditing(false);
+  // Handler for clicking the cancel button
+  const handleCancelClick = () => {
+    toggleBankBalanceEdit(false); // Set global editing state to false
+    // No need to reset editValue here, useEffect will handle it
+  };
 
+  // Handler for clicking the save button
   const handleSaveClick = async () => {
     if (!isNaN(editValue)) {
       const result = await updateBalance({ balance: editValue });
-      if (result !== null) setIsEditing(false);
+      if (result !== null) {
+        toggleBankBalanceEdit(false); // Set global editing state to false on success
+      }
+      // Error message handled by updateBalance in context
     } else {
       message.error('Invalid balance amount entered.');
     }
   };
 
+  // Determine text color based on balance
   const bankBalanceColor =
     bankBalance === null || bankBalance >= 0
       ? 'var(--success-500)'
@@ -92,9 +108,9 @@ const BankBalanceCard = ({ isMobile, styles, isComponentLoading }) => {
                 size={isMobile ? 16 : styles.iconSize.standard}
                 style={{ color: '#47586d', opacity: 0.8, display: 'flex' }}
               />
-              <Text style={{ 
+              <Text style={{
                 fontSize: isMobile ? '0.75rem' : styles.fontSize.title,
-                fontWeight: 500, 
+                fontWeight: 500,
                 color: '#47586d',
                 display: 'flex',
                 alignItems: 'center',
@@ -103,13 +119,14 @@ const BankBalanceCard = ({ isMobile, styles, isComponentLoading }) => {
               </Text>
             </Space>
 
-            {!isEditing && !isMobile && (
+            {/* Show Edit button only on desktop when NOT editing */}
+            {!isEditingBankBalance && !isMobile && (
               <Tooltip title="Edit Balance">
                 <Button
                   type="text"
                   shape="circle"
                   icon={<IconEdit size={styles.iconSize.edit} />}
-                  onClick={handleEditClick}
+                  onClick={handleEditClick} // Use updated handler
                   style={{ color: '#47586d' }}
                   disabled={loadingBalance || isComponentLoading}
                   className="desktop-only-edit-btn"
@@ -117,16 +134,17 @@ const BankBalanceCard = ({ isMobile, styles, isComponentLoading }) => {
               </Tooltip>
             )}
 
-            {isEditing && (
+            {/* Show Save/Cancel buttons when editing */}
+            {isEditingBankBalance && (
               <Space size="small">
                 <Tooltip title="Save Balance">
                   <Button
                     type="text"
                     shape="circle"
                     icon={<IconCircleCheck size={styles.iconSize.edit} style={{ color: 'var(--success-500)' }} />}
-                    onClick={handleSaveClick}
+                    onClick={handleSaveClick} // Use updated handler
                     style={{ color: '#47586d', ...(isMobile ? styles.editButtonStyle : {}) }}
-                    loading={loadingBalance}
+                    loading={loadingBalance} // Show loading state on save button
                   />
                 </Tooltip>
                 <Tooltip title="Cancel Edit">
@@ -134,9 +152,9 @@ const BankBalanceCard = ({ isMobile, styles, isComponentLoading }) => {
                     type="text"
                     shape="circle"
                     icon={<IconX size={styles.iconSize.edit} style={{ color: 'var(--danger-500)' }} />}
-                    onClick={handleCancelClick}
+                    onClick={handleCancelClick} // Use updated handler
                     style={{ color: '#47586d', ...(isMobile ? styles.editButtonStyle : {}) }}
-                    disabled={loadingBalance}
+                    disabled={loadingBalance} // Disable cancel while saving
                   />
                 </Tooltip>
               </Space>
@@ -145,7 +163,8 @@ const BankBalanceCard = ({ isMobile, styles, isComponentLoading }) => {
         </div>
 
         <div>
-          {!isEditing ? (
+          {/* Show Statistic when NOT editing */}
+          {!isEditingBankBalance ? (
             <Statistic
               value={loadingBalance || isComponentLoading ? null : (bankBalance ?? 0)}
               valueStyle={{
@@ -159,6 +178,7 @@ const BankBalanceCard = ({ isMobile, styles, isComponentLoading }) => {
               formatter={formatCurrencySuperscript}
             />
           ) : (
+            // Show InputNumber when editing
             <InputNumber
               value={editValue}
               onChange={(val) => setEditValue(val ?? 0)}
@@ -168,18 +188,21 @@ const BankBalanceCard = ({ isMobile, styles, isComponentLoading }) => {
               style={{ width: '100%' }}
               size={isMobile ? 'middle' : 'large'}
               autoFocus
-              disabled={loadingBalance}
+              disabled={loadingBalance} // Disable input while saving
+              // Pressing Enter triggers save
+              onPressEnter={handleSaveClick}
             />
           )}
         </div>
       </Card>
+      {/* Keep existing style block */}
       <style jsx>{`
         .currency-wrapper {
           position: relative;
           display: inline-flex;
           align-items: flex-start;
         }
-        
+
         .cents-superscript {
           font-size: ${isMobile ? '50%' : '50%'};
           margin-left: 2px;
