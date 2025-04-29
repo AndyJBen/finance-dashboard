@@ -68,8 +68,8 @@
 }
 
 .section-icon-container {
-  width: 36px; /* Increased from 32px */
-  height: 36px; /* Increased from 32px */
+  width: 30px; /* Increased from 32px */
+  height: 30px; /* Increased from 32px */
   border-radius: 30%; /* Make it circular */
   display: flex;
   align-items: center;
@@ -147,8 +147,7 @@
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.08) !important;
-}
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08) !important;}
 
 .feed-item-content {
   padding-left: 0 !important; /* Remove left padding, we use gap instead */
@@ -234,7 +233,6 @@
 
 /* --- Show More Button --- */
 .show-more-container {
-  padding: 12px 0 !important; /* Increased from 8px */
   text-align: center !important;
   border-top: 1px solid rgba(0,0,0,0.04) !important;
 }
