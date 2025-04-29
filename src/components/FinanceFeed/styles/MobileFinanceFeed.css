@@ -111,7 +111,7 @@
   /* Toggle button styling - UPDATED for better mobile experience */
   .section-toggle-button {
     width: 32px !important;
-    height: 32px !important;
+    height: 20px !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;

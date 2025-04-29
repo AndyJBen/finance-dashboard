@@ -218,7 +218,7 @@ const MobileFinanceFeed = () => {
             onClick={() => toggleSection(section)}
             style={{ 
               width: '32px',
-              height: '32px',
+              height: '20px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
