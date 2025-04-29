@@ -70,7 +70,7 @@
 .section-icon-container {
   width: 36px; /* Increased from 32px */
   height: 36px; /* Increased from 32px */
-  border-radius: 50%; /* Make it circular */
+  border-radius: 30%; /* Make it circular */
   display: flex;
   align-items: center;
   justify-content: center;
