@@ -75,12 +75,7 @@ const MonthlyProgressSummary = ({
                 {/* Month Navigation */}
                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: 'var(--space-20)' }}>
                     <Tooltip title="Previous Month">
-                        <Button 
-                            shape="circle" 
-                            icon={<IconChevronLeft size={16} />} 
-                            onClick={goToPreviousMonth} 
-                            style={{ margin: '0 var(--space-16)' }} 
-                        />
+                        <Button shape="circle" icon={<IconChevronLeft size={16} />} onClick={goToPreviousMonth} style={{ margin: '0 var(--space-16)' }} />
                     </Tooltip>
                     <div style={{ textAlign: 'center', minWidth: '100px' }}>
                         <Paragraph style={{ margin: 0, fontWeight: 600, fontSize: '1.25rem', lineHeight: 1.2, color: 'var(--neutral-800)', marginBottom: '2px' }}>
@@ -91,12 +86,7 @@ const MonthlyProgressSummary = ({
                         </Paragraph>
                     </div>
                     <Tooltip title="Next Month">
-                        <Button 
-                            shape="circle" 
-                            icon={<IconChevronRight size={16} />} 
-                            onClick={goToNextMonth} 
-                            style={{ margin: '0 var(--space-16)' }} 
-                        />
+                        <Button shape="circle" icon={<IconChevronRight size={16} />} onClick={goToNextMonth} style={{ margin: '0 var(--space-16)' }} />
                     </Tooltip>
                 </div>
             </div>
@@ -105,24 +95,26 @@ const MonthlyProgressSummary = ({
             <div className="mobile-header">
                 {/* Month Navigation - Now at top for better spacing */}
                 <div className="month-navigation">
-                    <Button
-                        type="default"
-                        shape="circle"
-                        icon={<IconChevronLeft size={16} />}
-                        onClick={goToPreviousMonth}
-                        className="nav-button"
-                    />
+                    <Tooltip title="Previous Month">
+                        <Button 
+                            shape="circle" 
+                            icon={<IconChevronLeft size={16} />} 
+                            onClick={goToPreviousMonth} 
+                            className="nav-button"
+                        />
+                    </Tooltip>
                     <div className="month-display">
                         <Text strong className="month-text">{monthText}</Text>
                         <Text className="year-text">{yearText}</Text>
                     </div>
-                    <Button
-                        type="default"
-                        shape="circle"
-                        icon={<IconChevronRight size={16} />}
-                        onClick={goToNextMonth}
-                        className="nav-button"
-                    />
+                    <Tooltip title="Next Month">
+                        <Button 
+                            shape="circle" 
+                            icon={<IconChevronRight size={16} />} 
+                            onClick={goToNextMonth} 
+                            className="nav-button"
+                        />
+                    </Tooltip>
                 </div>
 
                 {/* Title and Progress Row */}
@@ -225,29 +217,10 @@ const MonthlyProgressSummary = ({
                     }
 
                     .nav-button {
-                        margin: 0 8px;
-                        width: 32px;
-                        height: 32px;
+                        margin: 0 12px;
                         display: flex;
                         align-items: center;
                         justify-content: center;
-                        border: 1px solid var(--neutral-300);
-                        color: var(--neutral-700);
-                        background-color: white;
-                        border-radius: 16px;
-                        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-                        transition: all 0.2s ease;
-                    }
-
-                    .nav-button:hover {
-                        border-color: var(--primary-500);
-                        color: var(--primary-600);
-                        transform: translateY(-1px);
-                        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-                    }
-
-                    .nav-button:active {
-                        transform: translateY(0);
                     }
 
                     .month-display {
@@ -258,19 +231,17 @@ const MonthlyProgressSummary = ({
                     }
 
                     .month-text {
-                        font-size: 1rem;
+                        font-size: 1.1rem;
                         line-height: 1.2;
                         margin: 0;
                         color: var(--neutral-800);
-                        font-weight: 600;
                     }
 
                     .year-text {
-                        font-size: 0.75rem;
+                        font-size: 0.8rem;
                         line-height: 1.1;
                         color: var(--neutral-600);
                         margin: 0;
-                        opacity: 0.7;
                     }
 
                     .title-progress-row {
