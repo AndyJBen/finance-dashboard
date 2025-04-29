@@ -6,7 +6,7 @@
     width: 100%;
     max-width: 100%;
     overflow-x: hidden;
-    padding-bottom: 80px !important; /* Space for bottom nav */
+    padding-bottom: 40px !important; /* Space for bottom nav */
   }
   
   /* Card styling for mobile */
