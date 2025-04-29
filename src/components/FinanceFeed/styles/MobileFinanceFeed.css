@@ -140,8 +140,6 @@
 }
 
 .feed-item-avatar {
-  width: 38px !important; /* Increased from 40px */
-  height: 38px !important; /* Increased from 40px */
   border-radius: 50% !important; /* Ensure it's perfectly circular */
   flex-shrink: 0 !important;
   display: flex !important;
