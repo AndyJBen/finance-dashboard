@@ -748,7 +748,6 @@ main.ant-layout-content {
   /* General card settings */
   .ant-card {
     margin-top: 2px !important;
-    margin-bottom: 5px !important;
   }
   
   /* Fix the table row spacing issues */
