@@ -1,23 +1,27 @@
-// src/components/FinanceFeed/MobileFinanceFeed.jsx
+// src/components/MobileFinanceFeed/MobileFinanceFeed.jsx
 import React, { useState, useContext } from 'react';
 import { Typography, Card, Space, List, Badge, Tag, Avatar, Button } from 'antd';
 import {
-  IconAlertOctagon,
+  IconAlertOctagonFilled, // Changed from IconAlertOctagon
   IconClipboardList,
   IconRepeatOff,
-  IconHourglass,
-  IconClock,
+  IconHourglassHigh, // Changed from IconHourglass
+  IconTimeDuration15, // Changed from IconClock
   IconChevronDown,
   IconChevronUp,
-  IconCircleCheck,
-  IconCar,
-  IconHome,
-  IconDeviceLaptop,
+  IconCircleCheckFilled, // Changed from IconCircleCheck
+  IconClock, // Keep for subtitle
+  IconCarFilled, // Changed from IconCar
+  IconHomeFilled, // Changed from IconHome
+  IconDeviceLaptopFilled, // Changed from IconDeviceLaptop
   IconWifi,
-  IconDroplet,
+  IconDropletFilled, // Changed from IconDroplet
   IconCreditCard,
   IconShoppingBag
 } from '@tabler/icons-react';
+
+// FIXED: Uncommented this line
+import { FinanceContext } from '../../contexts/FinanceContext'; // Adjust path if needed
 
 // Import the CSS file for mobile styling
 import './MobileFinanceFeed.css';
@@ -27,19 +31,19 @@ const { Text, Title } = Typography;
 // Helper function to get icon based on category
 const getCategoryIcon = (category, size = 16) => {
   const lowerCategory = category?.toLowerCase() || '';
-  
+
   if (lowerCategory.includes('car') || lowerCategory.includes('auto')) 
-    return <IconCar size={size} style={{ color: '#FF9233' }} />;
+    return <IconCarFilled size={size} style={{ color: '#FF9233' }} />;
   if (lowerCategory.includes('home') || lowerCategory.includes('rent')) 
-    return <IconHome size={size} style={{ color: '#F1476F' }} />;
+    return <IconHomeFilled size={size} style={{ color: '#F1476F' }} />;
   if (lowerCategory.includes('internet') || lowerCategory.includes('wifi')) 
     return <IconWifi size={size} style={{ color: '#0066FF' }} />;
   if (lowerCategory.includes('water')) 
-    return <IconDroplet size={size} style={{ color: '#26C67B' }} />;
+    return <IconDropletFilled size={size} style={{ color: '#26C67B' }} />;
   if (lowerCategory.includes('gas')) 
-    return <IconDroplet size={size} style={{ color: '#FF9233' }} />;
+    return <IconDropletFilled size={size} style={{ color: '#FF9233' }} />;
   if (lowerCategory.includes('subscription') || lowerCategory.includes('chatgpt')) 
-    return <IconDeviceLaptop size={size} style={{ color: '#0066FF' }} />;
+    return <IconDeviceLaptopFilled size={size} style={{ color: '#0066FF' }} />;
   if (lowerCategory.includes('medical')) 
     return <IconClipboardList size={size} style={{ color: '#F1476F' }} />;
   if (lowerCategory.includes('clothing')) 
@@ -52,17 +56,17 @@ const getCategoryIcon = (category, size = 16) => {
 // Sample data (replace with context data in real implementation)
 const MobileFinanceFeed = () => {
   // Use context for real implementation
-  const financeContext = useContext(FinanceContext);
-  
+  const financeContext = useContext(FinanceContext); // Now this should work
+
   // Get the data we need for each section
   // Past Due Bills
   const pastDueBills = financeContext.pastDueBills || [];
-  
+
   // Bill Prep items
   const billPrepItems = financeContext.bills?.filter(bill => 
     bill.category?.toLowerCase() === 'bill prep' && !bill.isPaid
   ) || [];
-  
+
   // Group Bill Prep items by name
   const groupedBillPrepItems = billPrepItems.reduce((acc, bill) => {
     const name = bill.name;
@@ -82,28 +86,28 @@ const MobileFinanceFeed = () => {
     return acc;
   }, {});
   const billPrep = Object.values(groupedBillPrepItems);
-  
+
   // Non-Recurring Bills
   const nonRecurring = financeContext.bills?.filter(bill => !bill.isRecurring) || [];
-  
+
   // Upcoming Bills (unpaid bills with future due dates)
   const today = new Date();
   const upcoming = financeContext.bills?.filter(bill => 
     !bill.isPaid && new Date(bill.dueDate) >= today
   ) || [];
-  
+
   // Recent Activity (paid bills, ordered by payment date)
   const recentActivity = financeContext.bills?.filter(bill => 
     bill.isPaid
   ).sort((a, b) => new Date(b.dueDate) - new Date(a.dueDate)).slice(0, 10) || [];
-  
+
   // Calculate totals for each section
   const pastDueTotal = pastDueBills.reduce((sum, bill) => sum + Number(bill.amount || 0), 0);
   const billPrepTotal = billPrep.reduce((sum, item) => sum + Number(item.totalAmount || 0), 0);
   const nonRecurringTotal = nonRecurring.reduce((sum, bill) => sum + Number(bill.amount || 0), 0);
   const upcomingTotal = upcoming.reduce((sum, bill) => sum + Number(bill.amount || 0), 0);
   const recentActivityTotal = recentActivity.reduce((sum, bill) => sum + Number(bill.amount || 0), 0);
-  
+
   // State to track expanded/collapsed sections
   const [expanded, setExpanded] = useState({
     pastDue: true,
@@ -151,11 +155,11 @@ const MobileFinanceFeed = () => {
   const formatDueDate = (dateString) => {
     const date = new Date(dateString);
     const diffDays = Math.ceil((date - today) / (1000 * 60 * 60 * 24));
-    
+
     if (diffDays === 0) return 'Today';
     if (diffDays === 1) return 'Tomorrow';
     if (diffDays <= 7) return `In ${diffDays} days`;
-    
+
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   };
 
@@ -229,11 +233,11 @@ const MobileFinanceFeed = () => {
   return (
     <div className="finance-feed-mobile">
       <Title level={4} style={{ marginBottom: 16 }}>Finance Feed</Title>
-      
+
       {/* Past Due Payments */}
       <SectionCard
         title="Past Due Payments"
-        icon={<IconAlertOctagon size={18} style={{ color: '#F1476F' }} />}
+        icon={<IconAlertOctagonFilled size={18} style={{ color: '#F1476F' }} />} // Use Filled version
         section="pastDue"
         empty={pastDueBills.length === 0}
         emptyText="No past due payments"
@@ -255,7 +259,7 @@ const MobileFinanceFeed = () => {
                   Due {daysAgo(item.dueDate)} days ago
                 </Text>
               </div>
-              <Text strong style={{color: '#F5222D'}}>${Number(item.amount).toFixed(2)}</Text>
+              <Text strong style={{color: '#F1476F'}}>${Number(item.amount).toFixed(2)}</Text>
             </List.Item>
           )}
         />
@@ -373,7 +377,7 @@ const MobileFinanceFeed = () => {
       {/* Upcoming Bills */}
       <SectionCard
         title="Upcoming Bills"
-        icon={<IconHourglass size={18} style={{ color: '#0066FF' }} />}
+        icon={<IconHourglassHigh size={18} style={{ color: '#0066FF' }} />}
         section="upcoming"
         empty={upcoming.length === 0}
         emptyText="No upcoming bills"
@@ -412,7 +416,7 @@ const MobileFinanceFeed = () => {
       {/* Recent Activity */}
       <SectionCard
         title="Recent Activity"
-        icon={<IconClock size={18} style={{ color: '#0066FF' }} />}
+        icon={<IconTimeDuration15 size={18} style={{ color: '#0066FF' }} />}
         section="recentActivity"
         empty={recentActivity.length === 0}
         emptyText="No recent activity"
@@ -429,7 +433,7 @@ const MobileFinanceFeed = () => {
                       shape="square" 
                       className="feed-item-avatar"
                       style={{ backgroundColor: 'rgba(114, 46, 209, 0.1)' }}
-                      icon={<IconCircleCheck size={16} style={{ color: '#722ED1' }} />}
+                      icon={<IconCircleCheckFilled size={16} style={{ color: '#722ED1' }} />} // Use Filled version
                     />
                     <Text strong>{item.name}</Text>
                   </Space>
