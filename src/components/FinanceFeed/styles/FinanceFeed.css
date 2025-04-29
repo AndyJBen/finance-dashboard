@@ -268,7 +268,7 @@
   /* Typography adjustments */
   .finance-feed-mobile h4.ant-typography {
     font-size: 1.2rem !important;
-    margin-bottom: 16px !important;
+    margin-bottom: 8px 15px !important;
     font-weight: 600;
   }
   
