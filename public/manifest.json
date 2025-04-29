@@ -1,7 +1,7 @@
 {
     "name": "Financely",
     "short_name": "Financely",
-    "theme_color": "#F5F7FA",
+    "theme_color": "#0066FF",
     "background_color": "#F5F7FA",
     "display": "standalone",
     "scope": "/",
@@ -70,6 +70,20 @@
         "purpose": "maskable"
       }
     ],
+    "screenshots": [
+      {
+        "src": "screenshots/dashboard-1280x720.png",
+        "sizes": "1280x720",
+        "type": "image/png",
+        "form_factor": "wide"
+      },
+      {
+        "src": "screenshots/dashboard-mobile-750x1334.png",
+        "sizes": "750x1334",
+        "type": "image/png",
+        "form_factor": "narrow"
+      }
+    ],
     "shortcuts": [
       {
         "name": "Dashboard",
@@ -86,5 +100,7 @@
         "icons": [{ "src": "icons/shortcut-add-96x96.png", "sizes": "96x96" }]
       }
     ],
-    "categories": ["finance", "utilities", "productivity"]
+    "categories": ["finance", "utilities", "productivity"],
+    "related_applications": [],
+    "prefer_related_applications": false
   }
