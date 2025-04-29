@@ -1,5 +1,6 @@
+// src/components/FinanceFeed/MobileFinanceFeed.jsx
 import React, { useState, useContext } from 'react';
-import { Typography, Card, Space, List, Badge, Tag, Avatar, Button, Divider } from 'antd';
+import { Typography, Card, Space, List, Badge, Tag, Avatar, Button } from 'antd';
 import {
   IconAlertOctagon,
   IconClipboardList,
@@ -18,8 +19,8 @@ import {
   IconShoppingBag
 } from '@tabler/icons-react';
 
-// Import context
-import { FinanceContext } from '../../contexts/FinanceContext';
+// Import the CSS file for mobile styling
+import './MobileFinanceFeed.css';
 
 const { Text, Title } = Typography;
 
@@ -48,8 +49,9 @@ const getCategoryIcon = (category, size = 16) => {
   return <IconCreditCard size={size} style={{ color: '#0066FF' }} />;
 };
 
+// Sample data (replace with context data in real implementation)
 const MobileFinanceFeed = () => {
-  // Get data from context
+  // Use context for real implementation
   const financeContext = useContext(FinanceContext);
   
   // Get the data we need for each section
@@ -157,46 +159,42 @@ const MobileFinanceFeed = () => {
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   };
 
-  // Mobile card styling - more compact than desktop
-  const cardStyle = {
-    marginBottom: 12,
-    borderRadius: 12,
-    overflow: 'hidden',
-    boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
-  };
-
   // Section card component with improved collapse button
   const SectionCard = ({ title, icon, children, section, empty = false, count, itemCount, emptyText }) => (
     <Card
-      style={cardStyle}
+      className="finance-section-card"
       bodyStyle={expanded[section] ? { padding: 0 } : { padding: 0, height: 0, overflow: 'hidden' }}
       title={
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: 0 }}>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            {icon}
-            <Text strong style={{ marginLeft: 8, fontSize: '0.95rem' }}>{title}</Text>
-            {count && (
-              <Badge
-                count={count}
-                showZero={false}
-                style={{ 
-                  backgroundColor: empty ? '#e0e0e0' : '#0066FF',
-                  marginLeft: 8,
-                  fontSize: '0.7rem',
-                  minWidth: 18,
-                  height: 18,
-                  borderRadius: 9,
-                  color: '#fff',
-                  fontWeight: 'bold',
-                  lineHeight: '18px'
-                }}
-              />
-            )}
-            {itemCount && (
-              <Text type="secondary" style={{ marginLeft: 8, fontSize: '0.75rem' }}>
-                ({itemCount})
-              </Text>
-            )}
+        <div className="section-header">
+          <div className="section-title-container">
+            <div className="section-icon-container">
+              {icon}
+            </div>
+            <div>
+              <Text className="section-title">{title}</Text>
+              {count && (
+                <Badge
+                  count={count}
+                  showZero={false}
+                  style={{ 
+                    backgroundColor: empty ? '#e0e0e0' : '#0066FF',
+                    marginLeft: 8,
+                    fontSize: '0.7rem',
+                    minWidth: 18,
+                    height: 18,
+                    borderRadius: 9,
+                    color: '#fff',
+                    fontWeight: 'bold',
+                    lineHeight: '18px'
+                  }}
+                />
+              )}
+              {itemCount && (
+                <Text type="secondary" className="section-subtitle">
+                  ({itemCount})
+                </Text>
+              )}
+            </div>
           </div>
           <Button 
             type="default"
@@ -217,10 +215,9 @@ const MobileFinanceFeed = () => {
           />
         </div>
       }
-      headStyle={{ padding: '10px 16px' }}
     >
       {empty && expanded[section] ? (
-        <div style={{ padding: 16, textAlign: 'center' }}>
+        <div className="empty-section">
           <Text type="secondary">{emptyText || 'No items to display'}</Text>
         </div>
       ) : (
@@ -230,8 +227,8 @@ const MobileFinanceFeed = () => {
   );
 
   return (
-    <div className="finance-feed-mobile" style={{ padding: '12px 12px 80px 12px' }}>
-      <Title level={4} style={{ marginBottom: 16, fontSize: '1.2rem' }}>Finance Feed</Title>
+    <div className="finance-feed-mobile">
+      <Title level={4} style={{ marginBottom: 16 }}>Finance Feed</Title>
       
       {/* Past Due Payments */}
       <SectionCard
@@ -244,26 +241,22 @@ const MobileFinanceFeed = () => {
       >
         <List
           dataSource={pastDueBills}
-          renderItem={(item, index) => (
-            <>
-              <List.Item
-                style={{ padding: '12px 16px', borderBottom: index < pastDueBills.length - 1 ? '1px solid #f0f0f0' : 'none' }}
-              >
-                <Avatar 
-                  shape="square" 
-                  className="feed-item-avatar"
-                  style={{ backgroundColor: '#FFF5F5', borderRadius: 8 }}
-                  icon={getCategoryIcon(item.category, 18)}
-                />
-                <div className="feed-item-content">
-                  <Text strong className="feed-item-title">{item.name}</Text>
-                  <Text type="danger" className="due-date-text">
-                    Due {daysAgo(item.dueDate)} days ago
-                  </Text>
-                </div>
-                <Text strong style={{ color: '#F1476F' }}>${Number(item.amount).toFixed(2)}</Text>
-              </List.Item>
-            </>
+          renderItem={item => (
+            <List.Item className="feed-list-item">
+              <Avatar 
+                shape="square" 
+                className="feed-item-avatar"
+                style={{ backgroundColor: '#FFF5F5', borderRadius: 8 }}
+                icon={getCategoryIcon(item.category, 18)}
+              />
+              <div className="feed-item-content">
+                <Text className="feed-item-title">{item.name}</Text>
+                <Text type="danger" className="due-date-text">
+                  Due {daysAgo(item.dueDate)} days ago
+                </Text>
+              </div>
+              <Text strong style={{color: '#F5222D'}}>${Number(item.amount).toFixed(2)}</Text>
+            </List.Item>
           )}
         />
         {pastDueBills.length > 0 && (
@@ -287,26 +280,22 @@ const MobileFinanceFeed = () => {
       >
         <List
           dataSource={billPrep}
-          renderItem={(item, index) => (
-            <>
-              <List.Item
-                style={{ padding: '12px 16px', borderBottom: index < billPrep.length - 1 ? '1px solid #f0f0f0' : 'none' }}
-              >
-                <Avatar 
-                  shape="square" 
-                  className="feed-item-avatar"
-                  style={{ backgroundColor: '#EBF5FF', borderRadius: 8 }}
-                  icon={getCategoryIcon(item.category, 18)}
-                />
-                <div className="feed-item-content">
-                  <Text strong className="feed-item-title">{item.name}</Text>
-                  <Text type="secondary" className="feed-item-subtitle">
-                    {item.bills.length} {item.bills.length === 1 ? 'Item' : 'Items'}
-                  </Text>
-                </div>
-                <Text strong>${item.totalAmount.toFixed(2)}</Text>
-              </List.Item>
-            </>
+          renderItem={item => (
+            <List.Item className="feed-list-item">
+              <Avatar 
+                shape="square" 
+                className="feed-item-avatar"
+                style={{ backgroundColor: '#EBF5FF', borderRadius: 8 }}
+                icon={getCategoryIcon(item.category, 18)}
+              />
+              <div className="feed-item-content">
+                <Text className="feed-item-title">{item.name}</Text>
+                <Text type="secondary" className="feed-item-subtitle">
+                  {item.bills.length} {item.bills.length === 1 ? 'Item' : 'Items'}
+                </Text>
+              </div>
+              <Text strong style={{color: '#1890FF'}}>${item.totalAmount.toFixed(2)}</Text>
+            </List.Item>
           )}
         />
         {billPrep.length > 0 && (
@@ -330,37 +319,33 @@ const MobileFinanceFeed = () => {
       >
         <List
           dataSource={limitItems(nonRecurring, 'nonRecurring')}
-          renderItem={(item, index) => (
-            <>
-              <List.Item
-                style={{ padding: '12px 16px', borderBottom: index < limitItems(nonRecurring, 'nonRecurring').length - 1 ? '1px solid #f0f0f0' : 'none' }}
-              >
-                <Avatar 
-                  shape="square" 
-                  className="feed-item-avatar"
-                  style={{ backgroundColor: '#E5F8EF', borderRadius: 8 }}
-                  icon={getCategoryIcon(item.category, 18)}
-                />
-                <div className="feed-item-content">
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <Text strong className="feed-item-title">{item.name}</Text>
-                    <Text strong style={{ color: item.isPaid ? '#26C67B' : '#F1476F' }}>
-                      ${Number(item.amount).toFixed(2)}
-                    </Text>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 4 }}>
-                    <Text type="secondary" className="due-date-text">
-                      {daysAgo(item.dueDate)} days ago
-                    </Text>
-                    {item.isPaid && (
-                      <Tag className="status-tag status-tag-paid">
-                        Paid
-                      </Tag>
-                    )}
-                  </div>
+          renderItem={item => (
+            <List.Item className="feed-list-item">
+              <Avatar 
+                shape="square" 
+                className="feed-item-avatar"
+                style={{ backgroundColor: '#E5F8EF', borderRadius: 8 }}
+                icon={getCategoryIcon(item.category, 18)}
+              />
+              <div className="feed-item-content">
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <Text className="feed-item-title">{item.name}</Text>
+                  <Text strong style={{ color: item.isPaid ? '#26C67B' : '#F1476F' }}>
+                    ${Number(item.amount).toFixed(2)}
+                  </Text>
                 </div>
-              </List.Item>
-            </>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 4 }}>
+                  <Text type="secondary" className="due-date-text">
+                    {daysAgo(item.dueDate)} days ago
+                  </Text>
+                  {item.isPaid && (
+                    <Tag className="status-tag status-tag-paid">
+                      Paid
+                    </Tag>
+                  )}
+                </div>
+              </div>
+            </List.Item>
           )}
         />
         {nonRecurring.length > 3 && (
@@ -396,26 +381,22 @@ const MobileFinanceFeed = () => {
       >
         <List
           dataSource={upcoming}
-          renderItem={(item, index) => (
-            <>
-              <List.Item
-                style={{ padding: '12px 16px', borderBottom: index < upcoming.length - 1 ? '1px solid #f0f0f0' : 'none' }}
-              >
-                <Avatar 
-                  shape="square" 
-                  className="feed-item-avatar"
-                  style={{ backgroundColor: '#EBF5FF', borderRadius: 8 }}
-                  icon={getCategoryIcon(item.category, 18)}
-                />
-                <div className="feed-item-content">
-                  <Text strong className="feed-item-title">{item.name}</Text>
-                  <Text type="secondary" className="feed-item-subtitle">
-                    Due {formatDueDate(item.dueDate)}
-                  </Text>
-                </div>
-                <Text strong>${Number(item.amount).toFixed(2)}</Text>
-              </List.Item>
-            </>
+          renderItem={item => (
+            <List.Item className="feed-list-item">
+              <Avatar 
+                shape="square" 
+                className="feed-item-avatar"
+                style={{ backgroundColor: '#EBF5FF', borderRadius: 8 }}
+                icon={getCategoryIcon(item.category, 18)}
+              />
+              <div className="feed-item-content">
+                <Text className="feed-item-title">{item.name}</Text>
+                <Text type="secondary" className="feed-item-subtitle">
+                  Due {formatDueDate(item.dueDate)}
+                </Text>
+              </div>
+              <Text strong style={{color: '#0066FF'}}>${Number(item.amount).toFixed(2)}</Text>
+            </List.Item>
           )}
         />
         {upcoming.length > 0 && (
@@ -439,36 +420,32 @@ const MobileFinanceFeed = () => {
       >
         <List
           dataSource={limitItems(recentActivity, 'recentActivity')}
-          renderItem={(item, index) => (
-            <>
-              <List.Item
-                style={{ padding: '12px 16px', borderBottom: index < limitItems(recentActivity, 'recentActivity').length - 1 ? '1px solid #f0f0f0' : 'none' }}
-              >
-                <Space direction="vertical" size={0} style={{ width: '100%' }}>
-                  <Space align="center" style={{ width: '100%', justifyContent: 'space-between' }}>
-                    <Space align="center">
-                      <Avatar 
-                        shape="square" 
-                        className="feed-item-avatar"
-                        style={{ backgroundColor: 'rgba(114, 46, 209, 0.1)' }}
-                        icon={<IconCircleCheck size={16} style={{ color: '#722ED1' }} />}
-                      />
-                      <Text strong>{item.name}</Text>
-                    </Space>
-                    <Space direction="vertical" align="end" size={0}>
-                      <Text strong>${Number(item.amount).toFixed(2)}</Text>
-                      <Text type="secondary" style={{ fontSize: '0.7rem' }}>{item.category}</Text>
-                    </Space>
+          renderItem={item => (
+            <List.Item className="feed-list-item">
+              <Space direction="vertical" size={0} style={{ width: '100%' }}>
+                <Space align="center" style={{ width: '100%', justifyContent: 'space-between' }}>
+                  <Space align="center">
+                    <Avatar 
+                      shape="square" 
+                      className="feed-item-avatar"
+                      style={{ backgroundColor: 'rgba(114, 46, 209, 0.1)' }}
+                      icon={<IconCircleCheck size={16} style={{ color: '#722ED1' }} />}
+                    />
+                    <Text strong>{item.name}</Text>
                   </Space>
-                  <div style={{ paddingLeft: 48 }}>
-                    <Text type="secondary" style={{ fontSize: '0.75rem', display: 'flex', alignItems: 'center' }}>
-                      <IconClock size={10} style={{ marginRight: 4 }} />
-                      {daysAgo(item.dueDate)} days ago
-                    </Text>
-                  </div>
+                  <Space direction="vertical" align="end" size={0}>
+                    <Text strong>${Number(item.amount).toFixed(2)}</Text>
+                    <Text type="secondary" style={{ fontSize: '0.7rem' }}>{item.category}</Text>
+                  </Space>
                 </Space>
-              </List.Item>
-            </>
+                <div style={{ paddingLeft: 48 }}>
+                  <Text type="secondary" style={{ fontSize: '0.75rem', display: 'flex', alignItems: 'center' }}>
+                    <IconClock size={10} style={{ marginRight: 4 }} />
+                    {daysAgo(item.dueDate)} days ago
+                  </Text>
+                </div>
+              </Space>
+            </List.Item>
           )}
         />
         {recentActivity.length > 3 && (

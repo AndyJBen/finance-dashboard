@@ -108,19 +108,18 @@
     font-weight: 500;
   }
   
-  /* Toggle button styling */
+  /* Toggle button styling - UPDATED for better mobile experience */
   .section-toggle-button {
-    padding: 0;
-    width: 28px;
-    height: 28px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    background-color: rgba(255, 255, 255, 0.8);
+    width: 32px !important;
+    height: 32px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 16px !important;
+    background-color: var(--neutral-50) !important;
+    border: 1px solid var(--neutral-200) !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
     color: rgba(0, 0, 0, 0.45);
-    border: none;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
   }
   
   /* List item styling */
@@ -261,31 +260,6 @@
     height: 1px;
   }
   
-  /* Transition for smooth expansion/collapse */
-  .section-content {
-    overflow: hidden;
-    transition: max-height 0.3s ease;
-  }
-  
-  /* Apple-style lists */
-  .apple-style-list .feed-list-item {
-    padding-left: 16px;
-    padding-right: 16px;
-    margin-bottom: 1px;
-  }
-  
-  .apple-style-list .feed-item-title {
-    font-weight: 500;
-  }
-  
-  /* Loading state */
-  .loading-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 32px 0;
-  }
-  
   /* Tag styling */
   .status-tag {
     font-size: 0.7rem;
@@ -307,22 +281,6 @@
   .status-tag-unpaid {
     background-color: #fff2e8;
     color: #fa8c16;
-  }
-  
-  /* Animation for item appearances */
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  
-  .feed-list-item {
-    animation: fadeIn 0.3s ease-out;
   }
   
   /* Optimizations for very small screens */
@@ -357,29 +315,5 @@
     
     .section-total {
       padding: 10px;
-    }
-  }
-  
-  /* Enhanced accessibility focus states */
-  .section-toggle-button:focus {
-    outline: none;
-    box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.3);
-  }
-  
-  .show-more-button:focus {
-    outline: none;
-    box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
-  }
-  
-  /* iOS-specific overrides */
-  @supports (-webkit-touch-callout: none) {
-    .finance-feed-mobile {
-      /* iOS-specific padding adjustments */
-      padding-bottom: 80px !important;
-    }
-    
-    /* Fix for scrolling on iOS */
-    .section-content {
-      -webkit-overflow-scrolling: touch;
     }
   }
