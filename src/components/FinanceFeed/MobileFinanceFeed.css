@@ -6,7 +6,7 @@
     width: 100%;
     max-width: 100%;
     overflow-x: hidden;
-    padding: 16px 12px 100px 12px !important;
+    padding: 16px 12px 80px 12px !important;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior-y: none;
   }
@@ -104,6 +104,8 @@
     color: rgba(0, 0, 0, 0.5);
     line-height: 1.2;
     margin-top: 2px;
+    margin-left: 6px;
+    font-weight: 500;
   }
   
   /* Toggle button styling */
