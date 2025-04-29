@@ -4,6 +4,7 @@
 // Added conditional bottom margin for CombinedBillsOverview on mobile when expanded
 // Corrected import path for FinanceContext
 // Increased conditional margin for expanded list on mobile
+// Integrated SettingsPage component
 
 import React, { useState, useContext, useEffect } from 'react';
 import { Layout, Row, Col, Typography, Grid } from 'antd';
@@ -26,6 +27,7 @@ import AppFooter              from './components/Footer/Footer';
 import ChartsPage             from './components/ChartsPage/ChartsPage';
 import BottomNavBar           from './components/Navigation/BottomNavBar';
 import EditBillModal          from './components/BillsList/EditBillModal';
+import SettingsPage           from './components/Settings/SettingsPage'; // Import SettingsPage
 
 
 const { Content } = Layout;
@@ -197,8 +199,8 @@ function MyApp() {
       case 'reports': // Renders the ChartsPage component
         return <ChartsPage />;
 
-      case 'settings': // Renders a placeholder for the settings page
-        return <Title level={3}>Account/Settings (Placeholder)</Title>;
+      case 'settings': // Renders the SettingsPage component
+        return <SettingsPage isMobileView={isMobileView} />; // Pass mobile view status
 
       default: // Fallback for unknown routes
         return <Title level={3}>Not Found</Title>;
