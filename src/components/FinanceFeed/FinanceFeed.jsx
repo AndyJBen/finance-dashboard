@@ -12,8 +12,8 @@ import ActivityFeed from '../RecentActivity/ActivityFeed';
 // Import the mobile-optimized Finance Feed component directly
 import MobileFinanceFeed from './MobileFinanceFeed';
 
-// Import the CSS file for mobile styling
-import './MobileFinanceFeed.css';
+// Import the CSS files with the new organized structure
+import './styles/FinanceFeed.css'; // Desktop styles
 
 const { Title } = Typography;
 
@@ -50,13 +50,13 @@ const FinanceFeed = ({ isMobileView, onEditBill, onAddBill }) => {
       {/* Desktop view - Two column layout */}
       <Row gutter={[24, 24]}>
         {/* Left column - 2/3 width */}
-        <Col xs={24} lg={16}>
+        <Col xs={24} lg={16} className="finance-feed-left-column">
           <PastDuePayments style={cardStyle} />
           <UpcomingPayments style={cardStyle} />
         </Col>
         
         {/* Right column - 1/3 width */}
-        <Col xs={24} lg={8}>
+        <Col xs={24} lg={8} className="finance-feed-right-column">
           <BillPrepCard style={cardStyle} />
           <NonRecurringTransactions style={cardStyle} />
           <ActivityFeed style={cardStyle} />
