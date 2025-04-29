@@ -5,6 +5,7 @@
 // Corrected import path for FinanceContext
 // Increased conditional margin for expanded list on mobile
 // Integrated SettingsPage component
+// Added ErrorBoundary wrapper
 
 import React, { useState, useContext, useEffect } from 'react';
 import { Layout, Row, Col, Typography, Grid } from 'antd';
@@ -28,6 +29,7 @@ import ChartsPage             from './components/ChartsPage/ChartsPage';
 import BottomNavBar           from './components/Navigation/BottomNavBar';
 import EditBillModal          from './components/BillsList/EditBillModal';
 import SettingsPage           from './components/Settings/SettingsPage'; // Import SettingsPage
+import ErrorBoundary from './components/ErrorBoundary'; // Import ErrorBoundary
 
 
 const { Content } = Layout;
@@ -220,65 +222,68 @@ function MyApp() {
 
   // --- Component Return JSX ---
   return (
-    <Layout style={{ minHeight: '100vh', maxWidth: '100vw', overflow: 'hidden' }}>
-      {/* Sidebar: Render only if not in mobile view */}
-      {!isMobileView && (
-          <Sidebar
-            selectedKey={selectedMenuKey}
-            onSelect={handleSelect}
-            width={SIDEBAR_WIDTH}
-            // Pass modal handlers if Sidebar needs to trigger them (optional)
-            // onAddBill={handleOpenAddBillModal}
-            // onEditBill={handleOpenEditBillModal}
-          />
-      )}
-
-      {/* Main Layout Area (Content + Footer) */}
-      <Layout
-        style={{
-          marginLeft, // Apply left margin for sidebar space on desktop
-          transition: 'margin-left 0.2s', // Smooth transition for margin changes
-          minHeight: '100vh',
-          overflowY: 'auto', // Allow vertical scrolling for content
-          overflowX: 'hidden', // Prevent horizontal scrolling
-          overscrollBehaviorY: 'contain', // Prevent scrolling parent elements when content scrolls
-          display: 'flex',
-          flexDirection: 'column',
-          backgroundColor: 'var(--neutral-100)', // Background color for content area
-          width: '100%',
-          maxWidth: '100%',
-          padding: 0,
-        }}
-      >
-        {/* Content Area */}
-        <Content style={contentStyle}>
-          {renderContent()} {/* Render the selected page content */}
-        </Content>
-        {/* Footer */}
-        <AppFooter />
-      </Layout>
-
-      {/* Bottom Navigation Bar: Render only if in mobile view */}
-      {isMobileView && (
-          <BottomNavBar
+    // Wrap the entire application layout with the ErrorBoundary
+    <ErrorBoundary>
+      <Layout style={{ minHeight: '100vh', maxWidth: '100vw', overflow: 'hidden' }}>
+        {/* Sidebar: Render only if not in mobile view */}
+        {!isMobileView && (
+            <Sidebar
               selectedKey={selectedMenuKey}
               onSelect={handleSelect}
-              onAddClick={handleOpenAddBillModal} // Pass add handler to the center button action
-              // Pass other action handlers if needed, e.g., for editing balance
-              // onEditBalanceClick={handleOpenEditBalanceModal}
-          />
-      )}
+              width={SIDEBAR_WIDTH}
+              // Pass modal handlers if Sidebar needs to trigger them (optional)
+              // onAddBill={handleOpenAddBillModal}
+              // onEditBill={handleOpenEditBillModal}
+            />
+        )}
 
-      {/* Edit/Add Bill Modal: Render conditionally based on isEditModalVisible state */}
-      {isEditModalVisible && (
-          <EditBillModal
-              open={isEditModalVisible} // Control visibility
-              onCancel={handleModalClose} // Handler for closing the modal
-              onSubmit={handleModalSubmit} // Handler for form submission
-              initialData={editingBill} // Pass data for editing, or null for adding
-          />
-      )}
-    </Layout>
+        {/* Main Layout Area (Content + Footer) */}
+        <Layout
+          style={{
+            marginLeft, // Apply left margin for sidebar space on desktop
+            transition: 'margin-left 0.2s', // Smooth transition for margin changes
+            minHeight: '100vh',
+            overflowY: 'auto', // Allow vertical scrolling for content
+            overflowX: 'hidden', // Prevent horizontal scrolling
+            overscrollBehaviorY: 'contain', // Prevent scrolling parent elements when content scrolls
+            display: 'flex',
+            flexDirection: 'column',
+            backgroundColor: 'var(--neutral-100)', // Background color for content area
+            width: '100%',
+            maxWidth: '100%',
+            padding: 0,
+          }}
+        >
+          {/* Content Area */}
+          <Content style={contentStyle}>
+            {renderContent()} {/* Render the selected page content */}
+          </Content>
+          {/* Footer */}
+          <AppFooter />
+        </Layout>
+
+        {/* Bottom Navigation Bar: Render only if in mobile view */}
+        {isMobileView && (
+            <BottomNavBar
+                selectedKey={selectedMenuKey}
+                onSelect={handleSelect}
+                onAddClick={handleOpenAddBillModal} // Pass add handler to the center button action
+                // Pass other action handlers if needed, e.g., for editing balance
+                // onEditBalanceClick={handleOpenEditBalanceModal}
+            />
+        )}
+
+        {/* Edit/Add Bill Modal: Render conditionally based on isEditModalVisible state */}
+        {isEditModalVisible && (
+            <EditBillModal
+                open={isEditModalVisible} // Control visibility
+                onCancel={handleModalClose} // Handler for closing the modal
+                onSubmit={handleModalSubmit} // Handler for form submission
+                initialData={editingBill} // Pass data for editing, or null for adding
+            />
+        )}
+      </Layout>
+    </ErrorBoundary>
   );
 }
 
