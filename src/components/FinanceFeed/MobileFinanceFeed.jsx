@@ -1,20 +1,19 @@
 import React, { useState, useContext } from 'react';
 import { Typography, Card, Space, List, Badge, Tag, Avatar, Button, Divider } from 'antd';
 import {
-  IconAlertOctagonFilled,
+  IconAlertOctagon,
   IconClipboardList,
   IconRepeatOff,
-  IconHourglassHigh,
-  IconTimeDuration15,
+  IconHourglass,
+  IconClock,
   IconChevronDown,
   IconChevronUp,
-  IconCircleCheckFilled,
-  IconClock,
-  IconCarFilled,
-  IconHomeFilled,
-  IconDeviceLaptopFilled,
+  IconCircleCheck,
+  IconCar,
+  IconHome,
+  IconDeviceLaptop,
   IconWifi,
-  IconDropletFilled,
+  IconDroplet,
   IconCreditCard,
   IconShoppingBag
 } from '@tabler/icons-react';
@@ -29,17 +28,17 @@ const getCategoryIcon = (category, size = 16) => {
   const lowerCategory = category?.toLowerCase() || '';
   
   if (lowerCategory.includes('car') || lowerCategory.includes('auto')) 
-    return <IconCarFilled size={size} style={{ color: '#FF9233' }} />;
+    return <IconCar size={size} style={{ color: '#FF9233' }} />;
   if (lowerCategory.includes('home') || lowerCategory.includes('rent')) 
-    return <IconHomeFilled size={size} style={{ color: '#F1476F' }} />;
+    return <IconHome size={size} style={{ color: '#F1476F' }} />;
   if (lowerCategory.includes('internet') || lowerCategory.includes('wifi')) 
     return <IconWifi size={size} style={{ color: '#0066FF' }} />;
   if (lowerCategory.includes('water')) 
-    return <IconDropletFilled size={size} style={{ color: '#26C67B' }} />;
+    return <IconDroplet size={size} style={{ color: '#26C67B' }} />;
   if (lowerCategory.includes('gas')) 
-    return <IconDropletFilled size={size} style={{ color: '#FF9233' }} />;
+    return <IconDroplet size={size} style={{ color: '#FF9233' }} />;
   if (lowerCategory.includes('subscription') || lowerCategory.includes('chatgpt')) 
-    return <IconDeviceLaptopFilled size={size} style={{ color: '#0066FF' }} />;
+    return <IconDeviceLaptop size={size} style={{ color: '#0066FF' }} />;
   if (lowerCategory.includes('medical')) 
     return <IconClipboardList size={size} style={{ color: '#F1476F' }} />;
   if (lowerCategory.includes('clothing')) 
@@ -237,7 +236,7 @@ const MobileFinanceFeed = () => {
       {/* Past Due Payments */}
       <SectionCard
         title="Past Due Payments"
-        icon={<IconAlertOctagonFilled size={18} style={{ color: '#F1476F' }} />}
+        icon={<IconAlertOctagon size={18} style={{ color: '#F1476F' }} />}
         section="pastDue"
         empty={pastDueBills.length === 0}
         emptyText="No past due payments"
@@ -389,7 +388,7 @@ const MobileFinanceFeed = () => {
       {/* Upcoming Bills */}
       <SectionCard
         title="Upcoming Bills"
-        icon={<IconHourglassHigh size={18} style={{ color: '#0066FF' }} />}
+        icon={<IconHourglass size={18} style={{ color: '#0066FF' }} />}
         section="upcoming"
         empty={upcoming.length === 0}
         emptyText="No upcoming bills"
@@ -432,7 +431,7 @@ const MobileFinanceFeed = () => {
       {/* Recent Activity */}
       <SectionCard
         title="Recent Activity"
-        icon={<IconTimeDuration15 size={18} style={{ color: '#0066FF' }} />}
+        icon={<IconClock size={18} style={{ color: '#0066FF' }} />}
         section="recentActivity"
         empty={recentActivity.length === 0}
         emptyText="No recent activity"
@@ -452,7 +451,7 @@ const MobileFinanceFeed = () => {
                         shape="square" 
                         className="feed-item-avatar"
                         style={{ backgroundColor: 'rgba(114, 46, 209, 0.1)' }}
-                        icon={<IconCircleCheckFilled size={16} style={{ color: '#722ED1' }} />}
+                        icon={<IconCircleCheck size={16} style={{ color: '#722ED1' }} />}
                       />
                       <Text strong>{item.name}</Text>
                     </Space>
