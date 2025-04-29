@@ -179,20 +179,21 @@ const MobileFinanceFeed = () => {
             </div>
             <div>
               <Text className="section-title">{title}</Text>
-              {count && (
+              {count !== undefined && (
                 <Badge
-                  count={count}
-                  showZero={false}
+                  count={count === 0 ? <span>{count} Items</span> : count}
+                  showZero={true} // Changed to true to show zero
                   style={{ 
-                    backgroundColor: empty ? '#e0e0e0' : '#0066FF',
+                    backgroundColor: count === 0 ? '#0066FF' : (empty ? '#e0e0e0' : '#0066FF'),
                     marginLeft: 8,
                     fontSize: '0.7rem',
-                    minWidth: 18,
+                    minWidth: count === 0 ? 50 : 18, // Wider for "0 Items" text
                     height: 18,
                     borderRadius: 9,
                     color: '#fff',
                     fontWeight: 'bold',
-                    lineHeight: '18px'
+                    lineHeight: '18px',
+                    padding: count === 0 ? '0 8px' : '0' // Add padding for "0 Items"
                   }}
                 />
               )}
@@ -270,7 +271,7 @@ const MobileFinanceFeed = () => {
           <div className="section-total">
             <Text className="total-label">SECTION TOTAL</Text>
             <Text className="total-amount total-amount-pastdue">
-              ${pastDueTotal.toFixed(2)}
+              ${Number(pastDueTotal).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </Text>
           </div>
         )}
