@@ -76,7 +76,7 @@ const DashboardBillsList = ({
       title: 'Amount',
       dataIndex: 'amount',
       key: 'amount',
-      render: (amount) => `$${parseFloat(amount).toFixed(2)}`
+      render: (amount) => `$${Number(amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
     },
     {
       title: 'Due Date',

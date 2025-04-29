@@ -301,7 +301,7 @@ const MobileFinanceFeed = () => {
                   {item.bills.length} {item.bills.length === 1 ? 'Item' : 'Items'}
                 </Text>
               </div>
-              <Text strong style={{color: '#1890FF'}}>${item.totalAmount.toFixed(2)}</Text>
+              <Text strong style={{color: '#1890FF'}}>${Number(item.totalAmount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</Text>
             </List.Item>
           )}
         />
