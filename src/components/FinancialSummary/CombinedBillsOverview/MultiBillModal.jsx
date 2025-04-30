@@ -301,7 +301,7 @@ export default function MultiBillModal({ open, onClose }) {
       {/* Custom styles */}
       <style jsx global>{`
         .multi-bill-modal .ant-modal-content {
-          border-radius: 20px;
+          border-radius: 22px;
           box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15), 0 2px 10px rgba(0, 0, 0, 0.12);
           overflow: hidden;
           padding: 0;
@@ -495,7 +495,7 @@ export default function MultiBillModal({ open, onClose }) {
           }
           
           .bill-form {
-            padding: 12px; /* Even more compact on mobile */
+            padding: 18px; /* Even more compact on mobile */
           }
           
           /* Improved touch feedback */
