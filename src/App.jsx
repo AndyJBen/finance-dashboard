@@ -7,6 +7,7 @@
 // Integrated SettingsPage component
 // Added ErrorBoundary wrapper
 // Added handleOpenEditBalanceModal function and passed to BottomNavBar
+// Added proper mobile footer spacing
 
 import React, { useState, useContext, useEffect } from 'react';
 import { Layout, Row, Col, Typography, Grid } from 'antd';
@@ -31,7 +32,6 @@ import BottomNavBar           from './components/Navigation/BottomNavBar';
 import EditBillModal          from './components/BillsList/EditBillModal';
 import SettingsPage           from './components/Settings/SettingsPage'; // Import SettingsPage
 import ErrorBoundary from './components/ErrorBoundary'; // Import ErrorBoundary
-
 
 const { Content } = Layout;
 const { Title }   = Typography;
@@ -60,7 +60,6 @@ function MyApp() {
   const updateBill = financeContext ? financeContext.updateBill : () => console.error("FinanceContext not available for updateBill");
   // Get the toggle function from context
   const toggleBankBalanceEdit = financeContext ? financeContext.toggleBankBalanceEdit : () => console.error("FinanceContext not available for toggleBankBalanceEdit");
-
 
   // --- Modal Handlers ---
 
@@ -144,7 +143,6 @@ function MyApp() {
       setIsBillsListExpanded(isExpanded);
   };
 
-
   // --- Content Rendering Logic ---
   // Determines which main component/page to render based on the selectedMenuKey
   const renderContent = () => {
@@ -160,7 +158,7 @@ function MyApp() {
               <div style={{
                   // *** INCREASED MARGIN BOTTOM ***
                   // Apply margin bottom ONLY when on mobile AND the list is expanded
-                  marginBottom: (isMobileView && isBillsListExpanded) ? '40px' : '0px', // Increased from 20px
+                  marginBottom: (isMobileView && isBillsListExpanded) ? '60px' : '0px', // Increased from 40px
                   // Optional: Add a smooth transition for the margin change
                   transition: 'margin-bottom 0.2s ease-in-out'
               }}>
@@ -224,15 +222,13 @@ function MyApp() {
 
   // --- Main Content Area Styling ---
   const contentStyle = {
-    padding: isMobileView ? 'var(--space-4) var(--space-12)' : 'var(--space-24)',
+    padding: isMobileView ? 'var(--space-4) var(--space-12)' : 'var(--space-24)', // Responsive padding (top, left, right)
     margin: 0,
-    flexGrow: 1,
+    flexGrow: 1, // Allow content to fill available space
     width: '100%',
-    maxWidth: '100%', 
-    // Dynamic padding for mobile
-    paddingBottom: isMobileView 
-      ? (isTableCollapsed ? '100px' : '120px') // More space when expanded
-      : 'var(--space-24)'
+    maxWidth: '100%',
+    // Fixed mobile padding - avoiding variables like isTableCollapsed
+    paddingBottom: isMobileView ? (isBillsListExpanded ? '100px' : '80px') : 'var(--space-24)'
   };
 
   // --- Component Return JSX ---
@@ -268,6 +264,7 @@ function MyApp() {
             maxWidth: '100%',
             padding: 0,
           }}
+          className={isBillsListExpanded ? 'expanded-bills-list' : 'collapsed-bills-list'} // Add class for CSS targeting
         >
           {/* Content Area */}
           <Content style={contentStyle}>
@@ -298,6 +295,33 @@ function MyApp() {
             />
         )}
       </Layout>
+
+      {/* Add CSS for mobile spacing */}
+      <style jsx global>{`
+        /* Mobile bottom spacing CSS */
+        @media (max-width: 768px) {
+          /* Add safe area inset support for iOS devices */
+          .ant-layout-content {
+            padding-bottom: env(safe-area-inset-bottom, 20px) !important;
+          }
+          
+          /* Add additional bottom space when bills list is expanded */
+          .expanded-bills-list .ant-layout-content {
+            padding-bottom: calc(env(safe-area-inset-bottom, 20px) + 80px) !important;
+          }
+          
+          /* Less padding when collapsed */
+          .collapsed-bills-list .ant-layout-content {
+            padding-bottom: calc(env(safe-area-inset-bottom, 20px) + 60px) !important;
+          }
+          
+          /* Fix layout for iOS */
+          .bottom-navbar {
+            z-index: 1001 !important;
+            bottom: env(safe-area-inset-bottom, 0px) !important;
+          }
+        }
+      `}</style>
     </ErrorBoundary>
   );
 }
