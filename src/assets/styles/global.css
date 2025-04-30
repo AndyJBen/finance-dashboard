@@ -1230,3 +1230,45 @@ textarea {
     border-color: #1890ff;
   }
 }
+/* Remove blue outline on touch without breaking accessibility */
+input, 
+textarea, 
+select, 
+button,
+[role="button"],
+a {
+  -webkit-tap-highlight-color: transparent; /* Remove blue flash on tap */
+}
+
+/* Maintain focus styles for keyboard navigation */
+input:focus:not(:focus-visible), 
+textarea:focus:not(:focus-visible), 
+select:focus:not(:focus-visible), 
+button:focus:not(:focus-visible),
+[role="button"]:focus:not(:focus-visible),
+a:focus:not(:focus-visible) {
+  outline: none; /* Remove outline for mouse/touch interactions */
+}
+
+/* Preserve outline for keyboard navigation */
+input:focus-visible, 
+textarea:focus-visible, 
+select:focus-visible, 
+button:focus-visible,
+[role="button"]:focus-visible,
+a:focus-visible {
+  outline: 2px solid #0066ff; /* Your primary color */
+  outline-offset: 2px;
+}
+
+/* iOS-specific input fixes */
+@supports (-webkit-touch-callout: none) {
+  /* iOS-specific selector */
+  input, 
+  textarea, 
+  select {
+    /* Remove iOS inner shadow in inputs */
+    -webkit-appearance: none;
+    appearance: none;
+  }
+}
