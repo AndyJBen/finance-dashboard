@@ -31,7 +31,7 @@
   width: 100%;
   max-width: 100%;
   overflow-x: hidden;
-  padding: 16px 16px 60px 16px !important; /* Increased bottom padding */
+  padding: 10px !important; /* Increased bottom padding */
   -webkit-overflow-scrolling: touch;
   overscroll-behavior-y: none;
 }
