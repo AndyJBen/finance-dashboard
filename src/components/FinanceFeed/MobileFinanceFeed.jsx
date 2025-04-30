@@ -200,6 +200,7 @@ const MobileFinanceFeed = () => {
                   }}
                 />
               )}
+            </div>
           </div>
           <Button 
             type="default"
