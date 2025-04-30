@@ -1125,3 +1125,20 @@ textarea {
     padding: 0 !important;
   }
 }
+/* Add to global.css */
+@media (max-width: 768px) {
+  /* Ensure bottom padding for the entire app on mobile */
+  .ant-layout, .ant-layout-content {
+    padding-bottom: env(safe-area-inset-bottom, 20px) !important;
+  }
+  
+  /* Additional space for iPhone notch/home indicator */
+  html.ios .ant-layout-content {
+    padding-bottom: calc(env(safe-area-inset-bottom, 20px) + 40px) !important;
+  }
+  
+  /* Fix for collapsed table state */
+  .ant-card-body.is-collapsed {
+    padding-bottom: 60px !important;
+  }
+}

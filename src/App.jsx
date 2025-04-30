@@ -224,13 +224,15 @@ function MyApp() {
 
   // --- Main Content Area Styling ---
   const contentStyle = {
-    padding: isMobileView ? 'var(--space-4) var(--space-12)' : 'var(--space-24)', // Responsive padding (top, left, right)
+    padding: isMobileView ? 'var(--space-4) var(--space-12)' : 'var(--space-24)',
     margin: 0,
-    flexGrow: 1, // Allow content to fill available space
+    flexGrow: 1,
     width: '100%',
-    maxWidth: '100%',
-    // Use original mobile padding - extra space is now handled by the conditional margin above
-    paddingBottom: isMobileView ? '80px' : 'var(--space-24)'
+    maxWidth: '100%', 
+    // Dynamic padding for mobile
+    paddingBottom: isMobileView 
+      ? (isTableCollapsed ? '100px' : '120px') // More space when expanded
+      : 'var(--space-24)'
   };
 
   // --- Component Return JSX ---

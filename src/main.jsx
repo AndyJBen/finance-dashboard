@@ -41,3 +41,6 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     </ConfigProvider>
   </React.StrictMode>
 );
+if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
+  document.documentElement.classList.add('ios');
+}
