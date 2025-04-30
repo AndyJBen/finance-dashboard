@@ -106,7 +106,7 @@ export default function MultiBillModal({ open, onClose }) {
       onCancel={handleCancel}
       width={isMobile ? '92%' : 520}
       style={{ 
-        top: isMobile ? '50%' : 100,
+        top: 20, // Positioned at the top of the screen as requested
         margin: '0 auto',
         padding: 0
       }}
@@ -120,17 +120,17 @@ export default function MultiBillModal({ open, onClose }) {
         backdropFilter: 'blur(4px)'
       }}
       className="multi-bill-modal modern-overlay"
-      centered={true}
       footer={
         <div className="modal-footer">
-          <Button onClick={handleCancel}>Cancel</Button>
+          <Button onClick={handleCancel} className="cancel-button">Cancel</Button>
           <Button 
             type="primary" 
             onClick={handleOk} 
             loading={isSubmitting}
             icon={<IconCheck size={16} />}
+            className="complete-button"
           >
-            {isSubmitting ? 'Adding...' : 'Add Bills'}
+            {isSubmitting ? 'Adding...' : 'Complete'}
           </Button>
         </div>
       }
@@ -308,15 +308,15 @@ export default function MultiBillModal({ open, onClose }) {
         }
         
         .modal-header {
-          padding: 20px 24px;
+          padding: 16px 24px; /* Reduced padding for more compact header */
           background: linear-gradient(135deg, #1D4ED8, #3B82F6);
           color: white;
           border-radius: 20px 20px 0 0;
         }
         
         .modal-icon-container {
-          width: 44px;
-          height: 44px;
+          width: 38px; /* Smaller icon container */
+          height: 38px;
           background-color: rgba(255, 255, 255, 0.2);
           border-radius: 12px;
           display: flex;
@@ -332,7 +332,7 @@ export default function MultiBillModal({ open, onClose }) {
         }
         
         .bill-form {
-          padding: 20px;
+          padding: 16px; /* Reduced padding */
           max-height: ${isMobile ? '60vh' : '70vh'};
           overflow-y: auto;
         }
@@ -340,7 +340,7 @@ export default function MultiBillModal({ open, onClose }) {
         .bill-cards-container {
           display: flex;
           flex-direction: column;
-          gap: 16px;
+          gap: 14px; /* Reduced gap */
         }
         
         .bill-card {
@@ -355,7 +355,7 @@ export default function MultiBillModal({ open, onClose }) {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          margin-bottom: 16px;
+          margin-bottom: 10px; /* Reduced margin */
         }
         
         .bill-number {
@@ -365,8 +365,8 @@ export default function MultiBillModal({ open, onClose }) {
         
         .remove-button {
           border-radius: 50%;
-          width: 36px;
-          height: 36px;
+          width: 32px; /* Smaller button */
+          height: 32px;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -376,7 +376,7 @@ export default function MultiBillModal({ open, onClose }) {
         .bill-form-fields {
           display: flex;
           flex-direction: column;
-          gap: 14px;
+          gap: 10px; /* Reduced gap for more compact form */
         }
         
         .field-row {
@@ -395,14 +395,14 @@ export default function MultiBillModal({ open, onClose }) {
         }
         
         .bill-input {
-          height: 52px !important;
+          height: 44px !important; /* Reduced height for more compact form */
           border-radius: 12px !important;
           font-size: 15px !important;
         }
         
         .bill-select .ant-select-selector {
-          height: 52px !important;
-          padding-top: 9px !important;
+          height: 44px !important; /* Reduced height */
+          padding-top: 6px !important; /* Adjusted for reduced height */
           border-radius: 12px !important;
           font-size: 15px !important;
         }
@@ -436,7 +436,7 @@ export default function MultiBillModal({ open, onClose }) {
         }
         
         .add-bill-button {
-          height: 54px;
+          height: 46px; /* Reduced height */
           border-radius: 14px;
           border-color: #1D4ED8;
           border-width: 1.5px;
@@ -444,24 +444,31 @@ export default function MultiBillModal({ open, onClose }) {
           color: #1D4ED8;
           font-weight: 500;
           font-size: 15px;
-          margin-top: 6px;
+          margin-top: 4px; /* Reduced margin */
         }
         
         .modal-footer {
           display: flex;
-          justify-content: space-between;
-          padding: 16px 24px;
+          justify-content: flex-end; /* Changed to push buttons to the right */
+          padding: 14px 24px;
           border-top: 1px solid #F0F0F0;
+          gap: 16px; /* Added gap between buttons as requested */
         }
         
         .modal-footer .ant-btn {
           padding: 0 20px;
-          height: 48px;
+          height: 44px; /* Reduced height */
           font-size: 15px;
           border-radius: 12px;
+          min-width: 100px; /* Ensure buttons have minimum width */
         }
         
-        .modal-footer .ant-btn-primary {
+        .cancel-button {
+          color: #64748B; /* Neutral color for cancel */
+          border-color: #E2E8F0;
+        }
+        
+        .complete-button {
           background-color: #1D4ED8;
         }
         
@@ -480,15 +487,15 @@ export default function MultiBillModal({ open, onClose }) {
           }
           
           .modal-footer .ant-btn {
-            flex: 1;
+            min-width: 80px;
           }
           
           .bill-card-header {
-            margin-bottom: 12px;
+            margin-bottom: 8px;
           }
           
           .bill-form {
-            padding: 16px;
+            padding: 12px; /* Even more compact on mobile */
           }
           
           /* Improved touch feedback */
