@@ -57,7 +57,6 @@
     -webkit-context-menu: initial !important;
     -moz-context-menu: initial !important;
     -ms-context-menu: initial !important;
-    context-menu: initial !important;
   }
   
   /* Fix cursor on all interactive elements */

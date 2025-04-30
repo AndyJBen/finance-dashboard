@@ -1,9 +1,10 @@
+// src/components/FinancialSummary/CombinedBillsOverview/BillsListSection.jsx
 import React from 'react';
 import {
-    Table, Button, Space, Tag, Dropdown, Menu, Typography
+    Table, Button, Space, Tag, Typography
 } from 'antd';
 import {
-    IconPlus, IconChevronDown, IconPlaylistAdd // Keep needed icons
+    IconPlus // Keep only needed icons
 } from '@tabler/icons-react';
 
 const { Text } = Typography;
@@ -16,9 +17,8 @@ const BillsListSection = ({
     categories,
     selectedCategory,
     setSelectedCategory,
-    handleAddSingle, // Function to open single add modal (received as prop)
-    handleMenuClick, // Function to handle dropdown menu clicks (for multi-modal)
-    addBillMenuItems, // Menu items for the dropdown
+    handleAddSingle, // Function to open multiple bills modal (renamed but kept for compatibility)
+    handleMenuClick, // Function kept for compatibility
     getCategoryIcon,
     selectedAllButtonStyle,
     defaultAllButtonStyle
@@ -37,15 +37,15 @@ const BillsListSection = ({
                         </Button>
                     </Space>
 
-                    {/* Dropdown Button for Adding Bills */}
+                    {/* Button for Adding Bills */}
                     {/* This button will be hidden on mobile via the 'hide-on-mobile' class (defined in global.css) */}
                     <div>
                         <Button
                             type="primary"
                             icon={<IconPlus size={16} />}
-                            onClick={handleAddBill} // Use our renamed handler
+                            onClick={handleAddSingle} // Use the passed function
                             style={{ display: 'flex', alignItems: 'center', fontWeight: 500 }}
-                            className="hide-on-mobile" // Add class to hide on mobile
+                            className="hide-on-mobile" // Keep class to hide on mobile
                         >
                             Add Bills
                         </Button>
