@@ -357,17 +357,29 @@ const MobileFinanceFeed = () => {
           )}
         />
         {nonRecurring.length > 3 && (
-          <div className="show-more-container">
+          <div 
+            className="show-more-container"
+            onClick={() => toggleShowAll('nonRecurring')} // Added onClick here to make whole area clickable
+            style={{ 
+              textAlign: 'center', 
+              marginTop: 'var(--space-12)', 
+              paddingBottom: 'var(--space-4)',
+              cursor: 'pointer' // Add cursor pointer to indicate clickable
+            }}
+          >
             <Button 
               type="link" 
               className="show-more-button"
               style={{color: '#52C41A'}}
-              onClick={() => toggleShowAll('nonRecurring')}
+              onClick={(e) => {
+                e.stopPropagation(); // Prevent double triggering
+                toggleShowAll('nonRecurring');
+              }}
             >
               {showAll.nonRecurring ? 'Show Less' : 'Show All'}
             </Button>
           </div>
-        )}
+)}
         {nonRecurring.length > 0 && (
           <div className="section-total">
             <Text className="total-label">SECTION TOTAL</Text>

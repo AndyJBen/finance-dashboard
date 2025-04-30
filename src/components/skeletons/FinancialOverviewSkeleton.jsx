@@ -37,13 +37,13 @@ const FinancialOverviewSkeleton = () => {
             <Skeleton.Input
               active // Show animation
               size="small" // Smaller size for title area
-              style={{ width: '60%', marginBottom: 16, height: '16px' }} // Adjusted width and height
+              style={{ width: '50%', marginBottom: 16, height: '16px' }} // Adjusted width and height
             />
             {/* Skeleton for the main value area */}
             <Skeleton.Input
               active // Show animation
               size="large" // Larger size for value area
-              style={{ width: '80%', height: '24px' }} // Adjusted width and height
+              style={{ width: '70%', height: '24px' }} // Adjusted width and height
               block // Make it take full width available
             />
           </Card>

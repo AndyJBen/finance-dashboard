@@ -1111,3 +1111,17 @@ textarea {
   -webkit-touch-callout: default !important;
   touch-action: auto !important;
 }
+@media (max-width: 768px) {
+  .month-navigation .nav-button {
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 12px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+  
+  .month-navigation .ant-btn {
+    padding: 0 !important;
+  }
+}
