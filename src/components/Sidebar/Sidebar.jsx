@@ -1,22 +1,20 @@
 // src/components/Sidebar/Sidebar.jsx
-// Includes IconSettings import and updated main menu items
-
 import React, { useContext, useState, useMemo } from 'react';
 import { Layout, Menu, Spin, Button, Tooltip, Space, message, Typography, Dropdown } from 'antd';
 import {
   IconHomeFilled,
-  IconReceiptFilled, // Note: IconReceiptFilled might not be used if 'Bills' was replaced
   IconChartPieFilled,
   IconCreditCard,
   IconPlus,
   IconEdit,
   IconWallet,
   IconTrash,
-  IconSettings, // Correctly imported here
+  IconSettings,
   IconUsers,
   IconDotsVertical,
   IconGripVertical,
-  IconActivityHeartbeat // Import IconActivityHeartbeat for Finance Feed
+  IconActivityHeartbeat,
+  IconBuildingBank // Added for the Edit Bank Balance button
 } from '@tabler/icons-react';
 // dnd-kit imports
 import {
@@ -37,10 +35,10 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
-import { FinanceContext } from '../../contexts/FinanceContext'; // Ensure path is correct
+import { FinanceContext } from '../../contexts/FinanceContext';
 import AddCreditCardModal from './AddCreditCardModal';
 import EditCreditCardModal from './EditCreditCardModal';
-import './Sidebar.css'; // Ensure CSS file exists and is correctly styled
+import './Sidebar.css';
 
 const { Sider } = Layout;
 const { Text } = Typography;
@@ -59,11 +57,11 @@ const SortableCardItem = ({ id, card, collapsed, onEdit, onDelete, isOverlay = f
   // Style for the draggable item
   const style = {
     transform: CSS.Transform.toString(transform),
-    transition: isDragging ? 'none' : transition, // Disable transition while dragging for smoother overlay
-    opacity: isDragging && !isOverlay ? 0.5 : 1, // Make original item semi-transparent when dragging
-    cursor: isOverlay ? 'grabbing' : 'grab', // Change cursor style
-    zIndex: isDragging ? 100 : 'auto', // Ensure dragged item is above others
-    boxShadow: isDragging ? '0 4px 12px rgba(0,0,0,0.15)' : 'none', // Add shadow when dragging
+    transition: isDragging ? 'none' : transition,
+    opacity: isDragging && !isOverlay ? 0.5 : 1,
+    cursor: isOverlay ? 'grabbing' : 'grab',
+    zIndex: isDragging ? 100 : 'auto',
+    boxShadow: isDragging ? '0 4px 12px rgba(0,0,0,0.15)' : 'none',
   };
 
   // Menu items for the action dropdown
@@ -75,9 +73,9 @@ const SortableCardItem = ({ id, card, collapsed, onEdit, onDelete, isOverlay = f
   return (
     // Outer wrapper for the sortable item
     <div
-      ref={setNodeRef} // Reference for dnd-kit
+      ref={setNodeRef}
       style={style}
-      {...attributes} // Spread attributes for dnd-kit
+      {...attributes}
       className={`sortable-card-item-wrapper ${isDragging ? 'is-dragging' : ''} ${isOverlay ? 'is-overlay' : ''}`}
     >
       {/* Inner container for the card content */}
@@ -95,7 +93,6 @@ const SortableCardItem = ({ id, card, collapsed, onEdit, onDelete, isOverlay = f
             <div className="card-details">
               <span className="card-name" title={card.name}>{card.name}</span>
               <span className="card-balance">
-                {/* Format balance as currency */}
                 ${Number(card.balance).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </span>
             </div>
@@ -105,7 +102,7 @@ const SortableCardItem = ({ id, card, collapsed, onEdit, onDelete, isOverlay = f
         {/* Action dropdown - only shown when not collapsed and not an overlay */}
         {!collapsed && !isOverlay && (
           <Dropdown
-            menu={{ items: actionMenuItems, onClick: e => e.domEvent.stopPropagation() }} // Prevent event bubbling
+            menu={{ items: actionMenuItems, onClick: e => e.domEvent.stopPropagation() }}
             trigger={['click']}
             placement="bottomRight"
           >
@@ -114,7 +111,7 @@ const SortableCardItem = ({ id, card, collapsed, onEdit, onDelete, isOverlay = f
               type="text"
               size="small"
               icon={<IconDotsVertical size={16} />}
-              onClick={e => e.stopPropagation()} // Prevent event bubbling
+              onClick={e => e.stopPropagation()}
             />
           </Dropdown>
         )}
@@ -125,7 +122,15 @@ const SortableCardItem = ({ id, card, collapsed, onEdit, onDelete, isOverlay = f
 
 
 // Main Sidebar component
-const Sidebar = ({ collapsed, onCollapse, selectedKey, onSelect, width, collapsedWidth }) => {
+const Sidebar = ({ 
+  collapsed, 
+  onCollapse, 
+  selectedKey, 
+  onSelect, 
+  width, 
+  collapsedWidth,
+  onEditBalance // Added prop for edit balance functionality
+}) => {
   // Get data and functions from FinanceContext
   const {
     creditCards,
@@ -201,9 +206,9 @@ const Sidebar = ({ collapsed, onCollapse, selectedKey, onSelect, width, collapse
   // Define the main navigation menu items
   const mainMenuItems = [
     { label: 'Dashboard', key: 'dashboard', icon: <IconHomeFilled size={20} /> },
-    { label: 'Finance Feed', key: 'finance-feed', icon: <IconActivityHeartbeat size={20} /> }, // Uses Finance Feed icon
+    { label: 'Finance Feed', key: 'finance-feed', icon: <IconActivityHeartbeat size={20} /> },
     { label: 'Reports',   key: 'reports',   icon: <IconChartPieFilled size={20} /> },
-    { label: 'Settings',  key: 'settings',  icon: <IconSettings size={20} /> }, // Uses Settings icon
+    { label: 'Settings',  key: 'settings',  icon: <IconSettings size={20} /> },
   ];
 
   // Memoize credit card IDs for dnd-kit context
@@ -330,16 +335,42 @@ const Sidebar = ({ collapsed, onCollapse, selectedKey, onSelect, width, collapse
           {collapsed ? (
             // Render icons with tooltips when collapsed
             <>
-              {/* Settings button removed as it's in the main menu */}
+              {/* Edit Bank Balance button */}
+              <Tooltip title="Edit Bank Balance" placement="right">
+                <Button 
+                  className="sidebar-bottom-button" 
+                  type="text" 
+                  icon={<IconBuildingBank size={20} />} 
+                  onClick={onEditBalance}
+                />
+              </Tooltip>
               <Tooltip title="Account" placement="right">
-                <Button className="sidebar-bottom-button" type="text" icon={<IconUsers size={20} />} onClick={() => { /* TODO: Implement account action */ }} />
+                <Button 
+                  className="sidebar-bottom-button" 
+                  type="text" 
+                  icon={<IconUsers size={20} />} 
+                  onClick={() => { /* TODO: Implement account action */ }} 
+                />
               </Tooltip>
             </>
           ) : (
             // Render buttons with text when expanded
             <Space direction="vertical" style={{ width: '100%' }}>
-              {/* Settings button removed as it's in the main menu */}
-              <Button className="sidebar-bottom-button" type="text" icon={<IconUsers size={20} />} onClick={() => { /* TODO: Implement account action */ }}>
+              {/* Edit Bank Balance button */}
+              <Button 
+                className="sidebar-bottom-button" 
+                type="text" 
+                icon={<IconBuildingBank size={20} />} 
+                onClick={onEditBalance}
+              >
+                Edit Bank Balance
+              </Button>
+              <Button 
+                className="sidebar-bottom-button" 
+                type="text" 
+                icon={<IconUsers size={20} />} 
+                onClick={() => { /* TODO: Implement account action */ }}
+              >
                 Account
               </Button>
             </Space>

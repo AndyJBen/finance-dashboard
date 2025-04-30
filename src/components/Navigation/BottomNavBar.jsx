@@ -7,8 +7,8 @@ import {
     IconChartBar,
     IconSettings,
     IconPlus,
-    IconPencil,
-    IconEdit // Keep IconEdit for the menu item
+    IconEdit,
+    IconBuildingBank
 } from '@tabler/icons-react';
 
 // Styles remain the same...
@@ -117,7 +117,7 @@ const BottomNavBar = ({ selectedKey, onSelect, onAddClick, onEditBalanceClick })
     // Improved action menu content
     const actionMenu = (
         <div style={actionMenuStyle}>
-            {/* Just one action now - Add Bills */}
+            {/* Add Bills action */}
             <div
                 style={{
                     ...actionItemStyle,
@@ -136,7 +136,7 @@ const BottomNavBar = ({ selectedKey, onSelect, onAddClick, onEditBalanceClick })
                 <span style={actionItemTextStyle}>Add Bills</span>
             </div>
             
-            {/* Keep the Edit Bank Balance action */}
+            {/* Edit Bank Balance action */}
             <div
                 style={{
                     ...lastActionItemStyle,
@@ -150,7 +150,7 @@ const BottomNavBar = ({ selectedKey, onSelect, onAddClick, onEditBalanceClick })
                 onMouseLeave={() => setHoverItem(null)}
             >
                 <div style={iconContainerStyle}>
-                    <IconEdit size={20} style={{ color: 'var(--primary-600)' }} />
+                    <IconBuildingBank size={20} style={{ color: 'var(--primary-600)' }} />
                 </div>
                 <span style={actionItemTextStyle}>Edit Bank Balance</span>
             </div>
@@ -166,7 +166,7 @@ const BottomNavBar = ({ selectedKey, onSelect, onAddClick, onEditBalanceClick })
     ];
 
     return (
-        <div style={navStyle}>
+        <div style={navStyle} className="bottom-navbar">
             {menuItems.map(item => {
                 // Center Action Button (Popover Trigger)
                 if (item.isCenter) {
