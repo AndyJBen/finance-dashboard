@@ -1125,20 +1125,27 @@ textarea {
     padding: 0 !important;
   }
 }
-/* Add to global.css */
+/* Add this to your global.css file */
 @media (max-width: 768px) {
-  /* Ensure bottom padding for the entire app on mobile */
-  .ant-layout, .ant-layout-content {
-    padding-bottom: env(safe-area-inset-bottom, 20px) !important;
+  /* Default bottom padding for mobile */
+  .ant-layout-content {
+    padding-bottom: 80px !important;
+  }
+
+  /* Additional spacing for iPhone safe area */
+  @supports (padding: env(safe-area-inset-bottom)) {
+    .ant-layout-content {
+      padding-bottom: calc(env(safe-area-inset-bottom) + 80px) !important;
+    }
   }
   
-  /* Additional space for iPhone notch/home indicator */
-  html.ios .ant-layout-content {
-    padding-bottom: calc(env(safe-area-inset-bottom, 20px) + 40px) !important;
+  /* Container for bills overview needs extra space */
+  .bills-overview-table {
+    margin-bottom: 20px;
   }
   
-  /* Fix for collapsed table state */
-  .ant-card-body.is-collapsed {
-    padding-bottom: 60px !important;
+  /* Increase bottom nav z-index to ensure it stays on top */
+  .bottom-navbar {
+    z-index: 1001 !important;
   }
 }
