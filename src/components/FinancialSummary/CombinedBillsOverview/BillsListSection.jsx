@@ -40,18 +40,15 @@ const BillsListSection = ({
                     {/* Dropdown Button for Adding Bills */}
                     {/* This button will be hidden on mobile via the 'hide-on-mobile' class (defined in global.css) */}
                     <div>
-                        <Dropdown.Button
+                        <Button
                             type="primary"
-                            icon={<IconChevronDown size={16} />}
-                            // Use the handleAddSingle prop for the main button click
-                            onClick={handleAddSingle} // Use the prop here
-                            menu={{ items: addBillMenuItems, onClick: handleMenuClick }}
+                            icon={<IconPlus size={16} />}
+                            onClick={handleAddBill} // Use our renamed handler
                             style={{ display: 'flex', alignItems: 'center', fontWeight: 500 }}
                             className="hide-on-mobile" // Add class to hide on mobile
                         >
-                            <IconPlus size={16} style={{marginRight: '4px'}}/>
-                            Add Bill
-                        </Dropdown.Button>
+                            Add Bills
+                        </Button>
                     </div>
                  </div>
                  {/* Category Tags Container - Apply specific class, REMOVE inline style */}

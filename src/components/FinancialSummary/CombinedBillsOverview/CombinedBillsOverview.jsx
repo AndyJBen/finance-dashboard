@@ -170,7 +170,7 @@ const CombinedBillsOverview = ({ style }) => {
     // --- END MODIFIED LOGIC ---
 
     // --- Event Handlers (Remain in parent) ---
-     const handleAddSingle = () => {
+     const handleAddBill = () => {
          setEditingBill(null);
          setIsModalVisible(true);
      };
@@ -277,7 +277,6 @@ const CombinedBillsOverview = ({ style }) => {
     // --- Button Styles and Menu Items (Remain in parent) ---
     const selectedAllButtonStyle = { fontWeight: 600, padding: '0 10px', height: '28px', borderColor: 'var(--primary-500)', color: 'var(--primary-600)' };
     const defaultAllButtonStyle = { fontWeight: 500, padding: '0 10px', height: '28px' };
-    const addBillMenuItems = [ { key: 'add-multiple', label: 'Add Multiple Bills', icon: <IconPlaylistAdd size={16} /> } ];
     // --- End Button Styles ---
 
 
@@ -323,7 +322,7 @@ const CombinedBillsOverview = ({ style }) => {
                     categories={categories}
                     selectedCategory={selectedCategory}
                     setSelectedCategory={setSelectedCategory}
-                    handleAddSingle={handleAddSingle}
+                    handleAddBill={handleAddBill}
                     handleMenuClick={handleMenuClick}
                     addBillMenuItems={addBillMenuItems}
                     getCategoryIcon={getCategoryIcon} // Pass helper

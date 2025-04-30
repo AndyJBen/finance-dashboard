@@ -117,14 +117,14 @@ const BottomNavBar = ({ selectedKey, onSelect, onAddClick, onEditBalanceClick })
     // Improved action menu content
     const actionMenu = (
         <div style={actionMenuStyle}>
-            {/* Add a Bill Action */}
+            {/* Just one action now - Add Bills */}
             <div
                 style={{
                     ...actionItemStyle,
                     ...(hoverItem === 'addBill' ? actionItemHoverStyle : {})
                 }}
                 onClick={() => {
-                    if (onAddClick) onAddClick();
+                    if (onAddClick) onAddClick(); // This now opens the MultiBillModal
                     closePopover(); // Close popover after action
                 }}
                 onMouseEnter={() => setHoverItem('addBill')}
@@ -133,26 +133,7 @@ const BottomNavBar = ({ selectedKey, onSelect, onAddClick, onEditBalanceClick })
                 <div style={iconContainerStyle}>
                     <IconPlus size={20} style={{ color: 'var(--primary-600)' }} />
                 </div>
-                <span style={actionItemTextStyle}>Add a Bill</span>
-            </div>
-            {/* Edit Bank Balance Action */}
-            <div
-                style={{
-                    ...lastActionItemStyle,
-                    ...(hoverItem === 'editBalance' ? actionItemHoverStyle : {})
-                }}
-                onClick={() => {
-                    // Call the passed onEditBalanceClick handler
-                    if (onEditBalanceClick) onEditBalanceClick();
-                    closePopover(); // Close popover after action
-                }}
-                onMouseEnter={() => setHoverItem('editBalance')}
-                onMouseLeave={() => setHoverItem(null)}
-            >
-                <div style={iconContainerStyle}>
-                    <IconEdit size={20} style={{ color: 'var(--primary-600)' }} />
-                </div>
-                <span style={actionItemTextStyle}>Edit Bank Balance</span>
+                <span style={actionItemTextStyle}>Add Bills</span>
             </div>
         </div>
     );
