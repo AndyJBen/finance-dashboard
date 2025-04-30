@@ -1025,7 +1025,7 @@ nav.bottom-navbar {
     flex: 1 1 0 !important;
     width: 33.33% !important;
     max-width: 33.33% !important;
-    padding: 0 3px !important;
+    padding: 0 8px !important;
   }
   
   /* Make cards more compact and consistent */
@@ -1039,7 +1039,7 @@ nav.bottom-navbar {
   
   /* Reduce card body padding to make more compact */
   .financial-overview-row .ant-card-body {
-    padding: 6px 8px !important;
+    padding: 8px 8px !important;
     height: 75px !important;
     display: flex !important;
     flex-direction: column !important;
