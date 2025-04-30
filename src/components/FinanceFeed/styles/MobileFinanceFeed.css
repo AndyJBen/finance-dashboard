@@ -168,7 +168,7 @@
 }
 
 .feed-item-subtitle {
-  font-size: var(--subtitle-font-size) !important;
+  font-size: var(--label-font-size) !important;
   color: rgba(0,0,0,0.65) !important;
 }
 
