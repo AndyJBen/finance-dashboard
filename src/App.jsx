@@ -8,6 +8,7 @@
 // Added ErrorBoundary wrapper
 // Added handleOpenEditBalanceModal function and passed to BottomNavBar
 // Added proper mobile footer spacing
+// UPDATED: Added MultiBillModal integration
 
 import React, { useState, useContext, useEffect } from 'react';
 import { Layout, Row, Col, Typography, Grid } from 'antd';
@@ -32,6 +33,8 @@ import BottomNavBar           from './components/Navigation/BottomNavBar';
 import EditBillModal          from './components/BillsList/EditBillModal';
 import SettingsPage           from './components/Settings/SettingsPage'; // Import SettingsPage
 import ErrorBoundary from './components/ErrorBoundary'; // Import ErrorBoundary
+// ADDED: Import MultiBillModal component
+import MultiBillModal from './components/FinancialSummary/CombinedBillsOverview/MultiBillModal';
 
 const { Content } = Layout;
 const { Title }   = Typography;
@@ -49,6 +52,9 @@ function MyApp() {
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [editingBill, setEditingBill] = useState(null); // Holds the bill data when editing
 
+  // ADDED: State for MultiBillModal
+  const [isMultiBillModalVisible, setIsMultiBillModalVisible] = useState(false);
+
   // State for CombinedBillsOverview Expansion
   // Default to true because the list starts expanded (isTableCollapsed starts false in CombinedBillsOverview)
   const [isBillsListExpanded, setIsBillsListExpanded] = useState(true);
@@ -63,10 +69,9 @@ function MyApp() {
 
   // --- Modal Handlers ---
 
-  // Opens the modal in 'Add' mode
+  // MODIFIED: Opens the MultiBillModal instead of EditBillModal
   const handleOpenAddBillModal = () => {
-    setEditingBill(null); // Ensure no bill data is pre-filled
-    setIsEditModalVisible(true);
+    setIsMultiBillModalVisible(true);
   };
 
   // Opens the modal in 'Edit' mode with the selected bill's data
@@ -75,10 +80,15 @@ function MyApp() {
     setIsEditModalVisible(true);
   };
 
-  // Closes the modal and resets the editing state
+  // Closes the edit modal and resets the editing state
   const handleModalClose = () => {
     setIsEditModalVisible(false);
     setEditingBill(null);
+  };
+
+  // ADDED: Handler to close MultiBillModal
+  const handleCloseMultiBillModal = () => {
+    setIsMultiBillModalVisible(false);
   };
 
   // Handles form submission from the EditBillModal
@@ -168,7 +178,7 @@ function MyApp() {
                     style={{ height: '100%' }}
                     // Pass modal handlers down
                     onEditBill={handleOpenEditBillModal}
-                    onAddBill={handleOpenAddBillModal}
+                    onAddBill={handleOpenAddBillModal} // MODIFIED: This now opens MultiBillModal
                     // Pass the expansion change handler down
                     onExpansionChange={handleBillsExpansionChange}
                   />
@@ -206,7 +216,7 @@ function MyApp() {
           isMobileView={isMobileView} // Pass mobile view status
           // Pass modal handlers
           onEditBill={handleOpenEditBillModal}
-          onAddBill={handleOpenAddBillModal}
+          onAddBill={handleOpenAddBillModal} // MODIFIED: This now opens MultiBillModal
         />;
 
       case 'reports': // Renders the ChartsPage component
@@ -279,13 +289,13 @@ function MyApp() {
             <BottomNavBar
                 selectedKey={selectedMenuKey}
                 onSelect={handleSelect}
-                onAddClick={handleOpenAddBillModal} // Pass add handler to the center button action
+                onAddClick={handleOpenAddBillModal} // MODIFIED: This now opens MultiBillModal
                 // Pass the new handler for editing balance
                 onEditBalanceClick={handleOpenEditBalanceModal}
             />
         )}
 
-        {/* Edit/Add Bill Modal: Render conditionally based on isEditModalVisible state */}
+        {/* Edit Bill Modal: Render conditionally based on isEditModalVisible state */}
         {isEditModalVisible && (
             <EditBillModal
                 open={isEditModalVisible} // Control visibility
@@ -294,6 +304,12 @@ function MyApp() {
                 initialData={editingBill} // Pass data for editing, or null for adding
             />
         )}
+
+        {/* ADDED: MultiBill Modal */}
+        <MultiBillModal
+            open={isMultiBillModalVisible}
+            onClose={handleCloseMultiBillModal}
+        />
       </Layout>
 
       {/* Add CSS for mobile spacing */}

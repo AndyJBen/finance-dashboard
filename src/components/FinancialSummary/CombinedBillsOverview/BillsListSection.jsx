@@ -18,7 +18,6 @@ const BillsListSection = ({
     selectedCategory,
     setSelectedCategory,
     handleAddSingle, // Function to open multiple bills modal (renamed but kept for compatibility)
-    handleMenuClick, // Function kept for compatibility
     getCategoryIcon,
     selectedAllButtonStyle,
     defaultAllButtonStyle

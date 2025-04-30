@@ -39,7 +39,10 @@ const FinanceFeed = ({ isMobileView, onEditBill, onAddBill }) => {
   if (isMobileView) {
     return (
       <div className="finance-feed-mobile">
-        <MobileFinanceFeed onEditBill={onEditBill} onAddBill={onAddBill} />
+        <MobileFinanceFeed 
+          onEditBill={onEditBill} 
+          onAddBill={onAddBill} // This now opens MultiBillModal
+        />
       </div>
     );
   }
