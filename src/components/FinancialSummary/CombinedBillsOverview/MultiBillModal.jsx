@@ -104,55 +104,47 @@ export default function MultiBillModal({ open, onClose }) {
       title={null}
       onOk={handleOk}
       onCancel={handleCancel}
-      width={isMobile ? '100%' : 580}
-      style={{ top: isMobile ? 0 : 20 }}
-      bodyStyle={{ 
-        padding: isMobile ? '0' : '24px',
-        maxHeight: isMobile ? '100vh' : '80vh',
-        overflowY: 'auto'
+      width={isMobile ? '92%' : 520}
+      style={{ 
+        top: 20, // Positioned at the top of the screen as requested
+        margin: '0 auto',
+        padding: 0
       }}
+      bodyStyle={{ 
+        padding: 0,
+        borderRadius: '20px',
+        overflow: 'hidden' 
+      }}
+      maskStyle={{
+        backgroundColor: 'rgba(0, 0, 0, 0.6)',
+        backdropFilter: 'blur(4px)'
+      }}
+      className="multi-bill-modal modern-overlay"
       footer={
-        <div style={{ padding: isMobile ? '12px 16px' : '12px 24px', display: 'flex', justifyContent: 'space-between' }}>
-          <Button onClick={handleCancel}>Cancel</Button>
+        <div className="modal-footer">
+          <Button onClick={handleCancel} className="cancel-button">Cancel</Button>
           <Button 
             type="primary" 
             onClick={handleOk} 
             loading={isSubmitting}
             icon={<IconCheck size={16} />}
+            className="complete-button"
           >
-            {isSubmitting ? 'Adding...' : 'Add Bills'}
+            {isSubmitting ? 'Adding...' : 'Complete'}
           </Button>
         </div>
       }
-      className="multi-bill-modal"
-      fullScreen={isMobile}
     >
       {/* Custom Header */}
-      <div style={{ 
-        borderBottom: '1px solid #f0f0f0', 
-        padding: isMobile ? '16px' : '16px 24px', 
-        backgroundColor: '#f9fafc',
-        borderTopLeftRadius: isMobile ? 0 : 8,
-        borderTopRightRadius: isMobile ? 0 : 8
-      }}>
-        <Row align="middle" gutter={16}>
+      <div className="modal-header">
+        <Row align="middle" gutter={12}>
           <Col>
-            <div style={{ 
-              backgroundColor: '#52c41a', 
-              color: 'white', 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'center', 
-              width: '40px', 
-              height: '40px', 
-              borderRadius: '10px', 
-              boxShadow: '0 2px 8px rgba(82, 196, 26, 0.2)'
-            }}>
-              <IconPlus size={20} />
+            <div className="modal-icon-container">
+              <IconPlus size={22} />
             </div>
           </Col>
           <Col>
-            <Title level={4} style={{ margin: 0 }}>Add Bills</Title>
+            <Title level={4} className="modal-title">Add Bills</Title>
           </Col>
         </Row>
       </div>
@@ -163,95 +155,63 @@ export default function MultiBillModal({ open, onClose }) {
         layout="vertical" 
         name="multiBillForm" 
         autoComplete="off"
-        style={{ 
-          padding: isMobile ? '16px' : '24px', 
-          maxHeight: isMobile ? 'calc(100vh - 180px)' : 'unset',
-          overflow: isMobile ? 'auto' : 'visible'
-        }}
+        className="bill-form"
       >
         <Form.List name="bills">
           {(fields, { add, remove }) => (
-            <div style={{ paddingBottom: 12 }}>
+            <div className="bill-cards-container">
               {fields.map(({ key, name, ...restField }, index) => (
                 <Card 
                   key={key} 
-                  size="small"
-                  style={{ 
-                    marginBottom: 16, 
-                    borderRadius: 12,
-                    border: '1px solid #f0f0f0',
-                    boxShadow: '0 1px 4px rgba(0, 0, 0, 0.05)',
-                    overflow: 'hidden'
-                  }}
-                  bodyStyle={{ padding: isMobile ? '12px' : '16px' }}
+                  className="bill-card"
                 >
                   {/* Show Bill # and remove button */}
-                  <div style={{ 
-                    display: 'flex', 
-                    justifyContent: 'space-between',
-                    marginBottom: 8,
-                    alignItems: 'center'
-                  }}>
-                    <Text strong style={{ fontSize: '14px', color: '#52c41a' }}>
+                  <div className="bill-card-header">
+                    <Text strong className="bill-number">
                       Bill #{index + 1}
                     </Text>
                     {fields.length > 1 && (
                       <Button
                         type="text"
                         danger
+                        className="remove-button"
                         icon={<IconTrash size={16} />}
                         onClick={() => remove(name)}
-                        style={{ 
-                          width: 32, 
-                          height: 32,
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center'
-                        }}
                       />
                     )}
                   </div>
                   
-                  {/* Mobile optimized layout */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  <div className="bill-form-fields">
                     {/* Bill Name */}
                     <Form.Item
                       {...restField}
                       name={[name, 'name']}
                       rules={[{ required: true, message: 'Name required' }]}
-                      style={{ marginBottom: 0 }}
                     >
                       <Input
                         placeholder="Bill Name"
-                        prefix={<IconTag size={16} style={{ color: '#8c8c8c' }} />}
-                        style={{ 
-                          height: isMobile ? '48px' : '38px', 
-                          borderRadius: 8,
-                        }}
+                        prefix={<IconTag size={16} className="field-icon" />}
+                        className="bill-input"
                       />
                     </Form.Item>
                     
                     {/* Amount and Category */}
-                    <div style={{ display: 'flex', gap: 8 }}>
+                    <div className="field-row">
                       {/* Amount */}
                       <Form.Item
                         {...restField}
                         name={[name, 'amount']}
                         rules={[{ required: true, message: 'Amount required' }]}
-                        style={{ marginBottom: 0, flex: 1 }}
+                        className="amount-field"
                       >
                         <InputNumber
                           placeholder="Amount"
-                          style={{ 
-                            width: '100%', 
-                            height: isMobile ? '48px' : '38px',
-                            borderRadius: 8,
-                          }}
                           prefix="$"
                           formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                           parser={(value) => value?.replace(/\$\s?|(,*)/g, '') ?? ''}
                           min={0}
                           precision={2}
+                          className="bill-input"
                         />
                       </Form.Item>
                       
@@ -260,22 +220,17 @@ export default function MultiBillModal({ open, onClose }) {
                         {...restField}
                         name={[name, 'category']}
                         rules={[{ required: true, message: 'Category required' }]}
-                        style={{ marginBottom: 0, flex: 1.5 }}
+                        className="category-field"
                       >
                         <Select
                           placeholder="Category"
-                          style={{ 
-                            width: '100%', 
-                            height: isMobile ? '48px' : '38px',
-                          }}
-                          dropdownStyle={{ borderRadius: 8 }}
+                          className="bill-select"
+                          dropdownClassName="bill-dropdown"
                           optionFilterProp="children"
                           showSearch
                         >
                           {billCategories.map(category => (
-                            <Option key={category} value={category}>
-                              {category}
-                            </Option>
+                            <Option key={category} value={category}>{category}</Option>
                           ))}
                         </Select>
                       </Form.Item>
@@ -286,35 +241,26 @@ export default function MultiBillModal({ open, onClose }) {
                       {...restField}
                       name={[name, 'dueDate']}
                       rules={[{ required: true, message: 'Due date required' }]}
-                      style={{ marginBottom: 0 }}
                     >
                       <DatePicker
-                        style={{ 
-                          width: '100%', 
-                          height: isMobile ? '48px' : '38px',
-                          borderRadius: 8,
-                        }}
                         format="YYYY-MM-DD"
                         placeholder="Due Date"
-                        suffixIcon={<IconCalendar size={16} style={{ color: '#8c8c8c' }} />}
+                        suffixIcon={<IconCalendar size={16} className="field-icon" />}
+                        className="bill-input date-picker"
                       />
                     </Form.Item>
                     
                     {/* Checkboxes */}
-                    <div style={{ 
-                      display: 'flex', 
-                      justifyContent: 'space-between', 
-                      marginTop: 4
-                    }}>
+                    <div className="options-row">
                       <Form.Item
                         {...restField}
                         name={[name, 'isPaid']}
                         valuePropName="checked"
-                        style={{ marginBottom: 0 }}
+                        className="checkbox-item"
                       >
-                        <Checkbox>
+                        <Checkbox className="styled-checkbox">
                           <Space align="center" size={4}>
-                            <IconCheck size={14} style={{ color: '#52c41a' }} />
+                            <IconCheck size={14} className="checkbox-icon" />
                             <span>Paid</span>
                           </Space>
                         </Checkbox>
@@ -324,11 +270,11 @@ export default function MultiBillModal({ open, onClose }) {
                         {...restField}
                         name={[name, 'isRecurring']}
                         valuePropName="checked"
-                        style={{ marginBottom: 0 }}
+                        className="checkbox-item"
                       >
-                        <Checkbox>
+                        <Checkbox className="styled-checkbox">
                           <Space align="center" size={4}>
-                            <IconArrowsShuffle size={14} style={{ color: '#1890ff' }} />
+                            <IconArrowsShuffle size={14} className="checkbox-icon" />
                             <span>Recurring</span>
                           </Space>
                         </Checkbox>
@@ -338,19 +284,12 @@ export default function MultiBillModal({ open, onClose }) {
                 </Card>
               ))}
               
-              {/* Add Bill Button - optimized for touch */}
+              {/* Add Bill Button */}
               <Button
                 type="dashed"
                 onClick={() => add({ dueDate: null })}
                 icon={<IconPlus size={16} />}
-                style={{ 
-                  width: '100%',
-                  height: isMobile ? '54px' : '42px',
-                  borderRadius: 10,
-                  marginTop: 8,
-                  borderColor: '#52c41a',
-                  color: '#52c41a'
-                }}
+                className="add-bill-button"
               >
                 Add Another Bill
               </Button>
@@ -359,55 +298,210 @@ export default function MultiBillModal({ open, onClose }) {
         </Form.List>
       </Form>
       
-      {/* Add custom styles to improve mobile experience */}
+      {/* Custom styles */}
       <style jsx global>{`
         .multi-bill-modal .ant-modal-content {
-          border-radius: ${isMobile ? '0' : '12px'};
+          border-radius: 20px;
+          box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15), 0 2px 10px rgba(0, 0, 0, 0.12);
           overflow: hidden;
+          padding: 0;
         }
         
-        .multi-bill-modal .ant-input-number-input {
-          height: ${isMobile ? '48px' : '38px'};
-          line-height: ${isMobile ? '48px' : '38px'};
+        .modal-header {
+          padding: 16px 24px; /* Reduced padding for more compact header */
+          background: linear-gradient(135deg, #1D4ED8, #3B82F6);
+          color: white;
+          border-radius: 20px 20px 0 0;
         }
         
+        .modal-icon-container {
+          width: 38px; /* Smaller icon container */
+          height: 38px;
+          background-color: rgba(255, 255, 255, 0.2);
+          border-radius: 12px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+        }
+        
+        .modal-title {
+          color: white !important;
+          margin: 0 !important;
+          font-size: 18px !important;
+        }
+        
+        .bill-form {
+          padding: 16px; /* Reduced padding */
+          max-height: ${isMobile ? '60vh' : '70vh'};
+          overflow-y: auto;
+        }
+        
+        .bill-cards-container {
+          display: flex;
+          flex-direction: column;
+          gap: 14px; /* Reduced gap */
+        }
+        
+        .bill-card {
+          border-radius: 16px;
+          background-color: #FAFBFC;
+          border: 1px solid #EDF1F7;
+          overflow: hidden;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+        
+        .bill-card-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 10px; /* Reduced margin */
+        }
+        
+        .bill-number {
+          color: #1D4ED8;
+          font-size: 15px;
+        }
+        
+        .remove-button {
+          border-radius: 50%;
+          width: 32px; /* Smaller button */
+          height: 32px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 0;
+        }
+        
+        .bill-form-fields {
+          display: flex;
+          flex-direction: column;
+          gap: 10px; /* Reduced gap for more compact form */
+        }
+        
+        .field-row {
+          display: flex;
+          gap: 12px;
+        }
+        
+        .amount-field {
+          flex: 1;
+          margin-bottom: 0 !important;
+        }
+        
+        .category-field {
+          flex: 1.5;
+          margin-bottom: 0 !important;
+        }
+        
+        .bill-input {
+          height: 44px !important; /* Reduced height for more compact form */
+          border-radius: 12px !important;
+          font-size: 15px !important;
+        }
+        
+        .bill-select .ant-select-selector {
+          height: 44px !important; /* Reduced height */
+          padding-top: 6px !important; /* Adjusted for reduced height */
+          border-radius: 12px !important;
+          font-size: 15px !important;
+        }
+        
+        .date-picker {
+          width: 100% !important;
+        }
+        
+        .field-icon {
+          color: #1D4ED8 !important;
+          margin-right: 8px;
+        }
+        
+        .options-row {
+          display: flex;
+          justify-content: space-between;
+          gap: 8px;
+        }
+        
+        .checkbox-item {
+          margin-bottom: 0 !important;
+        }
+        
+        .styled-checkbox {
+          font-size: 15px;
+          font-weight: 500;
+        }
+        
+        .checkbox-icon {
+          color: #1D4ED8;
+        }
+        
+        .add-bill-button {
+          height: 46px; /* Reduced height */
+          border-radius: 14px;
+          border-color: #1D4ED8;
+          border-width: 1.5px;
+          border-style: dashed;
+          color: #1D4ED8;
+          font-weight: 500;
+          font-size: 15px;
+          margin-top: 4px; /* Reduced margin */
+        }
+        
+        .modal-footer {
+          display: flex;
+          justify-content: flex-end; /* Changed to push buttons to the right */
+          padding: 14px 24px;
+          border-top: 1px solid #F0F0F0;
+          gap: 16px; /* Added gap between buttons as requested */
+        }
+        
+        .modal-footer .ant-btn {
+          padding: 0 20px;
+          height: 44px; /* Reduced height */
+          font-size: 15px;
+          border-radius: 12px;
+          min-width: 100px; /* Ensure buttons have minimum width */
+        }
+        
+        .cancel-button {
+          color: #64748B; /* Neutral color for cancel */
+          border-color: #E2E8F0;
+        }
+        
+        .complete-button {
+          background-color: #1D4ED8;
+        }
+        
+        /* Make sure on tablets we don't go too wide */
+        @media (min-width: 769px) and (max-width: 1024px) {
+          .multi-bill-modal .ant-modal {
+            max-width: 600px !important;
+          }
+        }
+        
+        /* Enhanced mobile experience */
         @media (max-width: 768px) {
-          .multi-bill-modal {
-            width: 100vw !important;
-            max-width: 100vw !important;
-            margin: 0 !important;
-            top: 0 !important;
-            padding: 0 !important;
+          .bill-input, 
+          .bill-select .ant-select-selector {
+            font-size: 16px !important; /* Better legibility on mobile */
           }
           
-          .multi-bill-modal .ant-modal-content {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+          .modal-footer .ant-btn {
+            min-width: 80px;
           }
           
-          .multi-bill-modal .ant-modal-body {
-            flex: 1;
-            overflow-y: auto;
+          .bill-card-header {
+            margin-bottom: 8px;
           }
           
-          /* Enhanced touch targets */
-          .multi-bill-modal .ant-select-selector {
-            height: 48px !important;
-            padding-top: 8px !important;
+          .bill-form {
+            padding: 12px; /* Even more compact on mobile */
           }
           
-          .multi-bill-modal .ant-picker {
-            padding: 8px 11px 8px;
-          }
-          
-          .multi-bill-modal .ant-checkbox-wrapper {
-            font-size: 14px;
-            padding: 4px 0;
-          }
-          
-          .multi-bill-modal .ant-form-item-explain {
-            font-size: 12px;
+          /* Improved touch feedback */
+          .add-bill-button:active {
+            transform: scale(0.98);
+            transition: transform 0.2s;
           }
         }
       `}</style>
