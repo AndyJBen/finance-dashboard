@@ -181,41 +181,25 @@ const MobileFinanceFeed = () => {
               <Text className="section-title">{title}</Text>
               {count !== undefined && (
                 <Badge
-                  count={count === 0 ? <span>{count} Items</span> : count}
-                  showZero={true} // Changed to true to show zero
-                  style={{ 
-                    backgroundColor: count === 0 ? '#0066FF' : (empty ? '#e0e0e0' : '#0066FF'),
-                    marginLeft: 8,
-                    fontSize: '0.7rem',
-                    minWidth: count === 0 ? 50 : 18, // Wider for "0 Items" text
-                    height: 18,
-                    borderRadius: 9,
-                    color: '#fff',
-                    fontWeight: 'bold',
-                    lineHeight: '18px',
-                    padding: count === 0 ? '0 8px' : '0' // Add padding for "0 Items"
-                  }}
-                />
-              )}
-              {count && (
-                <Badge
                   count={`${count} ${count === 1 ? 'Item' : 'Items'}`}
-                  showZero={false}
+                  showZero={true} // Always show zero
                   style={{ 
                     backgroundColor: empty ? '#e0e0e0' : '#0066FF',
                     marginLeft: 8,
                     fontSize: '0.7rem',
-                    minWidth: 18,
+                    minWidth: 18, // Auto-adjust for any text length
                     height: 18,
                     borderRadius: 9,
                     color: '#fff',
                     fontWeight: 'bold',
                     lineHeight: '18px',
-                    padding: '0 8px' // Add padding for text
+                    padding: '0 8px', // Consistent padding for all states
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
                   }}
                 />
               )}
-            </div>
           </div>
           <Button 
             type="default"
