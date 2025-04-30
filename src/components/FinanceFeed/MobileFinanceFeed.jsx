@@ -197,10 +197,23 @@ const MobileFinanceFeed = () => {
                   }}
                 />
               )}
-              {itemCount && (
-                <Text type="secondary" className="section-subtitle">
-                  ({itemCount})
-                </Text>
+              {count && (
+                <Badge
+                  count={`${count} ${count === 1 ? 'Item' : 'Items'}`}
+                  showZero={false}
+                  style={{ 
+                    backgroundColor: empty ? '#e0e0e0' : '#0066FF',
+                    marginLeft: 8,
+                    fontSize: '0.7rem',
+                    minWidth: 18,
+                    height: 18,
+                    borderRadius: 9,
+                    color: '#fff',
+                    fontWeight: 'bold',
+                    lineHeight: '18px',
+                    padding: '0 8px' // Add padding for text
+                  }}
+                />
               )}
             </div>
           </div>
