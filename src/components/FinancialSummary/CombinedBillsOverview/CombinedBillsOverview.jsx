@@ -171,7 +171,6 @@ const CombinedBillsOverview = ({ style }) => {
 
     // --- Event Handlers (Remain in parent) ---
      const handleAddBill = () => {
-         setEditingBill(null);
          setIsModalVisible(true);
      };
      const handleEdit = (record) => {
@@ -193,11 +192,9 @@ const CombinedBillsOverview = ({ style }) => {
      const handleCloseMultiModal = () => {
          setMultiModalVisible(false);
      };
-     const handleMenuClick = (e) => {
-        if (e.key === 'add-multiple') {
+        const handleMenuClick = () => {
             handleOpenMultiModal();
-        }
-     };
+        };
 
      // New handler for toggling paid bills visibility
      const togglePaidBillsVisibility = () => {
@@ -324,7 +321,6 @@ const CombinedBillsOverview = ({ style }) => {
                     setSelectedCategory={setSelectedCategory}
                     handleAddBill={handleAddBill}
                     handleMenuClick={handleMenuClick}
-                    addBillMenuItems={addBillMenuItems}
                     getCategoryIcon={getCategoryIcon} // Pass helper
                     selectedAllButtonStyle={selectedAllButtonStyle}
                     defaultAllButtonStyle={defaultAllButtonStyle}

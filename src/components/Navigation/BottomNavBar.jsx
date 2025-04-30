@@ -135,6 +135,25 @@ const BottomNavBar = ({ selectedKey, onSelect, onAddClick, onEditBalanceClick })
                 </div>
                 <span style={actionItemTextStyle}>Add Bills</span>
             </div>
+            
+            {/* Keep the Edit Bank Balance action */}
+            <div
+                style={{
+                    ...lastActionItemStyle,
+                    ...(hoverItem === 'editBalance' ? actionItemHoverStyle : {})
+                }}
+                onClick={() => {
+                    if (onEditBalanceClick) onEditBalanceClick();
+                    closePopover();
+                }}
+                onMouseEnter={() => setHoverItem('editBalance')}
+                onMouseLeave={() => setHoverItem(null)}
+            >
+                <div style={iconContainerStyle}>
+                    <IconEdit size={20} style={{ color: 'var(--primary-600)' }} />
+                </div>
+                <span style={actionItemTextStyle}>Edit Bank Balance</span>
+            </div>
         </div>
     );
 
