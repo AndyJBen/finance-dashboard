@@ -671,7 +671,7 @@ textarea {
   
   .financial-overview-row .ant-card {
     border-radius: 10px !important;
-    margin-bottom: 5px !important; /* Reduced from 8px */
+    margin-bottom: 5px !important;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
     min-height: 75px !important;
   }
@@ -717,7 +717,7 @@ textarea {
     overflow-x: hidden !important;
     padding-bottom: 0 !important;
     margin-bottom: 0 !important;
-    padding-top: 2px !important; /* Add minimal padding */
+    padding-top: 2px !important;
   }
   
   .ant-row {
@@ -803,7 +803,7 @@ textarea {
 
   /* LARGER font size for top card amounts */
   .financial-overview-row .ant-statistic-content {
-    font-size: 22px !important;  /* Increased from 18px */
+    font-size: 22px !important;
     line-height: 1.1 !important;
     margin-top: 2px !important;
   }
