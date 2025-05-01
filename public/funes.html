@@ -1,0 +1,2038 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WorkForce Pro - Manual Labor Services</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* CSS Variables for consistent colors */
+        :root {
+            --primary-color: #FF7B00; /* Orange */
+            --secondary-color: #1A5D7A; /* Dark Blue */
+            --tertiary-color: #F2F2F2; /* Light Gray */
+            --text-color: #333333;
+            --light-text: #FFFFFF;
+            --border-radius: 8px;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        html {
+            scroll-behavior: smooth; /* Smooth scrolling */
+        }
+
+        body {
+            background-color: var(--tertiary-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* Container */
+        .container {
+            width: 100%;
+            padding: 0 20px;
+            margin: 0 auto;
+            max-width: 1200px;
+        }
+
+        /* Header */
+        header {
+            background-color: var(--primary-color);
+            color: var(--light-text);
+            padding: 15px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            text-decoration: none; /* Remove underline from logo link */
+            color: var(--light-text); /* Ensure logo text is white */
+        }
+
+        .logo img {
+            width: 40px;
+            height: 40px; /* Ensure height is set */
+            margin-right: 10px;
+            border-radius: 50%; /* Make logo image round */
+            background-color: white; /* Add background if image is transparent */
+        }
+
+        .hamburger {
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+            padding: 5px;
+            border: none; /* Remove default button border */
+            background: none; /* Remove default button background */
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background-color: white;
+            margin: 3px 0;
+            border-radius: 3px;
+            transition: var(--transition);
+        }
+
+        /* Hamburger animation */
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(5px, -5px);
+        }
+
+
+        /* Navigation */
+        nav {
+            background-color: var(--secondary-color);
+            position: fixed;
+            top: 72px; /* Adjust based on header height */
+            width: 100%;
+            left: 0;
+            transform: translateY(-150%); /* Start further off-screen */
+            transition: transform 0.4s ease-in-out;
+            z-index: 99;
+            box-shadow: var(--shadow);
+            max-height: calc(100vh - 72px); /* Limit height */
+            overflow-y: auto; /* Allow scrolling if needed */
+        }
+
+        nav.active {
+            transform: translateY(0);
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        nav li {
+            padding: 15px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+         nav li:last-child {
+            border-bottom: none; /* Remove border from last item */
+        }
+
+        nav a {
+            color: var(--light-text);
+            text-decoration: none;
+            font-weight: 500;
+            display: block;
+            transition: var(--transition);
+        }
+
+        nav a:hover {
+            color: var(--primary-color);
+            padding-left: 5px; /* Slight indent on hover */
+        }
+
+        /* Main Content */
+        main {
+            margin-top: 72px; /* Match header height */
+            padding: 30px 0; /* Increased padding */
+            min-height: calc(100vh - 200px); /* Adjust based on header/footer */
+        }
+
+        /* Tab System */
+        .tab-container {
+            display: none; /* Hide tabs by default */
+            animation: fadeIn 0.5s ease-in-out; /* Add fade-in animation */
+        }
+
+        .tab-container.active {
+            display: block; /* Show active tab */
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+
+        /* Hero Section */
+        .hero {
+            /* Use placeholder with orange background */
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://placehold.co/1200x600/FF7B00/FFFFFF?text=WorkForce+Pro') center/cover no-repeat;
+            padding: 80px 20px; /* Increased padding */
+            text-align: center;
+            color: var(--light-text);
+            border-radius: var(--border-radius);
+            margin-bottom: 40px; /* Increased margin */
+            box-shadow: var(--shadow);
+        }
+
+        .hero h1 {
+            font-size: 2.2rem; /* Adjusted size */
+            margin-bottom: 20px;
+            font-weight: 700; /* Bolder */
+        }
+
+        .hero p {
+            font-size: 1.1rem; /* Adjusted size */
+            margin-bottom: 30px;
+            max-width: 650px; /* Wider text block */
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-button {
+            background-color: var(--primary-color);
+            color: var(--light-text);
+            border: none;
+            padding: 14px 28px; /* Larger button */
+            border-radius: var(--border-radius);
+            font-weight: bold;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 1.1rem; /* Larger font */
+            display: inline-block;
+            text-decoration: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2); /* Subtle shadow */
+        }
+
+        .cta-button:hover {
+            background-color: #E66E00; /* Darker orange on hover */
+            transform: translateY(-3px); /* More pronounced lift */
+            box-shadow: 0 6px 10px rgba(0,0,0,0.2); /* Larger shadow on hover */
+        }
+
+        /* Services Section */
+        .services-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px; /* Increased gap */
+            margin-bottom: 40px;
+        }
+
+        .service-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            display: flex; /* Use flex for better structure */
+            flex-direction: column;
+        }
+
+        .service-card:hover {
+            transform: translateY(-6px); /* More lift */
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15); /* Enhanced shadow */
+        }
+
+        .service-image {
+            height: 220px; /* Slightly taller image */
+            width: 100%;
+            object-fit: cover;
+            /* Use placeholder images */
+            /* Example: https://placehold.co/{width}x{height}/{background_color}/{text_color}?text={text} */
+        }
+
+        .service-content {
+            padding: 25px; /* Increased padding */
+            flex-grow: 1; /* Allow content to fill space */
+            display: flex;
+            flex-direction: column;
+        }
+
+        .service-content h3 {
+            color: var(--secondary-color);
+            margin-bottom: 12px;
+            font-size: 1.3rem; /* Larger heading */
+        }
+
+        .service-content p {
+            margin-bottom: 20px;
+            color: #666;
+            font-size: 0.95rem;
+            flex-grow: 1; /* Push link to bottom */
+        }
+
+        .read-more {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-block;
+            transition: var(--transition);
+            align-self: flex-start; /* Align button to the left */
+        }
+
+        .read-more:hover {
+            color: #E66E00;
+            text-decoration: underline; /* Add underline on hover */
+        }
+
+        /* About Section */
+        .about-content {
+            background-color: white;
+            padding: 40px; /* Increased padding */
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 40px;
+        }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 40px; /* Increased gap */
+            align-items: center; /* Vertically align items */
+        }
+
+        .about-image {
+            width: 100%;
+            max-width: 500px; /* Limit max width */
+            height: auto; /* Maintain aspect ratio */
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin: 0 auto; /* Center image on smaller screens */
+            display: block;
+        }
+
+        .about-text h2 {
+            color: var(--secondary-color);
+            margin-bottom: 25px;
+            font-size: 2rem; /* Larger heading */
+        }
+
+        .about-text p {
+            margin-bottom: 20px;
+            color: #555;
+            line-height: 1.7; /* Improved readability */
+        }
+
+        /* Stats */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px; /* Increased gap */
+            margin: 40px 0;
+        }
+
+        .stat-box {
+            background-color: var(--secondary-color);
+            color: var(--light-text);
+            padding: 25px; /* Increased padding */
+            text-align: center;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+         .stat-box:hover {
+             background-color: #144d65; /* Slightly lighter blue on hover */
+             transform: scale(1.03); /* Slight scale effect */
+         }
+
+        .stat-number {
+            font-size: 2.5rem; /* Larger number */
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: var(--primary-color);
+        }
+
+        .stat-label {
+            font-size: 1rem; /* Larger label */
+        }
+
+        /* Team Section */
+        .team-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px; /* Increased gap */
+            margin-bottom: 40px;
+        }
+
+        .team-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            text-align: center;
+            transition: var(--transition);
+        }
+        .team-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .team-image {
+            width: 160px; /* Larger image */
+            height: 160px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 25px auto 15px; /* Adjusted margins */
+            border: 4px solid var(--primary-color); /* Thicker border */
+            display: block; /* Ensure block display */
+        }
+
+        .team-content {
+            padding: 0 25px 25px; /* Adjusted padding */
+        }
+
+        .team-content h3 {
+            color: var(--secondary-color);
+            margin-bottom: 8px; /* Adjusted margin */
+            font-size: 1.3rem;
+        }
+
+        .team-role {
+            color: var(--primary-color);
+            font-weight: 600; /* Bolder role */
+            margin-bottom: 15px;
+            display: block;
+            font-size: 1rem;
+        }
+
+        .team-content p {
+            margin-bottom: 20px;
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        .social-icons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .social-icon {
+            width: 40px; /* Larger icons */
+            height: 40px;
+            background-color: var(--tertiary-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            text-decoration: none;
+            color: var(--secondary-color);
+            font-size: 1.1rem; /* Larger icon font size */
+        }
+
+        .social-icon:hover {
+            background-color: var(--primary-color);
+            color: var(--light-text);
+            transform: scale(1.1); /* Scale effect on hover */
+        }
+
+        /* Testimonials */
+        .testimonials {
+            padding: 40px 0;
+            background-color: #e9e9e9; /* Slightly different background */
+            margin-bottom: 40px;
+        }
+
+        .testimonial-container {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden; /* Hide overflowing testimonials during transition */
+        }
+
+        .testimonial {
+            background-color: white;
+            padding: 30px; /* Increased padding */
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+            position: relative;
+            /* display: none; */ /* JS will handle this */
+            opacity: 0; /* Use opacity for fade effect */
+            position: absolute; /* Position for sliding effect */
+            width: 100%;
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+            transform: translateX(100%); /* Start off-screen right */
+        }
+
+        .testimonial.active {
+            /* display: block; */
+            opacity: 1;
+            position: relative; /* Bring active slide into flow */
+            transform: translateX(0); /* Slide in */
+        }
+        .testimonial.prev {
+            transform: translateX(-100%); /* Slide out left */
+        }
+
+
+        .testimonial-text {
+            font-style: italic;
+            margin-bottom: 25px;
+            color: #555;
+            line-height: 1.7;
+            font-size: 1.05rem; /* Slightly larger text */
+        }
+        .testimonial-text::before {
+            content: '"';
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-right: 5px;
+            vertical-align: -10px;
+        }
+         .testimonial-text::after {
+            content: '"';
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-left: 5px;
+            vertical-align: -10px;
+        }
+
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+        }
+
+        .author-image {
+            width: 65px; /* Larger image */
+            height: 65px;
+            border-radius: 50%;
+            margin-right: 20px;
+            object-fit: cover;
+            border: 3px solid var(--primary-color); /* Add border */
+        }
+
+        .author-info h4 {
+            color: var(--secondary-color);
+            margin-bottom: 5px; /* Adjusted margin */
+            font-size: 1.1rem;
+        }
+
+        .author-info p {
+            color: #777;
+            font-size: 0.95rem;
+        }
+
+        .testimonial-controls {
+            display: flex;
+            justify-content: center;
+            gap: 12px; /* Increased gap */
+            margin-top: 25px;
+        }
+
+        .testimonial-dot {
+            width: 14px; /* Larger dots */
+            height: 14px;
+            background-color: #ccc;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 2px solid transparent; /* Add border for active state */
+        }
+
+        .testimonial-dot.active {
+            background-color: var(--primary-color);
+            border-color: var(--secondary-color); /* Contrasting border */
+            transform: scale(1.1); /* Scale active dot */
+        }
+
+        /* Contact Form */
+        .contact-container {
+            background-color: white;
+            padding: 40px; /* Increased padding */
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 40px;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 40px; /* Increased gap */
+        }
+
+        .contact-info h2, .contact-form h2 {
+            color: var(--secondary-color);
+            margin-bottom: 25px; /* Increased margin */
+            font-size: 1.8rem;
+        }
+
+        .contact-detail {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 25px; /* Increased margin */
+        }
+
+        .contact-icon {
+            background-color: var(--primary-color);
+            color: var(--light-text);
+            width: 45px; /* Larger icon */
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 20px;
+            flex-shrink: 0;
+            font-size: 1.2rem; /* Larger icon font size */
+        }
+
+        .contact-text h4 {
+            color: var(--secondary-color);
+            margin-bottom: 8px; /* Adjusted margin */
+            font-size: 1.1rem;
+        }
+
+        .contact-text p, .contact-text a {
+            color: #666;
+            font-size: 1rem; /* Larger text */
+            text-decoration: none; /* Remove underline from links */
+        }
+        .contact-text a:hover {
+            color: var(--primary-color);
+            text-decoration: underline;
+        }
+
+        .contact-form .form-group {
+            margin-bottom: 25px; /* Increased margin */
+        }
+
+        .contact-form label {
+            display: block;
+            margin-bottom: 10px; /* Increased margin */
+            color: var(--secondary-color);
+            font-weight: 600; /* Bolder label */
+        }
+
+        .contact-form input,
+        .contact-form textarea,
+        .contact-form select {
+            width: 100%;
+            padding: 14px; /* Increased padding */
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: var(--transition);
+            background-color: #f9f9f9; /* Light background for inputs */
+        }
+
+        .contact-form input:focus,
+        .contact-form textarea:focus,
+        .contact-form select:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(255, 123, 0, 0.25); /* Enhanced focus */
+            background-color: white;
+        }
+
+        .contact-form textarea {
+            height: 160px; /* Taller textarea */
+            resize: vertical;
+        }
+
+        /* Submit button style reuse */
+        .submit-button {
+            background-color: var(--primary-color);
+            color: var(--light-text);
+            border: none;
+            padding: 14px 28px;
+            border-radius: var(--border-radius);
+            font-weight: bold;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 1.1rem;
+            display: inline-block;
+            text-decoration: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            width: 100%; /* Make button full width */
+        }
+
+        .submit-button:hover {
+            background-color: #E66E00;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 10px rgba(0,0,0,0.2);
+        }
+
+
+        /* Projects Section */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px; /* Increased gap */
+            margin-bottom: 40px;
+        }
+
+        .project-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+             display: flex;
+            flex-direction: column;
+        }
+         .project-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .project-image {
+            height: 220px; /* Match service card */
+            width: 100%;
+            object-fit: cover;
+        }
+
+        .project-content {
+            padding: 25px; /* Increased padding */
+            flex-grow: 1;
+        }
+
+        .project-content h3 {
+            color: var(--secondary-color);
+            margin-bottom: 12px;
+            font-size: 1.3rem;
+        }
+
+        .project-meta {
+            display: flex;
+            flex-wrap: wrap; /* Allow wrapping on small screens */
+            justify-content: space-between;
+            color: #777;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            gap: 10px; /* Add gap between meta items */
+        }
+        .project-meta span {
+            background-color: #eee; /* Light background for meta tags */
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+        .project-meta i { /* Style icons in meta */
+           margin-right: 5px;
+           color: var(--primary-color);
+        }
+
+        .project-content p {
+            margin-bottom: 20px;
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        /* Pricing Section */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px; /* Increased gap */
+            margin-bottom: 40px;
+            padding: 10px; /* Add padding around grid */
+            align-items: stretch; /* Make cards same height */
+        }
+
+        .pricing-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            text-align: center;
+            transition: var(--transition);
+            border: 3px solid transparent; /* Thicker border */
+            display: flex; /* Use flex */
+            flex-direction: column; /* Stack elements vertically */
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-8px); /* More lift on hover */
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.18); /* Enhanced shadow */
+        }
+
+        .pricing-card.popular {
+            border-color: var(--primary-color);
+            position: relative;
+            transform: scale(1.03); /* Make popular slightly larger */
+        }
+         .pricing-card.popular:hover {
+             transform: scale(1.05) translateY(-8px); /* Enhance hover effect */
+         }
+
+        .popular-tag {
+            position: absolute;
+            top: -15px; /* Position above the card */
+            left: 50%;
+            transform: translateX(-50%); /* Center the tag */
+            background-color: var(--primary-color);
+            color: white;
+            padding: 6px 15px; /* Adjusted padding */
+            border-radius: 20px;
+            font-size: 0.9rem; /* Adjusted size */
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .pricing-header {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 25px 20px; /* Increased padding */
+        }
+
+        .pricing-header h3 {
+            margin-bottom: 15px; /* Increased margin */
+            font-size: 1.6rem; /* Larger heading */
+        }
+
+        .price {
+            font-size: 2.8rem; /* Larger price */
+            font-weight: bold;
+            color: var(--tertiary-color); /* Use light gray for contrast */
+            margin-bottom: 10px;
+        }
+
+        .price span {
+            font-size: 1rem;
+            font-weight: normal;
+            color: #ccc; /* Lighter color for unit */
+        }
+
+        .pricing-features {
+            padding: 25px; /* Increased padding */
+            flex-grow: 1; /* Make features section fill space */
+        }
+
+        .pricing-features ul {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 25px; /* Increased margin */
+        }
+
+        .pricing-features li {
+            padding: 12px 0; /* Increased padding */
+            border-bottom: 1px solid #eee;
+            color: #555; /* Darker feature text */
+            font-size: 1rem; /* Larger font size */
+        }
+         .pricing-features li i { /* Style icons in features */
+            color: var(--primary-color);
+            margin-right: 10px;
+            width: 15px; /* Align icons */
+            text-align: center;
+         }
+
+        .pricing-features li:last-child {
+            border-bottom: none;
+        }
+
+        .pricing-footer {
+            padding: 0 25px 25px; /* Add padding for button */
+        }
+        /* Reuse cta-button style */
+        .pricing-button {
+             background-color: var(--primary-color);
+            color: var(--light-text);
+            border: none;
+            padding: 12px 24px;
+            border-radius: var(--border-radius);
+            font-weight: bold;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 1rem;
+            display: inline-block;
+            text-decoration: none;
+            width: 100%; /* Full width button */
+        }
+        .pricing-button:hover {
+             background-color: #E66E00;
+             transform: translateY(-2px);
+        }
+        .pricing-card.popular .pricing-button {
+            background-color: var(--secondary-color); /* Different button for popular */
+        }
+        .pricing-card.popular .pricing-button:hover {
+            background-color: #144d65;
+        }
+
+
+        /* FAQ Section */
+        .faq-container {
+            margin-bottom: 40px;
+            max-width: 900px; /* Wider container */
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .faq-item {
+            background-color: white;
+            border-radius: var(--border-radius);
+            margin-bottom: 15px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            border: 1px solid #eee; /* Add subtle border */
+        }
+
+        .faq-question {
+            padding: 18px 25px; /* Increased padding */
+            /* background-color: var(--tertiary-color); */ /* Use white */
+            color: var(--secondary-color);
+            font-weight: 600; /* Bolder question */
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.3s ease; /* Smooth background transition */
+            font-size: 1.1rem; /* Larger font */
+        }
+
+        .faq-question:hover {
+            background-color: #f8f8f8; /* Slight grey on hover */
+            color: var(--primary-color); /* Change text color on hover */
+        }
+
+        .faq-icon { /* Style for the +/- icon */
+            font-size: 1.5rem;
+            font-weight: bold;
+            transition: transform 0.3s ease;
+            color: var(--primary-color); /* Orange icon */
+        }
+
+        .faq-item.active .faq-question {
+             background-color: var(--secondary-color); /* Dark blue when active */
+             color: white; /* White text when active */
+        }
+         .faq-item.active .faq-question .faq-icon {
+             transform: rotate(180deg); /* Rotate minus sign */
+             color: white; /* White icon when active */
+         }
+
+
+        .faq-answer {
+            padding: 0 25px; /* Horizontal padding only */
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out, padding 0.4s ease-out; /* Smoother transition */
+            background-color: white; /* Ensure background */
+            color: #555;
+            line-height: 1.7;
+        }
+
+        .faq-item.active .faq-answer {
+            padding: 25px; /* Add padding when active */
+            max-height: 500px; /* Allow space for content */
+            border-top: 1px solid #eee; /* Add separator */
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--secondary-color);
+            color: var(--tertiary-color);
+            padding: 50px 0 25px; /* Increased padding */
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 40px; /* Increased gap */
+            margin-bottom: 30px;
+        }
+
+        .footer-section h3 {
+            color: var(--primary-color);
+            margin-bottom: 25px; /* Increased margin */
+            font-size: 1.4rem; /* Larger heading */
+            position: relative;
+            padding-bottom: 10px;
+        }
+         .footer-section h3::after { /* Underline effect */
+             content: '';
+             position: absolute;
+             bottom: 0;
+             left: 0;
+             width: 50px;
+             height: 3px;
+             background-color: var(--primary-color);
+             border-radius: 2px;
+         }
+
+
+        .footer-section p {
+            margin-bottom: 20px;
+            font-size: 1rem; /* Larger text */
+            color: #ccc;
+            line-height: 1.7;
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 12px; /* Increased margin */
+        }
+
+        .footer-links a {
+            color: #ccc;
+            text-decoration: none;
+            transition: var(--transition);
+            display: flex; /* Align icon and text */
+            align-items: center;
+        }
+        .footer-links a i { /* Style icons */
+            margin-right: 8px;
+            color: var(--primary-color);
+            width: 16px; /* Align icons */
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-color);
+            padding-left: 5px; /* Indent on hover */
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px; /* Add margin */
+        }
+
+        .footer-social a {
+            color: #ccc;
+            text-decoration: none;
+            width: 45px; /* Larger icons */
+            height: 45px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            font-size: 1.2rem; /* Larger icon font size */
+        }
+
+        .footer-social a:hover {
+            background-color: var(--primary-color);
+            color: white;
+            transform: translateY(-3px); /* Lift effect */
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 25px; /* Increased padding */
+            border-top: 1px solid rgba(255, 255, 255, 0.15); /* More visible border */
+            font-size: 0.95rem; /* Larger text */
+            color: #aaa;
+        }
+
+        /* Section Heading */
+        .section-heading {
+            text-align: center;
+            margin-bottom: 40px; /* Increased margin */
+        }
+
+        .section-heading h2 {
+            color: var(--secondary-color);
+            font-size: 2rem; /* Larger heading */
+            margin-bottom: 15px; /* Increased margin */
+            font-weight: 700; /* Bolder */
+        }
+
+        .section-heading p {
+            color: #777;
+            max-width: 700px;
+            margin: 0 auto;
+            font-size: 1.05rem; /* Slightly larger text */
+        }
+
+        .divider {
+            height: 4px; /* Thicker divider */
+            width: 70px; /* Wider divider */
+            background-color: var(--primary-color);
+            margin: 20px auto; /* Increased margin */
+            border-radius: 3px;
+        }
+
+        /* Scroll to top */
+        .scroll-top {
+            position: fixed;
+            bottom: 25px; /* Adjusted position */
+            right: 25px;
+            background-color: var(--primary-color);
+            color: white;
+            width: 50px; /* Larger button */
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            opacity: 0;
+            visibility: hidden; /* Hide completely */
+            transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+            z-index: 99;
+            border: 2px solid white; /* Add border */
+            font-size: 1.3rem; /* Larger icon */
+        }
+
+        .scroll-top.active {
+            opacity: 1;
+            visibility: visible; /* Make visible */
+        }
+        .scroll-top:hover {
+            background-color: #E66E00; /* Darker orange on hover */
+            transform: scale(1.1); /* Scale effect */
+        }
+
+
+        /* Media queries for responsiveness */
+        @media (min-width: 768px) {
+            .container {
+                padding: 0 40px;
+            }
+
+            .hamburger {
+                display: none; /* Hide hamburger on desktop */
+            }
+
+            nav {
+                background-color: transparent; /* Header background shows through */
+                position: static; /* Normal flow */
+                transform: translateY(0);
+                box-shadow: none;
+                width: auto; /* Auto width */
+                max-height: none; /* Remove max height */
+                overflow-y: visible; /* Remove scroll */
+            }
+
+            nav ul {
+                display: flex; /* Horizontal layout */
+            }
+
+            nav li {
+                padding: 0;
+                margin-left: 30px; /* Space between items */
+                border-bottom: none;
+            }
+
+            nav a {
+                padding: 8px 0;
+                position: relative;
+                color: var(--light-text); /* Ensure white text */
+            }
+            nav a:hover {
+                color: var(--light-text); /* Keep white on hover */
+                padding-left: 0; /* Remove mobile indent */
+            }
+
+            /* Underline effect for desktop nav */
+            nav a::after {
+                content: '';
+                position: absolute;
+                bottom: -2px; /* Position below text */
+                left: 0;
+                width: 0;
+                height: 3px; /* Thicker underline */
+                background-color: var(--light-text);
+                transition: width 0.3s ease; /* Animate width */
+            }
+
+            nav a:hover::after,
+            nav a.active-link::after { /* Style for active tab link */
+                width: 100%;
+            }
+
+            .hero h1 {
+                font-size: 3rem; /* Larger hero heading */
+            }
+
+            .hero p {
+                font-size: 1.2rem;
+            }
+
+            .services-grid,
+            .team-grid,
+            .projects-grid {
+                grid-template-columns: repeat(3, 1fr); /* 3 columns */
+            }
+
+            .pricing-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .about-grid,
+            .contact-grid {
+                grid-template-columns: repeat(2, 1fr); /* 2 columns */
+            }
+
+            .stats-container {
+                grid-template-columns: repeat(4, 1fr); /* 4 columns */
+            }
+
+            .footer-grid {
+                /* Flexible layout: About | Links | Services | Contact/Social */
+                grid-template-columns: 2fr 1.5fr 1.5fr 1.5fr;
+            }
+
+            .contact-form .submit-button {
+                width: auto; /* Auto width for submit button */
+                padding: 14px 40px; /* More horizontal padding */
+            }
+        }
+
+        /* Styles for tablets */
+        @media (min-width: 576px) and (max-width: 767px) {
+            .services-grid,
+            .team-grid,
+            .projects-grid,
+            .pricing-grid {
+                grid-template-columns: repeat(2, 1fr); /* 2 columns */
+            }
+            .stats-container {
+                 grid-template-columns: repeat(2, 1fr); /* 2 columns */
+            }
+             .footer-grid {
+                grid-template-columns: repeat(2, 1fr); /* 2 columns */
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <a href="#" class="logo" data-tab="home"> <img src="https://placehold.co/40x40/ffffff/FF7B00?text=WP" alt="WorkForce Pro Logo">
+                WorkForce Pro
+            </a>
+            <button class="hamburger" id="menuToggle" aria-label="Toggle menu" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <nav id="mainNav">
+                <ul>
+                    <li><a href="#home" data-tab="home">Home</a></li>
+                    <li><a href="#services" data-tab="services">Services</a></li>
+                    <li><a href="#about" data-tab="about">About</a></li>
+                    <li><a href="#projects" data-tab="projects">Projects</a></li>
+                    <li><a href="#pricing" data-tab="pricing">Pricing</a></li>
+                    <li><a href="#contact" data-tab="contact">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <div class="tab-container active" id="home">
+                <section class="hero">
+                    <h1>Quality Manual Labor Services</h1>
+                    <p>Our professional and experienced team is ready to tackle your toughest jobs with precision, efficiency, and care. From construction to landscaping, we've got you covered.</p>
+                    <a href="#contact" class="cta-button" data-tab="contact">Get A Free Quote</a>
+                </section>
+
+                <section id="home-services">
+                    <div class="section-heading">
+                        <h2>Our Core Services</h2>
+                        <div class="divider"></div>
+                        <p>We offer a wide range of professional services to meet all your manual labor needs. Reliable solutions for every project.</p>
+                    </div>
+                    <div class="services-grid">
+                        <div class="service-card">
+                            <img src="https://placehold.co/400x220/1A5D7A/FFFFFF?text=Construction" alt="Construction Service" class="service-image">
+                            <div class="service-content">
+                                <h3>Construction & Building</h3>
+                                <p>Expert construction services for residential and commercial projects, including framing, concrete work, and site preparation.</p>
+                                <a href="#services" class="read-more" data-tab="services">Learn More <i class="fas fa-arrow-right"></i></a>
+                            </div>
+                        </div>
+                        <div class="service-card">
+                            <img src="https://placehold.co/400x220/FF7B00/FFFFFF?text=Landscaping" alt="Landscaping Service" class="service-image">
+                            <div class="service-content">
+                                <h3>Landscaping & Groundskeeping</h3>
+                                <p>Transform your outdoor spaces with our professional landscaping, lawn care, planting, and hardscaping services.</p>
+                                <a href="#services" class="read-more" data-tab="services">Learn More <i class="fas fa-arrow-right"></i></a>
+                            </div>
+                        </div>
+                        <div class="service-card">
+                            <img src="https://placehold.co/400x220/1A5D7A/FFFFFF?text=Renovation" alt="Renovation Service" class="service-image">
+                            <div class="service-content">
+                                <h3>Renovation & Remodeling</h3>
+                                <p>Complete home and office renovation services, including demolition, installation, and finishing touches to revitalize your spaces.</p>
+                                <a href="#services" class="read-more" data-tab="services">Learn More <i class="fas fa-arrow-right"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="testimonials">
+                    <div class="container"> <div class="section-heading">
+                            <h2>What Our Clients Say</h2>
+                            <div class="divider"></div>
+                            <p>Don't just take our word for it, hear from our satisfied customers who trust WorkForce Pro for their projects.</p>
+                        </div>
+                        <div class="testimonial-container" id="testimonialContainer">
+                            <div class="testimonial active">
+                                <p class="testimonial-text">WorkForce Pro completely transformed our backyard. Their team was professional, efficient, and the quality of work exceeded our expectations. Would definitely recommend them for any landscaping project!</p>
+                                <div class="testimonial-author">
+                                    <img src="https://placehold.co/65x65/cccccc/333333?text=JS" alt="John Smith" class="author-image">
+                                    <div class="author-info">
+                                        <h4>John Smith</h4>
+                                        <p>Homeowner, Springfield</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="testimonial">
+                                <p class="testimonial-text">I hired WorkForce Pro for a major kitchen renovation, and I couldn't be happier with the results. Their attention to detail and craftsmanship is outstanding. They completed the project on time and within budget.</p>
+                                <div class="testimonial-author">
+                                    <img src="https://placehold.co/65x65/cccccc/333333?text=SJ" alt="Sarah Johnson" class="author-image">
+                                    <div class="author-info">
+                                        <h4>Sarah Johnson</h4>
+                                        <p>Restaurant Owner, Centerville</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="testimonial">
+                                <p class="testimonial-text">As a property manager, I've worked with many service providers, but WorkForce Pro stands out for their reliability and quality. They're now our go-to team for all maintenance and construction needs across our properties.</p>
+                                <div class="testimonial-author">
+                                    <img src="https://placehold.co/65x65/cccccc/333333?text=MB" alt="Michael Brown" class="author-image">
+                                    <div class="author-info">
+                                        <h4>Michael Brown</h4>
+                                        <p>Property Manager, Oakton</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                         <div class="testimonial-controls" id="testimonialControls">
+                            <div class="testimonial-dot active" data-index="0"></div>
+                            <div class="testimonial-dot" data-index="1"></div>
+                            <div class="testimonial-dot" data-index="2"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="stats">
+                     <div class="section-heading">
+                        <h2>Our Track Record</h2>
+                        <div class="divider"></div>
+                        <p>Proven results and a commitment to excellence define our work ethic and success.</p>
+                    </div>
+                    <div class="stats-container">
+                        <div class="stat-box">
+                            <div class="stat-number">500+</div>
+                            <div class="stat-label">Projects Completed</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-number">50+</div>
+                            <div class="stat-label">Skilled Team Members</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-number">10+</div>
+                            <div class="stat-label">Years of Experience</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-number">98%</div>
+                            <div class="stat-label">Client Satisfaction Rate</div>
+                        </div>
+                    </div>
+                </section>
+            </div> <div class="tab-container" id="services">
+                <div class="section-heading">
+                    <h2>Our Comprehensive Services</h2>
+                    <div class="divider"></div>
+                    <p>We provide a full spectrum of manual labor services tailored to your specific needs, ensuring quality and reliability every step of the way.</p>
+                </div>
+                <div class="services-grid">
+                     <div class="service-card">
+                        <img src="https://placehold.co/400x220/1A5D7A/FFFFFF?text=Construction" alt="Construction Service" class="service-image">
+                        <div class="service-content">
+                            <h3>Construction & Building</h3>
+                            <p>From ground-up construction to additions, our team handles framing, roofing, concrete, masonry, and site work with expertise.</p>
+                            <a href="#contact" class="read-more" data-tab="contact">Request Service <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                    <div class="service-card">
+                        <img src="https://placehold.co/400x220/FF7B00/FFFFFF?text=Landscaping" alt="Landscaping Service" class="service-image">
+                        <div class="service-content">
+                            <h3>Landscaping & Groundskeeping</h3>
+                            <p>Full-service landscaping including design, installation, maintenance, lawn care, tree/shrub care, hardscaping, and irrigation.</p>
+                             <a href="#contact" class="read-more" data-tab="contact">Request Service <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                    <div class="service-card">
+                        <img src="https://placehold.co/400x220/1A5D7A/FFFFFF?text=Renovation" alt="Renovation Service" class="service-image">
+                        <div class="service-content">
+                            <h3>Renovation & Remodeling</h3>
+                            <p>Interior and exterior renovations for homes and businesses. Services include demolition, drywall, painting, flooring, and fixture installation.</p>
+                             <a href="#contact" class="read-more" data-tab="contact">Request Service <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                     <div class="service-card">
+                        <img src="https://placehold.co/400x220/FF7B00/FFFFFF?text=Moving" alt="Moving Service" class="service-image">
+                        <div class="service-content">
+                            <h3>Moving & Hauling</h3>
+                            <p>Reliable moving labor for loading/unloading trucks, internal moves, furniture assembly, and junk removal/hauling services.</p>
+                             <a href="#contact" class="read-more" data-tab="contact">Request Service <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                     <div class="service-card">
+                        <img src="https://placehold.co/400x220/1A5D7A/FFFFFF?text=Cleaning" alt="Cleaning Service" class="service-image">
+                        <div class="service-content">
+                            <h3>Post-Construction Cleanup</h3>
+                            <p>Thorough cleanup services after construction or renovation projects, ensuring your site is spotless and ready for use.</p>
+                             <a href="#contact" class="read-more" data-tab="contact">Request Service <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                     <div class="service-card">
+                        <img src="https://placehold.co/400x220/FF7B00/FFFFFF?text=Maintenance" alt="Maintenance Service" class="service-image">
+                        <div class="service-content">
+                            <h3>General Maintenance</h3>
+                            <p>Handyman services, property maintenance, pressure washing, gutter cleaning, and other general labor tasks.</p>
+                             <a href="#contact" class="read-more" data-tab="contact">Request Service <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div> <div class="tab-container" id="about">
+                <div class="section-heading">
+                    <h2>About WorkForce Pro</h2>
+                    <div class="divider"></div>
+                    <p>Learn more about our company, our mission, and the dedicated team behind our success.</p>
+                </div>
+                <section class="about-content">
+                    <div class="about-grid">
+                        <div class="about-text">
+                            <h2>Your Trusted Partner for Manual Labor</h2>
+                            <p>Founded over a decade ago, WorkForce Pro started with a simple mission: to provide reliable, high-quality manual labor services with integrity and professionalism. We saw a need for a dependable workforce that clients could trust for their most demanding projects.</p>
+                            <p>Today, we've grown into a leading provider in the region, known for our skilled team, commitment to safety, and unwavering focus on customer satisfaction. We believe in hard work, clear communication, and delivering results that exceed expectations.</p>
+                            <p>Our core values guide everything we do: Quality, Reliability, Safety, and Customer Focus. We invest in our team, providing ongoing training and ensuring they have the best tools for the job. Whether it's a small residential task or a large commercial project, we approach every job with the same level of dedication.</p>
+                            <a href="#contact" class="cta-button" data-tab="contact">Meet the Team</a>
+                        </div>
+                        <div class="about-image-container">
+                             <img src="https://placehold.co/500x350/FF7B00/FFFFFF?text=Our+Team+at+Work" alt="WorkForce Pro Team Working" class="about-image">
+                        </div>
+                    </div>
+                </section>
+
+                 <section id="team">
+                    <div class="section-heading">
+                        <h2>Meet Our Leadership Team</h2>
+                         <div class="divider"></div>
+                        <p>The driving force behind WorkForce Pro's commitment to excellence.</p>
+                    </div>
+                    <div class="team-grid">
+                        <div class="team-card">
+                            <img src="https://placehold.co/160x160/cccccc/333333?text=JD" alt="Team Member John Doe" class="team-image">
+                            <div class="team-content">
+                                <h3>John Doe</h3>
+                                <span class="team-role">Founder & CEO</span>
+                                <p>With over 20 years in the industry, John leads with a passion for quality workmanship and client satisfaction.</p>
+                                <div class="social-icons">
+                                    <a href="#" class="social-icon" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                                    <a href="#" class="social-icon" aria-label="Email"><i class="fas fa-envelope"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="team-card">
+                            <img src="https://placehold.co/160x160/cccccc/333333?text=JS" alt="Team Member Jane Smith" class="team-image">
+                            <div class="team-content">
+                                <h3>Jane Smith</h3>
+                                <span class="team-role">Operations Manager</span>
+                                <p>Jane ensures every project runs smoothly, coordinating teams and resources for maximum efficiency and safety.</p>
+                                 <div class="social-icons">
+                                    <a href="#" class="social-icon" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                                    <a href="#" class="social-icon" aria-label="Email"><i class="fas fa-envelope"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="team-card">
+                            <img src="https://placehold.co/160x160/cccccc/333333?text=RB" alt="Team Member Robert Brown" class="team-image">
+                            <div class="team-content">
+                                <h3>Robert Brown</h3>
+                                <span class="team-role">Lead Supervisor</span>
+                                <p>Robert brings hands-on expertise to every site, mentoring crews and upholding our high standards of quality.</p>
+                                 <div class="social-icons">
+                                    <a href="#" class="social-icon" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                                    <a href="#" class="social-icon" aria-label="Email"><i class="fas fa-envelope"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="faq">
+                    <div class="section-heading">
+                        <h2>Frequently Asked Questions</h2>
+                        <div class="divider"></div>
+                        <p>Have questions? We've got answers. Find information about our services, process, and policies below.</p>
+                    </div>
+                    <div class="faq-container" id="faqContainer">
+                        <div class="faq-item">
+                            <div class="faq-question" role="button" aria-expanded="false">
+                                What areas do you serve?
+                                <span class="faq-icon">-</span> </div>
+                            <div class="faq-answer">
+                                <p>We primarily serve the Greater Springfield area, including Centerville, Oakton, and surrounding counties within a 50-mile radius. Please contact us to confirm if we cover your specific location.</p>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <div class="faq-question" role="button" aria-expanded="false">
+                                Are you licensed and insured?
+                                <span class="faq-icon">+</span>
+                            </div>
+                            <div class="faq-answer">
+                                <p>Yes, WorkForce Pro is fully licensed and insured for all the services we offer. We carry comprehensive liability insurance and workers' compensation coverage for your peace of mind and our team's protection.</p>
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <div class="faq-question" role="button" aria-expanded="false">
+                                How do I get a quote for my project?
+                                 <span class="faq-icon">+</span>
+                            </div>
+                            <div class="faq-answer">
+                                <p>You can request a free, no-obligation quote by filling out the contact form on our website, calling us directly, or sending us an email. We typically schedule a site visit for larger projects to provide the most accurate estimate.</p>
+                            </div>
+                        </div>
+                         <div class="faq-item">
+                            <div class="faq-question" role="button" aria-expanded="false">
+                                What are your payment terms?
+                                 <span class="faq-icon">+</span>
+                            </div>
+                            <div class="faq-answer">
+                                <p>Payment terms vary depending on the project size and duration. For smaller jobs, payment is typically due upon completion. For larger projects, we may require a deposit upfront with progress payments scheduled throughout the project. We accept checks, credit cards, and electronic bank transfers.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div> <div class="tab-container" id="projects">
+                 <div class="section-heading">
+                    <h2>Our Recent Projects</h2>
+                    <div class="divider"></div>
+                    <p>Explore a selection of our completed projects showcasing the quality and diversity of our work.</p>
+                </div>
+                 <div class="projects-grid">
+                     <div class="project-card">
+                        <img src="https://placehold.co/400x220/FF7B00/FFFFFF?text=Project+Alpha" alt="Project Alpha Image" class="project-image">
+                        <div class="project-content">
+                            <h3>Commercial Office Renovation</h3>
+                             <div class="project-meta">
+                                <span><i class="fas fa-map-marker-alt"></i> Centerville</span>
+                                <span><i class="fas fa-tag"></i> Renovation</span>
+                                <span><i class="far fa-calendar-alt"></i> Completed: Mar 2025</span>
+                            </div>
+                            <p>Complete interior gut and remodel of a 5,000 sq ft office space, including new walls, flooring, electrical, and finishes.</p>
+                             <a href="#contact" class="read-more" data-tab="contact">Discuss Similar Project <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                    <div class="project-card">
+                        <img src="https://placehold.co/400x220/1A5D7A/FFFFFF?text=Project+Beta" alt="Project Beta Image" class="project-image">
+                        <div class="project-content">
+                            <h3>Residential Backyard Landscaping</h3>
+                             <div class="project-meta">
+                                <span><i class="fas fa-map-marker-alt"></i> Springfield</span>
+                                <span><i class="fas fa-tag"></i> Landscaping</span>
+                                 <span><i class="far fa-calendar-alt"></i> Completed: Apr 2025</span>
+                            </div>
+                            <p>Designed and installed a new patio, retaining walls, plantings, and irrigation system for a residential client.</p>
+                             <a href="#contact" class="read-more" data-tab="contact">Discuss Similar Project <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                    <div class="project-card">
+                        <img src="https://placehold.co/400x220/FF7B00/FFFFFF?text=Project+Gamma" alt="Project Gamma Image" class="project-image">
+                        <div class="project-content">
+                            <h3>New Home Construction Support</h3>
+                             <div class="project-meta">
+                                <span><i class="fas fa-map-marker-alt"></i> Oakton</span>
+                                <span><i class="fas fa-tag"></i> Construction</span>
+                                 <span><i class="far fa-calendar-alt"></i> Completed: Feb 2025</span>
+                            </div>
+                            <p>Provided skilled labor support for framing, roofing, and site cleanup during a new custom home build.</p>
+                            <a href="#contact" class="read-more" data-tab="contact">Discuss Similar Project <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                     </div>
+            </div> <div class="tab-container" id="pricing">
+                 <div class="section-heading">
+                    <h2>Our Pricing Plans</h2>
+                    <div class="divider"></div>
+                    <p>Transparent pricing options to fit your project needs and budget. Contact us for custom quotes.</p>
+                </div>
+                 <div class="pricing-grid">
+                    <div class="pricing-card">
+                        <div class="pricing-header">
+                            <h3>Hourly Rate</h3>
+                            <div class="price">$75<span>/hour per worker</span></div>
+                            <p>Ideal for smaller tasks & flexibility</p>
+                        </div>
+                        <div class="pricing-features">
+                            <ul>
+                                <li><i class="fas fa-check"></i> General Labor Tasks</li>
+                                <li><i class="fas fa-check"></i> Moving & Hauling Assistance</li>
+                                <li><i class="fas fa-check"></i> Site Cleanup</li>
+                                <li><i class="fas fa-check"></i> Minimum 2-hour charge</li>
+                                <li><i class="fas fa-times"></i> Specialized Equipment Extra</li>
+                            </ul>
+                        </div>
+                         <div class="pricing-footer">
+                            <a href="#contact" class="pricing-button" data-tab="contact">Request Hourly Service</a>
+                        </div>
+                    </div>
+                    <div class="pricing-card popular">
+                        <div class="popular-tag">Most Popular</div>
+                        <div class="pricing-header">
+                            <h3>Project Quote</h3>
+                             <div class="price">Custom<span>/project</span></div>
+                             <p>Best for defined scope projects</p>
+                        </div>
+                        <div class="pricing-features">
+                            <ul>
+                                <li><i class="fas fa-check"></i> Fixed Price Guarantee</li>
+                                <li><i class="fas fa-check"></i> Construction & Renovation</li>
+                                <li><i class="fas fa-check"></i> Landscaping Installations</li>
+                                <li><i class="fas fa-check"></i> Detailed Scope of Work</li>
+                                <li><i class="fas fa-check"></i> Dedicated Project Supervisor</li>
+                            </ul>
+                        </div>
+                         <div class="pricing-footer">
+                            <a href="#contact" class="pricing-button" data-tab="contact">Get a Custom Quote</a>
+                        </div>
+                    </div>
+                    <div class="pricing-card">
+                        <div class="pricing-header">
+                            <h3>Maintenance Retainer</h3>
+                             <div class="price">Contact Us<span>/month</span></div>
+                             <p>Ongoing property care</p>
+                        </div>
+                        <div class="pricing-features">
+                            <ul>
+                                <li><i class="fas fa-check"></i> Scheduled Maintenance Visits</li>
+                                <li><i class="fas fa-check"></i> Groundskeeping & Lawn Care</li>
+                                <li><i class="fas fa-check"></i> Priority Service Calls</li>
+                                <li><i class="fas fa-check"></i> Discounted Hourly Rates</li>
+                                <li><i class="fas fa-check"></i> Customizable Plans</li>
+                            </ul>
+                        </div>
+                         <div class="pricing-footer">
+                            <a href="#contact" class="pricing-button" data-tab="contact">Discuss Retainer Options</a>
+                        </div>
+                    </div>
+                 </div>
+            </div> <div class="tab-container" id="contact">
+                <div class="section-heading">
+                    <h2>Get In Touch</h2>
+                    <div class="divider"></div>
+                    <p>Ready to start your project or have questions? Contact us today! We're here to help.</p>
+                </div>
+                <div class="contact-container">
+                    <div class="contact-grid">
+                        <div class="contact-info">
+                            <h2>Contact Information</h2>
+                            <div class="contact-detail">
+                                <div class="contact-icon"><i class="fas fa-map-marker-alt"></i></div>
+                                <div class="contact-text">
+                                    <h4>Our Office</h4>
+                                    <p>123 Labor Lane, Springfield, VA 22150</p>
+                                </div>
+                            </div>
+                            <div class="contact-detail">
+                                <div class="contact-icon"><i class="fas fa-phone"></i></div>
+                                <div class="contact-text">
+                                    <h4>Call Us</h4>
+                                    <p><a href="tel:+17035551234">(703) 555-1234</a></p>
+                                </div>
+                            </div>
+                            <div class="contact-detail">
+                                <div class="contact-icon"><i class="fas fa-envelope"></i></div>
+                                <div class="contact-text">
+                                    <h4>Email Us</h4>
+                                    <p><a href="mailto:info@workforcepro.com">info@workforcepro.com</a></p>
+                                </div>
+                            </div>
+                             <div class="contact-detail">
+                                <div class="contact-icon"><i class="far fa-clock"></i></div>
+                                <div class="contact-text">
+                                    <h4>Business Hours</h4>
+                                    <p>Mon - Fri: 7:00 AM - 6:00 PM<br>Sat: 8:00 AM - 1:00 PM<br>Sun: Closed</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="contact-form">
+                             <h2>Send Us a Message</h2>
+                            <form id="mainContactForm">
+                                <div class="form-group">
+                                    <label for="name">Full Name</label>
+                                    <input type="text" id="name" name="name" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="email">Email Address</label>
+                                    <input type="email" id="email" name="email" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="phone">Phone Number (Optional)</label>
+                                    <input type="tel" id="phone" name="phone">
+                                </div>
+                                <div class="form-group">
+                                    <label for="service">Service Interested In</label>
+                                    <select id="service" name="service" required>
+                                        <option value="">-- Select a Service --</option>
+                                        <option value="Construction">Construction</option>
+                                        <option value="Landscaping">Landscaping</option>
+                                        <option value="Renovation">Renovation</option>
+                                        <option value="Moving">Moving/Hauling</option>
+                                        <option value="Maintenance">General Maintenance</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="message">Message</label>
+                                    <textarea id="message" name="message" required></textarea>
+                                </div>
+                                <button type="submit" class="submit-button">Send Message</button>
+                            </form>
+                             <p id="formStatus" style="margin-top: 15px; text-align: center;"></p> </div>
+                    </div>
+                </div>
+            </div> </div> </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-section">
+                    <h3>About WorkForce Pro</h3>
+                    <p>Your reliable partner for professional manual labor services. Quality, efficiency, and customer satisfaction guaranteed.</p>
+                    <div class="footer-social">
+                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="#home" data-tab="home"><i class="fas fa-angle-right"></i> Home</a></li>
+                        <li><a href="#about" data-tab="about"><i class="fas fa-angle-right"></i> About Us</a></li>
+                        <li><a href="#services" data-tab="services"><i class="fas fa-angle-right"></i> Services</a></li>
+                        <li><a href="#projects" data-tab="projects"><i class="fas fa-angle-right"></i> Projects</a></li>
+                        <li><a href="#contact" data-tab="contact"><i class="fas fa-angle-right"></i> Contact</a></li>
+                         <li><a href="#faq" data-tab="about"><i class="fas fa-angle-right"></i> FAQ</a></li>
+                    </ul>
+                </div>
+                 <div class="footer-section">
+                    <h3>Our Services</h3>
+                     <ul class="footer-links">
+                        <li><a href="#services" data-tab="services"><i class="fas fa-hard-hat"></i> Construction</a></li>
+                        <li><a href="#services" data-tab="services"><i class="fas fa-leaf"></i> Landscaping</a></li>
+                        <li><a href="#services" data-tab="services"><i class="fas fa-paint-roller"></i> Renovation</a></li>
+                        <li><a href="#services" data-tab="services"><i class="fas fa-truck-moving"></i> Moving & Hauling</a></li>
+                        <li><a href="#services" data-tab="services"><i class="fas fa-tools"></i> Maintenance</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact Us</h3>
+                     <ul class="footer-links">
+                        <li><a href="#"><i class="fas fa-map-marker-alt"></i> 123 Labor Ln, Springfield, VA</a></li>
+                        <li><a href="tel:+17035551234"><i class="fas fa-phone"></i> (703) 555-1234</a></li>
+                        <li><a href="mailto:info@workforcepro.com"><i class="fas fa-envelope"></i> info@workforcepro.com</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                &copy; <span id="currentYear"></span> WorkForce Pro. All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+
+    <a href="#" class="scroll-top" id="scrollTopBtn" aria-label="Scroll to top">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuToggle = document.getElementById('menuToggle');
+            const mainNav = document.getElementById('mainNav');
+            const navLinks = mainNav.querySelectorAll('a[data-tab]');
+            const tabContainers = document.querySelectorAll('.tab-container');
+            const testimonialContainer = document.getElementById('testimonialContainer');
+            const testimonials = testimonialContainer ? testimonialContainer.querySelectorAll('.testimonial') : [];
+            const testimonialControls = document.getElementById('testimonialControls');
+            const testimonialDots = testimonialControls ? testimonialControls.querySelectorAll('.testimonial-dot') : [];
+            const faqContainer = document.getElementById('faqContainer');
+            const faqItems = faqContainer ? faqContainer.querySelectorAll('.faq-item') : [];
+            const scrollTopBtn = document.getElementById('scrollTopBtn');
+            const contactForm = document.getElementById('mainContactForm');
+            const formStatus = document.getElementById('formStatus');
+            const currentYearSpan = document.getElementById('currentYear');
+
+            // Set Current Year in Footer
+            if (currentYearSpan) {
+                currentYearSpan.textContent = new Date().getFullYear();
+            }
+
+            // --- Hamburger Menu Toggle ---
+            if (menuToggle && mainNav) {
+                menuToggle.addEventListener('click', () => {
+                    mainNav.classList.toggle('active');
+                    menuToggle.classList.toggle('active');
+                    // Toggle aria-expanded attribute for accessibility
+                    const isExpanded = menuToggle.getAttribute('aria-expanded') === 'true';
+                    menuToggle.setAttribute('aria-expanded', !isExpanded);
+                });
+            }
+
+             // --- Close Mobile Nav on Link Click ---
+             navLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    if (mainNav.classList.contains('active')) {
+                        mainNav.classList.remove('active');
+                        menuToggle.classList.remove('active');
+                        menuToggle.setAttribute('aria-expanded', 'false');
+                    }
+                });
+            });
+
+
+            // --- Tab Navigation ---
+            function activateTab(tabId) {
+                // Hide all tabs
+                tabContainers.forEach(container => {
+                    container.classList.remove('active');
+                });
+                // Deactivate all nav links underline
+                 navLinks.forEach(link => {
+                    link.classList.remove('active-link');
+                });
+
+                // Show the selected tab
+                const activeTab = document.getElementById(tabId);
+                if (activeTab) {
+                    activeTab.classList.add('active');
+                }
+                // Activate the corresponding nav link underline
+                const activeLink = mainNav.querySelector(`a[data-tab="${tabId}"]`);
+                 if (activeLink) {
+                    activeLink.classList.add('active-link');
+                }
+
+                 // Scroll to the top of the main content area smoothly
+                 const mainElement = document.querySelector('main');
+                 if(mainElement) {
+                    window.scrollTo({
+                        top: mainElement.offsetTop - document.querySelector('header').offsetHeight, // Adjust for fixed header
+                        behavior: 'smooth'
+                    });
+                 }
+            }
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault(); // Prevent default anchor jump
+                    const tabId = link.getAttribute('data-tab');
+                    activateTab(tabId);
+                     // Update URL hash without jumping (optional)
+                    // history.pushState(null, null, `#${tabId}`);
+                });
+            });
+
+             // Activate tab based on URL hash on load (optional)
+             /*
+             if (window.location.hash) {
+                 const hashTabId = window.location.hash.substring(1);
+                 const correspondingLink = mainNav.querySelector(`a[data-tab="${hashTabId}"]`);
+                 if (correspondingLink) {
+                     activateTab(hashTabId);
+                 } else {
+                      activateTab('home'); // Default to home if hash is invalid
+                 }
+             } else {
+                 activateTab('home'); // Default to home if no hash
+             }
+             */
+             // Simplified: Always start on home tab
+             activateTab('home');
+
+
+            // --- Testimonial Slider ---
+            let currentTestimonialIndex = 0;
+            let testimonialInterval;
+
+            function showTestimonial(index) {
+                if (!testimonials || testimonials.length === 0) return;
+
+                testimonials.forEach((testimonial, i) => {
+                    testimonial.classList.remove('active', 'prev');
+                     // Logic for sliding effect
+                     if (i === index) {
+                         testimonial.classList.add('active');
+                     } else if (i === currentTestimonialIndex) {
+                         testimonial.classList.add('prev'); // Mark old slide for slide-out
+                     }
+                });
+
+                testimonialDots.forEach((dot, i) => {
+                    dot.classList.toggle('active', i === index);
+                });
+                currentTestimonialIndex = index;
+            }
+
+            function nextTestimonial() {
+                 if (!testimonials || testimonials.length === 0) return;
+                let nextIndex = (currentTestimonialIndex + 1) % testimonials.length;
+                showTestimonial(nextIndex);
+            }
+
+            function startTestimonialSlider() {
+                 if (!testimonials || testimonials.length === 0) return;
+                stopTestimonialSlider(); // Clear existing interval first
+                testimonialInterval = setInterval(nextTestimonial, 5000); // Change slide every 5 seconds
+            }
+
+            function stopTestimonialSlider() {
+                clearInterval(testimonialInterval);
+            }
+
+            if (testimonialDots.length > 0) {
+                testimonialDots.forEach(dot => {
+                    dot.addEventListener('click', () => {
+                        stopTestimonialSlider(); // Stop auto-slide on manual control
+                        showTestimonial(parseInt(dot.getAttribute('data-index')));
+                         startTestimonialSlider(); // Optional: Restart slider after manual click
+                    });
+                });
+                 // Initialize first testimonial and start slider
+                 showTestimonial(0);
+                 startTestimonialSlider();
+
+                 // Pause slider on hover
+                 testimonialContainer.addEventListener('mouseenter', stopTestimonialSlider);
+                 testimonialContainer.addEventListener('mouseleave', startTestimonialSlider);
+            }
+
+
+            // --- FAQ Accordion ---
+            if (faqItems.length > 0) {
+                // Initialize: Close all except maybe the first one
+                faqItems.forEach((item, index) => {
+                    const question = item.querySelector('.faq-question');
+                    const answer = item.querySelector('.faq-answer');
+                    const icon = question.querySelector('.faq-icon');
+
+                    if (index === 0) { // Open the first item by default
+                         item.classList.add('active');
+                         question.setAttribute('aria-expanded', 'true');
+                         answer.style.maxHeight = answer.scrollHeight + "px";
+                         answer.style.padding = "25px"; // Match CSS padding
+                         icon.textContent = '-';
+                    } else {
+                        item.classList.remove('active');
+                        question.setAttribute('aria-expanded', 'false');
+                        answer.style.maxHeight = '0';
+                        answer.style.padding = "0 25px"; // Match CSS padding
+                        icon.textContent = '+';
+                    }
+                });
+
+                faqItems.forEach(item => {
+                    const question = item.querySelector('.faq-question');
+                    const answer = item.querySelector('.faq-answer');
+                    const icon = question.querySelector('.faq-icon');
+
+                    question.addEventListener('click', () => {
+                        const isActive = item.classList.contains('active');
+
+                        // Optional: Close other items when one is opened
+                        faqItems.forEach(otherItem => {
+                           if (otherItem !== item && otherItem.classList.contains('active')) {
+                               otherItem.classList.remove('active');
+                               otherItem.querySelector('.faq-question').setAttribute('aria-expanded', 'false');
+                               otherItem.querySelector('.faq-answer').style.maxHeight = '0';
+                               otherItem.querySelector('.faq-answer').style.padding = "0 25px";
+                               otherItem.querySelector('.faq-icon').textContent = '+';
+                           }
+                        });
+
+                        // Toggle the clicked item
+                        item.classList.toggle('active');
+                        question.setAttribute('aria-expanded', !isActive);
+
+                        if (item.classList.contains('active')) {
+                            answer.style.maxHeight = answer.scrollHeight + "px";
+                            answer.style.padding = "25px"; // Add padding when open
+                            icon.textContent = '-';
+                        } else {
+                            answer.style.maxHeight = '0';
+                             answer.style.padding = "0 25px"; // Remove padding when closed
+                            icon.textContent = '+';
+                        }
+                    });
+                });
+            }
+
+            // --- Scroll to Top Button ---
+            if (scrollTopBtn) {
+                window.addEventListener('scroll', () => {
+                    if (window.pageYOffset > 300) { // Show button after scrolling down 300px
+                        scrollTopBtn.classList.add('active');
+                    } else {
+                        scrollTopBtn.classList.remove('active');
+                    }
+                });
+
+                scrollTopBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                });
+            }
+
+            // --- Basic Contact Form Handling (Placeholder) ---
+             if (contactForm && formStatus) {
+                contactForm.addEventListener('submit', (e) => {
+                    e.preventDefault(); // Prevent actual form submission
+
+                    // Basic validation check (can be more robust)
+                    const name = document.getElementById('name').value;
+                    const email = document.getElementById('email').value;
+                    const service = document.getElementById('service').value;
+                    const message = document.getElementById('message').value;
+
+                    if (name && email && service && message) {
+                         // Simulate sending message
+                         formStatus.textContent = 'Sending message...';
+                         formStatus.style.color = 'var(--secondary-color)';
+
+                         setTimeout(() => {
+                             formStatus.textContent = 'Message sent successfully! We will get back to you soon.';
+                             formStatus.style.color = 'green';
+                             contactForm.reset(); // Clear the form
+                         }, 1500); // Simulate network delay
+
+                         // Hide status message after a few seconds
+                         setTimeout(() => {
+                             formStatus.textContent = '';
+                         }, 6000);
+                    } else {
+                         formStatus.textContent = 'Please fill out all required fields.';
+                         formStatus.style.color = 'red';
+                    }
+                });
+            }
+
+        });
+    </script>
+</body>
+</html>
