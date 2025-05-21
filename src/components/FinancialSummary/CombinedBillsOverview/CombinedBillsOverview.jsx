@@ -171,7 +171,7 @@ const CombinedBillsOverview = ({ style }) => {
 
     // --- Event Handlers (Remain in parent) ---
      const handleAddBill = () => {
-         setIsModalVisible(true);
+         setMultiModalVisible(true);
      };
      const handleEdit = (record) => {
          setEditingBill(record);

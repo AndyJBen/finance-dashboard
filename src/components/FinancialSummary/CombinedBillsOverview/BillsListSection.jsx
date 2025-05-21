@@ -17,7 +17,7 @@ const BillsListSection = ({
     categories,
     selectedCategory,
     setSelectedCategory,
-    handleAddSingle, // Function to open multiple bills modal (renamed but kept for compatibility)
+    handleAddBill,
     getCategoryIcon,
     selectedAllButtonStyle,
     defaultAllButtonStyle
@@ -42,7 +42,7 @@ const BillsListSection = ({
                         <Button
                             type="primary"
                             icon={<IconPlus size={16} />}
-                            onClick={handleAddSingle} // Use the passed function
+                            onClick={handleAddBill}
                             style={{ display: 'flex', alignItems: 'center', fontWeight: 500 }}
                             className="hide-on-mobile" // Keep class to hide on mobile
                         >
@@ -100,7 +100,7 @@ const BillsListSection = ({
 
 // Add defaultProps for safety, although App.jsx should always pass them
 BillsListSection.defaultProps = {
-  handleAddSingle: () => console.warn("handleAddSingle handler not provided to BillsListSection"),
+  handleAddBill: () => console.warn("handleAddBill handler not provided to BillsListSection"),
   getCategoryIcon: () => null, // Provide a default fallback for the icon function
 };
 
