@@ -1,6 +1,6 @@
 // src/components/FinancialSummary/FinancialOverviewCards/BankBalanceCard.jsx
 
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import { Card, Col, Space, Statistic, Typography, Tooltip } from 'antd';
 import { IconBuildingBank } from '@tabler/icons-react';
 import { FinanceContext } from '../../../contexts/FinanceContext';
@@ -30,10 +30,7 @@ const formatCurrencySuperscript = (value) => {
 
 const BankBalanceCard = ({ isMobile, styles, isComponentLoading }) => {
   // Consume context, including the new state and toggle function
-  const { bankBalance, loadingBalance } = useContext(FinanceContext);
-
-  // State for the modal
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const { bankBalance, loadingBalance, isEditingBankBalance, toggleBankBalanceEdit } = useContext(FinanceContext);
 
   // Determine text color based on balance
   const bankBalanceColor =
@@ -43,7 +40,7 @@ const BankBalanceCard = ({ isMobile, styles, isComponentLoading }) => {
 
   // Card click handler to open the modal
   const handleCardClick = () => {
-    setIsModalVisible(true);
+    toggleBankBalanceEdit(true);
   };
 
   return (
@@ -113,8 +110,8 @@ const BankBalanceCard = ({ isMobile, styles, isComponentLoading }) => {
 
       {/* Bank Balance Edit Modal */}
       <BankBalanceEditModal
-        open={isModalVisible}
-        onClose={() => setIsModalVisible(false)}
+        open={isEditingBankBalance}
+        onClose={() => toggleBankBalanceEdit(false)}
       />
     </>
   );

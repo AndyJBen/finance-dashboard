@@ -35,6 +35,7 @@ import SettingsPage           from './components/Settings/SettingsPage'; // Impo
 import ErrorBoundary from './components/ErrorBoundary'; // Import ErrorBoundary
 // ADDED: Import MultiBillModal component
 import MultiBillModal from './components/FinancialSummary/CombinedBillsOverview/MultiBillModal';
+import BankBalanceEditModal from './components/FinancialSummary/FinancialOverviewCards/BankBalanceEditModal';
 
 const { Content } = Layout;
 const { Title }   = Typography;
@@ -66,6 +67,7 @@ function MyApp() {
   const updateBill = financeContext ? financeContext.updateBill : () => console.error("FinanceContext not available for updateBill");
   // Get the toggle function from context
   const toggleBankBalanceEdit = financeContext ? financeContext.toggleBankBalanceEdit : () => console.error("FinanceContext not available for toggleBankBalanceEdit");
+  const isEditingBankBalance = financeContext ? financeContext.isEditingBankBalance : false;
 
   // --- Modal Handlers ---
 
@@ -252,7 +254,7 @@ function MyApp() {
               selectedKey={selectedMenuKey}
               onSelect={handleSelect}
               width={SIDEBAR_WIDTH}
-              // Pass modal handlers if Sidebar needs to trigger them (optional)
+              onEditBalance={handleOpenEditBalanceModal}
               // onAddBill={handleOpenAddBillModal}
               // onEditBill={handleOpenEditBillModal}
             />
@@ -309,6 +311,12 @@ function MyApp() {
         <MultiBillModal
             open={isMultiBillModalVisible}
             onClose={handleCloseMultiBillModal}
+        />
+
+        {/* Bank Balance Edit Modal - globally rendered */}
+        <BankBalanceEditModal
+            open={isEditingBankBalance}
+            onClose={() => toggleBankBalanceEdit(false)}
         />
       </Layout>
 
