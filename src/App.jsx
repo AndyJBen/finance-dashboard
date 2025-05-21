@@ -287,7 +287,10 @@ function MyApp() {
         >
           {/* Content Area */}
           <Content style={contentStyle}>
-            {renderContent()} {/* Render the selected page content */}
+            <div key={selectedMenuKey}
+                 className={isMobileView ? 'page-transition' : undefined}>
+              {renderContent()}
+            </div>
           </Content>
           {/* Footer */}
           <AppFooter />
