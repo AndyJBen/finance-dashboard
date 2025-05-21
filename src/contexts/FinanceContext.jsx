@@ -178,7 +178,7 @@ export const FinanceProvider = ({ children }) => {
         // Replace with server response in case it differs
         setBills(prev => prev.map(b => (b.id === existingBill.id ? { ...b, ...result } : b)));
 
-        // --- NEW: Adjust bank balance if paid status changed ---
+        // Adjust bank balance if the paid status changed
         if (typeof result.isPaid === 'boolean' && result.isPaid !== existingBill.isPaid) {
           const amount = Number(result.amount ?? existingBill.amount ?? 0);
           const adjustment = result.isPaid ? -amount : amount;
