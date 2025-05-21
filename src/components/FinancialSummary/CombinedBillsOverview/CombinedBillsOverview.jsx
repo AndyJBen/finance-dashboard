@@ -110,6 +110,7 @@ const CombinedBillsOverview = ({ style }) => {
     const [selectedCategory, setSelectedCategory] = useState('All');
     const [isTableCollapsed, setIsTableCollapsed] = useState(false); // State for collapse/expand
     const [showPaidBills, setShowPaidBills] = useState(false); // New state for showing/hiding paid bills
+    const [fadingBillId, setFadingBillId] = useState(null); // Row fade state
     const defaultPageSize = 10; // Kept for reference, but not used for slicing when collapsed
 
     // --- Derived State (Modified to filter out paid bills by default) ---
@@ -181,25 +182,36 @@ const CombinedBillsOverview = ({ style }) => {
          let result = editingBill ? await updateBill(editingBill, values) : await addBill(values);
          if (result) { setIsModalVisible(false); setEditingBill(null); }
      };
-     const handleTogglePaid = async (record) => { await updateBill(record, { isPaid: !record.isPaid }); };
+    const handleTogglePaid = async (record) => {
+         const markingAsPaid = !record.isPaid;
+         if (markingAsPaid) {
+             setFadingBillId(record.id);
+             await new Promise(res => setTimeout(res, 300));
+         }
+         await updateBill(record, { isPaid: markingAsPaid });
+         if (markingAsPaid) {
+             setFadingBillId(null);
+         }
+     };
      const handleDelete = async (record) => {
          if (!record || typeof record.id === 'undefined') { message.error('Cannot delete bill: Invalid data.'); return; }
          try { await deleteBill(record.id); } catch (error) { message.error(`Deletion error: ${error.message || 'Unknown'}`); }
      };
-     const handleOpenMultiModal = () => {
-         setMultiModalVisible(true);
-     };
-     const handleCloseMultiModal = () => {
-         setMultiModalVisible(false);
-     };
+    const handleOpenMultiModal = () => {
+        setMultiModalVisible(true);
+    };
+    const handleCloseMultiModal = () => {
+        setMultiModalVisible(false);
+    };
         const handleMenuClick = () => {
             handleOpenMultiModal();
         };
 
      // New handler for toggling paid bills visibility
-     const togglePaidBillsVisibility = () => {
-         setShowPaidBills(prev => !prev);
-     };
+    const togglePaidBillsVisibility = () => {
+        setShowPaidBills(prev => !prev);
+    };
+    const rowClassName = (record) => (record.id === fadingBillId ? 'bill-row-fade-out' : '');
      // --- End Event Handlers ---
 
 
@@ -324,6 +336,7 @@ const CombinedBillsOverview = ({ style }) => {
                     getCategoryIcon={getCategoryIcon} // Pass helper
                     selectedAllButtonStyle={selectedAllButtonStyle}
                     defaultAllButtonStyle={defaultAllButtonStyle}
+                    rowClassName={rowClassName}
                 />
 
                 {/* Show/Hide Paid Bills Toggle Button - Only displayed when table is not collapsed */}

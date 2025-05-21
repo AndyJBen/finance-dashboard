@@ -20,7 +20,8 @@ const BillsListSection = ({
     handleAddBill,
     getCategoryIcon,
     selectedAllButtonStyle,
-    defaultAllButtonStyle
+    defaultAllButtonStyle,
+    rowClassName
 }) => {
 
     return (
@@ -76,6 +77,7 @@ const BillsListSection = ({
                 columns={columns}
                 dataSource={tableDataSource}
                 rowKey={record => record.id || `${record.name}-${record.dueDate}`} // Ensure unique keys
+                rowClassName={rowClassName}
                 pagination={false}
                 scroll={{ x: 730 }}
                 size="middle"
@@ -102,6 +104,7 @@ const BillsListSection = ({
 BillsListSection.defaultProps = {
   handleAddBill: () => console.warn("handleAddBill handler not provided to BillsListSection"),
   getCategoryIcon: () => null, // Provide a default fallback for the icon function
+  rowClassName: () => ''
 };
 
 
