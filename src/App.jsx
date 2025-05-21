@@ -49,6 +49,13 @@ function MyApp() {
   // Determine if the view is mobile (medium breakpoint and below)
   const isMobileView = !screens.md;
 
+  // Ensure the page always loads scrolled to the very top on mobile
+  useEffect(() => {
+    if (isMobileView) {
+      window.scrollTo(0, 0);
+    }
+  }, [isMobileView]);
+
   // State for Edit/Add Bill Modal
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [editingBill, setEditingBill] = useState(null); // Holds the bill data when editing
