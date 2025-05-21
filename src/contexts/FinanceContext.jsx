@@ -178,7 +178,21 @@ export const FinanceProvider = ({ children }) => {
         // Replace with server response in case it differs
         setBills(prev => prev.map(b => (b.id === existingBill.id ? { ...b, ...result } : b)));
 
-        // Bank balance is no longer auto-adjusted when a bill is marked paid or unpaid
+        // If paid status changed, adjust bank balance
+        if (typeof result.isPaid === 'boolean' && result.isPaid !== existingBill.isPaid && typeof bankBalance === 'number') {
+          const amountValue = Number(result.amount || existingBill.amount || 0);
+          const newBalance = existingBill.isPaid ? bankBalance + amountValue : bankBalance - amountValue;
+
+          // Optimistically update local balance
+          setBankBalance(newBalance);
+
+          // Persist the updated balance
+          try {
+            await updateBankBalance({ balance: newBalance });
+          } catch (balanceErr) {
+            console.error('Error updating bank balance after bill update:', balanceErr);
+          }
+        }
 
         message.success('Bill updated successfully');
         return true;
