@@ -167,15 +167,26 @@ export const FinanceProvider = ({ children }) => {
       console.error('Invalid existingBill:', existingBill);
       return false;
     }
+
+    // Optimistically update local state so UI updates immediately
+    const optimisticBill = { ...existingBill, ...updates };
+    setBills(prev => prev.map(b => (b.id === existingBill.id ? optimisticBill : b)));
+
     try {
       const result = await updateBill(existingBill.id, updates);
       if (result) {
+        // Replace with server response in case it differs
+        setBills(prev => prev.map(b => (b.id === existingBill.id ? { ...b, ...result } : b)));
         message.success('Bill updated successfully');
-        await loadBillsForMonth();
         return true;
       }
+
+      // If no result, revert the optimistic update
+      setBills(prev => prev.map(b => (b.id === existingBill.id ? existingBill : b)));
       return false;
     } catch (err) {
+      // Revert optimistic update on error
+      setBills(prev => prev.map(b => (b.id === existingBill.id ? existingBill : b)));
       console.error('Error updating bill:', err);
       message.error(err.message || 'Failed to update bill');
       return false;
