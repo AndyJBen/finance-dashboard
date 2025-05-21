@@ -28,13 +28,12 @@ const formatCurrencySuperscript = (value) => {
 };
 
 const NetPositionCard = ({ isMobile, styles, isComponentLoading }) => {
-  const { bankBalance, totalCreditCardBalance } = useContext(FinanceContext);
-  // Net position is the bank balance minus outstanding credit card debt.
-  // We no longer subtract unpaid bills so that paying a bill permanently
-  // decreases the net position as the bank balance updates.
+  const { bankBalance, dueBalanceTotal } = useContext(FinanceContext);
+  // Net position is the bank balance minus all amounts currently due
+  // (bills, Bill Prep items, and credit card balances).
   const grandTotal =
-    bankBalance !== null && totalCreditCardBalance !== null
-      ? bankBalance - totalCreditCardBalance
+    bankBalance !== null && dueBalanceTotal !== null
+      ? bankBalance - dueBalanceTotal
       : null;
   const grandTotalIsNegative = grandTotal !== null && grandTotal < 0;
 
