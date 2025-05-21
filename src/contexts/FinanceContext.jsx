@@ -178,20 +178,9 @@ export const FinanceProvider = ({ children }) => {
         // Replace with server response in case it differs
         setBills(prev => prev.map(b => (b.id === existingBill.id ? { ...b, ...result } : b)));
 
-        // --- NEW: Adjust bank balance if paid status changed ---
-        if (typeof result.isPaid === 'boolean' && result.isPaid !== existingBill.isPaid) {
-          const amount = Number(result.amount ?? existingBill.amount ?? 0);
-          const adjustment = result.isPaid ? -amount : amount;
-          const newBalance = (bankBalance ?? 0) + adjustment;
-          try {
-            const balanceResult = await updateBankBalance({ balance: newBalance });
-            if (balanceResult && typeof balanceResult.balance === 'number') {
-              setBankBalance(balanceResult.balance);
-            }
-          } catch (balanceError) {
-            console.error('Error updating bank balance after bill update:', balanceError);
-          }
-        }
+        // Bank balance is no longer adjusted automatically when a bill's paid
+        // status changes. Net Position will update based solely on the change
+        // to current due amounts.
 
         message.success('Bill updated successfully');
         return true;
