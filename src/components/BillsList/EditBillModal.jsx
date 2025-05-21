@@ -2,14 +2,15 @@
 // COMPLETE FILE CODE
 // Highlight: Added console logging to check props and form interaction.
 
-import React, { useEffect } from 'react';
-import { Modal, Form, Input, InputNumber, DatePicker, Select, Checkbox, Row, Col, Typography } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Modal, Form, Input, InputNumber, DatePicker, Select, Checkbox, Row, Col, Typography, Button } from 'antd';
 import {
     IconEdit,
     IconPlus,
     IconCoin,
     IconCalendar,
-    IconTag
+    IconTag,
+    IconCheck
 } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 
@@ -26,6 +27,15 @@ const billCategories = [
 // Highlight: Use 'open' prop for AntD v5
 const EditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
   const [form] = Form.useForm();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  // Update mobile state on resize
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Highlight: Log props when component renders/updates
   console.log(`[EditBillModal] Rendering. open=${open}, initialData:`, initialData);
@@ -60,34 +70,38 @@ const EditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
     }
   }, [open, initialData, form]); // Dependencies for the effect
 
+  // Reset submitting state when modal is closed
+  useEffect(() => {
+    if (!open) {
+      setIsSubmitting(false);
+    }
+  }, [open]);
+
   // Handler for the OK button click
   const handleOk = () => {
     console.log("[EditBillModal] handleOk called.");
+    setIsSubmitting(true);
     form
       .validateFields()
       .then((values) => {
         console.log("[EditBillModal] Form validation successful. Values:", values);
-        // Format data before submitting
         const formattedValues = {
           ...values,
-           // Format dueDate to YYYY-MM-DD string or null
-           dueDate: values.dueDate && dayjs(values.dueDate).isValid() ? values.dueDate.format('YYYY-MM-DD') : null,
-           // Ensure amount is a number, default to 0
-           amount: Number(values.amount) || 0,
-           // Ensure boolean values
-           isPaid: Boolean(values.isPaid),
-           isRecurring: Boolean(values.isRecurring)
+          dueDate: values.dueDate && dayjs(values.dueDate).isValid() ? values.dueDate.format('YYYY-MM-DD') : null,
+          amount: Number(values.amount) || 0,
+          isPaid: Boolean(values.isPaid),
+          isRecurring: Boolean(values.isRecurring)
         };
-        // If editing, include the ID
         if (initialData && initialData.id) {
-            formattedValues.id = initialData.id;
+          formattedValues.id = initialData.id;
         }
         console.log("[EditBillModal] Calling onSubmit with formatted values:", formattedValues);
-        onSubmit(formattedValues); // Call the onSubmit prop passed from parent
+        onSubmit(formattedValues);
       })
       .catch((info) => {
         console.error('[EditBillModal] Form Validation Failed:', info);
-      });
+      })
+      .finally(() => setIsSubmitting(false));
   };
 
   // Determine modal title and icon based on whether initialData is present
@@ -95,44 +109,42 @@ const EditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
   const modalIcon = initialData ? <IconEdit size={20} /> : <IconPlus size={20} />;
   const modalIconBg = initialData ? '#1677ff' : '#52c41a'; // Blue for edit, Green for add
 
-  // Custom styles for modal parts (AntD v5)
-  const modalStyles = {
-    header: { borderBottom: '1px solid #f0f0f0', padding: '16px 24px', backgroundColor: '#f9fafc' },
-    body: { padding: '24px' },
-    footer: { borderTop: '1px solid #f0f0f0', padding: '12px 24px' }
-  };
-
-  const inputHeight = '45px'; // Consistent input height
-
   // --- Component Render ---
   return (
     <Modal
-      title={null} // Use custom header below
-      // Use 'open' prop for AntD v5
+      title={null}
       open={open}
-      onOk={handleOk}
       onCancel={onCancel}
-      okText={initialData ? 'Save Changes' : 'Add Bill'}
-      cancelText="Cancel"
-      destroyOnClose // Unmount component when closed
-      width={480}
-      // Use 'styles' prop for AntD v5
-      styles={{
-        body: modalStyles.body,
-        footer: modalStyles.footer,
-        // Header style applied via custom div below
-      }}
+      footer={
+        <div className="modal-footer">
+          <Button onClick={onCancel} className="cancel-button">Cancel</Button>
+          <Button
+            type="primary"
+            onClick={handleOk}
+            loading={isSubmitting}
+            icon={<IconCheck size={16} />}
+            className="complete-button"
+          >
+            {initialData ? 'Save Changes' : 'Add Bill'}
+          </Button>
+        </div>
+      }
+      width={isMobile ? '92%' : 480}
+      style={{ top: 20, margin: '0 auto', padding: 0 }}
+      bodyStyle={{ padding: 0, borderRadius: '20px', overflow: 'hidden' }}
+      maskStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.6)', backdropFilter: 'blur(4px)' }}
+      className="edit-bill-modal modern-overlay"
     >
       {/* Custom Header */}
-      <div style={modalStyles.header}>
-        <Row align="middle" gutter={16}>
+      <div className="modal-header">
+        <Row align="middle" gutter={12}>
           <Col>
-            <div style={{ backgroundColor: modalIconBg, color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '40px', height: '40px', borderRadius: '8px', fontSize: '18px' }}>
+            <div className="modal-icon-container" style={{ backgroundColor: modalIconBg }}>
               {modalIcon}
             </div>
           </Col>
           <Col>
-            <Title level={4} style={{ margin: 0 }}>{modalTitle}</Title>
+            <Title level={4} className="modal-title">{modalTitle}</Title>
           </Col>
         </Row>
       </div>
@@ -142,27 +154,27 @@ const EditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
         form={form}
         layout="vertical"
         name="billForm"
-        id="billFormInstance" // Added ID for potential targeting
-        style={{ marginTop: '16px' }}
+        id="billFormInstance"
+        className="bill-form"
       >
         {/* Bill Name */}
         <Form.Item name="name" label={<span style={{ fontSize: '14px', fontWeight: 500 }}>Bill Name</span>} rules={[{ required: true, message: 'Please input the bill name!' }]} >
-          <Input prefix={<IconTag size={16} style={{ color: '#1677ff' }} />} placeholder="e.g., Electricity Bill" style={{ height: inputHeight, borderRadius: '8px' }} />
+          <Input prefix={<IconTag size={16} style={{ color: '#1677ff' }} />} placeholder="e.g., Electricity Bill" className="bill-input" />
         </Form.Item>
 
         {/* Amount */}
         <Form.Item name="amount" label={<span style={{ fontSize: '14px', fontWeight: 500 }}>Amount</span>} rules={[{ required: true, message: 'Please input the amount!' }, { type: 'number', min: 0, message: 'Amount cannot be negative!' }]} >
-          <InputNumber prefix={<IconCoin size={16} style={{ color: '#1677ff' }} />} min={0} step={0.01} formatter={(value) => `$${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')} parser={(value) => value.replace(/\$\s?|(,*)/g, '')} style={{ width: '100%', height: inputHeight, borderRadius: '8px' }} placeholder="e.g., 75.50" />
+          <InputNumber prefix={<IconCoin size={16} style={{ color: '#1677ff' }} />} min={0} step={0.01} formatter={(value) => `$${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')} parser={(value) => value.replace(/\$\s?|(,*)/g, '')} className="bill-input" style={{ width: '100%' }} placeholder="e.g., 75.50" />
         </Form.Item>
 
         {/* Due Date */}
         <Form.Item name="dueDate" label={<span style={{ fontSize: '14px', fontWeight: 500 }}>Due Date</span>} rules={[{ required: true, message: 'Please select the due date!' }]} >
-          <DatePicker format="YYYY-MM-DD" style={{ width: '100%', height: inputHeight, borderRadius: '8px' }} placeholder="Select date" suffixIcon={<IconCalendar size={16} style={{ color: '#1677ff' }} />} />
+          <DatePicker format="YYYY-MM-DD" placeholder="Select date" suffixIcon={<IconCalendar size={16} style={{ color: '#1677ff' }} />} className="bill-input date-picker" />
         </Form.Item>
 
         {/* Category */}
         <Form.Item name="category" label={<span style={{ fontSize: '14px', fontWeight: 500 }}>Category</span>} rules={[{ required: true, message: 'Please select a category!' }]} >
-          <Select placeholder="Select or type a category" style={{ width: '100%', height: inputHeight, borderRadius: '8px' }} dropdownStyle={{ borderRadius: '8px' }} suffixIcon={<IconTag size={16} style={{ color: '#1677ff' }} />} >
+          <Select placeholder="Select or type a category" className="bill-select" dropdownStyle={{ borderRadius: '8px' }} suffixIcon={<IconTag size={16} style={{ color: '#1677ff' }} />} >
             {billCategories.map(category => ( <Option key={category} value={category}>{category}</Option> ))}
           </Select>
         </Form.Item>
@@ -181,6 +193,100 @@ const EditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
           </Col>
         </Row>
       </Form>
+
+      <style jsx global>{`
+        .edit-bill-modal .ant-modal-content {
+          border-radius: 20px;
+          box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15), 0 2px 10px rgba(0, 0, 0, 0.12);
+          overflow: hidden;
+          padding: 0;
+        }
+
+        .modal-header {
+          padding: 16px 24px;
+          background: linear-gradient(135deg, #1D4ED8, #3B82F6);
+          color: white;
+          border-radius: 20px 20px 0 0;
+        }
+
+        .modal-icon-container {
+          width: 38px;
+          height: 38px;
+          background-color: rgba(255, 255, 255, 0.2);
+          border-radius: 12px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+        }
+
+        .modal-title {
+          color: white !important;
+          margin: 0 !important;
+          font-size: 18px !important;
+          font-weight: 600 !important;
+        }
+
+        .bill-form {
+          padding: 24px;
+        }
+
+        .bill-input,
+        .bill-select .ant-select-selector,
+        .bill-form .ant-picker {
+          height: 48px !important;
+          border-radius: 12px !important;
+          font-size: 15px !important;
+        }
+
+        .bill-select .ant-select-selector {
+          padding-top: 6px !important;
+        }
+
+        .modal-footer {
+          display: flex;
+          justify-content: flex-end;
+          padding: 14px 24px;
+          border-top: 1px solid #F0F0F0;
+          gap: 12px;
+        }
+
+        .modal-footer .ant-btn {
+          padding: 0 20px;
+          height: 44px;
+          font-size: 15px;
+          border-radius: 12px;
+          min-width: 100px;
+          font-weight: 500;
+        }
+
+        .cancel-button {
+          color: #64748B;
+          border-color: #E2E8F0;
+        }
+
+        .complete-button {
+          background-color: #1D4ED8;
+        }
+
+        @media (max-width: 768px) {
+          .modal-header {
+            padding: 14px 16px;
+          }
+          .bill-form {
+            padding: 20px 16px;
+          }
+          .modal-footer {
+            padding: 12px 16px;
+            gap: 8px;
+          }
+          .modal-footer .ant-btn {
+            height: 40px;
+            min-width: 90px;
+            font-size: 14px;
+          }
+        }
+      `}</style>
     </Modal>
   );
   // --- End Component Render ---
