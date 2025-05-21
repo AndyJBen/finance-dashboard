@@ -5,6 +5,22 @@ import reactRefresh from 'eslint-plugin-react-refresh'
 
 export default [
   { ignores: ['dist'] },
+
+  // Node backend config (CommonJS)
+  {
+    files: ['server/**/*.js'], // adjust path if needed
+    languageOptions: {
+      ecmaVersion: 2020,
+      sourceType: 'script', // not 'module', because it's using require()
+      globals: globals.node,
+    },
+    rules: {
+      ...js.configs.recommended.rules,
+      'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
+    },
+  },
+
+  // Frontend config (React, JSX, ESModules)
   {
     files: ['**/*.{js,jsx}'],
     languageOptions: {
