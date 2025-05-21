@@ -204,6 +204,38 @@ router.delete('/:id', async (req, res) => {
     }
 });
 
+// PATCH /api/credit_cards/reorder - Update sort order for multiple cards
+router.patch('/reorder', async (req, res) => {
+  const { cards } = req.body;
+
+  if (!Array.isArray(cards)) {
+    return res.status(400).json({ error: 'Invalid payload: cards must be an array.' });
+  }
+
+  try {
+    await db.query('BEGIN');
+
+    for (const card of cards) {
+      if (typeof card.id !== 'number' || typeof card.sort_order !== 'number') {
+        await db.query('ROLLBACK');
+        return res.status(400).json({ error: 'Invalid card data in payload.' });
+      }
+
+      await db.query(
+        'UPDATE credit_cards SET sort_order = $1 WHERE id = $2',
+        [card.sort_order, card.id]
+      );
+    }
+
+    await db.query('COMMIT');
+    res.status(200).json({ success: true });
+  } catch (err) {
+    await db.query('ROLLBACK');
+    console.error('Error reordering credit cards:', err);
+    res.status(500).json({ error: 'Internal server error while reordering cards.' });
+  }
+});
+
 
 // --- Export the router (Ensure this is present!) ---
 module.exports = router;
