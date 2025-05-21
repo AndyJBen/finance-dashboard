@@ -109,6 +109,19 @@ export const FinanceProvider = ({ children }) => {
     return !bill.isPaid && isCurrentMonth ? sum + Number(bill.amount || 0) : sum;
   }, 0);
 
+  // Calculate total amount due (current + past due + unpaid 'Bill Prep')
+  const dueBalanceTotal = bills.reduce((sum, bill) => {
+    if (bill.isPaid) return sum;
+    const dueDate = dayjs(bill.dueDate);
+    const isCurrentOrPast =
+      dueDate.isValid() && dueDate.isSameOrBefore(displayedMonth.endOf('month'));
+    const isBillPrep = bill.category?.toLowerCase() === 'bill prep';
+
+    return isCurrentOrPast || isBillPrep
+      ? sum + Number(bill.amount || 0)
+      : sum;
+  }, 0) + totalCreditCardBalance;
+
   // --- Month Navigation Functions ---
   const goToPreviousMonth = useCallback(() => {
     setDisplayedMonth(prev => prev.subtract(1, 'month'));
@@ -445,6 +458,7 @@ export const FinanceProvider = ({ children }) => {
 
     // Computed values
     totalCreditCardBalance,
+    dueBalanceTotal,
     hasAnyPastDueBills,
     pastDueAmountFromPreviousMonths,
     currentDueAmt,

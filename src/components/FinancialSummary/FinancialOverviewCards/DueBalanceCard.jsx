@@ -35,17 +35,14 @@ const formatCurrency = (value) => {
 
 const DueBalanceCard = ({ isMobile, styles, isComponentLoading }) => {
   const {
-    currentDueAmt,
+    dueBalanceTotal,
     totalCreditCardBalance,
     hasAnyPastDueBills,
     pastDueAmountFromPreviousMonths,
   } = useContext(FinanceContext);
 
-  const combinedTotalDue = (currentDueAmt ?? 0) + (totalCreditCardBalance ?? 0);
-  const showDueWarning =
-    (currentDueAmt ?? 0) > 0 ||
-    (totalCreditCardBalance ?? 0) > 0 ||
-    hasAnyPastDueBills;
+  const combinedTotalDue = dueBalanceTotal ?? 0;
+  const showDueWarning = combinedTotalDue > 0;
 
   const dueCardIcon = showDueWarning ? (
     <IconFlagFilled size={styles.iconSize.standard} />
