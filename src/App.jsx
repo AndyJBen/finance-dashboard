@@ -182,7 +182,7 @@ function MyApp() {
                   transition: 'margin-bottom 0.2s ease-in-out'
               }}>
                 {/* Inner div for consistent top margin */}
-                <div style={{ marginTop: isMobileView ? 5 : 24 }}>
+                <div style={{ marginTop: isMobileView ? 0 : 24 }}>
                   <CombinedBillsOverview
                     style={{ height: '100%' }}
                     // Pass modal handlers down
@@ -241,7 +241,7 @@ function MyApp() {
 
   // --- Main Content Area Styling ---
   const contentStyle = {
-    padding: isMobileView ? 'var(--space-4) var(--space-12)' : 'var(--space-24)', // Responsive padding (top, left, right)
+    padding: isMobileView ? '0 var(--space-12)' : 'var(--space-24)', // Responsive padding (top, left, right)
     margin: 0,
     flexGrow: 1, // Allow content to fill available space
     width: '100%',
