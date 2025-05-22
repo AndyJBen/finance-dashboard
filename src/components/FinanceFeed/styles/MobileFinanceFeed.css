@@ -249,27 +249,6 @@
   text-align: center !important;
 }
 
-/* --- Special styles for the Recent Activity section --- */
-.feed-list-item .ant-space {
-  width: 100% !important;
-}
-
-/* For non-recurring bill item layout */
-.feed-list-item .feed-item-content > div {
-  display: flex !important;
-  justify-content: space-between !important;
-  width: 100% !important;
-}
-
-.feed-list-item .feed-item-content > div:first-child {
-  margin-bottom: 4px !important;
-}
-
-/* Fix for padding in recent activity section */
-div[style="padding-left: 48px;"] {
-  padding-left: 0 !important;
-  margin-top: 2px !important;
-}
 
 /* Optimizations for very small screens */
 @media (max-width: 350px) {

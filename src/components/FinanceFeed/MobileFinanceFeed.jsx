@@ -327,30 +327,26 @@ const MobileFinanceFeed = () => {
           dataSource={limitItems(nonRecurring, 'nonRecurring')}
           renderItem={item => (
             <List.Item className="feed-list-item">
-              <Avatar 
-                shape="circle" 
+              <Avatar
+                shape="circle"
                 className="feed-item-avatar"
                 style={{ backgroundColor: '#E5F8EF', borderRadius: 30 }}
                 icon={getCategoryIcon(item.category, 18)}
               />
               <div className="feed-item-content">
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <Text className="feed-item-title">{item.name}</Text>
-                  <Text strong style={{ color: item.isPaid ? '#26C67B' : '#F1476F' }}>
-                    ${Number(item.amount).toFixed(2)}
-                  </Text>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 4 }}>
+                <Text className="feed-item-title">{item.name}</Text>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
                   <Text type="secondary" className="due-date-text">
                     {daysAgo(item.dueDate)} days ago
                   </Text>
                   {item.isPaid && (
-                    <Tag className="status-tag status-tag-paid">
-                      Paid
-                    </Tag>
+                    <Tag className="status-tag status-tag-paid">Paid</Tag>
                   )}
                 </div>
               </div>
+              <Text strong style={{ color: item.isPaid ? '#26C67B' : '#F1476F' }}>
+                ${Number(item.amount).toFixed(2)}
+              </Text>
             </List.Item>
           )}
         />
@@ -440,29 +436,27 @@ const MobileFinanceFeed = () => {
           dataSource={limitItems(recentActivity, 'recentActivity')}
           renderItem={item => (
             <List.Item className="feed-list-item">
-              <Space direction="vertical" size={0} style={{ width: '100%' }}>
-                <Space align="center" style={{ width: '100%', justifyContent: 'space-between' }}>
-                  <Space align="center">
-                    <Avatar 
-                      shape="circle" 
-                      className="feed-item-avatar"
-                      style={{ backgroundColor: 'rgba(114, 46, 209, 0.1)' }}
-                      icon={<IconCircleCheck size={16} style={{ color: '#722ED1' }} />}
-                    />
-                    <Text strong>{item.name}</Text>
-                  </Space>
-                  <Space direction="vertical" align="end" size={0}>
-                    <Text strong>${Number(item.amount).toFixed(2)}</Text>
-                    <Text type="secondary" style={{ fontSize: '0.7rem' }}>{item.category}</Text>
-                  </Space>
-                </Space>
-                <div style={{ paddingLeft: 48 }}>
-                  <Text type="secondary" style={{ fontSize: '0.75rem', display: 'flex', alignItems: 'center' }}>
-                    <IconClock size={10} style={{ marginRight: 4 }} />
+              <Avatar
+                shape="circle"
+                className="feed-item-avatar"
+                style={{ backgroundColor: 'rgba(114, 46, 209, 0.1)' }}
+                icon={<IconCircleCheck size={16} style={{ color: '#722ED1' }} />}
+              />
+              <div className="feed-item-content">
+                <Text className="feed-item-title">{item.name}</Text>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                  <IconClock size={10} style={{ marginRight: 2 }} />
+                  <Text type="secondary" className="due-date-text">
                     {daysAgo(item.dueDate)} days ago
                   </Text>
                 </div>
-              </Space>
+              </div>
+              <div style={{ textAlign: 'right' }}>
+                <Text strong>${Number(item.amount).toFixed(2)}</Text>
+                <Text type="secondary" style={{ fontSize: '0.7rem', display: 'block' }}>
+                  {item.category}
+                </Text>
+              </div>
             </List.Item>
           )}
         />
