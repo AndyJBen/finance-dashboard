@@ -32,7 +32,13 @@ const BillsListSection = ({
                     {/* Filter controls */}
                     <Space align="center">
                         <Text strong style={{ color: 'var(--neutral-600)', whiteSpace: 'nowrap' }}> Filter by: </Text>
-                        <Button size="small" type="default" onClick={() => setSelectedCategory('All')} style={selectedCategory === 'All' ? selectedAllButtonStyle : defaultAllButtonStyle} >
+                        <Button
+                            size="small"
+                            type="default"
+                            className="all-categories-btn"
+                            onClick={() => setSelectedCategory('All')}
+                            style={selectedCategory === 'All' ? selectedAllButtonStyle : defaultAllButtonStyle}
+                        >
                             All Categories
                         </Button>
                     </Space>
