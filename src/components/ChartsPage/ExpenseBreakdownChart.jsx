@@ -2,6 +2,20 @@ import React from 'react';
 import { ResponsivePie } from '@nivo/pie';
 import { theme } from 'antd'; // Import AntD theme
 
+// Google style color palette for the pie chart
+const googleColors = [
+  '#4285F4',
+  '#DB4437',
+  '#F4B400',
+  '#0F9D58',
+  '#AB47BC',
+  '#00ACC1',
+  '#FF7043',
+  '#9E9D24',
+  '#5C6BC0',
+  '#EC407A',
+];
+
 // Helper to process bills data (assuming it's passed as a prop)
 const processBreakdownData = (bills = []) => {
   const categoryTotals = bills.reduce((acc, bill) => {
@@ -36,60 +50,53 @@ const ExpenseBreakdownChart = ({ data }) => { // Expects processed data
   }
 
   return (
-    <div style={{ height: '300px' }}> {/* Container needs height */}
+    <div style={{ height: '300px' }}>
       <ResponsivePie
-        data={chartData} // Use filtered data
+        data={chartData}
         margin={{ top: 40, right: 80, bottom: 80, left: 80 }}
-        innerRadius={0.5} // Makes it a donut chart
+        innerRadius={0.5}
         padAngle={0.7}
         cornerRadius={3}
         activeOuterRadiusOffset={8}
         borderWidth={1}
         borderColor={{ from: 'color', modifiers: [['darker', 0.2]] }}
-        // Use AntD colors if desired - requires mapping categories to colors
-        // colors={{ scheme: 'blues' }} // Example Nivo scheme
-        // Cycle through AntD palette - ensure enough colors or use a Nivo scheme
-        colors={{ scheme: 'blues' }} // Using a default Nivo scheme for simplicity here
-        // If using AntD tokens, ensure you handle cases where there are more categories than colors:
-        // colors={chartData.map((_, i) => [token.colorPrimary, token.colorSuccess, token.colorWarning, token.colorError, token.colorInfo][i % 5])}
+        colors={googleColors}
+        valueFormat={v => `$${Number(v).toLocaleString('en-US')}`}
         arcLinkLabelsSkipAngle={10}
         arcLinkLabelsTextColor={token.colorText}
         arcLinkLabelsThickness={2}
         arcLinkLabelsColor={{ from: 'color' }}
+        arcLinkLabel={d => `${d.id}: $${Number(d.value).toLocaleString('en-US')}`}
         arcLabelsSkipAngle={10}
         arcLabelsTextColor={{ from: 'color', modifiers: [['darker', 3]] }}
         theme={{
-           // Basic theme adjustments to match AntD feel
-           fontSize: 12,
-           textColor: token.colorTextSecondary,
-           tooltip: {
-                container: {
-                    background: token.colorBgElevated,
-                    color: token.colorText,
-                    fontSize: '12px',
-                    borderRadius: token.borderRadiusLG,
-                    boxShadow: token.boxShadowSecondary,
-                },
+          fontSize: 14,
+          textColor: token.colorTextSecondary,
+          tooltip: {
+            container: {
+              background: token.colorBgElevated,
+              color: token.colorText,
+              fontSize: '12px',
+              borderRadius: token.borderRadiusLG,
+              boxShadow: token.boxShadowSecondary,
             },
-            legends: {
-                 text: {
-                    fill: token.colorTextSecondary, // Match legend text color
-                }
-            }
+          },
+          legends: {
+            text: {
+              fill: token.colorTextSecondary,
+            },
+          },
         }}
-        defs={[ /* Optional: gradients/patterns */ ]}
-        fill={[ /* Optional: specific fill rules */ ]}
         legends={[
           {
             anchor: 'bottom',
             direction: 'row',
-            justify: false,
             translateX: 0,
             translateY: 56,
             itemsSpacing: 0,
             itemWidth: 100,
             itemHeight: 18,
-            itemTextColor: token.colorText, // Use AntD text color
+            itemTextColor: token.colorText,
             itemDirection: 'left-to-right',
             itemOpacity: 1,
             symbolSize: 18,
@@ -98,12 +105,25 @@ const ExpenseBreakdownChart = ({ data }) => { // Expects processed data
               {
                 on: 'hover',
                 style: {
-                  itemTextColor: token.colorPrimary, // Highlight on hover
+                  itemTextColor: token.colorPrimary,
                 },
               },
             ],
           },
         ]}
+        tooltip={({ datum }) => (
+          <div
+            style={{
+              padding: '6px 9px',
+              background: token.colorBgElevated,
+              color: token.colorText,
+              borderRadius: token.borderRadiusLG,
+              boxShadow: token.boxShadowSecondary,
+            }}
+          >
+            <strong>{datum.id}</strong>: ${Number(datum.value).toLocaleString('en-US')}
+          </div>
+        )}
       />
     </div>
   );
