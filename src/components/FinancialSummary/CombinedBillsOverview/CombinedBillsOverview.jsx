@@ -291,15 +291,26 @@ const CombinedBillsOverview = ({ style }) => {
                 return (
                     <div className='mobile-bill-cell'>
                         <div className='mobile-bill-main'>
-                            <Text strong>{record.name}</Text>
-                            <Text strong className='amount-cell'>{amountFormatted}</Text>
+                            <Text strong style={{ fontSize: '0.9rem', lineHeight: '1.2' }}>{record.name}</Text>
+                            <Text strong className='amount-cell' style={{ fontSize: '0.9rem', fontWeight: 600 }}>{amountFormatted}</Text>
                         </div>
                         <div className='mobile-bill-details'>
                             {record.category && (
-                                <Tag icon={<span style={{ marginRight: '4px', display: 'inline-flex', alignItems: 'center' }}>{getCategoryIcon(record.category)}</span>} color={getCategoryColor(record.category)}>{record.category}</Tag>
+                                <div className='mobile-detail-item'>
+                                    <span className='mobile-detail-icon'>{getCategoryIcon(record.category)}</span>
+                                    <span className='mobile-detail-text'>{record.category}</span>
+                                </div>
                             )}
-                            <span className='due-date-cell'>{record.dueDate ? dayjs(record.dueDate).format('MM/DD/YYYY') : 'N/A'}</span>
-                            <span className='due-in-cell'>{renderDueIn(record.dueDate, record)}</span>
+                            <div className='mobile-detail-item'>
+                                <span className='mobile-detail-text mobile-due-date'>
+                                    {record.dueDate ? dayjs(record.dueDate).format('MM/DD') : 'N/A'}
+                                </span>
+                            </div>
+                            <div className='mobile-detail-item'>
+                                <span className='mobile-detail-text mobile-due-in'>
+                                    {renderDueIn(record.dueDate, record)}
+                                </span>
+                            </div>
                         </div>
                     </div>
                 );
