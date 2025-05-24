@@ -1,536 +1,421 @@
+// src/components/FinancialSummary/CombinedBillsOverview/CombinedBillsOverview.jsx
 import React, { useState, useContext, useMemo } from 'react';
 import {
-    Card, Button, Space, Tooltip, Checkbox, Tag, 
-    Progress, Typography, Row, Col, Statistic, 
-    Modal, Dropdown, Grid, Badge
+    Table, Button, Space, Spin, Alert, Tooltip, Checkbox, Tag, Card,
+    Progress, Typography, Row, Col, Statistic, Divider, message, Modal,
+    List,
+    Dropdown,
+    Menu,
+    Grid
 } from 'antd';
 import {
     IconCalendarFilled, IconEdit, IconTrash, IconPlus, IconChevronLeft,
-    IconChevronRight, IconHome, IconBolt, IconWifi, IconCreditCard, 
-    IconCar, IconShoppingCart, IconHelp, IconCalendar, IconCurrencyDollar, 
-    IconCircleCheck, IconClock, IconCertificate, IconMedicineSyrup, 
-    IconCalendarTime, IconUser, IconDotsVertical, IconChevronDown,
-    IconChevronUp, IconEye, IconEyeOff, IconTrendingUp, IconAlertTriangle,
-    IconSparkles, IconZap
+    IconChevronRight, IconHome, IconBolt, IconWifi,
+    IconCreditCard, IconCar, IconShoppingCart, IconHelp, IconApps,
+    IconCalendar, IconCurrencyDollar, IconCircleCheck, IconClock, IconPhone,
+    IconCertificate, IconMedicineSyrup, IconCalendarTime,
+    IconX, IconUser,
+    IconDotsVertical,
+    IconChevronDown,
+    IconChevronUp,
+    IconPlaylistAdd,
+    IconEye, // New icon for showing all bills
+    IconEyeOff  // New icon for hiding paid bills
 } from '@tabler/icons-react';
+// Corrected the relative path for FinanceContext (up 3 levels)
+import { FinanceContext } from '../../../contexts/FinanceContext';
+// Import EditBillModal from its original location
+import EditBillModal from '../../BillsList/EditBillModal';
+// Import components from the CURRENT directory
+import MultiBillModal from './MultiBillModal';
+import MonthlyProgressSummary from './MonthlyProgressSummary';
+import BillsListSection from './BillsListSection';
 import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import updateLocale from 'dayjs/plugin/updateLocale';
+import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
+import isBetween from 'dayjs/plugin/isBetween';
+import isSameOrBeforePlugin from 'dayjs/plugin/isSameOrBefore';
 
+// Extend dayjs plugins
+dayjs.extend(relativeTime);
+dayjs.extend(updateLocale);
+dayjs.extend(isSameOrBefore);
+dayjs.extend(isSameOrAfter);
+dayjs.extend(isBetween);
+dayjs.extend(isSameOrBeforePlugin);
+
+// Use Typography components directly
 const { Text } = Typography;
 const { useBreakpoint } = Grid;
 
-// Mock context for demonstration
-const FinanceContext = React.createContext({
-    loading: false,
-    bills: [
-        { id: 1, name: 'Electric Bill', amount: 156.78, dueDate: '2025-01-28', category: 'Utilities', isPaid: false, isRecurring: true },
-        { id: 2, name: 'Rent Payment', amount: 1850.00, dueDate: '2025-01-31', category: 'Rent', isPaid: true, isRecurring: true },
-        { id: 3, name: 'Phone Bill', amount: 89.99, dueDate: '2025-01-25', category: 'Utilities', isPaid: false, isRecurring: true },
-        { id: 4, name: 'Grocery Shopping', amount: 245.33, dueDate: '2025-01-20', category: 'Groceries', isPaid: true, isRecurring: false },
-        { id: 5, name: 'Internet Service', amount: 79.99, dueDate: '2025-01-15', category: 'Utilities', isPaid: false, isRecurring: true },
-    ],
-    displayedMonth: dayjs(),
-    updateBill: () => {},
-    deleteBill: () => {},
-});
+// --- Helper Functions (Kept here as they are used in column definitions) ---
+const getCategoryIcon = (category) => {
+    const lowerCategory = category?.toLowerCase() || '';
+    if (lowerCategory.includes('rent') || lowerCategory.includes('mortgage')) return <IconHome size={16} />;
+    if (lowerCategory.includes('electric') || lowerCategory.includes('utilit')) return <IconBolt size={16} />;
+    if (lowerCategory.includes('card')) return <IconCreditCard size={16} />;
+    if (lowerCategory.includes('auto') || lowerCategory.includes('car')) return <IconCar size={16} />;
+    if (lowerCategory.includes('grocery')) return <IconShoppingCart size={16} />;
+    if (lowerCategory.includes('subscription')) return <IconCalendar size={16} />;
+    if (lowerCategory.includes('loan')) return <IconCurrencyDollar size={16} />;
+    if (lowerCategory.includes('insurance')) return <IconCertificate size={16} />;
+    if (lowerCategory.includes('medical')) return <IconMedicineSyrup size={16} />;
+    if (lowerCategory.includes('personal care')) return <IconUser size={16} />;
+    if (lowerCategory.includes('bill prep')) return <IconCalendarTime size={16} />;
+    return <IconHelp size={16} />;
+};
 
-// 2025 Design System Tokens
-const designTokens = {
-    // Depth & Elevation
-    elevation: {
-        surface: '0 1px 3px rgba(0, 0, 0, 0.04), 0 0 1px rgba(0, 0, 0, 0.02)',
-        raised: '0 2px 8px rgba(0, 0, 0, 0.06), 0 1px 4px rgba(0, 0, 0, 0.04)',
-        floating: '0 8px 24px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.04)',
-        overlay: '0 16px 48px rgba(0, 0, 0, 0.12), 0 8px 24px rgba(0, 0, 0, 0.08)'
-    },
-    // Advanced Color Psychology
-    semantic: {
-        success: { base: '#10B981', surface: '#ECFDF5', accent: '#065F46' },
-        warning: { base: '#F59E0B', surface: '#FFFBEB', accent: '#92400E' },
-        danger: { base: '#EF4444', surface: '#FEF2F2', accent: '#991B1B' },
-        info: { base: '#3B82F6', surface: '#EFF6FF', accent: '#1E40AF' },
-        neutral: { base: '#6B7280', surface: '#F9FAFB', accent: '#374151' }
-    },
-    // Motion
-    motion: {
-        spring: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
-        smooth: 'cubic-bezier(0.4, 0, 0.2, 1)',
-        sharp: 'cubic-bezier(0.4, 0, 0.6, 1)'
-    },
-    // Spacing with Golden Ratio
-    space: {
-        xs: '4px', sm: '8px', md: '12px', lg: '20px', xl: '32px', xxl: '52px'
+// Updated formatDueDate to handle past due logic *outside* this function
+// It now focuses purely on formatting future dates relative to today.
+const formatDueDate = (dueDate) => {
+    if (!dueDate || !dayjs(dueDate).isValid()) { return <span style={{ color: 'var(--neutral-400)' }}>N/A</span>; }
+    const due = dayjs(dueDate).startOf('day');
+    const today = dayjs().startOf('day');
+    // This function now assumes the date is NOT past due or today,
+    // as those checks are handled in the column render function.
+    const diffDaysFromToday = due.diff(today, 'day');
+    let resultText = '';
+    if (diffDaysFromToday <= 10) { resultText = `${diffDaysFromToday}d`; }
+    else {
+        const diffWeeks = Math.ceil(diffDaysFromToday / 7);
+        if (diffWeeks <= 6) { resultText = `${diffWeeks}w`; }
+        else { const diffMonths = Math.ceil(diffDaysFromToday / 30.44); resultText = `${diffMonths}m`; }
+    }
+    return resultText;
+};
+
+const getCategoryColor = (category) => {
+    switch (category?.toLowerCase()) {
+        case 'utilities': return 'blue'; case 'rent': return 'purple'; case 'mortgage': return 'volcano';
+        case 'groceries': return 'green'; case 'subscription': return 'cyan'; case 'credit card': return 'red';
+        case 'loan': return 'gold'; case 'insurance': return 'magenta';
+        case 'medical': return 'red'; case 'personal care': return 'lime'; case 'bill prep': return 'geekblue';
+        case 'auto': return 'orange';
+        default: return 'default';
     }
 };
+// --- End Helper Functions ---
 
-// Helper Functions
-const getCategoryIcon = (category) => {
-    const iconMap = {
-        'utilities': <IconBolt size={16} />,
-        'rent': <IconHome size={16} />,
-        'groceries': <IconShoppingCart size={16} />,
-        'phone': <IconCreditCard size={16} />,
-        'internet': <IconWifi size={16} />
-    };
-    return iconMap[category?.toLowerCase()] || <IconHelp size={16} />;
-};
 
-const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 2,
-    }).format(amount);
-};
-
-const getUrgencyLevel = (dueDate, isPaid) => {
-    if (isPaid) return 'completed';
-    const days = dayjs(dueDate).diff(dayjs(), 'day');
-    if (days < 0) return 'overdue';
-    if (days <= 3) return 'urgent';
-    if (days <= 7) return 'warning';
-    return 'normal';
-};
-
-// Novel Component: Smart Bill Card
-const SmartBillCard = ({ bill, onEdit, onDelete, onTogglePaid, compact = false }) => {
-    const urgency = getUrgencyLevel(bill.dueDate, bill.isPaid);
-    const [isExpanded, setIsExpanded] = useState(false);
-    
-    const urgencyStyles = {
-        completed: { 
-            bg: designTokens.semantic.success.surface, 
-            border: designTokens.semantic.success.base,
-            accent: designTokens.semantic.success.accent
-        },
-        overdue: { 
-            bg: designTokens.semantic.danger.surface, 
-            border: designTokens.semantic.danger.base,
-            accent: designTokens.semantic.danger.accent
-        },
-        urgent: { 
-            bg: designTokens.semantic.warning.surface, 
-            border: designTokens.semantic.warning.base,
-            accent: designTokens.semantic.warning.accent
-        },
-        warning: { 
-            bg: designTokens.semantic.info.surface, 
-            border: designTokens.semantic.info.base,
-            accent: designTokens.semantic.info.accent
-        },
-        normal: { 
-            bg: designTokens.semantic.neutral.surface, 
-            border: 'transparent',
-            accent: designTokens.semantic.neutral.accent
-        }
-    };
-
-    const style = urgencyStyles[urgency];
-
-    return (
-        <div
-            style={{
-                backgroundColor: style.bg,
-                border: `1px solid ${style.border}`,
-                borderRadius: '16px',
-                padding: compact ? '12px 16px' : '16px 20px',
-                marginBottom: '8px',
-                transition: `all 300ms ${designTokens.motion.spring}`,
-                cursor: 'pointer',
-                position: 'relative',
-                overflow: 'hidden',
-                boxShadow: isExpanded ? designTokens.elevation.raised : designTokens.elevation.surface,
-                transform: isExpanded ? 'scale(1.02)' : 'scale(1)',
-            }}
-            onClick={() => setIsExpanded(!isExpanded)}
-        >
-            {/* Urgency Indicator */}
-            {urgency !== 'normal' && (
-                <div
-                    style={{
-                        position: 'absolute',
-                        left: 0,
-                        top: 0,
-                        bottom: 0,
-                        width: '4px',
-                        background: `linear-gradient(180deg, ${style.border}, ${style.accent})`,
-                        borderRadius: '0 4px 4px 0'
-                    }}
-                />
-            )}
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                {/* Smart Checkbox with Animation */}
-                <div
-                    style={{
-                        position: 'relative',
-                        transform: bill.isPaid ? 'scale(1.1)' : 'scale(1)',
-                        transition: `transform 200ms ${designTokens.motion.spring}`
-                    }}
-                    onClick={(e) => e.stopPropagation()}
-                >
-                    <Checkbox
-                        checked={bill.isPaid}
-                        onChange={() => onTogglePaid(bill)}
-                        style={{
-                            transform: bill.isPaid ? 'rotate(360deg)' : 'rotate(0deg)',
-                            transition: `transform 500ms ${designTokens.motion.spring}`
-                        }}
-                    />
-                    {bill.isPaid && (
-                        <div
-                            style={{
-                                position: 'absolute',
-                                top: '-2px',
-                                right: '-2px',
-                                width: '8px',
-                                height: '8px',
-                                borderRadius: '50%',
-                                backgroundColor: designTokens.semantic.success.base,
-                                animation: 'pulse 2s infinite'
-                            }}
-                        />
-                    )}
-                </div>
-
-                {/* Category Icon with Glow Effect */}
-                <div
-                    style={{
-                        width: '40px',
-                        height: '40px',
-                        borderRadius: '12px',
-                        backgroundColor: 'white',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        boxShadow: designTokens.elevation.surface,
-                        position: 'relative'
-                    }}
-                >
-                    {getCategoryIcon(bill.category)}
-                    {urgency === 'urgent' && (
-                        <div
-                            style={{
-                                position: 'absolute',
-                                inset: '-2px',
-                                borderRadius: '14px',
-                                background: `linear-gradient(45deg, ${designTokens.semantic.warning.base}40, transparent)`,
-                                animation: 'glow 2s ease-in-out infinite alternate'
-                            }}
-                        />
-                    )}
-                </div>
-
-                {/* Content */}
-                <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                        <div>
-                            <Text strong style={{ fontSize: '16px', color: style.accent }}>
-                                {bill.name}
-                            </Text>
-                            <div style={{ marginTop: '2px' }}>
-                                <Text type="secondary" style={{ fontSize: '13px' }}>
-                                    Due {dayjs(bill.dueDate).format('MMM D')}
-                                </Text>
-                                {bill.isRecurring && (
-                                    <Badge
-                                        count="Recurring"
-                                        style={{
-                                            backgroundColor: designTokens.semantic.info.base,
-                                            marginLeft: '8px',
-                                            fontSize: '10px',
-                                            height: '18px',
-                                            lineHeight: '18px'
-                                        }}
-                                    />
-                                )}
-                            </div>
-                        </div>
-                        
-                        <div style={{ textAlign: 'right' }}>
-                            <Text
-                                strong
-                                style={{
-                                    fontSize: '18px',
-                                    color: bill.isPaid ? designTokens.semantic.success.base : style.accent,
-                                    fontFeatureSettings: '"tnum"' // Tabular numbers
-                                }}
-                            >
-                                {formatCurrency(bill.amount)}
-                            </Text>
-                            {urgency === 'overdue' && (
-                                <div style={{ marginTop: '2px' }}>
-                                    <IconAlertTriangle size={14} style={{ color: designTokens.semantic.danger.base }} />
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                </div>
-
-                {/* Expandable Actions */}
-                {isExpanded && (
-                    <div
-                        style={{
-                            display: 'flex',
-                            gap: '8px',
-                            opacity: isExpanded ? 1 : 0,
-                            transform: isExpanded ? 'translateX(0)' : 'translateX(20px)',
-                            transition: `all 200ms ${designTokens.motion.smooth}`
-                        }}
-                        onClick={(e) => e.stopPropagation()}
-                    >
-                        <Button
-                            type="text"
-                            size="small"
-                            icon={<IconEdit size={16} />}
-                            onClick={() => onEdit(bill)}
-                            style={{ borderRadius: '8px' }}
-                        />
-                        <Button
-                            type="text"
-                            size="small"
-                            danger
-                            icon={<IconTrash size={16} />}
-                            onClick={() => onDelete(bill)}
-                            style={{ borderRadius: '8px' }}
-                        />
-                    </div>
-                )}
-            </div>
-        </div>
-    );
-};
-
-// Main Component
+// --- Main Refactored Component ---
 const CombinedBillsOverview = ({ style }) => {
-    const { loading, bills, displayedMonth, updateBill, deleteBill } = useContext(FinanceContext);
-    const [showPaidBills, setShowPaidBills] = useState(false);
-    const [viewMode, setViewMode] = useState('cards'); // 'cards' | 'compact'
+    // Context and State (Remains the same)
+    const {
+        loading, error, deleteBill, updateBill, updateBillWithFuture, addBill,
+        displayedMonth, goToPreviousMonth, goToNextMonth, bills,
+    } = useContext(FinanceContext);
+    const [isModalVisible, setIsModalVisible] = useState(false); // For EditBillModal
+    const [isMultiModalVisible, setMultiModalVisible] = useState(false); // For MultiBillModal
+    const [editingBill, setEditingBill] = useState(null);
+    const [selectedCategory, setSelectedCategory] = useState('All');
+    const [isTableCollapsed, setIsTableCollapsed] = useState(false); // State for collapse/expand
+    const [showPaidBills, setShowPaidBills] = useState(false); // New state for showing/hiding paid bills
+    const [fadingBillId, setFadingBillId] = useState(null); // Row fade state
+
     const screens = useBreakpoint();
-    const isMobile = !screens.md;
+    const isSmallScreen = screens.xs || screens.sm;
 
-    const filteredBills = useMemo(() => {
-        return showPaidBills ? bills : bills.filter(bill => !bill.isPaid);
-    }, [bills, showPaidBills]);
+    // --- Derived State (Modified to filter out paid bills by default) ---
+    const validBills = Array.isArray(bills) ? bills : [];
+    const startOfDisplayedMonth = displayedMonth.startOf('month');
+    const endOfDisplayedMonth = displayedMonth.endOf('month');
 
-    const stats = useMemo(() => {
-        const total = bills.reduce((sum, bill) => sum + bill.amount, 0);
-        const paid = bills.filter(b => b.isPaid).reduce((sum, bill) => sum + bill.amount, 0);
-        const remaining = total - paid;
-        const progress = total > 0 ? Math.round((paid / total) * 100) : 0;
-        const overdue = bills.filter(b => !b.isPaid && dayjs(b.dueDate).isBefore(dayjs())).length;
-        
-        return { total, paid, remaining, progress, overdue };
-    }, [bills]);
+    const billsDueInDisplayedMonth = useMemo(() => {
+        return validBills.filter(bill => {
+            const dueDate = dayjs(bill.dueDate);
+            return dueDate.isValid() && dueDate.isBetween(startOfDisplayedMonth, endOfDisplayedMonth, 'day', '[]');
+        });
+    }, [validBills, displayedMonth, startOfDisplayedMonth, endOfDisplayedMonth]);
 
-    const handleTogglePaid = (bill) => {
-        updateBill(bill, { isPaid: !bill.isPaid });
+    // Filter bills by paid status and category
+    const filteredBillsByPaidStatus = useMemo(() => {
+        // If showPaidBills is true, return all bills, otherwise only return unpaid bills
+        return showPaidBills 
+            ? billsDueInDisplayedMonth 
+            : billsDueInDisplayedMonth.filter(bill => !bill.isPaid);
+    }, [billsDueInDisplayedMonth, showPaidBills]);
+
+    // Then apply the category filter
+    const mainTableDataSourceFiltered = useMemo(() => {
+        return filteredBillsByPaidStatus.filter(bill =>
+            selectedCategory === 'All' || bill.category === selectedCategory
+        );
+    }, [filteredBillsByPaidStatus, selectedCategory]);
+
+    const categories = useMemo(() => {
+        return [...new Set(billsDueInDisplayedMonth.map(bill => bill.category).filter(Boolean))].sort((a, b) => a.localeCompare(b));
+    }, [billsDueInDisplayedMonth]);
+
+    const totalAmountPaidInDisplayedMonth = useMemo(() => {
+        return billsDueInDisplayedMonth.reduce((sum, bill) => (bill.isPaid && typeof bill.amount === 'number' ? sum + bill.amount : sum), 0);
+    }, [billsDueInDisplayedMonth]);
+
+    const totalAmountForAllBillsInDisplayedMonth = useMemo(() => {
+        return billsDueInDisplayedMonth.reduce((sum, bill) => (typeof bill.amount === 'number' ? sum + bill.amount : sum), 0);
+    }, [billsDueInDisplayedMonth]);
+
+    const percentAmountPaid = totalAmountForAllBillsInDisplayedMonth > 0
+        ? Math.round((totalAmountPaidInDisplayedMonth / totalAmountForAllBillsInDisplayedMonth) * 100)
+        : 0;
+
+    const totalBillsInDisplayedMonth = billsDueInDisplayedMonth.length;
+    const paidBillsInDisplayedMonth = billsDueInDisplayedMonth.filter(b => b.isPaid).length;
+    const totalExpensesInDisplayedMonth = totalAmountPaidInDisplayedMonth;
+    const totalAmountDueInDisplayedMonth = useMemo(() => {
+        return billsDueInDisplayedMonth.reduce((sum, bill) => (!bill.isPaid && typeof bill.amount === 'number' ? sum + bill.amount : sum), 0);
+    }, [billsDueInDisplayedMonth]);
+
+    // --- MODIFIED LOGIC FOR COLLAPSE & BILL VISIBILITY ---
+    const tableDataSource = isTableCollapsed
+        ? [] // Provide an empty array when collapsed to hide all rows
+        : mainTableDataSourceFiltered; // Show filtered bills when not collapsed
+    // --- END MODIFIED LOGIC ---
+
+    // --- Event Handlers (Remain in parent) ---
+     const handleAddBill = () => {
+         setMultiModalVisible(true);
+     };
+     const handleEdit = (record) => {
+         setEditingBill(record);
+         setIsModalVisible(true);
+     };
+    const handleModalSubmit = async (values) => {
+         const { applyToFuture = {}, ...billValues } = values;
+         let result;
+         if (editingBill) {
+             const fields = Object.entries(applyToFuture).filter(([,v]) => v).map(([k]) => k);
+             if (fields.length > 0) {
+                 result = await updateBillWithFuture(editingBill, billValues, fields);
+             } else {
+                 result = await updateBill(editingBill, billValues);
+             }
+         } else {
+             result = await addBill(billValues);
+         }
+         if (result) { setIsModalVisible(false); setEditingBill(null); }
+     };
+    const handleTogglePaid = async (record) => {
+         const markingAsPaid = !record.isPaid;
+         if (markingAsPaid) {
+             setFadingBillId(record.id);
+             await new Promise(res => setTimeout(res, 300));
+         }
+         await updateBill(record, { isPaid: markingAsPaid });
+         if (markingAsPaid) {
+             setFadingBillId(null);
+         }
+     };
+     const handleDelete = async (record) => {
+         if (!record || typeof record.id === 'undefined') { message.error('Cannot delete bill: Invalid data.'); return; }
+         try { await deleteBill(record.id); } catch (error) { message.error(`Deletion error: ${error.message || 'Unknown'}`); }
+     };
+    const handleOpenMultiModal = () => {
+        setMultiModalVisible(true);
+    };
+    const handleCloseMultiModal = () => {
+        setMultiModalVisible(false);
+    };
+        const handleMenuClick = () => {
+            handleOpenMultiModal();
+        };
+
+     // New handler for toggling paid bills visibility
+    const togglePaidBillsVisibility = () => {
+        setShowPaidBills(prev => !prev);
+    };
+    const rowClassName = (record) => (record.id === fadingBillId ? 'bill-row-fade-out' : '');
+    // --- End Event Handlers ---
+
+    const renderDueIn = (dueDate, record) => {
+        if (record.isPaid) {
+            return <span style={{ color: 'var(--neutral-400)' }}>-</span>;
+        }
+        if (!dueDate || !dayjs(dueDate).isValid()) {
+            return <span style={{ color: 'var(--neutral-400)' }}>N/A</span>;
+        }
+        const due = dayjs(dueDate).startOf('day');
+        const today = dayjs().startOf('day');
+        if (due.isBefore(today)) {
+            if (record.category === 'Bill Prep') {
+                return <span style={{ color: 'var(--neutral-400)' }}>-</span>;
+            }
+            return <span style={{ color: 'var(--danger-500)' }}>Past Due</span>;
+        }
+        if (due.isSame(today, 'day')) {
+            return <span style={{ color: 'var(--warning-700)' }}>Today</span>;
+        }
+        return formatDueDate(dueDate);
     };
 
-    return (
-        <Card
-            style={{
-                ...style,
-                borderRadius: '24px',
-                border: 'none',
-                background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
-                boxShadow: designTokens.elevation.floating,
-                overflow: 'hidden'
-            }}
-        >
-            {/* Header with Glass Morphism */}
-            <div
-                style={{
-                    background: 'rgba(255, 255, 255, 0.8)',
-                    backdropFilter: 'blur(20px)',
-                    borderRadius: '20px 20px 0 0',
-                    padding: '24px',
-                    marginBottom: '20px',
-                    position: 'relative'
-                }}
-            >
-                {/* Decorative Elements */}
-                <div
-                    style={{
-                        position: 'absolute',
-                        top: '10px',
-                        right: '20px',
-                        width: '60px',
-                        height: '60px',
-                        background: `linear-gradient(45deg, ${designTokens.semantic.info.base}20, ${designTokens.semantic.success.base}20)`,
-                        borderRadius: '50%',
-                        filter: 'blur(20px)',
-                        opacity: 0.6
-                    }}
-                />
-                
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px' }}>
-                    <div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
-                            <IconCalendarFilled size={24} style={{ color: designTokens.semantic.info.base }} />
-                            <Text strong style={{ fontSize: '24px', fontWeight: 700 }}>
-                                {displayedMonth.format('MMMM YYYY')}
-                            </Text>
-                            {stats.overdue > 0 && (
-                                <Badge
-                                    count={`${stats.overdue} overdue`}
-                                    style={{
-                                        backgroundColor: designTokens.semantic.danger.base,
-                                        animation: 'pulse 2s infinite'
-                                    }}
-                                />
-                            )}
+
+    // --- Table Columns Definition ---
+    const defaultColumns = [
+        { title: '', dataIndex: 'isPaid', key: 'statusCheckbox', width: 32, align: 'center', render: (isPaid, record) => (<Tooltip title={isPaid ? 'Mark as Unpaid' : 'Mark as Paid'}><Checkbox className={`status-checkbox small-checkbox ${isPaid ? 'checked' : ''}`} checked={isPaid} onChange={() => handleTogglePaid(record)} /></Tooltip>) },
+        { title: 'Name', dataIndex: 'name', key: 'name', width: 130, align: 'left', sorter: (a, b) => a.name.localeCompare(b.name), render: (text) => (<div style={{ textAlign: 'left' }}><Text strong>{text}</Text></div>) },
+        { title: 'Amount', dataIndex: 'amount', key: 'amount', width: 80, align: 'left', sorter: (a, b) => a.amount - b.amount, render: (amount) => <Text strong>{`$${Number(amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}</Text> },
+        { title: 'Category', dataIndex: 'category', key: 'category', width: 80, align: 'left', render: (category) => category ? (<div style={{ textAlign: 'left' }}><Tag icon={<span style={{ marginRight: '6px', display: 'inline-flex', alignItems: 'center' }}>{getCategoryIcon(category)}</span>} color={getCategoryColor(category)}>{category}</Tag></div>) : null },
+        { title: 'Due Date', dataIndex: 'dueDate', key: 'dueDate', width: 80, align: 'left', sorter: (a, b) => dayjs(a.dueDate).valueOf() - dayjs(b.dueDate).valueOf(), render: (date) => date ? dayjs(date).format('MM/DD/YYYY') : 'N/A' },
+        {
+            title: 'Due In', key: 'dueIn', dataIndex: 'dueDate', width: 60, align: 'left',
+            sorter: (a, b) => {
+                if (a.isPaid && !b.isPaid) return 1; if (!a.isPaid && b.isPaid) return -1;
+                const dateA = dayjs(a.dueDate).isValid() ? dayjs(a.dueDate).valueOf() : Infinity;
+                const dateB = dayjs(b.dueDate).isValid() ? dayjs(b.dueDate).valueOf() : Infinity;
+                return dateA - dateB;
+            },
+            defaultSortOrder: 'ascend',
+            render: (dueDate, record) => renderDueIn(dueDate, record),
+        },
+        {
+            title: (<Tooltip title={isTableCollapsed ? 'Expand List' : 'Collapse List'}><Button type='link' size='small' icon={isTableCollapsed ? <IconChevronDown size={16} /> : <IconChevronUp size={16} />} onClick={() => setIsTableCollapsed(!isTableCollapsed)} style={{ padding: '0 4px' }} /></Tooltip>),
+            key: 'actions', fixed: 'right', width: 30, align: 'center',
+            render: (_, record) => {
+                const menuItems = [
+                    { key: 'edit', icon: <IconEdit size={16} />, label: 'Edit', onClick: (e) => { if (e && e.domEvent) e.domEvent.stopPropagation(); handleEdit(record); } },
+                    { key: 'delete', icon: <IconTrash size={16} />, label: 'Delete', danger: true, onClick: (e) => { if (e && e.domEvent) e.domEvent.stopPropagation(); handleDelete(record); } }
+                ];
+                return (<Dropdown menu={{ items: menuItems }} trigger={['click']}><Button type='text' icon={<IconDotsVertical size={16} />} style={{ padding: '0 12px' }} onClick={e => e.stopPropagation()} /></Dropdown>);
+            }
+        },
+    ];
+
+    const mobileColumns = [
+        { title: '', dataIndex: 'isPaid', key: 'statusCheckbox', width: 32, align: 'center', render: (isPaid, record) => (<Checkbox className={`status-checkbox small-checkbox ${isPaid ? 'checked' : ''}`} checked={isPaid} onChange={() => handleTogglePaid(record)} />) },
+        {
+            title: 'Bill',
+            key: 'billInfo',
+            render: (_, record) => {
+                const amountFormatted = `$${Number(record.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                return (
+                    <div className='mobile-bill-cell'>
+                        <div className='mobile-bill-main'>
+                            <Text strong>{record.name}</Text>
+                            <Text strong className='amount-cell'>{amountFormatted}</Text>
                         </div>
-                        <Text type="secondary" style={{ fontSize: '16px' }}>
-                            {filteredBills.length} bills • {formatCurrency(stats.remaining)} remaining
-                        </Text>
+                        <div className='mobile-bill-details'>
+                            {record.category && (
+                                <Tag icon={<span style={{ marginRight: '4px', display: 'inline-flex', alignItems: 'center' }}>{getCategoryIcon(record.category)}</span>} color={getCategoryColor(record.category)}>{record.category}</Tag>
+                            )}
+                            <span className='due-date-cell'>{record.dueDate ? dayjs(record.dueDate).format('MM/DD/YYYY') : 'N/A'}</span>
+                            <span className='due-in-cell'>{renderDueIn(record.dueDate, record)}</span>
+                        </div>
                     </div>
+                );
+            }
+        },
+        {
+            title: (<Tooltip title={isTableCollapsed ? 'Expand List' : 'Collapse List'}><Button type='link' size='small' icon={isTableCollapsed ? <IconChevronDown size={16} /> : <IconChevronUp size={16} />} onClick={() => setIsTableCollapsed(!isTableCollapsed)} style={{ padding: '0 4px' }} /></Tooltip>),
+            key: 'actions', fixed: 'right', width: 30, align: 'center',
+            render: (_, record) => {
+                const menuItems = [
+                    { key: 'edit', icon: <IconEdit size={16} />, label: 'Edit', onClick: (e) => { if (e && e.domEvent) e.domEvent.stopPropagation(); handleEdit(record); } },
+                    { key: 'delete', icon: <IconTrash size={16} />, label: 'Delete', danger: true, onClick: (e) => { if (e && e.domEvent) e.domEvent.stopPropagation(); handleDelete(record); } }
+                ];
+                return (<Dropdown menu={{ items: menuItems }} trigger={['click']}><Button type='text' icon={<IconDotsVertical size={16} />} style={{ padding: '0 12px' }} onClick={e => e.stopPropagation()} /></Dropdown>);
+            }
+        }
+    ];
 
-                    {/* Smart Controls */}
-                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                        <Tooltip title={showPaidBills ? 'Hide paid bills' : 'Show paid bills'}>
-                            <Button
-                                type="text"
-                                icon={showPaidBills ? <IconEyeOff size={18} /> : <IconEye size={18} />}
-                                onClick={() => setShowPaidBills(!showPaidBills)}
-                                style={{
-                                    borderRadius: '12px',
-                                    background: showPaidBills ? designTokens.semantic.success.surface : 'transparent'
-                                }}
-                            />
-                        </Tooltip>
-                        
-                        <Tooltip title="Add new bill">
-                            <Button
-                                type="primary"
-                                icon={<IconPlus size={18} />}
-                                style={{
-                                    borderRadius: '12px',
-                                    background: `linear-gradient(135deg, ${designTokens.semantic.info.base}, ${designTokens.semantic.info.accent})`,
-                                    border: 'none',
-                                    boxShadow: designTokens.elevation.raised
-                                }}
-                            >
-                                {!isMobile && 'Add Bill'}
-                            </Button>
-                        </Tooltip>
-                    </div>
-                </div>
+    const columns = isSmallScreen ? mobileColumns : defaultColumns;
+    // --- End Table Columns ---
 
-                {/* Progress Visualization */}
-                <div
-                    style={{
-                        background: 'white',
-                        borderRadius: '16px',
-                        padding: '16px',
-                        boxShadow: designTokens.elevation.surface
-                    }}
-                >
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
-                        <Text strong>Payment Progress</Text>
-                        <Text strong style={{ color: designTokens.semantic.success.base }}>
-                            {stats.progress}%
-                        </Text>
-                    </div>
-                    
-                    <Progress
-                        percent={stats.progress}
-                        strokeColor={{
-                            '0%': designTokens.semantic.info.base,
-                            '100%': designTokens.semantic.success.base,
-                        }}
-                        trailColor={designTokens.semantic.neutral.surface}
-                        strokeWidth={8}
-                        style={{ marginBottom: '12px' }}
-                    />
-                    
-                    <Row gutter={16}>
-                        <Col span={8}>
-                            <Statistic
-                                title="Paid"
-                                value={formatCurrency(stats.paid)}
-                                valueStyle={{ color: designTokens.semantic.success.base, fontSize: '16px' }}
-                            />
-                        </Col>
-                        <Col span={8}>
-                            <Statistic
-                                title="Remaining"
-                                value={formatCurrency(stats.remaining)}
-                                valueStyle={{ color: designTokens.semantic.warning.base, fontSize: '16px' }}
-                            />
-                        </Col>
-                        <Col span={8}>
-                            <Statistic
-                                title="Total"
-                                value={formatCurrency(stats.total)}
-                                valueStyle={{ fontSize: '16px' }}
-                            />
-                        </Col>
-                    </Row>
-                </div>
-            </div>
 
-            {/* Bills List */}
-            <div style={{ padding: '0 24px 24px' }}>
-                {filteredBills.length === 0 ? (
-                    <div
-                        style={{
-                            textAlign: 'center',
-                            padding: '60px 20px',
-                            background: designTokens.semantic.neutral.surface,
-                            borderRadius: '16px'
-                        }}
-                    >
-                        <IconSparkles size={48} style={{ color: designTokens.semantic.info.base, marginBottom: '16px' }} />
-                        <Text strong style={{ display: 'block', fontSize: '18px', marginBottom: '8px' }}>
-                            {showPaidBills ? 'All caught up!' : 'No pending bills'}
-                        </Text>
-                        <Text type="secondary">
-                            {showPaidBills ? 'All your bills are paid this month.' : 'Add your first bill to get started.'}
-                        </Text>
-                    </div>
-                ) : (
-                    <div>
-                        {filteredBills.map(bill => (
-                            <SmartBillCard
-                                key={bill.id}
-                                bill={bill}
-                                onEdit={() => console.log('Edit', bill)}
-                                onDelete={() => console.log('Delete', bill)}
-                                onTogglePaid={handleTogglePaid}
-                                compact={isMobile}
-                            />
-                        ))}
+    // --- Button Styles and Menu Items (Remain in parent) ---
+    const selectedAllButtonStyle = { fontWeight: 600, padding: '0 10px', height: '28px', borderColor: 'var(--primary-500)', color: 'var(--primary-600)' };
+    const defaultAllButtonStyle = { fontWeight: 500, padding: '0 10px', height: '28px' };
+    // --- End Button Styles ---
+
+
+    // --- Render Logic ---
+    if (error && !loading) { return (<Card style={style}><Alert message="Error Loading Bills Data" description={error.message || 'Unknown error'} type="error" showIcon closable /></Card>); }
+
+    // Calculate the number of unpaid and paid bills with the current category filter applied
+    const paidVisibleCount = billsDueInDisplayedMonth.filter(bill =>
+        bill.isPaid && (selectedCategory === 'All' || bill.category === selectedCategory)
+    ).length;
+
+    return (
+     <> {/* Fragment to wrap Card and Modals */}
+        <Card
+            style={style}
+            styles={{ body: { padding: 'var(--space-20)' } }}
+        >
+            <Spin spinning={loading} tip="Loading Bills...">
+
+                {/* Render Monthly Progress Summary Component */}
+                <MonthlyProgressSummary
+                    loading={loading}
+                    displayedMonth={displayedMonth}
+                    goToPreviousMonth={goToPreviousMonth}
+                    goToNextMonth={goToNextMonth}
+                    totalBillsInDisplayedMonth={totalBillsInDisplayedMonth}
+                    paidBillsInDisplayedMonth={paidBillsInDisplayedMonth}
+                    totalAmountForAllBillsInDisplayedMonth={totalAmountForAllBillsInDisplayedMonth}
+                    percentAmountPaid={percentAmountPaid}
+                    totalExpensesInDisplayedMonth={totalExpensesInDisplayedMonth}
+                    totalAmountDueInDisplayedMonth={totalAmountDueInDisplayedMonth}
+                />
+                {/* Render Bills List Section Component */}
+                <BillsListSection
+                    loading={loading}
+                    columns={columns}
+                    tableDataSource={tableDataSource} // Pass the potentially empty dataSource
+                    isTableCollapsed={isTableCollapsed} // Pass collapse state down
+                    categories={categories}
+                    selectedCategory={selectedCategory}
+                    setSelectedCategory={setSelectedCategory}
+                    handleAddBill={handleAddBill}
+                    handleMenuClick={handleMenuClick}
+                    getCategoryIcon={getCategoryIcon} // Pass helper
+                    selectedAllButtonStyle={selectedAllButtonStyle}
+                    defaultAllButtonStyle={defaultAllButtonStyle}
+                    rowClassName={rowClassName}
+                />
+
+                {/* Show/Hide Paid Bills Toggle Button - Only displayed when table is not collapsed */}
+                {!isTableCollapsed && billsDueInDisplayedMonth.length > 0 && paidVisibleCount > 0 && (
+                    <div style={{ 
+                        textAlign: 'center', 
+                        borderTop: '1px solid var(--neutral-200)',
+                        paddingTop: 'var(--space-12)'
+                    }}>
+                        <Button
+                            type="text"
+                            icon={showPaidBills ? <IconEyeOff size={16} /> : <IconEye size={16} />}
+                            onClick={togglePaidBillsVisibility}
+                            style={{ color: 'var(--neutral-600)' }}
+                        >
+                            {showPaidBills ? 
+                                `Hide Paid Bills` : 
+                                `Show All Bills`
+                            }
+                        </Button>
                     </div>
                 )}
-            </div>
 
-            {/* Custom Styles */}
-            <style jsx>{`
-                @keyframes pulse {
-                    0%, 100% { opacity: 1; }
-                    50% { opacity: 0.5; }
-                }
-                
-                @keyframes glow {
-                    0% { opacity: 0.5; }
-                    100% { opacity: 1; }
-                }
-                
-                /* Smooth scroll behavior */
-                * {
-                    scroll-behavior: smooth;
-                }
-                
-                /* Enhanced touch targets for mobile */
-                @media (max-width: 768px) {
-                    button {
-                        min-height: 44px;
-                        min-width: 44px;
-                    }
-                }
-            `}</style>
+            </Spin>
+
+            {/* Edit/Add Bill Modal (Single Bill) - Remains in Parent */}
+            {isModalVisible && (
+                 <EditBillModal
+                    open={isModalVisible}
+                    onCancel={() => { setIsModalVisible(false); setEditingBill(null); }}
+                    onSubmit={handleModalSubmit}
+                    initialData={editingBill}
+                 />
+            )}
         </Card>
+
+        {/* Multi Bill Modal - Remains in Parent */}
+        {isMultiModalVisible && (
+             <MultiBillModal
+                open={isMultiModalVisible}
+                onClose={handleCloseMultiModal}
+             />
+        )}
+     </>
     );
 };
 
