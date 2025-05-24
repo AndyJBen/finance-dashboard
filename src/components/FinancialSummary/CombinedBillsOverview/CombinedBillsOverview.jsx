@@ -237,16 +237,31 @@ const CombinedBillsOverview = ({ style }) => {
         }
         const due = dayjs(dueDate).startOf('day');
         const today = dayjs().startOf('day');
+        const diffDays = due.diff(today, 'day');
+        
         if (due.isBefore(today)) {
             if (record.category === 'Bill Prep') {
                 return <span style={{ color: 'var(--neutral-400)' }}>-</span>;
             }
-            return <span style={{ color: 'var(--danger-500)' }}>Past Due</span>;
+            const daysPastDue = Math.abs(diffDays);
+            return (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <div style={{ 
+                        width: '6px', 
+                        height: '6px', 
+                        borderRadius: '50%', 
+                        backgroundColor: 'var(--danger-500)' 
+                    }} />
+                    <span style={{ color: 'var(--danger-500)', fontSize: '0.75rem' }}>
+                        {daysPastDue}d overdue
+                    </span>
+                </div>
+            );
         }
         if (due.isSame(today, 'day')) {
             return <span style={{ color: 'var(--warning-700)' }}>Today</span>;
         }
-        return formatDueDate(dueDate);
+        return <span style={{ fontSize: '0.75rem' }}>{diffDays}d</span>;
     };
 
 
@@ -282,49 +297,110 @@ const CombinedBillsOverview = ({ style }) => {
     ];
 
     const mobileColumns = [
-        { title: '', dataIndex: 'isPaid', key: 'statusCheckbox', width: 32, align: 'center', render: (isPaid, record) => (<Checkbox className={`status-checkbox small-checkbox ${isPaid ? 'checked' : ''}`} checked={isPaid} onChange={() => handleTogglePaid(record)} />) },
+        { 
+            title: '', 
+            dataIndex: 'isPaid', 
+            key: 'statusCheckbox', 
+            width: 32, 
+            align: 'center', 
+            render: (isPaid, record) => (
+                <Checkbox 
+                    className={`status-checkbox small-checkbox ${isPaid ? 'checked' : ''}`} 
+                    checked={isPaid} 
+                    onChange={() => handleTogglePaid(record)} 
+                />
+            ) 
+        },
         {
             title: 'Bill',
             key: 'billInfo',
             render: (_, record) => {
                 const amountFormatted = `$${Number(record.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                const due = dayjs(record.dueDate).startOf('day');
+                const today = dayjs().startOf('day');
+                const diffDays = due.diff(today, 'day');
+                const isOverdue = due.isBefore(today) && !record.isPaid && record.category !== 'Bill Prep';
+                
                 return (
                     <div className='mobile-bill-cell'>
                         <div className='mobile-bill-main'>
-                            <Text strong style={{ fontSize: '0.9rem', lineHeight: '1.2' }}>{record.name}</Text>
-                            <Text strong className='amount-cell' style={{ fontSize: '0.9rem', fontWeight: 600 }}>{amountFormatted}</Text>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                {isOverdue && (
+                                    <div style={{ 
+                                        width: '6px', 
+                                        height: '6px', 
+                                        borderRadius: '50%', 
+                                        backgroundColor: 'var(--danger-500)',
+                                        flexShrink: 0
+                                    }} />
+                                )}
+                                <Text strong>{record.name}</Text>
+                            </div>
+                            <div style={{ textAlign: 'right' }}>
+                                <Text strong className='amount-cell'>{amountFormatted}</Text>
+                                <div style={{ fontSize: '0.7rem', color: 'var(--neutral-600)', marginTop: '2px' }}>
+                                    {record.dueDate ? dayjs(record.dueDate).format('MM/DD') : 'N/A'}
+                                </div>
+                            </div>
                         </div>
                         <div className='mobile-bill-details'>
                             {record.category && (
-                                <div className='mobile-detail-item'>
-                                    <span className='mobile-detail-icon'>{getCategoryIcon(record.category)}</span>
-                                    <span className='mobile-detail-text'>{record.category}</span>
-                                </div>
+                                <Tag icon={<span style={{ marginRight: '4px', display: 'inline-flex', alignItems: 'center' }}>{getCategoryIcon(record.category)}</span>} color={getCategoryColor(record.category)}>{record.category}</Tag>
                             )}
-                            <div className='mobile-detail-item'>
-                                <span className='mobile-detail-text mobile-due-date'>
-                                    {record.dueDate ? dayjs(record.dueDate).format('MM/DD') : 'N/A'}
-                                </span>
-                            </div>
-                            <div className='mobile-detail-item'>
-                                <span className='mobile-detail-text mobile-due-in'>
-                                    {renderDueIn(record.dueDate, record)}
-                                </span>
-                            </div>
+                            <span className='due-in-cell'>{renderDueIn(record.dueDate, record)}</span>
                         </div>
                     </div>
                 );
             }
         },
         {
-            title: (<Tooltip title={isTableCollapsed ? 'Expand List' : 'Collapse List'}><Button type='link' size='small' icon={isTableCollapsed ? <IconChevronDown size={16} /> : <IconChevronUp size={16} />} onClick={() => setIsTableCollapsed(!isTableCollapsed)} style={{ padding: '0 4px' }} /></Tooltip>),
-            key: 'actions', fixed: 'right', width: 30, align: 'center',
+            title: (
+                <Tooltip title={isTableCollapsed ? 'Expand List' : 'Collapse List'}>
+                    <Button 
+                        type='link' 
+                        size='small' 
+                        icon={isTableCollapsed ? <IconChevronDown size={16} /> : <IconChevronUp size={16} />} 
+                        onClick={() => setIsTableCollapsed(!isTableCollapsed)} 
+                        style={{ padding: '0 4px' }} 
+                    />
+                </Tooltip>
+            ),
+            key: 'actions', 
+            fixed: 'right', 
+            width: 30, 
+            align: 'center',
             render: (_, record) => {
                 const menuItems = [
-                    { key: 'edit', icon: <IconEdit size={16} />, label: 'Edit', onClick: (e) => { if (e && e.domEvent) e.domEvent.stopPropagation(); handleEdit(record); } },
-                    { key: 'delete', icon: <IconTrash size={16} />, label: 'Delete', danger: true, onClick: (e) => { if (e && e.domEvent) e.domEvent.stopPropagation(); handleDelete(record); } }
+                    { 
+                        key: 'edit', 
+                        icon: <IconEdit size={16} />, 
+                        label: 'Edit', 
+                        onClick: (e) => { 
+                            if (e && e.domEvent) e.domEvent.stopPropagation(); 
+                            handleEdit(record); 
+                        } 
+                    },
+                    { 
+                        key: 'delete', 
+                        icon: <IconTrash size={16} />, 
+                        label: 'Delete', 
+                        danger: true, 
+                        onClick: (e) => { 
+                            if (e && e.domEvent) e.domEvent.stopPropagation(); 
+                            handleDelete(record); 
+                        } 
+                    }
                 ];
-                return (<Dropdown menu={{ items: menuItems }} trigger={['click']}><Button type='text' icon={<IconDotsVertical size={16} />} style={{ padding: '0 12px' }} onClick={e => e.stopPropagation()} /></Dropdown>);
+                return (
+                    <Dropdown menu={{ items: menuItems }} trigger={['click']}>
+                        <Button 
+                            type='text' 
+                            icon={<IconDotsVertical size={16} />} 
+                            style={{ padding: '0 12px' }} 
+                            onClick={e => e.stopPropagation()} 
+                        />
+                    </Dropdown>
+                );
             }
         }
     ];
