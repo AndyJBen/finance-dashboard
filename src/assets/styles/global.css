@@ -1208,6 +1208,49 @@ textarea {
   justify-content: space-between;
   align-items: flex-start; /* Changed from center to flex-start */
 }
+/* Better alignment for mobile bill cells */
+.bills-overview-table .mobile-bill-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.bills-overview-table .mobile-bill-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  gap: 8px;
+}
+
+.bills-overview-table .mobile-bill-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  gap: 8px;
+  font-size: 0.75rem;
+  color: var(--neutral-600);
+}
+
+.bills-overview-table .mobile-bill-details .ant-tag {
+  margin: 0 !important;
+  flex-shrink: 0;
+}
+
+.bills-overview-table .mobile-bill-details .due-in-cell {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-shrink: 0;
+}
+
+/* Ensure proper spacing in table cells */
+.bills-overview-table .ant-table-tbody > tr > td:nth-child(2) {
+  padding: 8px 4px !important;
+  width: calc(100% - 60px) !important;
+}
 /* ==================================================
    11. ANIMATION & TRANSITIONS
 ================================================== */
