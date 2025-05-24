@@ -1186,17 +1186,7 @@ textarea {
 }
 
 /* ==================================================
-   11. ACCESSIBILITY ENHANCEMENTS
-================================================== */
-
-/* Improved focus states */
-*:focus-visible {
-  /* outline: 2px solid var(--primary-600) !important; */
-  /* outline-offset: 2px !important; */
-}
-
-/* ==================================================
-   12. ANIMATION & TRANSITIONS
+   11. ANIMATION & TRANSITIONS
 ================================================== */
 
 .nav-button {
