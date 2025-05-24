@@ -1,13 +1,14 @@
 // src/components/FinancialSummary/CombinedBillsOverview/BillsListSection.jsx
 import React from 'react';
 import {
-    Table, Button, Space, Tag, Typography
+    Table, Button, Space, Tag, Typography, Grid
 } from 'antd';
 import {
     IconPlus // Keep only needed icons
 } from '@tabler/icons-react';
 
 const { Text } = Typography;
+const { useBreakpoint } = Grid;
 
 const BillsListSection = ({
     loading,
@@ -23,6 +24,9 @@ const BillsListSection = ({
     defaultAllButtonStyle,
     rowClassName
 }) => {
+
+    const screens = useBreakpoint();
+    const isSmallScreen = screens.xs || screens.sm;
 
     return (
         <div>
@@ -85,7 +89,7 @@ const BillsListSection = ({
                 rowKey={record => record.id || `${record.name}-${record.dueDate}`} // Ensure unique keys
                 rowClassName={rowClassName}
                 pagination={false}
-                scroll={{ x: 730 }}
+                scroll={isSmallScreen ? undefined : { x: 730 }}
                 size="middle"
                 loading={loading}
                 // --- START: MODIFIED LOCALE FOR COLLAPSE ---

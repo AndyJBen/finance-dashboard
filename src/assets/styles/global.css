@@ -1149,6 +1149,29 @@ textarea {
   .bills-overview-table .ant-typography strong {
     font-size: 0.8rem !important;
   }
+
+  /* New compact layout for mobile bills table */
+  .bills-overview-table .mobile-bill-cell {
+    display: flex;
+    flex-direction: column;
+  }
+  .bills-overview-table .mobile-bill-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .bills-overview-table .mobile-bill-details {
+    margin-top: 2px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    font-size: 0.75rem;
+    color: var(--neutral-600);
+  }
+  .bills-overview-table .mobile-bill-details .due-date-cell,
+  .bills-overview-table .mobile-bill-details .due-in-cell {
+    white-space: nowrap;
+  }
 }
 
 /* Desktop specific styles for MultiBillModal */
