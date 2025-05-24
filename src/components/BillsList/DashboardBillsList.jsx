@@ -24,6 +24,7 @@ const DashboardBillsList = ({
     loading: contextLoading,
     deleteBill,
     updateBill,
+    updateBillWithFuture,
     addBill
   } = useContext(FinanceContext);
 
@@ -41,11 +42,17 @@ const DashboardBillsList = ({
   };
 
   const handleModalSubmit = async (values) => {
+    const { applyToFuture = {}, ...billValues } = values;
     let result;
     if (editingBill) {
-      result = await updateBill(editingBill, values);
+      const fields = Object.entries(applyToFuture).filter(([,v]) => v).map(([k]) => k);
+      if (fields.length > 0) {
+        result = await updateBillWithFuture(editingBill, billValues, fields);
+      } else {
+        result = await updateBill(editingBill, billValues);
+      }
     } else {
-      result = await addBill(values);
+      result = await addBill(billValues);
     }
     if (result) {
       setIsEditModalVisible(false);

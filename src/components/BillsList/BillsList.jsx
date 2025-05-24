@@ -17,7 +17,7 @@ const BillsList = ({ loading: propLoading }) => {
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [editingBill, setEditingBill] = useState(null);
   // Use context for data and actions
-  const { bills, loading: contextLoading, deleteBill, updateBill, addBill } = useContext(FinanceContext);
+  const { bills, loading: contextLoading, deleteBill, updateBill, addBill, updateBillWithFuture } = useContext(FinanceContext);
 
   // Use context loading state primarily, but allow prop override if needed
   const isLoading = propLoading !== undefined ? propLoading : contextLoading;
@@ -36,11 +36,17 @@ const BillsList = ({ loading: propLoading }) => {
 
   // Function to handle submission from the modal (calls context updateBill/addBill)
   const handleModalSubmit = async (values) => {
+      const { applyToFuture = {}, ...billValues } = values;
       let result;
       if (editingBill) {
-          result = await updateBill(editingBill, values); // Use context updateBill
+          const fields = Object.entries(applyToFuture).filter(([,v]) => v).map(([k]) => k);
+          if (fields.length > 0) {
+              result = await updateBillWithFuture(editingBill, billValues, fields);
+          } else {
+              result = await updateBill(editingBill, billValues); // Use context updateBill
+          }
       } else {
-          result = await addBill(values); // Use context addBill
+          result = await addBill(billValues); // Use context addBill
       }
       if (result) { // Context functions should return truthy on success
           setIsEditModalVisible(false);
