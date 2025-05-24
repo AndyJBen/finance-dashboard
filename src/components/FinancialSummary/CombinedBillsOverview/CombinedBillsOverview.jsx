@@ -1,11 +1,12 @@
 // src/components/FinancialSummary/CombinedBillsOverview/CombinedBillsOverview.jsx
-import React, { useState, useContext, useMemo, useEffect } from 'react';
+import React, { useState, useContext, useMemo } from 'react';
 import {
     Table, Button, Space, Spin, Alert, Tooltip, Checkbox, Tag, Card,
     Progress, Typography, Row, Col, Statistic, Divider, message, Modal,
     List,
     Dropdown,
-    Menu
+    Menu,
+    Grid
 } from 'antd';
 import {
     IconCalendarFilled, IconEdit, IconTrash, IconPlus, IconChevronLeft,
@@ -47,6 +48,7 @@ dayjs.extend(isSameOrBeforePlugin);
 
 // Use Typography components directly
 const { Text } = Typography;
+const { useBreakpoint } = Grid;
 
 // --- Helper Functions (Kept here as they are used in column definitions) ---
 const getCategoryIcon = (category) => {
@@ -111,7 +113,9 @@ const CombinedBillsOverview = ({ style }) => {
     const [isTableCollapsed, setIsTableCollapsed] = useState(false); // State for collapse/expand
     const [showPaidBills, setShowPaidBills] = useState(false); // New state for showing/hiding paid bills
     const [fadingBillId, setFadingBillId] = useState(null); // Row fade state
-    const defaultPageSize = 10; // Kept for reference, but not used for slicing when collapsed
+
+    const screens = useBreakpoint();
+    const isSmallScreen = screens.xs || screens.sm;
 
     // --- Derived State (Modified to filter out paid bills by default) ---
     const validBills = Array.isArray(bills) ? bills : [];
@@ -158,7 +162,6 @@ const CombinedBillsOverview = ({ style }) => {
 
     const totalBillsInDisplayedMonth = billsDueInDisplayedMonth.length;
     const paidBillsInDisplayedMonth = billsDueInDisplayedMonth.filter(b => b.isPaid).length;
-    const unpaidBillsInDisplayedMonth = totalBillsInDisplayedMonth - paidBillsInDisplayedMonth;
     const totalExpensesInDisplayedMonth = totalAmountPaidInDisplayedMonth;
     const totalAmountDueInDisplayedMonth = useMemo(() => {
         return billsDueInDisplayedMonth.reduce((sum, bill) => (!bill.isPaid && typeof bill.amount === 'number' ? sum + bill.amount : sum), 0);
@@ -223,12 +226,33 @@ const CombinedBillsOverview = ({ style }) => {
         setShowPaidBills(prev => !prev);
     };
     const rowClassName = (record) => (record.id === fadingBillId ? 'bill-row-fade-out' : '');
-     // --- End Event Handlers ---
+    // --- End Event Handlers ---
+
+    const renderDueIn = (dueDate, record) => {
+        if (record.isPaid) {
+            return <span style={{ color: 'var(--neutral-400)' }}>-</span>;
+        }
+        if (!dueDate || !dayjs(dueDate).isValid()) {
+            return <span style={{ color: 'var(--neutral-400)' }}>N/A</span>;
+        }
+        const due = dayjs(dueDate).startOf('day');
+        const today = dayjs().startOf('day');
+        if (due.isBefore(today)) {
+            if (record.category === 'Bill Prep') {
+                return <span style={{ color: 'var(--neutral-400)' }}>-</span>;
+            }
+            return <span style={{ color: 'var(--danger-500)' }}>Past Due</span>;
+        }
+        if (due.isSame(today, 'day')) {
+            return <span style={{ color: 'var(--warning-700)' }}>Today</span>;
+        }
+        return formatDueDate(dueDate);
+    };
 
 
-    // --- Table Columns Definition (Remains in parent) ---
-    const columns = [
-        { title: '', dataIndex: 'isPaid', key: 'statusCheckbox', width: 32, align: 'center', render: (isPaid, record) => (<Tooltip title={isPaid ? "Mark as Unpaid" : "Mark as Paid"}><Checkbox className={`status-checkbox small-checkbox ${isPaid ? 'checked' : ''}`} checked={isPaid} onChange={() => handleTogglePaid(record)} /></Tooltip>) },
+    // --- Table Columns Definition ---
+    const defaultColumns = [
+        { title: '', dataIndex: 'isPaid', key: 'statusCheckbox', width: 32, align: 'center', render: (isPaid, record) => (<Tooltip title={isPaid ? 'Mark as Unpaid' : 'Mark as Paid'}><Checkbox className={`status-checkbox small-checkbox ${isPaid ? 'checked' : ''}`} checked={isPaid} onChange={() => handleTogglePaid(record)} /></Tooltip>) },
         { title: 'Name', dataIndex: 'name', key: 'name', width: 130, align: 'left', sorter: (a, b) => a.name.localeCompare(b.name), render: (text) => (<div style={{ textAlign: 'left' }}><Text strong>{text}</Text></div>) },
         { title: 'Amount', dataIndex: 'amount', key: 'amount', width: 80, align: 'left', sorter: (a, b) => a.amount - b.amount, render: (amount) => <Text strong>{`$${Number(amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}</Text> },
         { title: 'Category', dataIndex: 'category', key: 'category', width: 80, align: 'left', render: (category) => category ? (<div style={{ textAlign: 'left' }}><Tag icon={<span style={{ marginRight: '6px', display: 'inline-flex', alignItems: 'center' }}>{getCategoryIcon(category)}</span>} color={getCategoryColor(category)}>{category}</Tag></div>) : null },
@@ -242,55 +266,59 @@ const CombinedBillsOverview = ({ style }) => {
                 return dateA - dateB;
             },
             defaultSortOrder: 'ascend',
-            // --- START: Updated Render Logic for 'Due In' ---
-            render: (dueDate, record) => {
-                // If paid, always show dash
-                if (record.isPaid) {
-                    return <span style={{ color: 'var(--neutral-400)' }}>-</span>;
-                }
-
-                // Check if dueDate is valid
-                if (!dueDate || !dayjs(dueDate).isValid()) {
-                    return <span style={{ color: 'var(--neutral-400)' }}>N/A</span>;
-                }
-
-                const due = dayjs(dueDate).startOf('day');
-                const today = dayjs().startOf('day');
-
-                // Check if past due
-                if (due.isBefore(today)) {
-                    // Special case for 'Bill Prep' category when past due
-                    if (record.category === 'Bill Prep') {
-                        return <span style={{ color: 'var(--neutral-400)' }}>-</span>; // Show dash instead of 'Past Due'
-                    } else {
-                        return <span style={{ color: 'var(--danger-500)' }}>Past Due</span>; // Default past due text
-                    }
-                }
-
-                // Check if due today
-                if (due.isSame(today, 'day')) {
-                    return <span style={{ color: 'var(--warning-700)' }}>Today</span>;
-                }
-
-                // Otherwise, calculate relative time using the helper function
-                return formatDueDate(dueDate); // Pass only dueDate
-            },
-            // --- END: Updated Render Logic for 'Due In' ---
+            render: (dueDate, record) => renderDueIn(dueDate, record),
         },
         {
-            // --- START: Collapse/Expand Button ---
-            title: (<Tooltip title={isTableCollapsed ? "Expand List" : "Collapse List"}><Button type="link" size="small" icon={isTableCollapsed ? <IconChevronDown size={16} /> : <IconChevronUp size={16} />} onClick={() => setIsTableCollapsed(!isTableCollapsed)} style={{ padding: '0 4px' }} /></Tooltip>),
-            // --- END: Collapse/Expand Button ---
+            title: (<Tooltip title={isTableCollapsed ? 'Expand List' : 'Collapse List'}><Button type='link' size='small' icon={isTableCollapsed ? <IconChevronDown size={16} /> : <IconChevronUp size={16} />} onClick={() => setIsTableCollapsed(!isTableCollapsed)} style={{ padding: '0 4px' }} /></Tooltip>),
             key: 'actions', fixed: 'right', width: 30, align: 'center',
             render: (_, record) => {
                 const menuItems = [
                     { key: 'edit', icon: <IconEdit size={16} />, label: 'Edit', onClick: (e) => { if (e && e.domEvent) e.domEvent.stopPropagation(); handleEdit(record); } },
                     { key: 'delete', icon: <IconTrash size={16} />, label: 'Delete', danger: true, onClick: (e) => { if (e && e.domEvent) e.domEvent.stopPropagation(); handleDelete(record); } }
                 ];
-                return (<Dropdown menu={{items: menuItems}} trigger={['click']}><Button type="text" icon={<IconDotsVertical size={16} />} style={{ padding: '0 12px' }} onClick={e => e.stopPropagation()} /></Dropdown>);
+                return (<Dropdown menu={{ items: menuItems }} trigger={['click']}><Button type='text' icon={<IconDotsVertical size={16} />} style={{ padding: '0 12px' }} onClick={e => e.stopPropagation()} /></Dropdown>);
             }
         },
     ];
+
+    const mobileColumns = [
+        { title: '', dataIndex: 'isPaid', key: 'statusCheckbox', width: 32, align: 'center', render: (isPaid, record) => (<Checkbox className={`status-checkbox small-checkbox ${isPaid ? 'checked' : ''}`} checked={isPaid} onChange={() => handleTogglePaid(record)} />) },
+        {
+            title: 'Bill',
+            key: 'billInfo',
+            render: (_, record) => {
+                const amountFormatted = `$${Number(record.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                return (
+                    <div className='mobile-bill-cell'>
+                        <div className='mobile-bill-main'>
+                            <Text strong>{record.name}</Text>
+                            <Text strong className='amount-cell'>{amountFormatted}</Text>
+                        </div>
+                        <div className='mobile-bill-details'>
+                            {record.category && (
+                                <Tag icon={<span style={{ marginRight: '4px', display: 'inline-flex', alignItems: 'center' }}>{getCategoryIcon(record.category)}</span>} color={getCategoryColor(record.category)}>{record.category}</Tag>
+                            )}
+                            <span className='due-date-cell'>{record.dueDate ? dayjs(record.dueDate).format('MM/DD/YYYY') : 'N/A'}</span>
+                            <span className='due-in-cell'>{renderDueIn(record.dueDate, record)}</span>
+                        </div>
+                    </div>
+                );
+            }
+        },
+        {
+            title: (<Tooltip title={isTableCollapsed ? 'Expand List' : 'Collapse List'}><Button type='link' size='small' icon={isTableCollapsed ? <IconChevronDown size={16} /> : <IconChevronUp size={16} />} onClick={() => setIsTableCollapsed(!isTableCollapsed)} style={{ padding: '0 4px' }} /></Tooltip>),
+            key: 'actions', fixed: 'right', width: 30, align: 'center',
+            render: (_, record) => {
+                const menuItems = [
+                    { key: 'edit', icon: <IconEdit size={16} />, label: 'Edit', onClick: (e) => { if (e && e.domEvent) e.domEvent.stopPropagation(); handleEdit(record); } },
+                    { key: 'delete', icon: <IconTrash size={16} />, label: 'Delete', danger: true, onClick: (e) => { if (e && e.domEvent) e.domEvent.stopPropagation(); handleDelete(record); } }
+                ];
+                return (<Dropdown menu={{ items: menuItems }} trigger={['click']}><Button type='text' icon={<IconDotsVertical size={16} />} style={{ padding: '0 12px' }} onClick={e => e.stopPropagation()} /></Dropdown>);
+            }
+        }
+    ];
+
+    const columns = isSmallScreen ? mobileColumns : defaultColumns;
     // --- End Table Columns ---
 
 
@@ -304,11 +332,7 @@ const CombinedBillsOverview = ({ style }) => {
     if (error && !loading) { return (<Card style={style}><Alert message="Error Loading Bills Data" description={error.message || 'Unknown error'} type="error" showIcon closable /></Card>); }
 
     // Calculate the number of unpaid and paid bills with the current category filter applied
-    const unpaidVisibleCount = billsDueInDisplayedMonth.filter(bill => 
-        !bill.isPaid && (selectedCategory === 'All' || bill.category === selectedCategory)
-    ).length;
-    
-    const paidVisibleCount = billsDueInDisplayedMonth.filter(bill => 
+    const paidVisibleCount = billsDueInDisplayedMonth.filter(bill =>
         bill.isPaid && (selectedCategory === 'All' || bill.category === selectedCategory)
     ).length;
 
