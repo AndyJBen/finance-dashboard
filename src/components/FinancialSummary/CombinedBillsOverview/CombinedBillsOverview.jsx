@@ -243,19 +243,51 @@ const CombinedBillsOverview = ({ style }) => {
             if (record.category === 'Bill Prep') {
                 return <span style={{ color: 'var(--neutral-400)' }}>-</span>;
             }
+            
+            const daysPastDue = Math.abs(diffDays);
+            let overdueText = '';
+            
+            if (daysPastDue < 7) {
+                overdueText = `${daysPastDue}d`;
+            } else if (daysPastDue < 30) {
+                const weeks = Math.floor(daysPastDue / 7);
+                overdueText = `${weeks}w`;
+            } else {
+                const months = Math.floor(daysPastDue / 30);
+                overdueText = `${months}m`;
+            }
+            
             return (
-                <div style={{ 
-                    width: '6px', 
-                    height: '6px', 
-                    borderRadius: '50%', 
-                    backgroundColor: 'var(--danger-500)' 
-                }} />
+                <>
+                    <div style={{ 
+                        width: '6px', 
+                        height: '6px', 
+                        borderRadius: '50%', 
+                        backgroundColor: 'var(--danger-500)' 
+                    }} />
+                    <span style={{ color: 'var(--danger-500)', fontSize: '0.75rem' }}>
+                        {overdueText}
+                    </span>
+                </>
             );
         }
         if (due.isSame(today, 'day')) {
             return <span style={{ color: 'var(--warning-700)', fontSize: '0.75rem' }}>Today</span>;
         }
-        return <span style={{ fontSize: '0.75rem', color: 'var(--neutral-600)' }}>{diffDays}d</span>;
+        
+        // Format future dates
+        let futureText = '';
+        if (diffDays < 7) {
+            futureText = `${diffDays}d`;
+        } else if (diffDays < 30) {
+            const weeks = Math.floor(diffDays / 7);
+            futureText = `${weeks}w`;
+        } else {
+            const months = Math.floor(diffDays / 30);
+            futureText = `${months}m`;
+        }
+        
+        return <span style={{ fontSize: '0.75rem', color: 'var(--neutral-600)' }}>{futureText}</span>;
     };
 
 
@@ -310,23 +342,11 @@ const CombinedBillsOverview = ({ style }) => {
             key: 'billInfo',
             render: (_, record) => {
                 const amountFormatted = `$${Number(record.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-                const due = dayjs(record.dueDate).startOf('day');
-                const today = dayjs().startOf('day');
-                const isOverdue = due.isBefore(today) && !record.isPaid && record.category !== 'Bill Prep';
                 
                 return (
                     <div className='mobile-bill-cell'>
                         <div className='mobile-bill-main'>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flex: 1, minWidth: 0 }}>
-                                {isOverdue && (
-                                    <div style={{ 
-                                        width: '6px', 
-                                        height: '6px', 
-                                        borderRadius: '50%', 
-                                        backgroundColor: 'var(--danger-500)',
-                                        flexShrink: 0
-                                    }} />
-                                )}
+                            <div style={{ display: 'flex', alignItems: 'center', flex: 1, minWidth: 0 }}>
                                 <Text strong style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                     {record.name}
                                 </Text>
@@ -341,16 +361,23 @@ const CombinedBillsOverview = ({ style }) => {
                         <div className='mobile-bill-details'>
                             {record.category && (
                                 <Tag 
-                                    icon={<span style={{ marginRight: '4px', display: 'inline-flex', alignItems: 'center' }}>{getCategoryIcon(record.category)}</span>} 
-                                    color={getCategoryColor(record.category)}
-                                    style={{ margin: 0 }}
+                                    style={{ 
+                                        margin: 0,
+                                        backgroundColor: 'transparent',
+                                        border: '1px solid var(--neutral-400)',
+                                        color: 'var(--neutral-700)',
+                                        fontSize: '0.7rem'
+                                    }}
                                 >
+                                    <span style={{ marginRight: '4px', display: 'inline-flex', alignItems: 'center' }}>
+                                        {getCategoryIcon(record.category)}
+                                    </span>
                                     {record.category}
                                 </Tag>
                             )}
-                            <span className='due-in-cell' style={{ marginLeft: 'auto' }}>
+                            <div className='due-in-cell' style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                                 {renderDueIn(record.dueDate, record)}
-                            </span>
+                            </div>
                         </div>
                     </div>
                 );

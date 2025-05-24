@@ -997,198 +997,148 @@ textarea {
     font-size: 0.7rem !important; /* Smaller font for headers */
   }
   
-  /* Style the first column to be even more compact */
-  .bills-overview-table .ant-table-tbody > tr > td:first-child {
-    padding-left: 8px !important;
-    width: 24px !important; /* Minimum width for checkbox column */
-  }
-  
-  /* Make checkboxes slightly smaller */
-  .bills-overview-table .ant-checkbox-inner {
-    width: 14px !important;
-    height: 14px !important;
-  }
-  
-  /* Reduce the size of avatars/icons if present */
-  .bills-overview-table .ant-avatar {
-    width: 24px !important;
-    height: 24px !important;
-    line-height: 24px !important;
-    font-size: 0.75rem !important;
-  }
-  
-  /* Compress action buttons/icons */
-  .bills-overview-table .ant-table-cell .ant-space {
-    gap: 4px !important;
-  }
-  
-  /* Adjust any icons within the table */
-  .bills-overview-table .tabler-icon,
-  .bills-overview-table .anticon {
-    font-size: 0.9rem !important;
-    width: 16px !important;
-    height: 16px !important;
-  }
-  
-  /* Optional: Make due dates and amounts more prominent */
-  .bills-overview-table .due-date-cell {
-    font-weight: 500 !important;
-    white-space: nowrap !important;
-  }
-  
-  .bills-overview-table .amount-cell {
-    font-weight: 600 !important;
-    white-space: nowrap !important;
-  }
-  
-  /* CRITICAL: Remove extra row that creates a gap */
-  .bills-overview-table .ant-table-measure-row {
-    display: none !important;
-    height: 0 !important;
-  }
-  
-  /* Remove any table header/body spacing issues */
-  .bills-overview-table .ant-table-header {
-    margin-bottom: 0 !important;
-    padding-bottom: 0 !important;
-  }
-  
-  .bills-overview-table .ant-table-body {
-    margin-top: 0 !important;
-    padding-top: 0 !important;
-  }
-  
-  .bills-overview-table table {
-    border-spacing: 0 !important;
-    border-collapse: collapse !important;
-  }
-  
-  /* Table header styling */
-  .bills-overview-table .ant-table-thead > tr > th {
-    padding: 3px 2px !important;
-    font-size: 0.65rem !important;
-    padding-bottom: 2px !important;
-    border-bottom: 1px solid var(--neutral-200) !important;
-    height: 20px !important; /* Shorter height */
-  }
-  
-  /* Hide the "STATUS" column title text */
-  .bills-overview-table .ant-table-thead > tr > th:first-child {
-    font-size: 0 !important;
-    width: 15px !important; /* More compact */
-    max-width: 15px !important;
-    padding-left: 2px !important;
-    padding-right: 2px !important;
-  }
-  
-  /* Column width adjustments - even narrower */
-  .bills-overview-table .ant-table-thead > tr > th:nth-child(2) { /* Name */
-    width: 85px !important;
-    max-width: 85px !important;
-  }
-  
-  .bills-overview-table .ant-table-thead > tr > th:nth-child(3) { /* Amount */
-    width: 35px !important; /* Even narrower */
-    max-width: 35px !important;
-  }
-  
-  .bills-overview-table .ant-table-thead > tr > th:nth-child(4) { /* Category */
-    width: 75px !important;
-    max-width: 75px !important;
-  }
-  
-  .bills-overview-table .ant-table-thead > tr > th:nth-child(5) { /* Due Date */
-    width: 65px !important;
-    max-width: 65px !important;
-  }
-  
-  .bills-overview-table .ant-table-thead > tr > th:nth-child(6) { /* Due In */
-    width: 45px !important; /* Even narrower */
-    max-width: 45px !important;
-  }
-  
-  .bills-overview-table .ant-table-thead > tr > th:last-child { /* Actions */
-    width: 24px !important;
-    max-width: 24px !important;
-    padding-left: 2px !important;
-    padding-right: 2px !important;
-  }
-  
-  /* Table cell styling - more compact */
-  .bills-overview-table .ant-table-tbody > tr > td:first-child {
-    width: 24px !important;
-    max-width: 24px !important;
-    padding-left: 2px !important;
-    padding-right: 2px !important;
-  }
-  
-  .bills-overview-table .ant-table-tbody > tr > td:nth-child(3) {
-    width: 45px !important;
-    max-width: 45px !important;
-  }
-  
-  .bills-overview-table .ant-table-tbody > tr > td:last-child {
-    width: 24px !important;
-    max-width: 24px !important;
-    padding-left: 2px !important;
-    padding-right: 2px !important;
-  }
-  
-  .bills-overview-table .ant-table-tbody > tr > td {
-    padding: 5px 2px !important; /* Smaller vertical padding */
-    font-size: 0.8rem !important;
-    line-height: 1.2 !important;
-    height: 32px !important; /* Shorter rows */
-  }
-  
-  /* Remove extra space in rows */
-  .bills-overview-table .ant-table-tbody > tr {
-    height: 50px !important;
-  }
-  
-  .bills-overview-table .ant-typography strong {
-    font-size: 0.8rem !important;
-  }
-
-  /* New compact layout for mobile bills table */
-  .bills-overview-table .mobile-bill-cell {
-    display: flex;
-    flex-direction: column;
-  }
-  .bills-overview-table .mobile-bill-main {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .bills-overview-table .mobile-bill-details {
-    margin-top: 2px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    font-size: 0.75rem;
-    color: var(--neutral-600);
-  }
-  .bills-overview-table .mobile-bill-details .due-date-cell,
-  .bills-overview-table .mobile-bill-details .due-in-cell {
-    white-space: nowrap;
-  }
+/* Style the first column to be even more compact */
+.bills-overview-table .ant-table-tbody > tr > td:first-child {
+  padding-left: 8px !important;
+  width: 24px !important; /* Minimum width for checkbox column */
 }
 
-/* Desktop specific styles for MultiBillModal */
-@media (min-width: 769px) {
-  .multi-bill-modal .ant-card {
-    transition: all 0.2s ease;
-  }
-  
-  .multi-bill-modal .ant-card:hover {
-    border-color: #1890ff;
-  }
+/* Make checkboxes slightly smaller */
+.bills-overview-table .ant-checkbox-inner {
+  width: 14px !important;
+  height: 14px !important;
 }
-/* Increase row height by 15% */
+
+/* Reduce the size of avatars/icons if present */
+.bills-overview-table .ant-avatar {
+  width: 24px !important;
+  height: 24px !important;
+  line-height: 24px !important;
+  font-size: 0.75rem !important;
+}
+
+/* Compress action buttons/icons */
+.bills-overview-table .ant-table-cell .ant-space {
+  gap: 4px !important;
+}
+
+/* Adjust any icons within the table */
+.bills-overview-table .tabler-icon,
+.bills-overview-table .anticon {
+  font-size: 0.9rem !important;
+  width: 16px !important;
+  height: 16px !important;
+}
+
+/* Optional: Make due dates and amounts more prominent */
+.bills-overview-table .due-date-cell {
+  font-weight: 500 !important;
+  white-space: nowrap !important;
+}
+
+.bills-overview-table .amount-cell {
+  font-weight: 600 !important;
+  white-space: nowrap !important;
+}
+
+/* CRITICAL: Remove extra row that creates a gap */
+.bills-overview-table .ant-table-measure-row {
+  display: none !important;
+  height: 0 !important;
+}
+
+/* Remove any table header/body spacing issues */
+.bills-overview-table .ant-table-header {
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+.bills-overview-table .ant-table-body {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+
+.bills-overview-table table {
+  border-spacing: 0 !important;
+  border-collapse: collapse !important;
+}
+
+/* Table header styling */
+.bills-overview-table .ant-table-thead > tr > th {
+  padding: 3px 2px !important;
+  font-size: 0.65rem !important;
+  padding-bottom: 2px !important;
+  border-bottom: 1px solid var(--neutral-200) !important;
+  height: 20px !important; /* Shorter height */
+}
+
+/* Hide the "STATUS" column title text */
+.bills-overview-table .ant-table-thead > tr > th:first-child {
+  font-size: 0 !important;
+  width: 15px !important; /* More compact */
+  max-width: 15px !important;
+  padding-left: 2px !important;
+  padding-right: 2px !important;
+}
+
+/* Column width adjustments - even narrower */
+.bills-overview-table .ant-table-thead > tr > th:nth-child(2) { /* Name */
+  width: 85px !important;
+  max-width: 85px !important;
+}
+
+.bills-overview-table .ant-table-thead > tr > th:nth-child(3) { /* Amount */
+  width: 35px !important; /* Even narrower */
+  max-width: 35px !important;
+}
+
+.bills-overview-table .ant-table-thead > tr > th:nth-child(4) { /* Category */
+  width: 75px !important;
+  max-width: 75px !important;
+}
+
+.bills-overview-table .ant-table-thead > tr > th:nth-child(5) { /* Due Date */
+  width: 65px !important;
+  max-width: 65px !important;
+}
+
+.bills-overview-table .ant-table-thead > tr > th:nth-child(6) { /* Due In */
+  width: 45px !important; /* Even narrower */
+  max-width: 45px !important;
+}
+
+.bills-overview-table .ant-table-thead > tr > th:last-child { /* Actions */
+  width: 24px !important;
+  max-width: 24px !important;
+  padding-left: 2px !important;
+  padding-right: 2px !important;
+}
+
+/* Table cell styling - more compact */
+.bills-overview-table .ant-table-tbody > tr > td:first-child {
+  width: 24px !important;
+  max-width: 24px !important;
+  padding-left: 2px !important;
+  padding-right: 2px !important;
+}
+
+.bills-overview-table .ant-table-tbody > tr > td:nth-child(3) {
+  width: 45px !important;
+  max-width: 45px !important;
+}
+
+.bills-overview-table .ant-table-tbody > tr > td:last-child {
+  width: 24px !important;
+  max-width: 24px !important;
+  padding-left: 2px !important;
+  padding-right: 2px !important;
+}
+
+/* Increase row height by 15% and improve spacing */
 .bills-overview-table .ant-table-tbody > tr > td {
-  padding: 7px 2px !important; /* Increased from 5px */
+  padding: 7px 2px !important;
   font-size: 0.8rem !important;
-  line-height: 1.3 !important; /* Slightly increased */
+  line-height: 1.3 !important;
   height: 37px !important; /* Increased from 32px (15% more) */
 }
 
@@ -1196,18 +1146,10 @@ textarea {
   height: 58px !important; /* Increased from 50px (15% more) */
 }
 
-/* Adjust mobile bill cell for better spacing */
-.bills-overview-table .mobile-bill-cell {
-  display: flex;
-  flex-direction: column;
-  gap: 4px; /* Add gap between main and details */
+.bills-overview-table .ant-typography strong {
+  font-size: 0.8rem !important;
 }
 
-.bills-overview-table .mobile-bill-main {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start; /* Changed from center to flex-start */
-}
 /* Better alignment for mobile bill cells */
 .bills-overview-table .mobile-bill-cell {
   display: flex;
@@ -1237,6 +1179,9 @@ textarea {
 .bills-overview-table .mobile-bill-details .ant-tag {
   margin: 0 !important;
   flex-shrink: 0;
+  padding: 2px 6px !important;
+  height: auto !important;
+  line-height: 1.2 !important;
 }
 
 .bills-overview-table .mobile-bill-details .due-in-cell {
@@ -1244,6 +1189,7 @@ textarea {
   align-items: center;
   justify-content: flex-end;
   flex-shrink: 0;
+  gap: 4px;
 }
 
 /* Ensure proper spacing in table cells */
@@ -1251,53 +1197,71 @@ textarea {
   padding: 8px 4px !important;
   width: calc(100% - 60px) !important;
 }
+}
+
+/* Desktop specific styles for MultiBillModal */
+@media (min-width: 769px) {
+.multi-bill-modal .ant-card {
+  transition: all 0.2s ease;
+}
+
+.multi-bill-modal .ant-card:hover {
+  border-color: #1890ff;
+}
+}
+
 /* ==================================================
-   11. ANIMATION & TRANSITIONS
+ 11. ACCESSIBILITY ENHANCEMENTS
+================================================== */
+
+
+/* ==================================================
+ 12. ANIMATION & TRANSITIONS
 ================================================== */
 
 .nav-button {
-  transition: all 0.15s ease;
+transition: all 0.15s ease;
 }
 
 .action-icon {
-  transition: color 0.3s ease;
+transition: color 0.3s ease;
 }
 
 .compact-overdue-panel > .ant-collapse-header {
-  transition: background-color 0.3s ease;
+transition: background-color 0.3s ease;
 }
 
 .multi-bill-modal .ant-input,
 .multi-bill-modal .ant-input-number,
 .multi-bill-modal .ant-select-selector,
 .multi-bill-modal .ant-picker {
-  transition: all 0.3s ease;
+transition: all 0.3s ease;
 }
 
 .multi-bill-modal .ant-card {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 a {
-  transition: color 0.2s ease;
+transition: color 0.2s ease;
 }
 
 @keyframes pageFadeIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
+from { opacity: 0; transform: translateY(8px); }
+to   { opacity: 1; transform: translateY(0); }
 }
 
 .page-transition {
-  opacity: 0;
-  animation: pageFadeIn 0.3s ease-out forwards;
+opacity: 0;
+animation: pageFadeIn 0.3s ease-out forwards;
 }
 
 /* Fade out effect for bills table rows */
 @keyframes billRowFadeOut {
-  from { opacity: 1; }
-  to { opacity: 0; }
+from { opacity: 1; }
+to { opacity: 0; }
 }
 
 .bill-row-fade-out {
-  animation: billRowFadeOut 0.3s ease forwards;
+animation: billRowFadeOut 0.3s ease forwards;
 }
