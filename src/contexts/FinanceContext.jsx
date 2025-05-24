@@ -223,6 +223,44 @@ export const FinanceProvider = ({ children }) => {
     }
   };
 
+  // Update a bill and optionally apply changes to future recurring bills
+  const handleUpdateBillWithFuture = async (existingBill, updates, applyFields = []) => {
+    const success = await handleUpdateBill(existingBill, updates);
+    if (!success || !existingBill.isRecurring || applyFields.length === 0) {
+      return success;
+    }
+
+    const futureBills = bills.filter(
+      b => b.isRecurring && b.name === existingBill.name && dayjs(b.dueDate).isAfter(dayjs(existingBill.dueDate))
+    );
+
+    for (const bill of futureBills) {
+      const futureUpdates = {};
+      if (applyFields.includes('amount') && typeof updates.amount !== 'undefined') {
+        futureUpdates.amount = updates.amount;
+      }
+      if (applyFields.includes('category') && typeof updates.category !== 'undefined') {
+        futureUpdates.category = updates.category;
+      }
+      if (applyFields.includes('dueDate') && updates.dueDate) {
+        futureUpdates.dueDate = dayjs(bill.dueDate)
+          .date(dayjs(updates.dueDate).date())
+          .format('YYYY-MM-DD');
+      }
+      if (Object.keys(futureUpdates).length > 0) {
+        try {
+          const result = await updateBill(bill.id, futureUpdates);
+          if (result) {
+            setBills(prev => prev.map(b => (b.id === bill.id ? { ...b, ...result } : b)));
+          }
+        } catch (err) {
+          console.error('Error updating future bill:', err);
+        }
+      }
+    }
+    return true;
+  };
+
 
   // Delete a bill
   const handleDeleteBill = async (billId) => {
@@ -484,6 +522,7 @@ export const FinanceProvider = ({ children }) => {
     goToNextMonth,
     addBill: handleAddBill,
     updateBill: handleUpdateBill,
+    updateBillWithFuture: handleUpdateBillWithFuture,
     deleteBill: handleDeleteBill,
     updateBalance: handleUpdateBalance,
     createCreditCard: handleCreateCreditCard,

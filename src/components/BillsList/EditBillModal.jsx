@@ -29,6 +29,8 @@ const EditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
   const [form] = Form.useForm();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [confirmVisible, setConfirmVisible] = useState(false);
+  const [pendingSubmit, setPendingSubmit] = useState(null); // store values before confirming
 
   // Update mobile state on resize
   useEffect(() => {
@@ -55,8 +57,9 @@ const EditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
             // Ensure boolean values are correctly set
             isRecurring: Boolean(initialData.isRecurring),
             // Default isPaid to false if not present, otherwise convert to boolean
-            isPaid: initialData.hasOwnProperty('isPaid') ? Boolean(initialData.isPaid) : false,
+            isPaid: Object.prototype.hasOwnProperty.call(initialData, 'isPaid') ? Boolean(initialData.isPaid) : false,
           });
+          // no further state needed for edit comparison
         } else {
           // Adding new bill
           console.log("[EditBillModal] useEffect - Adding mode. Resetting fields.");
@@ -74,8 +77,12 @@ const EditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
   useEffect(() => {
     if (!open) {
       setIsSubmitting(false);
+      setConfirmVisible(false);
+      setPendingSubmit(null);
     }
   }, [open]);
+
+  // No field-level prompts; confirmation handled on save
 
   // Handler for the OK button click
   const handleOk = () => {
@@ -95,13 +102,35 @@ const EditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
         if (initialData && initialData.id) {
           formattedValues.id = initialData.id;
         }
+        if (initialData) {
+          const changed = {};
+          if (formattedValues.amount !== initialData.amount) changed.amount = true;
+          if (formattedValues.category !== initialData.category) changed.category = true;
+          const initialDate = initialData.dueDate ? dayjs(initialData.dueDate) : null;
+          const newDate = formattedValues.dueDate ? dayjs(formattedValues.dueDate) : null;
+          if ((initialDate && !newDate?.isSame(initialDate, 'day')) || (!initialDate && newDate)) {
+            changed.dueDate = true;
+          }
+
+          if (initialData.isRecurring && Object.keys(changed).length > 0) {
+            setPendingSubmit({ values: formattedValues, changed });
+            setConfirmVisible(true);
+            setIsSubmitting(false);
+            return;
+          }
+        }
         console.log("[EditBillModal] Calling onSubmit with formatted values:", formattedValues);
         onSubmit(formattedValues);
       })
       .catch((info) => {
         console.error('[EditBillModal] Form Validation Failed:', info);
       })
-      .finally(() => setIsSubmitting(false));
+      .finally(() => {
+        // keep spinner if confirmation modal opened
+        if (!confirmVisible) {
+          setIsSubmitting(false);
+        }
+      });
   };
 
   // Determine modal title and icon based on whether initialData is present
@@ -111,6 +140,7 @@ const EditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
 
   // --- Component Render ---
   return (
+    <>
     <Modal
       title={null}
       open={open}
@@ -288,6 +318,22 @@ const EditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
         }
       `}</style>
     </Modal>
+    <Modal
+      open={confirmVisible}
+      onCancel={() => {
+        setConfirmVisible(false);
+        setPendingSubmit(null);
+      }}
+      title="Apply changes to future bills?"
+      footer={[
+        <Button key="cancel" onClick={() => { setConfirmVisible(false); setPendingSubmit(null); }}>Go Back</Button>,
+        <Button key="single" onClick={() => { if (pendingSubmit) { onSubmit(pendingSubmit.values); } setConfirmVisible(false); setPendingSubmit(null); }}>Only This Bill</Button>,
+        <Button key="all" type="primary" onClick={() => { if (pendingSubmit) { onSubmit({ ...pendingSubmit.values, applyToFuture: pendingSubmit.changed }); } setConfirmVisible(false); setPendingSubmit(null); }}>All Future Bills</Button>
+      ]}
+    >
+      <p>Do you want to apply these changes only to this bill or also to all future bills?</p>
+    </Modal>
+    </>
   );
   // --- End Component Render ---
 };

@@ -101,7 +101,7 @@ const getCategoryColor = (category) => {
 const CombinedBillsOverview = ({ style }) => {
     // Context and State (Remains the same)
     const {
-        loading, error, deleteBill, updateBill, addBill,
+        loading, error, deleteBill, updateBill, updateBillWithFuture, addBill,
         displayedMonth, goToPreviousMonth, goToNextMonth, bills,
     } = useContext(FinanceContext);
     const [isModalVisible, setIsModalVisible] = useState(false); // For EditBillModal
@@ -178,8 +178,19 @@ const CombinedBillsOverview = ({ style }) => {
          setEditingBill(record);
          setIsModalVisible(true);
      };
-     const handleModalSubmit = async (values) => {
-         let result = editingBill ? await updateBill(editingBill, values) : await addBill(values);
+    const handleModalSubmit = async (values) => {
+         const { applyToFuture = {}, ...billValues } = values;
+         let result;
+         if (editingBill) {
+             const fields = Object.entries(applyToFuture).filter(([,v]) => v).map(([k]) => k);
+             if (fields.length > 0) {
+                 result = await updateBillWithFuture(editingBill, billValues, fields);
+             } else {
+                 result = await updateBill(editingBill, billValues);
+             }
+         } else {
+             result = await addBill(billValues);
+         }
          if (result) { setIsModalVisible(false); setEditingBill(null); }
      };
     const handleTogglePaid = async (record) => {
