@@ -61,6 +61,12 @@ const getCategoryIcon = (category, size = 16) => {
 const MobileFinanceFeed = () => {
   const financeContext = useContext(FinanceContext);
 
+  const formatAmount = (value) =>
+    Number(value || 0).toLocaleString('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+
   // Get the data we need for each section
   // Past Due Bills
   const pastDueBills = financeContext.pastDueBills || [];
@@ -122,7 +128,10 @@ const MobileFinanceFeed = () => {
 
   // State for "show all" toggles
   const [showAll, setShowAll] = useState({
+    pastDue: false,
+    billPrep: false,
     nonRecurring: false,
+    upcoming: false,
     recentActivity: false
   });
 
@@ -143,7 +152,7 @@ const MobileFinanceFeed = () => {
   };
 
   // Helper to limit items based on showAll state
-  const limitItems = (items, section, limit = 3) => {
+  const limitItems = (items, section, limit = 4) => {
     return showAll[section] ? items : items.slice(0, limit);
   };
 
@@ -167,7 +176,7 @@ const MobileFinanceFeed = () => {
   };
 
   // Section card component with improved collapse button
-  const SectionCard = ({ title, icon, children, section, empty = false, count, itemCount, emptyText }) => (
+  const SectionCard = ({ title, icon, children, section, empty = false, count, emptyText }) => (
     <Card
       className="finance-section-card"
       bodyStyle={expanded[section] ? { padding: 0 } : { padding: 0, height: 0, overflow: 'hidden' }}
@@ -246,11 +255,11 @@ const MobileFinanceFeed = () => {
         count={pastDueBills.length}
       >
         <List
-          dataSource={pastDueBills}
+          dataSource={limitItems(pastDueBills, 'pastDue')}
           renderItem={item => (
             <List.Item className="feed-list-item">
-              <Avatar 
-                shape="circle" 
+              <Avatar
+                shape="circle"
                 className="feed-item-avatar"
                 style={{ backgroundColor: '#FFF5F5', borderRadius: 30 }}
                 icon={getCategoryIcon(item.category, 18)}
@@ -261,15 +270,34 @@ const MobileFinanceFeed = () => {
                   Due {daysAgo(item.dueDate)} days ago
                 </Text>
               </div>
-              <Text strong style={{color: '#F1476F'}}>${Number(item.amount).toFixed(2)}</Text>
+              <div style={{ textAlign: 'right' }}>
+                <Text strong style={{ color: '#F1476F' }}>
+                  ${formatAmount(item.amount)}
+                </Text>
+                <Text type="secondary" style={{ fontSize: '0.7rem', display: 'block' }}>
+                  {item.category}
+                </Text>
+              </div>
             </List.Item>
           )}
         />
+        {pastDueBills.length > 4 && (
+          <div className="show-more-container">
+            <Button
+              type="link"
+              className="show-more-button"
+              style={{ color: '#F1476F' }}
+              onClick={() => toggleShowAll('pastDue')}
+            >
+              {showAll.pastDue ? 'Show Less' : 'Show All'}
+            </Button>
+          </div>
+        )}
         {pastDueBills.length > 0 && (
           <div className="section-total">
             <Text className="total-label">SECTION TOTAL</Text>
             <Text className="total-amount total-amount-pastdue">
-              ${Number(pastDueTotal).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              ${formatAmount(pastDueTotal)}
             </Text>
           </div>
         )}
@@ -285,7 +313,7 @@ const MobileFinanceFeed = () => {
         count={billPrep.length}
       >
         <List
-          dataSource={billPrep}
+          dataSource={limitItems(billPrep, 'billPrep')}
           renderItem={item => (
             <List.Item className="feed-list-item">
               <Avatar 
@@ -300,15 +328,34 @@ const MobileFinanceFeed = () => {
                   {item.bills.length} {item.bills.length === 1 ? 'Item' : 'Items'}
                 </Text>
               </div>
-              <Text strong style={{color: '#1890FF'}}>${Number(item.totalAmount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</Text>
+              <div style={{ textAlign: 'right' }}>
+                <Text strong style={{ color: '#1890FF' }}>
+                  ${formatAmount(item.totalAmount)}
+                </Text>
+                <Text type="secondary" style={{ fontSize: '0.7rem', display: 'block' }}>
+                  {item.category}
+                </Text>
+              </div>
             </List.Item>
           )}
         />
+        {billPrep.length > 4 && (
+          <div className="show-more-container">
+            <Button
+              type="link"
+              className="show-more-button"
+              style={{ color: '#1890FF' }}
+              onClick={() => toggleShowAll('billPrep')}
+            >
+              {showAll.billPrep ? 'Show Less' : 'Show All'}
+            </Button>
+          </div>
+        )}
         {billPrep.length > 0 && (
           <div className="section-total">
             <Text className="total-label">SECTION TOTAL</Text>
             <Text className="total-amount total-amount-billprep">
-              ${billPrepTotal.toFixed(2)}
+              ${formatAmount(billPrepTotal)}
             </Text>
           </div>
         )}
@@ -344,25 +391,30 @@ const MobileFinanceFeed = () => {
                   )}
                 </div>
               </div>
-              <Text strong style={{ color: item.isPaid ? '#26C67B' : '#F1476F' }}>
-                ${Number(item.amount).toFixed(2)}
-              </Text>
+              <div style={{ textAlign: 'right' }}>
+                <Text strong style={{ color: item.isPaid ? '#26C67B' : '#F1476F' }}>
+                  ${formatAmount(item.amount)}
+                </Text>
+                <Text type="secondary" style={{ fontSize: '0.7rem', display: 'block' }}>
+                  {item.category}
+                </Text>
+              </div>
             </List.Item>
           )}
         />
-        {nonRecurring.length > 3 && (
-          <div 
+        {nonRecurring.length > 4 && (
+          <div
             className="show-more-container"
             onClick={() => toggleShowAll('nonRecurring')} // Added onClick here to make whole area clickable
-            style={{ 
-              textAlign: 'center', 
-              marginTop: 'var(--space-12)', 
+            style={{
+              textAlign: 'center',
+              marginTop: 'var(--space-12)',
               paddingBottom: 'var(--space-4)',
               cursor: 'pointer' // Add cursor pointer to indicate clickable
             }}
           >
-            <Button 
-              type="link" 
+            <Button
+              type="link"
               className="show-more-button"
               style={{color: '#52C41A'}}
               onClick={(e) => {
@@ -373,12 +425,12 @@ const MobileFinanceFeed = () => {
               {showAll.nonRecurring ? 'Show Less' : 'Show All'}
             </Button>
           </div>
-)}
+        )}
         {nonRecurring.length > 0 && (
           <div className="section-total">
             <Text className="total-label">SECTION TOTAL</Text>
             <Text className="total-amount total-amount-nonrecurring">
-              ${nonRecurringTotal.toFixed(2)}
+              ${formatAmount(nonRecurringTotal)}
             </Text>
           </div>
         )}
@@ -394,7 +446,7 @@ const MobileFinanceFeed = () => {
         count={upcoming.length}
       >
         <List
-          dataSource={upcoming}
+          dataSource={limitItems(upcoming, 'upcoming')}
           renderItem={item => (
             <List.Item className="feed-list-item">
               <Avatar 
@@ -409,15 +461,34 @@ const MobileFinanceFeed = () => {
                   Due {formatDueDate(item.dueDate)}
                 </Text>
               </div>
-              <Text strong style={{color: '#0066FF'}}>${Number(item.amount).toFixed(2)}</Text>
+              <div style={{ textAlign: 'right' }}>
+                <Text strong style={{ color: '#0066FF' }}>
+                  ${formatAmount(item.amount)}
+                </Text>
+                <Text type="secondary" style={{ fontSize: '0.7rem', display: 'block' }}>
+                  {item.category}
+                </Text>
+              </div>
             </List.Item>
           )}
         />
+        {upcoming.length > 4 && (
+          <div className="show-more-container">
+            <Button
+              type="link"
+              className="show-more-button"
+              style={{ color: '#0066FF' }}
+              onClick={() => toggleShowAll('upcoming')}
+            >
+              {showAll.upcoming ? 'Show Less' : 'Show All'}
+            </Button>
+          </div>
+        )}
         {upcoming.length > 0 && (
           <div className="section-total">
             <Text className="total-label">SECTION TOTAL</Text>
             <Text className="total-amount total-amount-upcoming">
-              ${upcomingTotal.toFixed(2)}
+              ${formatAmount(upcomingTotal)}
             </Text>
           </div>
         )}
@@ -452,7 +523,7 @@ const MobileFinanceFeed = () => {
                 </div>
               </div>
               <div style={{ textAlign: 'right' }}>
-                <Text strong>${Number(item.amount).toFixed(2)}</Text>
+                <Text strong>${formatAmount(item.amount)}</Text>
                 <Text type="secondary" style={{ fontSize: '0.7rem', display: 'block' }}>
                   {item.category}
                 </Text>
@@ -460,10 +531,10 @@ const MobileFinanceFeed = () => {
             </List.Item>
           )}
         />
-        {recentActivity.length > 3 && (
+        {recentActivity.length > 4 && (
           <div className="show-more-container">
-            <Button 
-              type="link" 
+            <Button
+              type="link"
               className="show-more-button"
               style={{color: '#722ED1'}}
               onClick={() => toggleShowAll('recentActivity')}
@@ -476,7 +547,7 @@ const MobileFinanceFeed = () => {
           <div className="section-total">
             <Text className="total-label">SECTION TOTAL</Text>
             <Text className="total-amount total-amount-activity">
-              ${recentActivityTotal.toFixed(2)}
+              ${formatAmount(recentActivityTotal)}
             </Text>
           </div>
         )}
