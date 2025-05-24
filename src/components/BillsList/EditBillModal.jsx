@@ -29,6 +29,8 @@ const EditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
   const [form] = Form.useForm();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [applyToFuture, setApplyToFuture] = useState({ amount: false, dueDate: false, category: false });
+  const [lastValues, setLastValues] = useState({ amount: null, dueDate: null, category: null });
 
   // Update mobile state on resize
   useEffect(() => {
@@ -55,7 +57,12 @@ const EditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
             // Ensure boolean values are correctly set
             isRecurring: Boolean(initialData.isRecurring),
             // Default isPaid to false if not present, otherwise convert to boolean
-            isPaid: initialData.hasOwnProperty('isPaid') ? Boolean(initialData.isPaid) : false,
+            isPaid: Object.prototype.hasOwnProperty.call(initialData, 'isPaid') ? Boolean(initialData.isPaid) : false,
+          });
+          setLastValues({
+            amount: initialData.amount,
+            dueDate: initialData.dueDate ? dayjs(initialData.dueDate) : null,
+            category: initialData.category
           });
         } else {
           // Adding new bill
@@ -63,6 +70,7 @@ const EditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
           form.resetFields();
           // Set default values for checkboxes if needed
           form.setFieldsValue({ isPaid: false, isRecurring: false });
+          setLastValues({ amount: null, dueDate: null, category: null });
         }
     } else {
         // Optional: Log when modal is closed if needed for debugging lifecycle
@@ -74,8 +82,45 @@ const EditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
   useEffect(() => {
     if (!open) {
       setIsSubmitting(false);
+      setApplyToFuture({ amount: false, dueDate: false, category: false });
+      setLastValues({ amount: null, dueDate: null, category: null });
     }
   }, [open]);
+
+  const promptApplyFuture = (field, value) => {
+    Modal.confirm({
+      title: 'Apply change to future bills?',
+      content: 'Do you want to apply this change only to this bill or also to all future bills?',
+      okText: 'All Future Bills',
+      cancelText: 'Only This Bill',
+      onOk: () => {
+        setApplyToFuture(prev => ({ ...prev, [field]: true }));
+        setLastValues(prev => ({ ...prev, [field]: value }));
+      },
+      onCancel: () => {
+        setApplyToFuture(prev => ({ ...prev, [field]: false }));
+        setLastValues(prev => ({ ...prev, [field]: value }));
+      }
+    });
+  };
+
+  const handleBlur = (field) => {
+    const value = form.getFieldValue(field);
+    const previous = lastValues[field];
+    let changed = false;
+    if (field === 'dueDate') {
+      const formatted = value && dayjs(value).isValid() ? dayjs(value) : null;
+      changed = !formatted?.isSame(previous, 'day');
+      if (changed) {
+        promptApplyFuture(field, formatted);
+      }
+    } else {
+      changed = value !== previous && value !== undefined;
+      if (changed) {
+        promptApplyFuture(field, value);
+      }
+    }
+  };
 
   // Handler for the OK button click
   const handleOk = () => {
@@ -95,6 +140,7 @@ const EditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
         if (initialData && initialData.id) {
           formattedValues.id = initialData.id;
         }
+        formattedValues.applyToFuture = applyToFuture;
         console.log("[EditBillModal] Calling onSubmit with formatted values:", formattedValues);
         onSubmit(formattedValues);
       })
@@ -164,17 +210,17 @@ const EditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
 
         {/* Amount */}
         <Form.Item name="amount" label={<span style={{ fontSize: '14px', fontWeight: 500 }}>Amount</span>} rules={[{ required: true, message: 'Please input the amount!' }, { type: 'number', min: 0, message: 'Amount cannot be negative!' }]} >
-          <InputNumber prefix={<IconCoin size={16} style={{ color: '#1677ff' }} />} min={0} step={0.01} formatter={(value) => `$${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')} parser={(value) => value.replace(/\$\s?|(,*)/g, '')} className="bill-input" style={{ width: '100%' }} placeholder="e.g., 75.50" />
+          <InputNumber prefix={<IconCoin size={16} style={{ color: '#1677ff' }} />} min={0} step={0.01} formatter={(value) => `$${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')} parser={(value) => value.replace(/\$\s?|(,*)/g, '')} className="bill-input" style={{ width: '100%' }} placeholder="e.g., 75.50" onBlur={() => handleBlur('amount')} />
         </Form.Item>
 
         {/* Due Date */}
         <Form.Item name="dueDate" label={<span style={{ fontSize: '14px', fontWeight: 500 }}>Due Date</span>} rules={[{ required: true, message: 'Please select the due date!' }]} >
-          <DatePicker format="YYYY-MM-DD" placeholder="Select date" suffixIcon={<IconCalendar size={16} style={{ color: '#1677ff' }} />} className="bill-input date-picker" />
+          <DatePicker format="YYYY-MM-DD" placeholder="Select date" suffixIcon={<IconCalendar size={16} style={{ color: '#1677ff' }} />} className="bill-input date-picker" onBlur={() => handleBlur('dueDate')} />
         </Form.Item>
 
         {/* Category */}
         <Form.Item name="category" label={<span style={{ fontSize: '14px', fontWeight: 500 }}>Category</span>} rules={[{ required: true, message: 'Please select a category!' }]} >
-          <Select placeholder="Select or type a category" className="bill-select" dropdownStyle={{ borderRadius: '8px' }} suffixIcon={<IconTag size={16} style={{ color: '#1677ff' }} />} >
+          <Select placeholder="Select or type a category" className="bill-select" dropdownStyle={{ borderRadius: '8px' }} suffixIcon={<IconTag size={16} style={{ color: '#1677ff' }} />} onBlur={() => handleBlur('category')} >
             {billCategories.map(category => ( <Option key={category} value={category}>{category}</Option> ))}
           </Select>
         </Form.Item>
