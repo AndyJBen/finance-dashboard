@@ -3,14 +3,14 @@
 
 import React, { useState, useContext, useMemo } from 'react';
 import {
-    Card, Button, Tooltip, Checkbox, 
-    Progress, Typography, Row, Col, Statistic, 
+    Card, Button, Tooltip, Checkbox,
+    Progress, Typography, Row, Col, Statistic,
     Grid, Badge, Spin, Alert
 } from 'antd';
 import {
     IconCalendarFilled, IconEdit, IconTrash, IconPlus, IconChevronLeft,
-    IconChevronRight, IconHome, IconBolt, IconWifi, IconCreditCard, 
-    IconCar, IconShoppingCart, IconHelp, IconCalendar, IconCurrencyDollar, 
+    IconChevronRight, IconHome, IconBolt, IconWifi, IconCreditCard,
+    IconCar, IconShoppingCart, IconHelp, IconCalendar, IconCurrencyDollar,
     IconCertificate, IconMedicineSyrup, IconCalendarTime, IconUser,
     IconEye, IconEyeOff, IconAlertTriangle, IconSparkles
 } from '@tabler/icons-react';
@@ -42,7 +42,7 @@ const designTokens = {
     }
 };
 
-// Helper Functions (keeping existing ones, adding new ones)
+// Helper Functions
 const getCategoryIcon = (category) => {
     const lowerCategory = category?.toLowerCase() || '';
     if (lowerCategory.includes('rent') || lowerCategory.includes('mortgage')) return <IconHome size={16} />;
@@ -82,30 +82,30 @@ const getUrgencyLevel = (dueDate, isPaid) => {
 const SmartBillCard = ({ bill, onEdit, onDelete, onTogglePaid, compact = false }) => {
     const urgency = getUrgencyLevel(bill.dueDate, bill.isPaid);
     const [isExpanded, setIsExpanded] = useState(false);
-    
+
     const urgencyStyles = {
-        completed: { 
-            bg: designTokens.semantic.success.surface, 
+        completed: {
+            bg: designTokens.semantic.success.surface,
             border: designTokens.semantic.success.base,
             accent: designTokens.semantic.success.accent
         },
-        overdue: { 
-            bg: designTokens.semantic.danger.surface, 
+        overdue: {
+            bg: designTokens.semantic.danger.surface,
             border: designTokens.semantic.danger.base,
             accent: designTokens.semantic.danger.accent
         },
-        urgent: { 
-            bg: designTokens.semantic.warning.surface, 
+        urgent: {
+            bg: designTokens.semantic.warning.surface,
             border: designTokens.semantic.warning.base,
             accent: designTokens.semantic.warning.accent
         },
-        warning: { 
-            bg: designTokens.semantic.info.surface, 
+        warning: {
+            bg: designTokens.semantic.info.surface,
             border: designTokens.semantic.info.base,
             accent: designTokens.semantic.info.accent
         },
-        normal: { 
-            bg: designTokens.semantic.neutral.surface, 
+        normal: {
+            bg: designTokens.semantic.neutral.surface,
             border: 'transparent',
             accent: designTokens.semantic.neutral.accent
         }
@@ -130,7 +130,6 @@ const SmartBillCard = ({ bill, onEdit, onDelete, onTogglePaid, compact = false }
             }}
             onClick={() => setIsExpanded(!isExpanded)}
         >
-            {/* Urgency Indicator */}
             {urgency !== 'normal' && (
                 <div
                     style={{
@@ -146,7 +145,6 @@ const SmartBillCard = ({ bill, onEdit, onDelete, onTogglePaid, compact = false }
             )}
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                {/* Smart Checkbox */}
                 <div
                     style={{
                         position: 'relative',
@@ -179,7 +177,6 @@ const SmartBillCard = ({ bill, onEdit, onDelete, onTogglePaid, compact = false }
                     )}
                 </div>
 
-                {/* Category Icon */}
                 <div
                     style={{
                         width: '40px',
@@ -207,7 +204,6 @@ const SmartBillCard = ({ bill, onEdit, onDelete, onTogglePaid, compact = false }
                     )}
                 </div>
 
-                {/* Content */}
                 <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                         <div>
@@ -231,80 +227,7 @@ const SmartBillCard = ({ bill, onEdit, onDelete, onTogglePaid, compact = false }
                                     />
                                 )}
                             </div>
-                </Spin>
-
-                {/* Custom Styles */}
-                <style jsx>{`
-                    @keyframes pulse {
-                        0%, 100% { opacity: 1; }
-                        50% { opacity: 0.5; }
-                    }
-                    
-                    @keyframes glow {
-                        0% { opacity: 0.5; }
-                        100% { opacity: 1; }
-                    }
-                    
-                    /* Smooth scroll behavior */
-                    * {
-                        scroll-behavior: smooth;
-                    }
-                    
-                    /* Enhanced touch targets for mobile */
-                    @media (max-width: 768px) {
-                        button {
-                            min-height: 44px;
-                            min-width: 44px;
-                        }
-                    }
-                    
-                    /* Backdrop filter support */
-                    @supports (backdrop-filter: blur(20px)) {
-                        .glass-morphism {
-                            backdrop-filter: blur(20px);
-                        }
-                    }
-                    
-                    /* Reduced motion for accessibility */
-                    @media (prefers-reduced-motion: reduce) {
-                        * {
-                            animation-duration: 0.01ms !important;
-                            animation-iteration-count: 1 !important;
-                            transition-duration: 0.01ms !important;
-                        }
-                    }
-                `}</style>
-            </Card>
-
-            {/* Modals */}
-            {isEditModalVisible && editingBill && (
-                <EditBillModal
-                    open={isEditModalVisible}
-                    onCancel={handleModalClose}
-                    onSubmit={async (values) => {
-                        try {
-                            await updateBill(editingBill, values);
-                            handleModalClose();
-                        } catch (error) {
-                            console.error('Error updating bill:', error);
-                        }
-                    }}
-                    initialData={editingBill}
-                />
-            )}
-
-            {isMultiModalVisible && (
-                <MultiBillModal
-                    open={isMultiModalVisible}
-                    onClose={handleMultiModalClose}
-                />
-            )}
-        </>
-    );
-};
-
-export default CombinedBillsOverview;        </div>
-                        
+                        </div>
                         <div style={{ textAlign: 'right' }}>
                             <Text
                                 strong
@@ -324,37 +247,69 @@ export default CombinedBillsOverview;        </div>
                         </div>
                     </div>
                 </div>
-
-                {/* Expandable Actions */}
-                {isExpanded && (
-                    <div
-                        style={{
-                            display: 'flex',
-                            gap: '8px',
-                            opacity: isExpanded ? 1 : 0,
-                            transform: isExpanded ? 'translateX(0)' : 'translateX(20px)',
-                            transition: `all 200ms ${designTokens.motion.smooth}`
-                        }}
-                        onClick={(e) => e.stopPropagation()}
-                    >
-                        <Button
-                            type="text"
-                            size="small"
-                            icon={<IconEdit size={16} />}
-                            onClick={() => onEdit(bill)}
-                            style={{ borderRadius: '8px' }}
-                        />
-                        <Button
-                            type="text"
-                            size="small"
-                            danger
-                            icon={<IconTrash size={16} />}
-                            onClick={() => onDelete(bill)}
-                            style={{ borderRadius: '8px' }}
-                        />
-                    </div>
-                )}
             </div>
+
+            {isExpanded && (
+                <div
+                    style={{
+                        marginTop: '12px',
+                        paddingTop: '12px',
+                        borderTop: `1px solid ${designTokens.semantic.neutral.surface}`,
+                        display: 'flex',
+                        gap: '8px',
+                        opacity: isExpanded ? 1 : 0,
+                        transition: `all 200ms ${designTokens.motion.smooth}`
+                    }}
+                    onClick={(e) => e.stopPropagation()}
+                >
+                    <Button
+                        type="text"
+                        size="small"
+                        icon={<IconEdit size={16} />}
+                        onClick={() => onEdit(bill)}
+                        style={{ borderRadius: '8px' }}
+                    />
+                    <Button
+                        type="text"
+                        size="small"
+                        danger
+                        icon={<IconTrash size={16} />}
+                        onClick={() => onDelete(bill)}
+                        style={{ borderRadius: '8px' }}
+                    />
+                </div>
+            )}
+            <style jsx>{`
+                @keyframes pulse {
+                    0%, 100% { opacity: 1; }
+                    50% { opacity: 0.5; }
+                }
+                @keyframes glow {
+                    0% { opacity: 0.5; }
+                    100% { opacity: 1; }
+                }
+                * {
+                    scroll-behavior: smooth;
+                }
+                @media (max-width: 768px) {
+                    button {
+                        min-height: 44px;
+                        min-width: 44px;
+                    }
+                }
+                @supports (backdrop-filter: blur(20px)) {
+                    .glass-morphism {
+                        backdrop-filter: blur(20px);
+                    }
+                }
+                @media (prefers-reduced-motion: reduce) {
+                    * {
+                        animation-duration: 0.01ms !important;
+                        animation-iteration-count: 1 !important;
+                        transition-duration: 0.01ms !important;
+                    }
+                }
+            `}</style>
         </div>
     );
 };
@@ -379,7 +334,6 @@ const CombinedBillsOverview = ({ style, onEditBill, onAddBill, onExpansionChange
     const screens = useBreakpoint();
     const isMobile = !screens.md;
 
-    // Filter bills for current month
     const validBills = Array.isArray(bills) ? bills : [];
     const startOfDisplayedMonth = displayedMonth.startOf('month');
     const endOfDisplayedMonth = displayedMonth.endOf('month');
@@ -401,11 +355,10 @@ const CombinedBillsOverview = ({ style, onEditBill, onAddBill, onExpansionChange
         const remaining = total - paid;
         const progress = total > 0 ? Math.round((paid / total) * 100) : 0;
         const overdue = billsDueInDisplayedMonth.filter(b => !b.isPaid && dayjs(b.dueDate).isBefore(dayjs())).length;
-        
+
         return { total, paid, remaining, progress, overdue };
     }, [billsDueInDisplayedMonth]);
 
-    // Event Handlers
     const handleTogglePaid = async (bill) => {
         try {
             await updateBill(bill, { isPaid: !bill.isPaid });
@@ -442,14 +395,12 @@ const CombinedBillsOverview = ({ style, onEditBill, onAddBill, onExpansionChange
         setMultiModalVisible(false);
     };
 
-    // Notify parent of expansion changes
     React.useEffect(() => {
         if (onExpansionChange) {
             onExpansionChange(!showPaidBills || filteredBills.length > 0);
         }
     }, [showPaidBills, filteredBills.length, onExpansionChange]);
 
-    // Error handling
     if (error && !loading) {
         return (
             <Card style={style}>
@@ -471,7 +422,6 @@ const CombinedBillsOverview = ({ style, onEditBill, onAddBill, onExpansionChange
                 }}
             >
                 <Spin spinning={loading} tip="Loading Bills...">
-                    {/* Header with Glass Morphism */}
                     <div
                         style={{
                             background: 'rgba(255, 255, 255, 0.8)',
@@ -481,8 +431,8 @@ const CombinedBillsOverview = ({ style, onEditBill, onAddBill, onExpansionChange
                             marginBottom: '20px',
                             position: 'relative'
                         }}
+                        className="glass-morphism"
                     >
-                        {/* Month Navigation */}
                         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '20px' }}>
                             <Tooltip title="Previous Month">
                                 <Button
@@ -532,7 +482,6 @@ const CombinedBillsOverview = ({ style, onEditBill, onAddBill, onExpansionChange
                                 </Text>
                             </div>
 
-                            {/* Smart Controls */}
                             <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                                 <Tooltip title={showPaidBills ? 'Hide paid bills' : 'Show paid bills'}>
                                     <Button
@@ -545,7 +494,6 @@ const CombinedBillsOverview = ({ style, onEditBill, onAddBill, onExpansionChange
                                         }}
                                     />
                                 </Tooltip>
-                                
                                 <Tooltip title="Add new bill">
                                     <Button
                                         type="primary"
@@ -564,7 +512,6 @@ const CombinedBillsOverview = ({ style, onEditBill, onAddBill, onExpansionChange
                             </div>
                         </div>
 
-                        {/* Progress Visualization */}
                         <div
                             style={{
                                 background: 'white',
@@ -579,7 +526,6 @@ const CombinedBillsOverview = ({ style, onEditBill, onAddBill, onExpansionChange
                                     {stats.progress}%
                                 </Text>
                             </div>
-                            
                             <Progress
                                 percent={stats.progress}
                                 strokeColor={{
@@ -590,7 +536,6 @@ const CombinedBillsOverview = ({ style, onEditBill, onAddBill, onExpansionChange
                                 strokeWidth={8}
                                 style={{ marginBottom: '12px' }}
                             />
-                            
                             <Row gutter={16}>
                                 <Col span={8}>
                                     <Statistic
@@ -617,7 +562,6 @@ const CombinedBillsOverview = ({ style, onEditBill, onAddBill, onExpansionChange
                         </div>
                     </div>
 
-                    {/* Bills List */}
                     <div style={{ padding: '0 24px 24px' }}>
                         {filteredBills.length === 0 ? (
                             <div
@@ -651,3 +595,32 @@ const CombinedBillsOverview = ({ style, onEditBill, onAddBill, onExpansionChange
                             </div>
                         )}
                     </div>
+                </Spin>
+            </Card>
+
+            {isEditModalVisible && editingBill && (
+                <EditBillModal
+                    open={isEditModalVisible}
+                    onCancel={handleModalClose}
+                    onSubmit={async (values) => {
+                        try {
+                            await updateBill(editingBill, values);
+                            handleModalClose();
+                        } catch (error) {
+                            console.error('Error updating bill:', error);
+                        }
+                    }}
+                    initialData={editingBill}
+                />
+            )}
+            {isMultiModalVisible && (
+                <MultiBillModal
+                    open={isMultiModalVisible}
+                    onClose={handleMultiModalClose}
+                />
+            )}
+        </>
+    );
+};
+
+export default CombinedBillsOverview;
