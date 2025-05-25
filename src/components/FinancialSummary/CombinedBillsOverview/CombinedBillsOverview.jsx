@@ -451,11 +451,11 @@ const CombinedBillsOverview = ({ style }) => {
                                             }} 
                                             trigger={['click']}
                                         >
-                                            <Button 
-                                                type='text' 
-                                                icon={<IconDotsVertical size={16} />} 
+                                            <Button
+                                                type='text'
+                                                icon={<IconDotsVertical size={16} />}
                                                 onClick={e => e.stopPropagation()}
-                                                style={{ padding: '4px 8px' }}
+                                                style={{ padding: '4px 4px' }}
                                             />
                                         </Dropdown>
                                     </div>

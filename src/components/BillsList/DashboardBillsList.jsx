@@ -133,6 +133,7 @@ const DashboardBillsList = ({
               type="text"
               icon={<IconDotsVertical size={18} />}
               onClick={(e) => e.stopPropagation()}
+              style={{ padding: '4px 4px' }}
             />
           </Dropdown>
         );

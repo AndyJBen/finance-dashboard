@@ -640,13 +640,13 @@ textarea {
     display: none;
   }
   
-  .category-tags-container > .ant-tag {
-    flex-shrink: 0;
-    padding: 0 6px !important;
-    font-size: 0.7rem !important;
-    height: 22px !important;
-    line-height: 20px !important;
-  }
+.category-tags-container > .ant-tag {
+  flex-shrink: 0;
+  padding: 0 8px !important;
+  font-size: 0.8rem !important;
+  height: 24px !important;
+  line-height: 22px !important;
+}
   
   .category-tags-container .tabler-icon {
     width: 12px !important;
@@ -1061,6 +1061,15 @@ textarea {
 .bills-overview-table table {
   border-spacing: 0 !important;
   border-collapse: collapse !important;
+}
+
+/* Remove borders and shadow from table so it blends with the card */
+.bills-overview-table .ant-table,
+.bills-overview-table .ant-table-container,
+.bills-overview-table .ant-table-container table {
+  box-shadow: none !important;
+  border-left: none !important;
+  border-right: none !important;
 }
 
 /* Table header styling */
