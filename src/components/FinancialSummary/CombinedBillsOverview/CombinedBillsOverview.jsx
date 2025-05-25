@@ -290,26 +290,26 @@ const CombinedBillsOverview = ({ style }) => {
      <> {/* Fragment to wrap Card and Modals */}
         <Card
             style={style}
-            styles={{ body: { padding: 'var(--space-20)' } }}
+            styles={{ body: { padding: 0 } }} // Remove body padding so bills can touch edges
         >
             <Spin spinning={loading} tip="Loading Bills...">
 
-                {/* Render Monthly Progress Summary Component */}
-                <MonthlyProgressSummary
-                    loading={loading}
-                    displayedMonth={displayedMonth}
-                    goToPreviousMonth={goToPreviousMonth}
-                    goToNextMonth={goToNextMonth}
-                    totalBillsInDisplayedMonth={totalBillsInDisplayedMonth}
-                    paidBillsInDisplayedMonth={paidBillsInDisplayedMonth}
-                    totalAmountForAllBillsInDisplayedMonth={totalAmountForAllBillsInDisplayedMonth}
-                    percentAmountPaid={percentAmountPaid}
-                    totalExpensesInDisplayedMonth={totalExpensesInDisplayedMonth}
-                    totalAmountDueInDisplayedMonth={totalAmountDueInDisplayedMonth}
-                />
+                {/* Header Section with Padding */}
+                <div style={{ padding: 'var(--space-20)' }}>
+                    {/* Render Monthly Progress Summary Component */}
+                    <MonthlyProgressSummary
+                        loading={loading}
+                        displayedMonth={displayedMonth}
+                        goToPreviousMonth={goToPreviousMonth}
+                        goToNextMonth={goToNextMonth}
+                        totalBillsInDisplayedMonth={totalBillsInDisplayedMonth}
+                        paidBillsInDisplayedMonth={paidBillsInDisplayedMonth}
+                        totalAmountForAllBillsInDisplayedMonth={totalAmountForAllBillsInDisplayedMonth}
+                        percentAmountPaid={percentAmountPaid}
+                        totalExpensesInDisplayedMonth={totalExpensesInDisplayedMonth}
+                        totalAmountDueInDisplayedMonth={totalAmountDueInDisplayedMonth}
+                    />
 
-                {/* Replace BillsListSection with custom list */}
-                <div>
                     {/* Filter Section */}
                     <div style={{ marginBottom: '20px', width: '100%' }}>
                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
@@ -366,112 +366,109 @@ const CombinedBillsOverview = ({ style }) => {
                             ))}
                          </div>
                     </div>
-
-                    {/* Custom Bills List */}
-                    {!isTableCollapsed && (
-                        <div className="bills-list-container">
-                            {tableDataSource.length === 0 ? (
-                                <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--neutral-500)' }}>
-                                    <Text type="secondary">No bills match the current filters for this month.</Text>
-                                </div>
-                            ) : (
-                                tableDataSource.map((record, index) => (
-                                    <div key={record.id || index} className={`bill-row ${rowClassName(record)}`}>
-                                        {/* Checkbox */}
-                                        <div className="bill-checkbox">
-                                            <Checkbox 
-                                                className={`status-checkbox small-checkbox ${record.isPaid ? 'checked' : ''}`} 
-                                                checked={record.isPaid} 
-                                                onChange={() => handleTogglePaid(record)} 
-                                            />
-                                        </div>
-
-                                        {/* Main Content */}
-                                        <div className="bill-content">
-                                            {/* Top Row: Name and Amount */}
-                                            <div className="bill-main-row">
-                                                <Text strong className="bill-name">{record.name}</Text>
-                                                <Text strong className="bill-amount">
-                                                    ${Number(record.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                                                </Text>
-                                            </div>
-
-                                            {/* Bottom Row: Category and Due Status */}
-                                            <div className="bill-details-row">
-                                                {record.category && (
-                                                    <Tag 
-                                                        style={{ 
-                                                            margin: 0,
-                                                            backgroundColor: 'transparent',
-                                                            border: 'none',
-                                                            color: 'var(--neutral-600)',
-                                                            fontSize: '0.7rem',
-                                                            padding: '0 4px 0 0'
-                                                        }}
-                                                    >
-                                                        <span style={{ marginRight: '4px', display: 'inline-flex', alignItems: 'center' }}>
-                                                            {getCategoryIcon(record.category)}
-                                                        </span>
-                                                        {record.category}
-                                                    </Tag>
-                                                )}
-                                                <div className="bill-due-status">
-                                                    {renderDueIn(record.dueDate, record)}
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        {/* Actions */}
-                                        <div className="bill-actions">
-                                            <Dropdown
-                                                menu={{ 
-                                                    items: [
-                                                        { 
-                                                            key: 'edit', 
-                                                            icon: <IconEdit size={16} />, 
-                                                            label: 'Edit', 
-                                                            onClick: (e) => { 
-                                                                if (e && e.domEvent) e.domEvent.stopPropagation(); 
-                                                                handleEdit(record); 
-                                                            } 
-                                                        },
-                                                        { 
-                                                            key: 'delete', 
-                                                            icon: <IconTrash size={16} />, 
-                                                            label: 'Delete', 
-                                                            danger: true, 
-                                                            onClick: (e) => { 
-                                                                if (e && e.domEvent) e.domEvent.stopPropagation(); 
-                                                                handleDelete(record); 
-                                                            } 
-                                                        }
-                                                    ]
-                                                }} 
-                                                trigger={['click']}
-                                            >
-                                                <Button 
-                                                    type='text' 
-                                                    icon={<IconDotsVertical size={16} />} 
-                                                    onClick={e => e.stopPropagation()} 
-                                                />
-                                            </Dropdown>
-                                        </div>
-                                    </div>
-                                ))
-                            )}
-                        </div>
-                    )}
-
-                    {/* Collapse/Expand Button - REMOVED */}
-
                 </div>
 
-                {/* Show/Hide Paid Bills Toggle Button - Only displayed when table is not collapsed */}
+                {/* Bills Body Section - Full Width */}
+                {!isTableCollapsed && (
+                    <div className="bills-list-container">
+                        {tableDataSource.length === 0 ? (
+                            <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--neutral-500)' }}>
+                                <Text type="secondary">No bills match the current filters for this month.</Text>
+                            </div>
+                        ) : (
+                            tableDataSource.map((record, index) => (
+                                <div key={record.id || index} className={`bill-row ${rowClassName(record)}`}>
+                                    {/* Checkbox */}
+                                    <div className="bill-checkbox">
+                                        <Checkbox 
+                                            className={`status-checkbox small-checkbox ${record.isPaid ? 'checked' : ''}`} 
+                                            checked={record.isPaid} 
+                                            onChange={() => handleTogglePaid(record)} 
+                                        />
+                                    </div>
+
+                                    {/* Main Content */}
+                                    <div className="bill-content">
+                                        {/* Top Row: Name and Amount */}
+                                        <div className="bill-main-row">
+                                            <Text strong className="bill-name">{record.name}</Text>
+                                            <Text strong className="bill-amount">
+                                                ${Number(record.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                            </Text>
+                                        </div>
+
+                                        {/* Bottom Row: Category and Due Status */}
+                                        <div className="bill-details-row">
+                                            {record.category && (
+                                                <Tag 
+                                                    style={{ 
+                                                        margin: 0,
+                                                        backgroundColor: 'transparent',
+                                                        border: 'none',
+                                                        color: 'var(--neutral-600)',
+                                                        fontSize: '0.75rem',
+                                                        padding: '0 4px 0 0'
+                                                    }}
+                                                >
+                                                    <span style={{ marginRight: '4px', display: 'inline-flex', alignItems: 'center' }}>
+                                                        {React.cloneElement(getCategoryIcon(record.category), { size: 14 })}
+                                                    </span>
+                                                    {record.category}
+                                                </Tag>
+                                            )}
+                                            <div className="bill-due-status">
+                                                {renderDueIn(record.dueDate, record)}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Actions */}
+                                    <div className="bill-actions">
+                                        <Dropdown
+                                            menu={{ 
+                                                items: [
+                                                    { 
+                                                        key: 'edit', 
+                                                        icon: <IconEdit size={16} />, 
+                                                        label: 'Edit', 
+                                                        onClick: (e) => { 
+                                                            if (e && e.domEvent) e.domEvent.stopPropagation(); 
+                                                            handleEdit(record); 
+                                                        } 
+                                                    },
+                                                    { 
+                                                        key: 'delete', 
+                                                        icon: <IconTrash size={16} />, 
+                                                        label: 'Delete', 
+                                                        danger: true, 
+                                                        onClick: (e) => { 
+                                                            if (e && e.domEvent) e.domEvent.stopPropagation(); 
+                                                            handleDelete(record); 
+                                                        } 
+                                                    }
+                                                ]
+                                            }} 
+                                            trigger={['click']}
+                                        >
+                                            <Button 
+                                                type='text' 
+                                                icon={<IconDotsVertical size={16} />} 
+                                                onClick={e => e.stopPropagation()} 
+                                            />
+                                        </Dropdown>
+                                    </div>
+                                </div>
+                            ))
+                        )}
+                    </div>
+                )}
+
+                {/* Footer Section with Padding */}
                 {!isTableCollapsed && billsDueInDisplayedMonth.length > 0 && paidVisibleCount > 0 && (
                     <div style={{ 
                         textAlign: 'center', 
                         borderTop: '1px solid var(--neutral-200)',
-                        paddingTop: 'var(--space-12)'
+                        padding: 'var(--space-12) var(--space-20)'
                     }}>
                         <Button
                             type="text"
