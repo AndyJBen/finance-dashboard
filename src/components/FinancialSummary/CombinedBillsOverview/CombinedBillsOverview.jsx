@@ -237,213 +237,22 @@ const CombinedBillsOverview = ({ style }) => {
         }
         const due = dayjs(dueDate).startOf('day');
         const today = dayjs().startOf('day');
-        const diffDays = due.diff(today, 'day');
-        
         if (due.isBefore(today)) {
             if (record.category === 'Bill Prep') {
                 return <span style={{ color: 'var(--neutral-400)' }}>-</span>;
             }
-            
-            const daysPastDue = Math.abs(diffDays);
-            let overdueText = '';
-            
-            if (daysPastDue < 7) {
-                overdueText = `${daysPastDue}d`;
-            } else if (daysPastDue < 30) {
-                const weeks = Math.floor(daysPastDue / 7);
-                overdueText = `${weeks}w`;
-            } else {
-                const months = Math.floor(daysPastDue / 30);
-                overdueText = `${months}m`;
-            }
-            
-            return (
-                <>
-                    <div style={{ 
-                        width: '6px', 
-                        height: '6px', 
-                        borderRadius: '50%', 
-                        backgroundColor: 'var(--danger-500)' 
-                    }} />
-                    <span style={{ color: 'var(--danger-500)', fontSize: '0.75rem' }}>
-                        {overdueText}
-                    </span>
-                </>
-            );
+            return <span style={{ color: 'var(--danger-500)' }}>Past Due</span>;
         }
         if (due.isSame(today, 'day')) {
-            return <span style={{ color: 'var(--warning-700)', fontSize: '0.75rem' }}>Today</span>;
+            return <span style={{ color: 'var(--warning-700)' }}>Today</span>;
         }
-        
-        // Format future dates
-        let futureText = '';
-        if (diffDays < 7) {
-            futureText = `${diffDays}d`;
-        } else if (diffDays < 30) {
-            const weeks = Math.floor(diffDays / 7);
-            futureText = `${weeks}w`;
-        } else {
-            const months = Math.floor(diffDays / 30);
-            futureText = `${months}m`;
-        }
-        
-        return <span style={{ fontSize: '0.75rem', color: 'var(--neutral-600)' }}>{futureText}</span>;
+        return formatDueDate(dueDate);
     };
-
-
-    // --- Table Columns Definition ---
-    const defaultColumns = [
-        { title: '', dataIndex: 'isPaid', key: 'statusCheckbox', width: 32, align: 'center', render: (isPaid, record) => (<Tooltip title={isPaid ? 'Mark as Unpaid' : 'Mark as Paid'}><Checkbox className={`status-checkbox small-checkbox ${isPaid ? 'checked' : ''}`} checked={isPaid} onChange={() => handleTogglePaid(record)} /></Tooltip>) },
-        { title: 'Name', dataIndex: 'name', key: 'name', width: 130, align: 'left', sorter: (a, b) => a.name.localeCompare(b.name), render: (text) => (<div style={{ textAlign: 'left' }}><Text strong>{text}</Text></div>) },
-        { title: 'Amount', dataIndex: 'amount', key: 'amount', width: 80, align: 'left', sorter: (a, b) => a.amount - b.amount, render: (amount) => <Text strong>{`$${Number(amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}</Text> },
-        { title: 'Category', dataIndex: 'category', key: 'category', width: 80, align: 'left', render: (category) => category ? (<div style={{ textAlign: 'left' }}><Tag icon={<span style={{ marginRight: '6px', display: 'inline-flex', alignItems: 'center' }}>{getCategoryIcon(category)}</span>} color={getCategoryColor(category)}>{category}</Tag></div>) : null },
-        { title: 'Due Date', dataIndex: 'dueDate', key: 'dueDate', width: 80, align: 'left', sorter: (a, b) => dayjs(a.dueDate).valueOf() - dayjs(b.dueDate).valueOf(), render: (date) => date ? dayjs(date).format('MM/DD/YYYY') : 'N/A' },
-        {
-            title: 'Due In', key: 'dueIn', dataIndex: 'dueDate', width: 60, align: 'left',
-            sorter: (a, b) => {
-                if (a.isPaid && !b.isPaid) return 1; if (!a.isPaid && b.isPaid) return -1;
-                const dateA = dayjs(a.dueDate).isValid() ? dayjs(a.dueDate).valueOf() : Infinity;
-                const dateB = dayjs(b.dueDate).isValid() ? dayjs(b.dueDate).valueOf() : Infinity;
-                return dateA - dateB;
-            },
-            defaultSortOrder: 'ascend',
-            render: (dueDate, record) => renderDueIn(dueDate, record),
-        },
-        {
-            title: (<Tooltip title={isTableCollapsed ? 'Expand List' : 'Collapse List'}><Button type='link' size='small' icon={isTableCollapsed ? <IconChevronDown size={16} /> : <IconChevronUp size={16} />} onClick={() => setIsTableCollapsed(!isTableCollapsed)} style={{ padding: '0 4px' }} /></Tooltip>),
-            key: 'actions', fixed: 'right', width: 30, align: 'center',
-            render: (_, record) => {
-                const menuItems = [
-                    { key: 'edit', icon: <IconEdit size={16} />, label: 'Edit', onClick: (e) => { if (e && e.domEvent) e.domEvent.stopPropagation(); handleEdit(record); } },
-                    { key: 'delete', icon: <IconTrash size={16} />, label: 'Delete', danger: true, onClick: (e) => { if (e && e.domEvent) e.domEvent.stopPropagation(); handleDelete(record); } }
-                ];
-                return (<Dropdown menu={{ items: menuItems }} trigger={['click']}><Button type='text' icon={<IconDotsVertical size={16} />} style={{ padding: '0 12px' }} onClick={e => e.stopPropagation()} /></Dropdown>);
-            }
-        },
-    ];
-
-    const mobileColumns = [
-        { 
-            title: '', 
-            dataIndex: 'isPaid', 
-            key: 'statusCheckbox', 
-            width: 32, 
-            align: 'center', 
-            render: (isPaid, record) => (
-                <Checkbox 
-                    className={`status-checkbox small-checkbox ${isPaid ? 'checked' : ''}`} 
-                    checked={isPaid} 
-                    onChange={() => handleTogglePaid(record)} 
-                />
-            ) 
-        },
-        {
-            title: 'Bill',
-            key: 'billInfo',
-            render: (_, record) => {
-                const amountFormatted = `$${Number(record.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-                
-                return (
-                    <div className='mobile-bill-cell'>
-                        <div className='mobile-bill-main'>
-                            <div style={{ display: 'flex', alignItems: 'center', flex: 1, minWidth: 0 }}>
-                                <Text strong style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                    {record.name}
-                                </Text>
-                            </div>
-                            <div style={{ textAlign: 'right', flexShrink: 0, marginLeft: '8px' }}>
-                                <Text strong className='amount-cell'>{amountFormatted}</Text>
-                                <div style={{ fontSize: '0.7rem', color: 'var(--neutral-600)', marginTop: '2px' }}>
-                                    {record.dueDate ? dayjs(record.dueDate).format('MM/DD') : 'N/A'}
-                                </div>
-                            </div>
-                        </div>
-                        <div className='mobile-bill-details'>
-                            {record.category && (
-                                <Tag 
-                                    style={{ 
-                                        margin: 0,
-                                        backgroundColor: 'transparent',
-                                        border: '1px solid var(--neutral-400)',
-                                        color: 'var(--neutral-700)',
-                                        fontSize: '0.7rem'
-                                    }}
-                                >
-                                    <span style={{ marginRight: '4px', display: 'inline-flex', alignItems: 'center' }}>
-                                        {getCategoryIcon(record.category)}
-                                    </span>
-                                    {record.category}
-                                </Tag>
-                            )}
-                            <div className='due-in-cell' style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                                {renderDueIn(record.dueDate, record)}
-                            </div>
-                        </div>
-                    </div>
-                );
-            }
-        },
-        {
-            title: (
-                <Tooltip title={isTableCollapsed ? 'Expand List' : 'Collapse List'}>
-                    <Button 
-                        type='link' 
-                        size='small' 
-                        icon={isTableCollapsed ? <IconChevronDown size={16} /> : <IconChevronUp size={16} />} 
-                        onClick={() => setIsTableCollapsed(!isTableCollapsed)} 
-                        style={{ padding: '0 4px' }} 
-                    />
-                </Tooltip>
-            ),
-            key: 'actions', 
-            fixed: 'right', 
-            width: 30, 
-            align: 'center',
-            render: (_, record) => {
-                const menuItems = [
-                    { 
-                        key: 'edit', 
-                        icon: <IconEdit size={16} />, 
-                        label: 'Edit', 
-                        onClick: (e) => { 
-                            if (e && e.domEvent) e.domEvent.stopPropagation(); 
-                            handleEdit(record); 
-                        } 
-                    },
-                    { 
-                        key: 'delete', 
-                        icon: <IconTrash size={16} />, 
-                        label: 'Delete', 
-                        danger: true, 
-                        onClick: (e) => { 
-                            if (e && e.domEvent) e.domEvent.stopPropagation(); 
-                            handleDelete(record); 
-                        } 
-                    }
-                ];
-                return (
-                    <Dropdown menu={{ items: menuItems }} trigger={['click']}>
-                        <Button 
-                            type='text' 
-                            icon={<IconDotsVertical size={16} />} 
-                            style={{ padding: '0 12px' }} 
-                            onClick={e => e.stopPropagation()} 
-                        />
-                    </Dropdown>
-                );
-            }
-        }
-    ];
-
-    const columns = isSmallScreen ? mobileColumns : defaultColumns;
-    // --- End Table Columns ---
-
 
     // --- Button Styles and Menu Items (Remain in parent) ---
     const selectedAllButtonStyle = { fontWeight: 600, padding: '0 10px', height: '28px', borderColor: 'var(--primary-500)', color: 'var(--primary-600)' };
     const defaultAllButtonStyle = { fontWeight: 500, padding: '0 10px', height: '28px' };
     // --- End Button Styles ---
-
 
     // --- Render Logic ---
     if (error && !loading) { return (<Card style={style}><Alert message="Error Loading Bills Data" description={error.message || 'Unknown error'} type="error" showIcon closable /></Card>); }
@@ -474,22 +283,178 @@ const CombinedBillsOverview = ({ style }) => {
                     totalExpensesInDisplayedMonth={totalExpensesInDisplayedMonth}
                     totalAmountDueInDisplayedMonth={totalAmountDueInDisplayedMonth}
                 />
-                {/* Render Bills List Section Component */}
-                <BillsListSection
-                    loading={loading}
-                    columns={columns}
-                    tableDataSource={tableDataSource} // Pass the potentially empty dataSource
-                    isTableCollapsed={isTableCollapsed} // Pass collapse state down
-                    categories={categories}
-                    selectedCategory={selectedCategory}
-                    setSelectedCategory={setSelectedCategory}
-                    handleAddBill={handleAddBill}
-                    handleMenuClick={handleMenuClick}
-                    getCategoryIcon={getCategoryIcon} // Pass helper
-                    selectedAllButtonStyle={selectedAllButtonStyle}
-                    defaultAllButtonStyle={defaultAllButtonStyle}
-                    rowClassName={rowClassName}
-                />
+
+                {/* Replace BillsListSection with custom list */}
+                <div>
+                    {/* Filter Section */}
+                    <div style={{ marginBottom: '20px', width: '100%' }}>
+                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                            {/* Filter controls */}
+                            <Space align="center">
+                                <Text strong style={{ color: 'var(--neutral-600)', whiteSpace: 'nowrap' }}> Filter by: </Text>
+                                <Button
+                                    size="small"
+                                    type="default"
+                                    className="all-categories-btn"
+                                    onClick={() => setSelectedCategory('All')}
+                                    style={selectedCategory === 'All' ? selectedAllButtonStyle : defaultAllButtonStyle}
+                                >
+                                    All Categories
+                                </Button>
+                            </Space>
+
+                            {/* Button for Adding Bills */}
+                            <div>
+                                <Button
+                                    type="primary"
+                                    icon={<IconPlus size={16} />}
+                                    onClick={handleAddBill}
+                                    style={{ display: 'flex', alignItems: 'center', fontWeight: 500 }}
+                                    className="hide-on-mobile"
+                                >
+                                    Add Bills
+                                </Button>
+                            </div>
+                         </div>
+                         {/* Category Tags Container */}
+                         <div className="category-tags-container">
+                            {categories.map((category) => (
+                                <Tag.CheckableTag
+                                    key={category}
+                                    checked={selectedCategory === category}
+                                    onChange={(checked) => { setSelectedCategory(checked ? category : 'All'); }}
+                                    style={{ 
+                                        padding: '2px 8px', 
+                                        borderRadius: '12px', 
+                                        display: 'inline-flex', 
+                                        alignItems: 'center', 
+                                        gap: '6px', 
+                                        cursor: 'pointer', 
+                                        border: 'none',
+                                        backgroundColor: selectedCategory === category ? 'var(--primary-50)' : 'var(--neutral-50)', 
+                                        color: selectedCategory === category ? 'var(--primary-600)' : 'var(--neutral-700)', 
+                                        lineHeight: '1.4', 
+                                        fontSize: '0.8rem' 
+                                    }}
+                                >
+                                    {getCategoryIcon(category)} <span>{category}</span>
+                                </Tag.CheckableTag>
+                            ))}
+                         </div>
+                    </div>
+
+                    {/* Custom Bills List */}
+                    {!isTableCollapsed && (
+                        <div className="bills-list-container">
+                            {tableDataSource.length === 0 ? (
+                                <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--neutral-500)' }}>
+                                    <Text type="secondary">No bills match the current filters for this month.</Text>
+                                </div>
+                            ) : (
+                                tableDataSource.map((record, index) => (
+                                    <div key={record.id || index} className={`bill-row ${rowClassName(record)}`}>
+                                        {/* Checkbox */}
+                                        <div className="bill-checkbox">
+                                            <Checkbox 
+                                                className={`status-checkbox small-checkbox ${record.isPaid ? 'checked' : ''}`} 
+                                                checked={record.isPaid} 
+                                                onChange={() => handleTogglePaid(record)} 
+                                            />
+                                        </div>
+
+                                        {/* Main Content */}
+                                        <div className="bill-content">
+                                            {/* Top Row: Name and Amount */}
+                                            <div className="bill-main-row">
+                                                <Text strong className="bill-name">{record.name}</Text>
+                                                <div className="bill-amount-section">
+                                                    <Text strong className="bill-amount">
+                                                        ${Number(record.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                                    </Text>
+                                                    <Text className="bill-date">
+                                                        {record.dueDate ? dayjs(record.dueDate).format('MM/DD') : 'N/A'}
+                                                    </Text>
+                                                </div>
+                                            </div>
+
+                                            {/* Bottom Row: Category and Due Status */}
+                                            <div className="bill-details-row">
+                                                {record.category && (
+                                                    <Tag 
+                                                        style={{ 
+                                                            margin: 0,
+                                                            backgroundColor: 'transparent',
+                                                            border: 'none',
+                                                            color: 'var(--neutral-600)',
+                                                            fontSize: '0.7rem',
+                                                            padding: '0 4px 0 0'
+                                                        }}
+                                                    >
+                                                        <span style={{ marginRight: '4px', display: 'inline-flex', alignItems: 'center' }}>
+                                                            {getCategoryIcon(record.category)}
+                                                        </span>
+                                                        {record.category}
+                                                    </Tag>
+                                                )}
+                                                <div className="bill-due-status">
+                                                    {renderDueIn(record.dueDate, record)}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Actions */}
+                                        <div className="bill-actions">
+                                            <Dropdown
+                                                menu={{ 
+                                                    items: [
+                                                        { 
+                                                            key: 'edit', 
+                                                            icon: <IconEdit size={16} />, 
+                                                            label: 'Edit', 
+                                                            onClick: (e) => { 
+                                                                if (e && e.domEvent) e.domEvent.stopPropagation(); 
+                                                                handleEdit(record); 
+                                                            } 
+                                                        },
+                                                        { 
+                                                            key: 'delete', 
+                                                            icon: <IconTrash size={16} />, 
+                                                            label: 'Delete', 
+                                                            danger: true, 
+                                                            onClick: (e) => { 
+                                                                if (e && e.domEvent) e.domEvent.stopPropagation(); 
+                                                                handleDelete(record); 
+                                                            } 
+                                                        }
+                                                    ]
+                                                }} 
+                                                trigger={['click']}
+                                            >
+                                                <Button 
+                                                    type='text' 
+                                                    icon={<IconDotsVertical size={16} />} 
+                                                    onClick={e => e.stopPropagation()} 
+                                                />
+                                            </Dropdown>
+                                        </div>
+                                    </div>
+                                ))
+                            )}
+                        </div>
+                    )}
+
+                    {/* Collapse/Expand Button */}
+                    <div style={{ textAlign: 'center', marginTop: '16px', borderTop: '1px solid var(--neutral-200)', paddingTop: '12px' }}>
+                        <Button
+                            type="text"
+                            icon={isTableCollapsed ? <IconChevronDown size={16} /> : <IconChevronUp size={16} />}
+                            onClick={() => setIsTableCollapsed(!isTableCollapsed)}
+                            style={{ color: 'var(--neutral-600)' }}
+                        >
+                            {isTableCollapsed ? 'Show Bills' : 'Hide Bills'}
+                        </Button>
+                    </div>
+                </div>
 
                 {/* Show/Hide Paid Bills Toggle Button - Only displayed when table is not collapsed */}
                 {!isTableCollapsed && billsDueInDisplayedMonth.length > 0 && paidVisibleCount > 0 && (
@@ -532,6 +497,163 @@ const CombinedBillsOverview = ({ style }) => {
                 onClose={handleCloseMultiModal}
              />
         )}
+
+        {/* Custom CSS for the modern card-based design */}
+        <style jsx global>{`
+            .bills-list-container {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                margin-top: 16px;
+            }
+
+            .bill-row {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 16px;
+                background: white;
+                border-radius: 12px;
+                border: 1px solid var(--neutral-200);
+                transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            }
+
+            .bill-row:hover {
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                border-color: var(--primary-200);
+                transform: translateY(-1px);
+            }
+
+            .bill-checkbox {
+                flex-shrink: 0;
+            }
+
+            .bill-content {
+                flex: 1;
+                min-width: 0;
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+            }
+
+            .bill-main-row {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .bill-name {
+                font-size: 14px;
+                font-weight: 600;
+                color: var(--neutral-800);
+                line-height: 1.3;
+                flex: 1;
+                min-width: 0;
+                word-break: break-word;
+            }
+
+            .bill-amount-section {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-end;
+                gap: 2px;
+                flex-shrink: 0;
+            }
+
+            .bill-amount {
+                font-size: 14px;
+                font-weight: 600;
+                color: var(--neutral-900);
+                line-height: 1;
+            }
+
+            .bill-date {
+                font-size: 11px;
+                color: var(--neutral-500);
+                line-height: 1;
+            }
+
+            .bill-details-row {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .bill-due-status {
+                font-size: 12px;
+                font-weight: 500;
+                padding: 2px 6px;
+                border-radius: 6px;
+                background-color: var(--neutral-100);
+                color: var(--neutral-700);
+                white-space: nowrap;
+            }
+
+            .bill-actions {
+                flex-shrink: 0;
+                opacity: 0;
+                transition: opacity 0.2s ease;
+            }
+
+            .bill-row:hover .bill-actions {
+                opacity: 1;
+            }
+
+            /* Mobile optimizations */
+            @media (max-width: 768px) {
+                .bill-row {
+                    padding: 12px;
+                    gap: 10px;
+                }
+
+                .bill-main-row {
+                    gap: 8px;
+                }
+
+                .bill-name {
+                    font-size: 13px;
+                }
+
+                .bill-amount {
+                    font-size: 13px;
+                }
+
+                .bill-actions {
+                    opacity: 1; /* Always visible on mobile */
+                }
+
+                .bills-list-container {
+                    gap: 6px;
+                }
+            }
+
+            /* Fade animation for bill completion */
+            .bill-row-fade-out {
+                opacity: 0.5;
+                transform: scale(0.98);
+            }
+
+            /* Category tag styling */
+            .bill-details-row .ant-tag {
+                display: inline-flex;
+                align-items: center;
+                gap: 2px;
+            }
+
+            /* Due status color variations */
+            .bill-due-status:has-text("Past Due") {
+                background-color: var(--danger-100);
+                color: var(--danger-700);
+            }
+
+            .bill-due-status:has-text("Today") {
+                background-color: var(--warning-100);
+                color: var(--warning-700);
+            }
+        `}</style>
      </>
     );
 };
