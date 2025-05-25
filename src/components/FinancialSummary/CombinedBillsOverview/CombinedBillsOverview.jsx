@@ -515,7 +515,6 @@ const CombinedBillsOverview = ({ style }) => {
                 margin-top: 16px;
                 background: white;
                 border-radius: 12px;
-                border: 1px solid var(--neutral-200);
                 overflow: hidden;
             }
 
