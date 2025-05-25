@@ -289,7 +289,7 @@ const CombinedBillsOverview = ({ style }) => {
     return (
      <> {/* Fragment to wrap Card and Modals */}
         <Card
-            style={{...style, borderRadius: 0, boxShadow: 'none'}}
+            style={{...style, borderRadius: '20px', boxShadow: 'none'}}
             styles={{ body: { padding: 0 } }} // Remove body padding so bills can touch edges
         >
             <Spin spinning={loading} tip="Loading Bills...">
@@ -514,7 +514,7 @@ const CombinedBillsOverview = ({ style }) => {
                 flex-direction: column;
                 margin-top: 16px;
                 background: white;
-                border-radius: 12px;
+                border-radius: 0;
                 border: 1px solid var(--neutral-200);
                 overflow: hidden;
             }
@@ -607,7 +607,7 @@ const CombinedBillsOverview = ({ style }) => {
             @media (max-width: 768px) {
                 .bills-list-container {
                     margin-top: 12px;
-                    border-radius: 8px;
+                    border-radius: 0;
                 }
 
                 .bill-row {
