@@ -295,7 +295,12 @@ const CombinedBillsOverview = ({ style }) => {
             <Spin spinning={loading} tip="Loading Bills...">
 
                 {/* Header Section with Padding */}
-                <div style={{ padding: 'var(--space-20)' }}>
+                <div
+                    style={{
+                        padding: 'var(--space-20)',
+                        paddingBottom: 'calc(var(--space-20) * 0.1)'
+                    }}
+                >
                     {/* Render Monthly Progress Summary Component */}
                     <MonthlyProgressSummary
                         loading={loading}
