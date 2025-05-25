@@ -391,14 +391,9 @@ const CombinedBillsOverview = ({ style }) => {
                                             {/* Top Row: Name and Amount */}
                                             <div className="bill-main-row">
                                                 <Text strong className="bill-name">{record.name}</Text>
-                                                <div className="bill-amount-section">
-                                                    <Text strong className="bill-amount">
-                                                        ${Number(record.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                                                    </Text>
-                                                    <Text className="bill-date">
-                                                        {record.dueDate ? dayjs(record.dueDate).format('MM/DD') : 'N/A'}
-                                                    </Text>
-                                                </div>
+                                                <Text strong className="bill-amount">
+                                                    ${Number(record.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                                </Text>
                                             </div>
 
                                             {/* Bottom Row: Category and Due Status */}
@@ -518,8 +513,11 @@ const CombinedBillsOverview = ({ style }) => {
             .bills-list-container {
                 display: flex;
                 flex-direction: column;
-                gap: 8px;
                 margin-top: 16px;
+                background: white;
+                border-radius: 12px;
+                border: 1px solid var(--neutral-200);
+                overflow: hidden;
             }
 
             .bill-row {
@@ -528,16 +526,18 @@ const CombinedBillsOverview = ({ style }) => {
                 gap: 12px;
                 padding: 16px;
                 background: white;
-                border-radius: 12px;
-                border: 1px solid var(--neutral-200);
+                border-radius: 0;
+                border: none;
+                border-bottom: 1px solid var(--neutral-100);
                 transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
             }
 
             .bill-row:hover {
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-                border-color: var(--primary-200);
-                /* Removed transform to prevent lifting */
+                background-color: var(--neutral-50);
+            }
+
+            .bill-row:last-child {
+                border-bottom: none;
             }
 
             .bill-checkbox {
@@ -555,7 +555,7 @@ const CombinedBillsOverview = ({ style }) => {
             .bill-main-row {
                 display: flex;
                 justify-content: space-between;
-                align-items: flex-start;
+                align-items: center;
                 gap: 12px;
             }
 
@@ -569,25 +569,12 @@ const CombinedBillsOverview = ({ style }) => {
                 word-break: break-word;
             }
 
-            .bill-amount-section {
-                display: flex;
-                flex-direction: column;
-                align-items: flex-end;
-                gap: 2px;
-                flex-shrink: 0;
-            }
-
             .bill-amount {
                 font-size: 14px;
                 font-weight: 600;
                 color: var(--neutral-900);
                 line-height: 1;
-            }
-
-            .bill-date {
-                font-size: 11px;
-                color: var(--neutral-500);
-                line-height: 1;
+                flex-shrink: 0;
             }
 
             .bill-details-row {
@@ -619,29 +606,14 @@ const CombinedBillsOverview = ({ style }) => {
 
             /* Mobile optimizations */
             @media (max-width: 768px) {
+                .bills-list-container {
+                    margin-top: 12px;
+                    border-radius: 8px;
+                }
+
                 .bill-row {
                     padding: 12px;
                     gap: 10px;
-                }
-
-                .bill-main-row {
-                    gap: 8px;
-                }
-
-                .bill-name {
-                    font-size: 13px;
-                }
-
-                .bill-amount {
-                    font-size: 13px;
-                }
-
-                .bill-actions {
-                    opacity: 1; /* Always visible on mobile */
-                }
-
-                .bills-list-container {
-                    gap: 6px;
                 }
             }
 
