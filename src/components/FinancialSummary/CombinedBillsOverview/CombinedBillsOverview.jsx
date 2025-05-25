@@ -289,7 +289,7 @@ const CombinedBillsOverview = ({ style }) => {
     return (
      <> {/* Fragment to wrap Card and Modals */}
         <Card
-            style={style}
+            style={{...style, borderRadius: 0, boxShadow: 'none'}}
             styles={{ body: { padding: 0 } }} // Remove body padding so bills can touch edges
         >
             <Spin spinning={loading} tip="Loading Bills...">
@@ -348,7 +348,7 @@ const CombinedBillsOverview = ({ style }) => {
                                     checked={selectedCategory === category}
                                     onChange={(checked) => { setSelectedCategory(checked ? category : 'All'); }}
                                     style={{ 
-                                        padding: '2px 8px', 
+                                        padding: '4px 10px', 
                                         borderRadius: '12px', 
                                         display: 'inline-flex', 
                                         alignItems: 'center', 
@@ -358,7 +358,7 @@ const CombinedBillsOverview = ({ style }) => {
                                         backgroundColor: selectedCategory === category ? 'var(--primary-50)' : 'var(--neutral-50)', 
                                         color: selectedCategory === category ? 'var(--primary-600)' : 'var(--neutral-700)', 
                                         lineHeight: '1.4', 
-                                        fontSize: '0.8rem' 
+                                        fontSize: '0.85rem' 
                                     }}
                                 >
                                     {getCategoryIcon(category)} <span>{category}</span>
@@ -405,7 +405,6 @@ const CombinedBillsOverview = ({ style }) => {
                                                         margin: 0,
                                                         backgroundColor: 'transparent',
                                                         border: 'none',
-                                                        color: 'var(--neutral-600)',
                                                         fontSize: '0.75rem',
                                                         padding: '0 4px 0 0'
                                                     }}
@@ -413,7 +412,9 @@ const CombinedBillsOverview = ({ style }) => {
                                                     <span style={{ marginRight: '4px', display: 'inline-flex', alignItems: 'center' }}>
                                                         {React.cloneElement(getCategoryIcon(record.category), { size: 14 })}
                                                     </span>
-                                                    {record.category}
+                                                    <span style={{ color: getCategoryColor(record.category) === 'default' ? 'var(--neutral-600)' : `var(--${getCategoryColor(record.category)}-600)` }}>
+                                                        {record.category}
+                                                    </span>
                                                 </Tag>
                                             )}
                                             <div className="bill-due-status">
@@ -453,7 +454,8 @@ const CombinedBillsOverview = ({ style }) => {
                                             <Button 
                                                 type='text' 
                                                 icon={<IconDotsVertical size={16} />} 
-                                                onClick={e => e.stopPropagation()} 
+                                                onClick={e => e.stopPropagation()}
+                                                style={{ padding: '4px 8px' }}
                                             />
                                         </Dropdown>
                                     </div>
