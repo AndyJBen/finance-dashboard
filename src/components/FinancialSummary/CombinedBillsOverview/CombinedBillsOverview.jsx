@@ -241,12 +241,36 @@ const CombinedBillsOverview = ({ style }) => {
             if (record.category === 'Bill Prep') {
                 return <span style={{ color: 'var(--neutral-400)' }}>-</span>;
             }
-            return <span style={{ color: 'var(--danger-500)' }}>Past Due</span>;
+            const diffDays = today.diff(due, 'day');
+            let text = '';
+            if (diffDays <= 30) {
+                text = `${diffDays}d Past`;
+            } else if (diffDays <= 365) {
+                const weeks = Math.floor(diffDays / 7);
+                text = `${weeks}w Past`;
+            } else {
+                const months = Math.floor(diffDays / 30);
+                text = `${months}m Past`;
+            }
+            return <span style={{ color: 'var(--danger-500)' }}>{text}</span>;
         }
         if (due.isSame(today, 'day')) {
             return <span style={{ color: 'var(--warning-700)' }}>Today</span>;
         }
-        return formatDueDate(dueDate);
+        const diffDays = due.diff(today, 'day');
+        let resultText = '';
+        if (diffDays <= 10) { 
+            resultText = `Due in ${diffDays}d`; 
+        } else {
+            const diffWeeks = Math.ceil(diffDays / 7);
+            if (diffWeeks <= 6) { 
+                resultText = `Due in ${diffWeeks}w`; 
+            } else { 
+                const diffMonths = Math.ceil(diffDays / 30.44); 
+                resultText = `Due in ${diffMonths}m`; 
+            }
+        }
+        return resultText;
     };
 
     // --- Button Styles and Menu Items (Remain in parent) ---
@@ -443,17 +467,8 @@ const CombinedBillsOverview = ({ style }) => {
                         </div>
                     )}
 
-                    {/* Collapse/Expand Button */}
-                    <div style={{ textAlign: 'center', marginTop: '16px', borderTop: '1px solid var(--neutral-200)', paddingTop: '12px' }}>
-                        <Button
-                            type="text"
-                            icon={isTableCollapsed ? <IconChevronDown size={16} /> : <IconChevronUp size={16} />}
-                            onClick={() => setIsTableCollapsed(!isTableCollapsed)}
-                            style={{ color: 'var(--neutral-600)' }}
-                        >
-                            {isTableCollapsed ? 'Show Bills' : 'Hide Bills'}
-                        </Button>
-                    </div>
+                    {/* Collapse/Expand Button - REMOVED */}
+
                 </div>
 
                 {/* Show/Hide Paid Bills Toggle Button - Only displayed when table is not collapsed */}
@@ -522,7 +537,7 @@ const CombinedBillsOverview = ({ style }) => {
             .bill-row:hover {
                 box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
                 border-color: var(--primary-200);
-                transform: translateY(-1px);
+                /* Removed transform to prevent lifting */
             }
 
             .bill-checkbox {
@@ -534,7 +549,7 @@ const CombinedBillsOverview = ({ style }) => {
                 min-width: 0;
                 display: flex;
                 flex-direction: column;
-                gap: 6px;
+                gap: 4px; /* Reduced gap from 6px to 4px */
             }
 
             .bill-main-row {
@@ -644,7 +659,7 @@ const CombinedBillsOverview = ({ style }) => {
             }
 
             /* Due status color variations */
-            .bill-due-status:has-text("Past Due") {
+            .bill-due-status:has-text("Past") {
                 background-color: var(--danger-100);
                 color: var(--danger-700);
             }
