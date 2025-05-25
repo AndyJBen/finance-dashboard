@@ -289,7 +289,7 @@ const CombinedBillsOverview = ({ style }) => {
     return (
      <> {/* Fragment to wrap Card and Modals */}
         <Card
-            style={{...style, borderRadius: 0, boxShadow: 'none'}}
+            style={{...style, borderRadius: '20px', boxShadow: 'none'}}
             styles={{ body: { padding: 0 } }} // Remove body padding so bills can touch edges
         >
             <Spin spinning={loading} tip="Loading Bills...">
@@ -451,11 +451,11 @@ const CombinedBillsOverview = ({ style }) => {
                                             }} 
                                             trigger={['click']}
                                         >
-                                            <Button 
-                                                type='text' 
-                                                icon={<IconDotsVertical size={16} />} 
+                                            <Button
+                                                type='text'
+                                                icon={<IconDotsVertical size={16} />}
                                                 onClick={e => e.stopPropagation()}
-                                                style={{ padding: '4px 8px' }}
+                                                style={{ padding: '4px 4px' }}
                                             />
                                         </Dropdown>
                                     </div>
@@ -606,7 +606,7 @@ const CombinedBillsOverview = ({ style }) => {
             @media (max-width: 768px) {
                 .bills-list-container {
                     margin-top: 12px;
-                    border-radius: 8px;
+                    border-radius: 0;
                 }
 
                 .bill-row {
