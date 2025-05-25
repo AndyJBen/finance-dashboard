@@ -159,7 +159,7 @@ const BillsList = ({ loading: propLoading }) => {
         return (
           // Use Dropdown v5 'menu' prop with items
           <Dropdown menu={{ items: menuItems }} trigger={['click']}>
-            <Button type="text" icon={<IconDotsVertical size={18} />} />
+            <Button type="text" icon={<IconDotsVertical size={18} />} style={{ padding: '4px 4px' }} />
           </Dropdown>
         );
       },
