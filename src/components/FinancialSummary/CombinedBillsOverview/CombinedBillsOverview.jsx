@@ -702,7 +702,7 @@ const CombinedBillsOverview = ({ style }) => {
                     display: flex;
                     align-items: center;
                     gap: 12px;
-                    padding: 16px;
+                    padding: 16px 24px;
                     width: 100%;
                     background: white;
                     z-index: 2;
@@ -780,7 +780,7 @@ const CombinedBillsOverview = ({ style }) => {
                     }
 
                     .bill-row-content {
-                        padding: 14px 16px;
+                        padding: 14px 20px;
                         gap: 12px;
                         min-height: 60px;
                     }
