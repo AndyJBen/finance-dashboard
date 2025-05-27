@@ -414,19 +414,19 @@ const CombinedBillsOverview = ({ style }) => {
 
     const getCategoryColor = (category) => {
         switch (category?.toLowerCase()) {
-            case 'utilities': return { text: '#6B7D8F', bg: '#F8FAFC' }; // Subtle slate blue
-            case 'rent': return { text: '#8B7CA3', bg: '#F9F8FB' }; // Muted lavender
-            case 'mortgage': return { text: '#A3856B', bg: '#FBF9F7' }; // Warm taupe
-            case 'groceries': return { text: '#7A9B76', bg: '#F8FBF8' }; // Soft sage
-            case 'subscription': return { text: '#6B9499', bg: '#F7FAFB' }; // Muted teal
-            case 'credit card': return { text: '#B5838B', bg: '#FCF8F9' }; // Dusty rose
-            case 'loan': return { text: '#A89B6B', bg: '#FCFBF7' }; // Soft olive
-            case 'insurance': return { text: '#9486A3', bg: '#FAF9FB' }; // Light mauve
-            case 'medical': return { text: '#B58A6B', bg: '#FCF9F7' }; // Warm beige
-            case 'personal care': return { text: '#8F8BA3', bg: '#FAF9FB' }; // Soft periwinkle
-            case 'bill prep': return { text: '#7085A3', bg: '#F8F9FB' }; // Muted steel
-            case 'auto': return { text: '#A3936B', bg: '#FCFAF7' }; // Soft amber
-            default: return { text: '#8E8E93', bg: '#F7F7F7' }; // iOS default gray
+            case 'utilities': return { text: '#6B94D6', bg: '#F4F7FC' }; // Soft blue - lighter
+            case 'rent': return { text: '#A07BB8', bg: '#F7F5FA' }; // Muted lavender - lighter
+            case 'mortgage': return { text: '#C7956B', bg: '#FCF8F5' }; // Warm terracotta - lighter
+            case 'groceries': return { text: '#7DB473', bg: '#F6FAF5' }; // Soft green - lighter
+            case 'subscription': return { text: '#6BAFB4', bg: '#F5FAFB' }; // Teal - lighter
+            case 'credit card': return { text: '#D4869A', bg: '#FBF6F8' }; // Soft rose - lighter
+            case 'loan': return { text: '#C5B06B', bg: '#FCFBF5' }; // Soft gold - lighter
+            case 'insurance': return { text: '#B296D4', bg: '#F8F6FB' }; // Light purple - lighter
+            case 'medical': return { text: '#D4966B', bg: '#FCF7F5' }; // Soft coral - lighter
+            case 'personal care': return { text: '#A096D4', bg: '#F8F6FB' }; // Periwinkle - lighter
+            case 'bill prep': return { text: '#6B9FD4', bg: '#F5F8FC' }; // Steel blue - lighter
+            case 'auto': return { text: '#D4B56B', bg: '#FCFAF5' }; // Soft amber - lighter
+            default: return { text: '#9B9B9B', bg: '#F8F8F8' }; // iOS default gray - lighter
         }
     };
 
