@@ -266,12 +266,13 @@ const EnhancedBillRow = ({
                                     display: 'inline-flex', 
                                     alignItems: 'center' 
                                 }}>
-                                    {React.cloneElement(getCategoryIcon(record.category), { size: 14 })}
+                                    {React.cloneElement(getCategoryIcon(record.category), { 
+                                        size: 14,
+                                        style: { color: getCategoryColor(record.category).text }
+                                    })}
                                 </span>
                                 <span style={{ 
-                                    color: getCategoryColor(record.category) === 'default' 
-                                        ? 'var(--neutral-600)' 
-                                        : `var(--${getCategoryColor(record.category)}-600)` 
+                                    color: getCategoryColor(record.category).text
                                 }}>
                                     {record.category}
                                 </span>
@@ -413,19 +414,19 @@ const CombinedBillsOverview = ({ style }) => {
 
     const getCategoryColor = (category) => {
         switch (category?.toLowerCase()) {
-            case 'utilities': return 'blue';
-            case 'rent': return 'purple';
-            case 'mortgage': return 'volcano';
-            case 'groceries': return 'green';
-            case 'subscription': return 'cyan';
-            case 'credit card': return 'red';
-            case 'loan': return 'gold';
-            case 'insurance': return 'magenta';
-            case 'medical': return 'red';
-            case 'personal care': return 'lime';
-            case 'bill prep': return 'geekblue';
-            case 'auto': return 'orange';
-            default: return 'default';
+            case 'utilities': return { text: '#4A90E2', bg: '#F0F6FF' }; // Soft blue
+            case 'rent': return { text: '#8B5FBF', bg: '#F5F1FF' }; // Muted purple
+            case 'mortgage': return { text: '#D4703A', bg: '#FFF5F0' }; // Warm orange
+            case 'groceries': return { text: '#5BA854', bg: '#F0FFF0' }; // Natural green
+            case 'subscription': return { text: '#36A9AE', bg: '#F0FFFF' }; // Teal
+            case 'credit card': return { text: '#E85D75', bg: '#FFF0F3' }; // Soft pink
+            case 'loan': return { text: '#B8860B', bg: '#FFFDF0' }; // Muted gold
+            case 'insurance': return { text: '#9370DB', bg: '#F8F5FF' }; // Light purple
+            case 'medical': return { text: '#DC6B19', bg: '#FFF7F0' }; // Soft coral
+            case 'personal care': return { text: '#7B68EE', bg: '#F6F4FF' }; // Periwinkle
+            case 'bill prep': return { text: '#4682B4', bg: '#F4F8FF' }; // Steel blue
+            case 'auto': return { text: '#CD853F', bg: '#FFF8F0' }; // Sandy brown
+            default: return { text: '#8E8E93', bg: '#F7F7F7' }; // iOS default gray
         }
     };
 
@@ -552,13 +553,19 @@ const CombinedBillsOverview = ({ style }) => {
                                             gap: '6px', 
                                             cursor: 'pointer', 
                                             border: 'none',
-                                            backgroundColor: selectedCategory === category ? 'var(--primary-50)' : 'var(--neutral-50)', 
-                                            color: selectedCategory === category ? 'var(--primary-600)' : 'var(--neutral-700)', 
+                                            backgroundColor: selectedCategory === category ? getCategoryColor(category).bg : 'var(--neutral-50)', 
+                                            color: selectedCategory === category ? getCategoryColor(category).text : 'var(--neutral-700)', 
                                             lineHeight: '1.4', 
                                             fontSize: '0.85rem' 
                                         }}
                                     >
-                                        {getCategoryIcon(category)} <span>{category}</span>
+                                        {React.cloneElement(getCategoryIcon(category), { 
+                                            size: 16,
+                                            style: { 
+                                                color: selectedCategory === category ? getCategoryColor(category).text : 'var(--neutral-700)' 
+                                            }
+                                        })} 
+                                        <span>{category}</span>
                                     </Tag.CheckableTag>
                                 ))}
                             </div>
