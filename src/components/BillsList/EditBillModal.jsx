@@ -115,7 +115,7 @@ const PremiumEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
       <Modal
         open={open}
         onCancel={onCancel}
-        footer={null}
+        footer={null} 
         centered
         closable={false}
         width="100%"
@@ -138,13 +138,7 @@ const PremiumEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
               : 'linear-gradient(135deg, #007AFF10, #007AFF05)'
           }}>
             <div className="header-backdrop">
-              <Button 
-                type="text" 
-                className="premium-cancel-button"
-                onClick={onCancel}
-                icon={<IconX size={16} />}
-              />
-              
+              {/* Cancel button is now in the footer */}
               <div className="header-title-section">
                 {selectedCategory && (
                   <Avatar 
@@ -163,16 +157,7 @@ const PremiumEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
                   <Text className="premium-modal-subtitle">{selectedCategory}</Text>
                 )}
               </div>
-              
-              <Button 
-                type="primary"
-                className="premium-save-button"
-                onClick={handleSubmit}
-                loading={isSubmitting}
-                icon={<IconCheck size={16} />}
-              >
-                {isSubmitting ? 'Saving' : 'Save'}
-              </Button>
+              <div style={{width: '32px'}}></div> {/* Spacer to balance the header since cancel button moved */}
             </div>
           </div>
 
@@ -337,12 +322,30 @@ const PremiumEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
               </div>
             </Form>
           </div>
+          <div className="premium-modal-footer">
+            <Button 
+              type="text" 
+              className="premium-cancel-button footer-button"
+              onClick={onCancel}
+            >
+              Cancel
+            </Button>
+            <Button 
+              type="primary"
+              className="premium-save-button footer-button"
+              onClick={handleSubmit}
+              loading={isSubmitting}
+              icon={<IconCheck size={16} />}
+            >
+              {isSubmitting ? 'Saving' : 'Save'}
+            </Button>
+          </div>
         </div>
       </Modal>
 
       <style jsx global>{`
         .premium-edit-bill-modal .ant-modal {
-          padding: 8px;
+          padding: 0; /* Modal itself has no padding, content will handle it */
         }
 
         .premium-edit-bill-modal .ant-modal-content {
@@ -355,27 +358,31 @@ const PremiumEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
 
         .premium-modal-container {
           background: #FDFDFD;
-          max-height: 80vh; 
+          max-height: 85vh; /* Increased slightly to accommodate footer */
           display: flex;
           flex-direction: column;
         }
 
         .premium-modal-header {
-          padding: 12px 16px;
+          padding: 12px 16px; /* Vertical padding, horizontal padding to align content */
           border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+          /* Removed specific width/max-width, it will take full width of its parent .premium-modal-container */
         }
 
         .header-backdrop {
           display: flex;
-          justify-content: space-between;
+          justify-content: space-between; /* This will push title to center if spacer is used */
           align-items: center;
+          width: 100%; /* Ensure backdrop takes full width of header */
         }
-
+        
         .header-title-section {
           display: flex;
           flex-direction: column;
           align-items: center;
           gap: 0px;
+          flex-grow: 1; /* Allow title to take available space for centering */
+          text-align: center;
         }
 
         .premium-modal-title {
@@ -396,35 +403,35 @@ const PremiumEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
           border: 1.5px solid rgba(255, 255, 255, 0.7);
           box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
         }
-
-        .premium-cancel-button,
-        .premium-save-button {
-          padding: 0 !important;
-          height: 32px !important;
+        
+        /* Button styles are now primarily for footer buttons */
+        .footer-button {
+          height: 36px !important; /* Slightly taller footer buttons */
           border-radius: 10px !important;
           font-weight: 500 !important;
-          font-size: 13px !important;
+          font-size: 14px !important; /* Slightly larger font for footer buttons */
           display: flex;
           align-items: center;
           justify-content: center;
+          flex-grow: 1; /* Allow buttons to share space */
+          margin: 0 4px; /* Small margin between buttons */
         }
         
-        .premium-cancel-button {
+        .premium-cancel-button.footer-button {
           color: #007AFF !important;
-          width: 32px !important;
           background: rgba(0, 122, 255, 0.08) !important;
           border: none !important;
         }
         
-        .premium-save-button {
+        .premium-save-button.footer-button {
           background: linear-gradient(135deg, #007AFF, #0056CC) !important;
           border: none !important;
-          padding: 0 12px !important;
+          color: white !important;
           box-shadow: 0 3px 8px rgba(0, 122, 255, 0.3) !important;
-          gap: 4px;
+          gap: 5px;
         }
 
-        .premium-save-button:hover {
+        .premium-save-button.footer-button:hover {
           background: linear-gradient(135deg, #0056CC, #003D99) !important;
           transform: translateY(-1px);
           box-shadow: 0 4px 10px rgba(0, 122, 255, 0.4) !important;
@@ -435,6 +442,16 @@ const PremiumEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
           overflow-y: auto;
           padding: 8px 16px 16px 16px;
         }
+
+        .premium-modal-footer {
+          padding: 12px 16px;
+          border-top: 1px solid rgba(0, 0, 0, 0.05);
+          display: flex;
+          justify-content: space-between; /* Or 'flex-end' or 'center' based on desired alignment */
+          align-items: center;
+          background: #FDFDFD; /* Match container background */
+        }
+
 
         .premium-bill-form {
           width: 100%;
@@ -729,14 +746,6 @@ const PremiumEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
         }
 
         @media (max-width: 430px) {
-          .premium-edit-bill-modal .ant-modal {
-            padding: 0;
-            margin: 0;
-            max-width: 100%;
-            width: 100%;
-            height: 100%;
-          }
-
           .premium-edit-bill-modal .ant-modal-content {
             border-radius: 0;
             height: 100vh;
@@ -755,10 +764,13 @@ const PremiumEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
           .premium-modal-header {
             padding: 12px;
           }
+           .premium-modal-footer {
+            padding: 12px;
+          }
         }
 
-        .premium-cancel-button:active,
-        .premium-save-button:active {
+        .premium-cancel-button.footer-button:active,
+        .premium-save-button.footer-button:active {
           transform: scale(0.96);
         }
 
@@ -770,7 +782,7 @@ const PremiumEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
           transform: scale(0.95);
         }
 
-        .premium-save-button.ant-btn-loading {
+        .premium-save-button.footer-button.ant-btn-loading {
           background: linear-gradient(135deg, #86868B, #6D6D70) !important;
           box-shadow: 0 3px 8px rgba(134, 134, 139, 0.3) !important;
         }
@@ -904,7 +916,7 @@ const PremiumEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
            transform: scale(1.03);
         }
 
-        .premium-save-button.success {
+        .premium-save-button.footer-button.success { /* Ensure specificity for success state on footer button */
           background: linear-gradient(135deg, #34C759, #28A745) !important;
           box-shadow: 0 3px 8px rgba(52, 199, 89, 0.3) !important;
         }
@@ -914,6 +926,10 @@ const PremiumEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
           .premium-edit-bill-modal .ant-modal-content {
             background: #1A1A1C; 
             border-color: rgba(255,255,255,0.08);
+          }
+          .premium-modal-footer {
+            background: #1A1A1C;
+            border-top-color: rgba(255,255,255,0.08);
           }
           
           .form-section-title,
@@ -993,6 +1009,13 @@ const PremiumEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
              background: linear-gradient(135deg, #0A84FF, #0059B2);
              border-color: #0A84FF;
            }
+            .premium-cancel-button.footer-button {
+                background: rgba(10, 132, 255, 0.15) !important;
+                color: #0A84FF !important;
+            }
+            .premium-save-button.footer-button {
+                background: linear-gradient(135deg, #0A84FF, #0059B2) !important;
+            }
         }
         
         .premium-save-button, .premium-cancel-button, .premium-option-row, .form-section-icon-wrapper {
