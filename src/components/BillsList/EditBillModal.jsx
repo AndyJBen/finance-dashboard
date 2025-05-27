@@ -1,86 +1,58 @@
-// src/components/BillsList/EditBillModal.jsx
-// COMPLETE FILE CODE
-// Highlight: Added console logging to check props and form interaction.
-
+// iOS-Inspired Edit Bill Modal Component
 import React, { useEffect, useState } from 'react';
-import { Modal, Form, Input, InputNumber, DatePicker, Select, Checkbox, Row, Col, Typography, Button } from 'antd';
+import { Modal, Form, Input, InputNumber, DatePicker, Select, Checkbox, Typography, Button } from 'antd';
 import {
     IconEdit,
     IconPlus,
-    IconCoin,
-    IconCalendar,
     IconTag,
-    IconCheck
+    IconCalendar,
+    IconCurrencyDollar,
+    IconCheck,
+    IconX,
+    IconRepeat
 } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 
 const { Option } = Select;
-const { Title } = Typography;
+const { Text } = Typography;
 
-// Define common categories
+// Bill categories
 const billCategories = [
     "Utilities", "Rent", "Mortgage", "Groceries", "Subscription",
     "Credit Card", "Loan", "Insurance", "Medical", "Personal Care",
     "Bill Prep", "Auto", "Other"
 ];
 
-// Highlight: Use 'open' prop for AntD v5
-const EditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
+const IOSEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
   const [form] = Form.useForm();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
-  // Update mobile state on resize
+  // Initialize form when modal opens
   useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth <= 768);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  // Highlight: Log props when component renders/updates
-  console.log(`[EditBillModal] Rendering. open=${open}, initialData:`, initialData);
-
-  // Effect to set form values when modal opens or initialData changes
-  useEffect(() => {
-    // Only run if the modal is open
     if (open) {
-        console.log("[EditBillModal] useEffect - Modal is open. Setting form values.");
-        if (initialData) {
-          // Editing existing bill
-          console.log("[EditBillModal] useEffect - Editing mode. Initial data:", initialData);
-          form.setFieldsValue({
-            ...initialData,
-            // Ensure dueDate is a valid dayjs object or null
-            dueDate: initialData.dueDate && dayjs(initialData.dueDate).isValid() ? dayjs(initialData.dueDate) : null,
-            // Ensure boolean values are correctly set
-            isRecurring: Boolean(initialData.isRecurring),
-            // Default isPaid to false if not present, otherwise convert to boolean
-            isPaid: Object.prototype.hasOwnProperty.call(initialData, 'isPaid') ? Boolean(initialData.isPaid) : false,
-          });
-        } else {
-          // Adding new bill
-          console.log("[EditBillModal] useEffect - Adding mode. Resetting fields.");
-          form.resetFields();
-          // Set default values for checkboxes if needed
-          form.setFieldsValue({ isPaid: false, isRecurring: false });
-        }
-    } else {
-        // Optional: Log when modal is closed if needed for debugging lifecycle
-        // console.log("[EditBillModal] useEffect - Modal is closed.");
+      if (initialData) {
+        form.setFieldsValue({
+          ...initialData,
+          dueDate: initialData.dueDate && dayjs(initialData.dueDate).isValid() ? dayjs(initialData.dueDate) : null,
+          isRecurring: Boolean(initialData.isRecurring),
+          isPaid: Object.prototype.hasOwnProperty.call(initialData, 'isPaid') ? Boolean(initialData.isPaid) : false,
+        });
+      } else {
+        form.resetFields();
+        form.setFieldsValue({ isPaid: false, isRecurring: false });
+      }
     }
-  }, [open, initialData, form]); // Dependencies for the effect
+  }, [open, initialData, form]);
 
-  // Reset submitting state when modal is closed
+  // Reset submitting state when modal closes
   useEffect(() => {
     if (!open) {
       setIsSubmitting(false);
     }
   }, [open]);
 
-  // Prompt user when saving to determine whether to apply changes to future bills
-
-  // Handler for the OK button click
-  const handleOk = async () => {
+  // Handle form submission
+  const handleSubmit = async () => {
     try {
       const values = await form.validateFields();
       const formattedValues = {
@@ -92,238 +64,638 @@ const EditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
         isPaid: Boolean(values.isPaid),
         isRecurring: Boolean(values.isRecurring)
       };
+      
       if (initialData && initialData.id) {
         formattedValues.id = initialData.id;
       }
 
-      const changed = {};
-      if (initialData) {
-        if (Number(formattedValues.amount) !== Number(initialData.amount)) {
-          changed.amount = true;
-        }
-        if (formattedValues.category !== initialData.category) {
-          changed.category = true;
-        }
-        const origDate = initialData.dueDate
-          ? dayjs(initialData.dueDate).format('YYYY-MM-DD')
-          : null;
-        if (formattedValues.dueDate !== origDate) {
-          changed.dueDate = true;
-        }
-      }
-
-      const applyChanges = (toFuture) => {
-        formattedValues.applyToFuture = toFuture ? changed : {};
-        setIsSubmitting(true);
-        Promise.resolve(onSubmit(formattedValues)).finally(() =>
-          setIsSubmitting(false)
-        );
-      };
-
-      if (initialData?.isRecurring && Object.keys(changed).length > 0) {
-        Modal.confirm({
-          title: 'Apply changes to future bills?',
-          content:
-            'Do you want to apply these changes only to this bill or also to all future bills?',
-          okText: 'All Future Bills',
-          cancelText: 'Only This Bill',
-          onOk: () => applyChanges(true),
-          onCancel: () => applyChanges(false)
-        });
-      } else {
-        applyChanges(false);
-      }
+      setIsSubmitting(true);
+      await onSubmit(formattedValues);
+      setIsSubmitting(false);
     } catch (err) {
-      console.error('[EditBillModal] Form Validation Failed:', err);
+      console.error('Form validation failed:', err);
+      setIsSubmitting(false);
     }
   };
 
-  // Determine modal title and icon based on whether initialData is present
-  const modalTitle = initialData ? 'Edit Bill' : 'Add New Bill';
-  const modalIcon = initialData ? <IconEdit size={20} /> : <IconPlus size={20} />;
-  const modalIconBg = initialData ? '#1677ff' : '#52c41a'; // Blue for edit, Green for add
+  const modalTitle = initialData ? 'Edit Bill' : 'Add Bill';
 
-  // --- Component Render ---
   return (
-    <Modal
-      title={null}
-      open={open}
-      onCancel={onCancel}
-      footer={
-        <div className="modal-footer">
-          <Button onClick={onCancel} className="cancel-button">Cancel</Button>
-          <Button
-            type="primary"
-            onClick={handleOk}
-            loading={isSubmitting}
-            icon={<IconCheck size={16} />}
-            className="complete-button"
-          >
-            {initialData ? 'Save Changes' : 'Add Bill'}
-          </Button>
-        </div>
-      }
-      width={isMobile ? '92%' : 480}
-      style={{ top: 20, margin: '0 auto', padding: 0 }}
-      bodyStyle={{ padding: 0, borderRadius: '20px', overflow: 'hidden' }}
-      maskStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.6)', backdropFilter: 'blur(4px)' }}
-      className="edit-bill-modal modern-overlay"
-    >
-      {/* Custom Header */}
-      <div className="modal-header">
-        <Row align="middle" gutter={12}>
-          <Col>
-            <div className="modal-icon-container" style={{ backgroundColor: modalIconBg }}>
-              {modalIcon}
-            </div>
-          </Col>
-          <Col>
-            <Title level={4} className="modal-title">{modalTitle}</Title>
-          </Col>
-        </Row>
-      </div>
-
-      {/* Form */}
-      <Form
-        form={form}
-        layout="vertical"
-        name="billForm"
-        id="billFormInstance"
-        className="bill-form"
+    <div>
+      <Modal
+        open={open}
+        onCancel={onCancel}
+        footer={null}
+        centered
+        width="100%"
+        style={{ 
+          maxWidth: '390px',
+          margin: '0 auto',
+          padding: 0
+        }}
+        bodyStyle={{ padding: 0 }}
+        maskStyle={{
+          backgroundColor: 'rgba(0, 0, 0, 0.4)',
+          backdropFilter: 'blur(20px)'
+        }}
+        className="ios-edit-bill-modal"
       >
-        {/* Bill Name */}
-        <Form.Item name="name" label={<span style={{ fontSize: '14px', fontWeight: 500 }}>Bill Name</span>} rules={[{ required: true, message: 'Please input the bill name!' }]} >
-          <Input prefix={<IconTag size={16} style={{ color: '#1677ff' }} />} placeholder="e.g., Electricity Bill" className="bill-input" />
-        </Form.Item>
+        {/* Modal Content */}
+        <div className="ios-modal-container">
+          {/* Header */}
+          <div className="ios-modal-header">
+            <Button 
+              type="text" 
+              className="ios-cancel-button"
+              onClick={onCancel}
+              icon={<IconX size={18} />}
+            />
+            <Text className="ios-modal-title">{modalTitle}</Text>
+            <Button 
+              type="text" 
+              className="ios-done-button"
+              onClick={handleSubmit}
+              loading={isSubmitting}
+            >
+              {isSubmitting ? 'Saving...' : 'Done'}
+            </Button>
+          </div>
 
-        {/* Amount */}
-        <Form.Item name="amount" label={<span style={{ fontSize: '14px', fontWeight: 500 }}>Amount</span>} rules={[{ required: true, message: 'Please input the amount!' }, { type: 'number', min: 0, message: 'Amount cannot be negative!' }]} >
-          <InputNumber prefix={<IconCoin size={16} style={{ color: '#1677ff' }} />} min={0} step={0.01} formatter={(value) => `$${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')} parser={(value) => value.replace(/\$\s?|(,*)/g, '')} className="bill-input" style={{ width: '100%' }} placeholder="e.g., 75.50" />
-        </Form.Item>
+          {/* Form Content */}
+          <div className="ios-modal-content">
+            <Form
+              form={form}
+              layout="vertical"
+              name="billForm"
+              className="ios-bill-form"
+            >
+              {/* Bill Name Section */}
+              <div className="ios-form-section">
+                <div className="ios-section-header">
+                  <IconTag size={20} className="ios-section-icon" />
+                  <Text className="ios-section-title">Bill Details</Text>
+                </div>
+                
+                <div className="ios-input-group">
+                  <Form.Item 
+                    name="name" 
+                    rules={[{ required: true, message: 'Bill name is required' }]}
+                    className="ios-form-item"
+                  >
+                    <div className="ios-input-container">
+                      <Text className="ios-input-label">Name</Text>
+                      <Input 
+                        placeholder="Enter bill name"
+                        className="ios-input"
+                        variant="borderless"
+                      />
+                    </div>
+                  </Form.Item>
 
-        {/* Due Date */}
-        <Form.Item name="dueDate" label={<span style={{ fontSize: '14px', fontWeight: 500 }}>Due Date</span>} rules={[{ required: true, message: 'Please select the due date!' }]} >
-          <DatePicker format="YYYY-MM-DD" placeholder="Select date" suffixIcon={<IconCalendar size={16} style={{ color: '#1677ff' }} />} className="bill-input date-picker" />
-        </Form.Item>
+                  <div className="ios-input-divider" />
 
-        {/* Category */}
-        <Form.Item name="category" label={<span style={{ fontSize: '14px', fontWeight: 500 }}>Category</span>} rules={[{ required: true, message: 'Please select a category!' }]} >
-          <Select placeholder="Select or type a category" className="bill-select" dropdownStyle={{ borderRadius: '8px' }} suffixIcon={<IconTag size={16} style={{ color: '#1677ff' }} />} >
-            {billCategories.map(category => ( <Option key={category} value={category}>{category}</Option> ))}
-          </Select>
-        </Form.Item>
+                  <Form.Item 
+                    name="amount" 
+                    rules={[
+                      { required: true, message: 'Amount is required' },
+                      { type: 'number', min: 0, message: 'Amount must be positive' }
+                    ]}
+                    className="ios-form-item"
+                  >
+                    <div className="ios-input-container">
+                      <Text className="ios-input-label">Amount</Text>
+                      <InputNumber
+                        placeholder="0.00"
+                        className="ios-input ios-number-input"
+                        variant="borderless"
+                        min={0}
+                        step={0.01}
+                        formatter={(value) => value ? `$${value}` : ''}
+                        parser={(value) => value?.replace(/\$\s?/g, '') || ''}
+                        controls={false}
+                      />
+                    </div>
+                  </Form.Item>
 
-        {/* Paid Status & Recurring Options */}
-        <Row gutter={24}>
-          <Col span={12}>
-            <Form.Item name="isPaid" label={<span style={{ fontSize: '14px', fontWeight: 500 }}>Status</span>} valuePropName="checked" >
-              <Checkbox> Paid </Checkbox>
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Form.Item name="isRecurring" valuePropName="checked" label={<span style={{ fontSize: '14px', fontWeight: 500 }}>Options</span>} >
-              <Checkbox> Recurring </Checkbox>
-            </Form.Item>
-          </Col>
-        </Row>
-      </Form>
+                  <div className="ios-input-divider" />
+
+                  <Form.Item 
+                    name="category" 
+                    rules={[{ required: true, message: 'Category is required' }]}
+                    className="ios-form-item"
+                  >
+                    <div className="ios-input-container">
+                      <Text className="ios-input-label">Category</Text>
+                      <Select
+                        placeholder="Select category"
+                        className="ios-select"
+                        variant="borderless"
+                        suffixIcon={null}
+                        dropdownStyle={{
+                          borderRadius: '16px',
+                          boxShadow: '0 10px 40px rgba(0, 0, 0, 0.15)',
+                          border: 'none'
+                        }}
+                      >
+                        {billCategories.map(category => (
+                          <Option key={category} value={category}>
+                            {category}
+                          </Option>
+                        ))}
+                      </Select>
+                    </div>
+                  </Form.Item>
+                </div>
+              </div>
+
+              {/* Due Date Section */}
+              <div className="ios-form-section">
+                <div className="ios-section-header">
+                  <IconCalendar size={20} className="ios-section-icon" />
+                  <Text className="ios-section-title">Due Date</Text>
+                </div>
+                
+                <div className="ios-input-group">
+                  <Form.Item 
+                    name="dueDate" 
+                    rules={[{ required: true, message: 'Due date is required' }]}
+                    className="ios-form-item"
+                  >
+                    <div className="ios-input-container">
+                      <Text className="ios-input-label">Date</Text>
+                      <DatePicker
+                        format="MMM DD, YYYY"
+                        placeholder="Select date"
+                        className="ios-date-picker"
+                        variant="borderless"
+                        suffixIcon={null}
+                        popupStyle={{
+                          borderRadius: '16px',
+                          boxShadow: '0 10px 40px rgba(0, 0, 0, 0.15)'
+                        }}
+                      />
+                    </div>
+                  </Form.Item>
+                </div>
+              </div>
+
+              {/* Options Section */}
+              <div className="ios-form-section">
+                <div className="ios-section-header">
+                  <IconCheck size={20} className="ios-section-icon" />
+                  <Text className="ios-section-title">Options</Text>
+                </div>
+                
+                <div className="ios-toggle-group">
+                  <Form.Item 
+                    name="isPaid" 
+                    valuePropName="checked"
+                    className="ios-form-item"
+                  >
+                    <div className="ios-toggle-container">
+                      <div className="ios-toggle-content">
+                        <Text className="ios-toggle-label">Mark as Paid</Text>
+                        <Text className="ios-toggle-description">Bill has been paid</Text>
+                      </div>
+                      <Checkbox className="ios-checkbox" />
+                    </div>
+                  </Form.Item>
+
+                  <div className="ios-input-divider" />
+
+                  <Form.Item 
+                    name="isRecurring" 
+                    valuePropName="checked"
+                    className="ios-form-item"
+                  >
+                    <div className="ios-toggle-container">
+                      <div className="ios-toggle-content">
+                        <div className="ios-toggle-title-row">
+                          <IconRepeat size={16} className="ios-toggle-icon" />
+                          <Text className="ios-toggle-label">Recurring Bill</Text>
+                        </div>
+                        <Text className="ios-toggle-description">Repeats monthly</Text>
+                      </div>
+                      <Checkbox className="ios-checkbox" />
+                    </div>
+                  </Form.Item>
+                </div>
+              </div>
+            </Form>
+          </div>
+        </div>
+      </Modal>
 
       <style jsx global>{`
-        .edit-bill-modal .ant-modal-content {
+        /* iOS Modal Styling */
+        .ios-edit-bill-modal .ant-modal {
+          padding: 20px;
+        }
+
+        .ios-edit-bill-modal .ant-modal-content {
           border-radius: 20px;
-          box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15), 0 2px 10px rgba(0, 0, 0, 0.12);
           overflow: hidden;
+          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+          background: rgba(255, 255, 255, 0.95);
+          backdrop-filter: blur(20px);
+          border: 0.5px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .ios-modal-container {
+          background: #F2F2F7;
+          min-height: 70vh;
+          max-height: 85vh;
+          display: flex;
+          flex-direction: column;
+        }
+
+        /* Header */
+        .ios-modal-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 16px 20px;
+          background: rgba(255, 255, 255, 0.8);
+          backdrop-filter: blur(20px);
+          border-bottom: 0.5px solid rgba(0, 0, 0, 0.1);
+          position: sticky;
+          top: 0;
+          z-index: 10;
+        }
+
+        .ios-modal-title {
+          font-size: 17px;
+          font-weight: 600;
+          color: #000;
+          letter-spacing: -0.4px;
+        }
+
+        .ios-cancel-button {
+          color: #007AFF !important;
+          font-size: 17px;
+          font-weight: 400;
+          padding: 0 !important;
+          height: auto !important;
+          border: none !important;
+          background: transparent !important;
+          box-shadow: none !important;
+        }
+
+        .ios-done-button {
+          color: #007AFF !important;
+          font-size: 17px;
+          font-weight: 600;
+          padding: 0 !important;
+          height: auto !important;
+          border: none !important;
+          background: transparent !important;
+          box-shadow: none !important;
+        }
+
+        .ios-done-button:disabled {
+          color: #C7C7CC !important;
+        }
+
+        /* Content */
+        .ios-modal-content {
+          flex: 1;
+          overflow-y: auto;
+          padding: 0 0 20px 0;
+        }
+
+        .ios-bill-form {
+          width: 100%;
+        }
+
+        /* Form Sections */
+        .ios-form-section {
+          margin-bottom: 32px;
+        }
+
+        .ios-section-header {
+          display: flex;
+          align-items: center;
+          padding: 0 20px 12px 20px;
+          gap: 8px;
+        }
+
+        .ios-section-icon {
+          color: #007AFF;
+        }
+
+        .ios-section-title {
+          font-size: 15px;
+          font-weight: 600;
+          color: #000;
+          letter-spacing: -0.2px;
+        }
+
+        /* Input Groups */
+        .ios-input-group {
+          background: #fff;
+          border-radius: 16px;
+          margin: 0 20px;
+          overflow: hidden;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .ios-toggle-group {
+          background: #fff;
+          border-radius: 16px;
+          margin: 0 20px;
+          overflow: hidden;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .ios-form-item {
+          margin-bottom: 0 !important;
+        }
+
+        .ios-input-container {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 16px 20px;
+          min-height: 56px;
+        }
+
+        .ios-input-label {
+          font-size: 17px;
+          font-weight: 400;
+          color: #000;
+          letter-spacing: -0.4px;
+          min-width: 80px;
+          text-align: left;
+        }
+
+        .ios-input {
+          flex: 1;
+          text-align: right;
+          font-size: 17px;
+          color: #000;
+          background: transparent !important;
+          border: none !important;
+          box-shadow: none !important;
+          padding: 0 !important;
+        }
+
+        .ios-input::placeholder {
+          color: #C7C7CC;
+          font-size: 17px;
+        }
+
+        .ios-number-input.ant-input-number {
+          background: transparent !important;
+          border: none !important;
+          box-shadow: none !important;
+          width: 120px;
+        }
+
+        .ios-number-input .ant-input-number-input {
+          text-align: right;
+          font-size: 17px;
+          color: #000;
+          background: transparent;
+          border: none;
+          box-shadow: none;
           padding: 0;
         }
 
-        .modal-header {
-          padding: 16px 24px;
-          background: linear-gradient(135deg, #1D4ED8, #3B82F6);
-          color: white;
-          border-radius: 20px 20px 0 0;
+        .ios-select.ant-select {
+          width: 140px;
         }
 
-        .modal-icon-container {
-          width: 38px;
-          height: 38px;
-          background-color: rgba(255, 255, 255, 0.2);
-          border-radius: 12px;
+        .ios-select .ant-select-selector {
+          background: transparent !important;
+          border: none !important;
+          box-shadow: none !important;
+          padding: 0 !important;
+          text-align: right;
+        }
+
+        .ios-select .ant-select-selection-item {
+          font-size: 17px;
+          color: #000;
+          padding: 0;
+        }
+
+        .ios-select .ant-select-selection-placeholder {
+          color: #C7C7CC;
+          font-size: 17px;
+        }
+
+        .ios-date-picker.ant-picker {
+          background: transparent !important;
+          border: none !important;
+          box-shadow: none !important;
+          padding: 0 !important;
+          width: 140px;
+        }
+
+        .ios-date-picker .ant-picker-input {
+          text-align: right;
+        }
+
+        .ios-date-picker .ant-picker-input input {
+          font-size: 17px;
+          color: #000;
+          text-align: right;
+        }
+
+        .ios-date-picker .ant-picker-input input::placeholder {
+          color: #C7C7CC;
+        }
+
+        /* Dividers */
+        .ios-input-divider {
+          height: 0.5px;
+          background: rgba(0, 0, 0, 0.1);
+          margin-left: 100px;
+        }
+
+        /* Toggle Containers */
+        .ios-toggle-container {
           display: flex;
           align-items: center;
-          justify-content: center;
-          color: white;
+          justify-content: space-between;
+          padding: 16px 20px;
+          min-height: 56px;
         }
 
-        .modal-title {
-          color: white !important;
-          margin: 0 !important;
-          font-size: 18px !important;
-          font-weight: 600 !important;
+        .ios-toggle-content {
+          flex: 1;
         }
 
-        .bill-form {
-          padding: 24px;
-        }
-
-        .bill-input,
-        .bill-select .ant-select-selector,
-        .bill-form .ant-picker {
-          height: 48px !important;
-          border-radius: 12px !important;
-          font-size: 15px !important;
-        }
-
-        .bill-select .ant-select-selector {
-          padding-top: 6px !important;
-        }
-
-        .modal-footer {
+        .ios-toggle-title-row {
           display: flex;
-          justify-content: flex-end;
-          padding: 14px 24px;
-          border-top: 1px solid #F0F0F0;
-          gap: 12px;
+          align-items: center;
+          gap: 6px;
+          margin-bottom: 2px;
         }
 
-        .modal-footer .ant-btn {
-          padding: 0 20px;
-          height: 44px;
+        .ios-toggle-icon {
+          color: #007AFF;
+        }
+
+        .ios-toggle-label {
+          font-size: 17px;
+          font-weight: 400;
+          color: #000;
+          letter-spacing: -0.4px;
+          margin-bottom: 2px;
+          display: block;
+        }
+
+        .ios-toggle-description {
           font-size: 15px;
-          border-radius: 12px;
-          min-width: 100px;
-          font-weight: 500;
+          color: #8E8E93;
+          letter-spacing: -0.2px;
         }
 
-        .cancel-button {
-          color: #64748B;
-          border-color: #E2E8F0;
+        /* Checkboxes */
+        .ios-checkbox.ant-checkbox-wrapper {
+          font-size: 0;
         }
 
-        .complete-button {
-          background-color: #1D4ED8;
+        .ios-checkbox .ant-checkbox {
+          transform: scale(1.2);
         }
 
-        @media (max-width: 768px) {
-          .modal-header {
-            padding: 14px 16px;
+        .ios-checkbox .ant-checkbox-inner {
+          border-radius: 6px;
+          border-color: #C7C7CC;
+          background: #fff;
+        }
+
+        .ios-checkbox .ant-checkbox-checked .ant-checkbox-inner {
+          background-color: #007AFF;
+          border-color: #007AFF;
+        }
+
+        .ios-checkbox .ant-checkbox-checked .ant-checkbox-inner::after {
+          border-color: #fff;
+        }
+
+        /* Dropdown Styling */
+        .ant-select-dropdown {
+          border-radius: 16px !important;
+          box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15) !important;
+          border: none !important;
+          padding: 8px 0;
+        }
+
+        .ant-select-item {
+          padding: 12px 20px;
+          font-size: 17px;
+          color: #000;
+          border-radius: 0;
+        }
+
+        .ant-select-item-option-selected {
+          background-color: #F2F2F7;
+        }
+
+        .ant-select-item-option-active {
+          background-color: #F2F2F7;
+        }
+
+        /* Date Picker Dropdown */
+        .ant-picker-dropdown {
+          border-radius: 16px !important;
+          box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15) !important;
+          border: none !important;
+        }
+
+        .ant-picker-panel {
+          border-radius: 16px;
+          background: #fff;
+        }
+
+        .ant-picker-header {
+          border-bottom: 1px solid #F2F2F7;
+        }
+
+        .ant-picker-content th,
+        .ant-picker-content td {
+          font-size: 15px;
+        }
+
+        .ant-picker-cell-today .ant-picker-cell-inner {
+          color: #007AFF;
+          font-weight: 600;
+        }
+
+        .ant-picker-cell-selected .ant-picker-cell-inner {
+          background: #007AFF;
+          color: #fff;
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 430px) {
+          .ios-edit-bill-modal .ant-modal {
+            padding: 0;
+            margin: 0;
+            max-width: 100%;
+            width: 100%;
+            height: 100%;
           }
-          .bill-form {
-            padding: 20px 16px;
+
+          .ios-edit-bill-modal .ant-modal-content {
+            border-radius: 0;
+            height: 100vh;
+            max-height: 100vh;
           }
-          .modal-footer {
-            padding: 12px 16px;
-            gap: 8px;
+
+          .ios-modal-container {
+            min-height: 100vh;
+            max-height: 100vh;
           }
-          .modal-footer .ant-btn {
-            height: 40px;
-            min-width: 90px;
-            font-size: 14px;
+
+          .ios-input-group,
+          .ios-toggle-group {
+            margin: 0 16px;
           }
+
+          .ios-section-header {
+            padding: 0 16px 12px 16px;
+          }
+        }
+
+        /* Focus States */
+        .ios-input:focus,
+        .ios-number-input:focus-within,
+        .ios-select:focus-within,
+        .ios-date-picker:focus-within {
+          outline: none;
+        }
+
+        .ios-input-container:focus-within {
+          background-color: rgba(0, 122, 255, 0.05);
+        }
+
+        .ios-toggle-container:active {
+          background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        /* Haptic Feedback Simulation */
+        .ios-done-button:active,
+        .ios-cancel-button:active {
+          transform: scale(0.95);
+          transition: transform 0.1s ease;
+        }
+
+        .ios-toggle-container:active {
+          transform: scale(0.98);
+          transition: transform 0.1s ease;
+        }
+
+        .ios-checkbox:active {
+          transform: scale(0.95);
+          transition: transform 0.1s ease;
         }
       `}</style>
-    </Modal>
+    </div>
   );
-  // --- End Component Render ---
 };
 
-export default EditBillModal;
+export default IOSEditBillModal;
