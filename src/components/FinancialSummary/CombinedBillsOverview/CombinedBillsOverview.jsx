@@ -560,7 +560,7 @@ const CombinedBillsOverview = ({ style }) => {
                                         }}
                                     >
                                         {React.cloneElement(getCategoryIcon(category), { 
-                                            size: 16,
+                                            size: 18,
                                             style: { 
                                                 color: selectedCategory === category ? getCategoryColor(category).text : 'var(--neutral-700)' 
                                             }
@@ -640,7 +640,7 @@ const CombinedBillsOverview = ({ style }) => {
                 .enhanced-bills-container {
                     display: flex;
                     flex-direction: column;
-                    margin-top: 16px;
+                    margin-top: 8px;
                     background: white;
                     border-radius: 12px;
                     overflow: hidden;
@@ -799,7 +799,7 @@ const CombinedBillsOverview = ({ style }) => {
                 /* Mobile optimizations */
                 @media (max-width: 768px) {
                     .enhanced-bills-container {
-                        margin-top: 12px;
+                        margin-top: 6px;
                         border-radius: 0;
                     }
 
