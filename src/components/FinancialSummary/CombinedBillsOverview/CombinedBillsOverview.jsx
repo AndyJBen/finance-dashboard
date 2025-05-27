@@ -1,24 +1,19 @@
 // src/components/FinancialSummary/CombinedBillsOverview/CombinedBillsOverview.jsx
-import React, { useState, useContext, useMemo, useRef, useCallback } from 'react';
+import React, { useState, useContext, useMemo, useRef, useCallback, useEffect } from 'react';
 import {
-    Table, Button, Space, Spin, Alert, Tooltip, Checkbox, Tag, Card,
-    Progress, Typography, Row, Col, Statistic, Divider, message, Modal,
-    List,
+    Button, Space, Spin, Alert, Checkbox, Tag, Card,
+    Typography, message,
     Dropdown,
-    Menu,
     Grid
 } from 'antd';
 import {
     IconCalendarFilled, IconEdit, IconTrash, IconPlus, IconChevronLeft,
     IconChevronRight, IconHome, IconBolt, IconWifi,
-    IconCreditCard, IconCar, IconShoppingCart, IconHelp, IconApps,
-    IconCalendar, IconCurrencyDollar, IconCircleCheck, IconClock, IconPhone,
+    IconCreditCard, IconCar, IconShoppingCart, IconHelp,
+    IconCalendar, IconCurrencyDollar, IconCircleCheck, IconClock,
     IconCertificate, IconMedicineSyrup, IconCalendarTime,
-    IconX, IconUser,
+    IconUser,
     IconDotsVertical,
-    IconChevronDown,
-    IconChevronUp,
-    IconPlaylistAdd,
     IconEye,
     IconEyeOff
 } from '@tabler/icons-react';
@@ -26,14 +21,12 @@ import { FinanceContext } from '../../../contexts/FinanceContext';
 import EditBillModal from '../../BillsList/EditBillModal';
 import MultiBillModal from './MultiBillModal';
 import MonthlyProgressSummary from './MonthlyProgressSummary';
-import BillsListSection from './BillsListSection';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import updateLocale from 'dayjs/plugin/updateLocale';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import isBetween from 'dayjs/plugin/isBetween';
-import isSameOrBeforePlugin from 'dayjs/plugin/isSameOrBefore';
 
 // Extend dayjs plugins
 dayjs.extend(relativeTime);
@@ -41,12 +34,11 @@ dayjs.extend(updateLocale);
 dayjs.extend(isSameOrBefore);
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isBetween);
-dayjs.extend(isSameOrBeforePlugin);
 
 const { Text } = Typography;
 const { useBreakpoint } = Grid;
 
-// Enhanced Bill Row Component with Slide Actions
+// Enhanced Bill Row Component with iOS-style Slide Actions
 const EnhancedBillRow = ({ 
     record, 
     index, 
@@ -65,11 +57,11 @@ const EnhancedBillRow = ({
     
     const touchStartX = useRef(0);
     const touchStartY = useRef(0);
-    const touchStartTime = useRef(0);
     const slideThreshold = 60; // Pixels to reveal actions
     const maxSlide = 140; // Maximum slide distance
+    const snapThreshold = 40; // Minimum distance to keep actions visible
 
-    // Haptic feedback simulation (would use real haptics on device)
+    // Haptic feedback simulation
     const triggerHaptic = useCallback((type = 'light') => {
         if (navigator.vibrate) {
             const patterns = {
@@ -87,7 +79,7 @@ const EnhancedBillRow = ({
         const touch = e.touches[0];
         touchStartX.current = touch.clientX;
         touchStartY.current = touch.clientY;
-        touchStartTime.current = Date.now();
+        setIsSliding(false);
     }, [isMobile]);
 
     const handleTouchMove = useCallback((e) => {
@@ -97,49 +89,59 @@ const EnhancedBillRow = ({
         const deltaX = touch.clientX - touchStartX.current;
         const deltaY = touch.clientY - touchStartY.current;
         
-        // Only handle horizontal swipes (left swipe = negative deltaX)
-        if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 10) {
+        // Only handle horizontal swipes that are more horizontal than vertical
+        if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 15) {
             e.preventDefault(); // Prevent scrolling
             setIsSliding(true);
             
             // Only allow left swipe (negative values)
-            const newOffset = Math.max(-maxSlide, Math.min(0, deltaX));
-            setSlideOffset(newOffset);
-            
-            // Show actions when threshold is reached
-            const shouldShowActions = Math.abs(newOffset) > slideThreshold;
-            if (shouldShowActions !== showActions) {
-                setShowActions(shouldShowActions);
-                if (shouldShowActions) {
+            if (deltaX < 0) {
+                const newOffset = Math.max(-maxSlide, deltaX);
+                setSlideOffset(newOffset);
+                
+                // Show actions when threshold is reached
+                const shouldShowActions = Math.abs(newOffset) > slideThreshold;
+                if (shouldShowActions && !showActions) {
+                    setShowActions(true);
                     triggerHaptic('light');
+                }
+            } else if (showActions && deltaX > 0) {
+                // Allow swiping back to close actions
+                const newOffset = Math.min(0, deltaX - maxSlide);
+                setSlideOffset(newOffset);
+                
+                if (Math.abs(newOffset) < slideThreshold && showActions) {
+                    setShowActions(false);
                 }
             }
         }
     }, [isMobile, showActions, triggerHaptic]);
 
-    const handleTouchEnd = useCallback((e) => {
+    const handleTouchEnd = useCallback(() => {
         if (!isMobile) return;
         
-        const touchDuration = Date.now() - touchStartTime.current;
+        setIsSliding(false);
         
-        // If user swiped far enough, keep actions visible
-        if (Math.abs(slideOffset) > slideThreshold) {
-            setSlideOffset(-maxSlide); // Snap to full reveal
+        // Determine if we should snap to open or closed position
+        if (Math.abs(slideOffset) > snapThreshold) {
+            // Snap to open position
+            setSlideOffset(-maxSlide);
             setShowActions(true);
         } else {
-            // Snap back to original position
+            // Snap back to closed position
             setSlideOffset(0);
             setShowActions(false);
         }
-        
-        setIsSliding(false);
     }, [isMobile, slideOffset]);
 
-    // Close actions when clicking elsewhere or after action
-    const handleActionClick = useCallback((action) => {
+    // Handle action clicks
+    const handleActionClick = useCallback((action, e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        
         triggerHaptic('medium');
         
-        // Animate back to original position
+        // Close the actions first
         setSlideOffset(0);
         setShowActions(false);
         
@@ -150,14 +152,31 @@ const EnhancedBillRow = ({
             } else if (action === 'delete') {
                 onDelete(record);
             }
-        }, 100);
+        }, 150);
     }, [onEdit, onDelete, record, triggerHaptic]);
 
-    // Reset slide when clicking on the row content
-    const handleRowClick = useCallback(() => {
+    // Close actions when tapping elsewhere
+    const handleRowClick = useCallback((e) => {
         if (showActions) {
+            e.preventDefault();
+            e.stopPropagation();
             setSlideOffset(0);
             setShowActions(false);
+        }
+    }, [showActions]);
+
+    // Close actions when scrolling or other interactions
+    useEffect(() => {
+        const handleDocumentTouch = () => {
+            if (showActions) {
+                setSlideOffset(0);
+                setShowActions(false);
+            }
+        };
+
+        if (showActions) {
+            document.addEventListener('touchstart', handleDocumentTouch);
+            return () => document.removeEventListener('touchstart', handleDocumentTouch);
         }
     }, [showActions]);
 
@@ -165,43 +184,48 @@ const EnhancedBillRow = ({
         <div 
             key={record.id || index} 
             className={`enhanced-bill-row ${rowClassName ? rowClassName(record) : ''}`}
-            style={{
-                transform: `translateX(${slideOffset}px)`,
-                transition: isSliding ? 'none' : 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
-            }}
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
             onClick={handleRowClick}
         >
-            {/* Slide Actions Background */}
-            <div className={`slide-actions-container ${showActions ? 'visible' : ''}`}>
+            {/* Slide Actions Background - Always present but hidden */}
+            <div className="slide-actions-background">
                 <button 
                     className="slide-action edit-action"
-                    onClick={() => handleActionClick('edit')}
+                    onClick={(e) => handleActionClick('edit', e)}
                     aria-label="Edit bill"
                 >
-                    <IconEdit size={20} />
+                    <IconEdit size={18} />
                     <span>Edit</span>
                 </button>
                 <button 
                     className="slide-action delete-action"
-                    onClick={() => handleActionClick('delete')}
+                    onClick={(e) => handleActionClick('delete', e)}
                     aria-label="Delete bill"
                 >
-                    <IconTrash size={20} />
+                    <IconTrash size={18} />
                     <span>Delete</span>
                 </button>
             </div>
 
-            {/* Main Row Content */}
-            <div className="bill-row-content">
+            {/* Main Row Content - This slides to reveal actions */}
+            <div 
+                className="bill-row-content"
+                style={{
+                    transform: `translateX(${slideOffset}px)`,
+                    transition: isSliding ? 'none' : 'transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)'
+                }}
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
+            >
                 {/* Checkbox */}
                 <div className="bill-checkbox">
                     <Checkbox 
                         className={`status-checkbox small-checkbox ${record.isPaid ? 'checked' : ''}`} 
                         checked={record.isPaid} 
-                        onChange={() => onTogglePaid(record)} 
+                        onChange={(e) => {
+                            e.stopPropagation();
+                            onTogglePaid(record);
+                        }} 
                     />
                 </div>
 
@@ -256,7 +280,7 @@ const EnhancedBillRow = ({
     );
 };
 
-// Main Component (keeping original logic, just updating the bills list section)
+// Main Component
 const CombinedBillsOverview = ({ style }) => {
     const {
         loading, error, deleteBill, updateBill, updateBillWithFuture, addBill,
@@ -267,14 +291,13 @@ const CombinedBillsOverview = ({ style }) => {
     const [isMultiModalVisible, setMultiModalVisible] = useState(false);
     const [editingBill, setEditingBill] = useState(null);
     const [selectedCategory, setSelectedCategory] = useState('All');
-    const [isTableCollapsed, setIsTableCollapsed] = useState(false);
     const [showPaidBills, setShowPaidBills] = useState(false);
     const [fadingBillId, setFadingBillId] = useState(null);
 
     const screens = useBreakpoint();
     const isSmallScreen = screens.xs || screens.sm;
 
-    // All the existing logic remains the same...
+    // Data processing logic
     const validBills = Array.isArray(bills) ? bills : [];
     const startOfDisplayedMonth = displayedMonth.startOf('month');
     const endOfDisplayedMonth = displayedMonth.endOf('month');
@@ -302,45 +325,13 @@ const CombinedBillsOverview = ({ style }) => {
         return [...new Set(billsDueInDisplayedMonth.map(bill => bill.category).filter(Boolean))].sort((a, b) => a.localeCompare(b));
     }, [billsDueInDisplayedMonth]);
 
-    // ... (all other computed values remain the same)
-
-    const tableDataSource = isTableCollapsed ? [] : mainTableDataSourceFiltered;
-
-    // Event handlers remain the same...
+    // Event handlers
     const handleAddBill = () => setMultiModalVisible(true);
     const handleEdit = (record) => {
         setEditingBill(record);
         setIsEditModalVisible(true);
     };
     
-    // ... (all other handlers remain the same)
-
-    // Helper functions remain the same...
-    const getCategoryIcon = (category) => {
-        const lowerCategory = category?.toLowerCase() || '';
-        if (lowerCategory.includes('rent') || lowerCategory.includes('mortgage')) return <IconHome size={16} />;
-        if (lowerCategory.includes('electric') || lowerCategory.includes('utilit')) return <IconBolt size={16} />;
-        // ... (rest of the function remains the same)
-        return <IconHelp size={16} />;
-    };
-
-    const getCategoryColor = (category) => {
-        switch (category?.toLowerCase()) {
-            case 'utilities': return 'blue';
-            case 'rent': return 'purple';
-            // ... (rest remains the same)
-            default: return 'default';
-        }
-    };
-
-    const renderDueIn = (dueDate, record) => {
-        // ... (function remains the same)
-        if (record.isPaid) {
-            return <span style={{ color: 'var(--neutral-400)' }}>-</span>;
-        }
-        // ... (rest of function logic)
-    };
-
     const handleDelete = async (record) => {
         if (!record || typeof record.id === 'undefined') { 
             message.error('Cannot delete bill: Invalid data.'); 
@@ -365,9 +356,106 @@ const CombinedBillsOverview = ({ style }) => {
         }
     };
 
+    const handleModalSubmit = async (values) => {
+        const { applyToFuture = {}, ...billValues } = values;
+        let result;
+        if (editingBill) {
+            const fields = Object.entries(applyToFuture).filter(([,v]) => v).map(([k]) => k);
+            if (fields.length > 0) {
+                result = await updateBillWithFuture(editingBill, billValues, fields);
+            } else {
+                result = await updateBill(editingBill, billValues);
+            }
+        } else {
+            result = await addBill(billValues);
+        }
+        if (result) { 
+            setIsEditModalVisible(false); 
+            setEditingBill(null); 
+        }
+    };
+
     const rowClassName = (record) => (record.id === fadingBillId ? 'bill-row-fade-out' : '');
 
-    // ... (rest of the component logic remains the same)
+    // Helper functions
+    const getCategoryIcon = (category) => {
+        const lowerCategory = category?.toLowerCase() || '';
+        if (lowerCategory.includes('rent') || lowerCategory.includes('mortgage')) return <IconHome size={16} />;
+        if (lowerCategory.includes('electric') || lowerCategory.includes('utilit')) return <IconBolt size={16} />;
+        if (lowerCategory.includes('card')) return <IconCreditCard size={16} />;
+        if (lowerCategory.includes('auto') || lowerCategory.includes('car')) return <IconCar size={16} />;
+        if (lowerCategory.includes('grocery')) return <IconShoppingCart size={16} />;
+        if (lowerCategory.includes('subscription')) return <IconCalendar size={16} />;
+        if (lowerCategory.includes('loan')) return <IconCurrencyDollar size={16} />;
+        if (lowerCategory.includes('insurance')) return <IconCertificate size={16} />;
+        if (lowerCategory.includes('medical')) return <IconMedicineSyrup size={16} />;
+        if (lowerCategory.includes('personal care')) return <IconUser size={16} />;
+        if (lowerCategory.includes('bill prep')) return <IconCalendarTime size={16} />;
+        return <IconHelp size={16} />;
+    };
+
+    const getCategoryColor = (category) => {
+        switch (category?.toLowerCase()) {
+            case 'utilities': return 'blue';
+            case 'rent': return 'purple';
+            case 'mortgage': return 'volcano';
+            case 'groceries': return 'green';
+            case 'subscription': return 'cyan';
+            case 'credit card': return 'red';
+            case 'loan': return 'gold';
+            case 'insurance': return 'magenta';
+            case 'medical': return 'red';
+            case 'personal care': return 'lime';
+            case 'bill prep': return 'geekblue';
+            case 'auto': return 'orange';
+            default: return 'default';
+        }
+    };
+
+    const renderDueIn = (dueDate, record) => {
+        if (record.isPaid) {
+            return <span style={{ color: 'var(--neutral-400)' }}>-</span>;
+        }
+        if (!dueDate || !dayjs(dueDate).isValid()) {
+            return <span style={{ color: 'var(--neutral-400)' }}>N/A</span>;
+        }
+        const due = dayjs(dueDate).startOf('day');
+        const today = dayjs().startOf('day');
+        if (due.isBefore(today)) {
+            if (record.category === 'Bill Prep') {
+                return <span style={{ color: 'var(--neutral-400)' }}>-</span>;
+            }
+            const diffDays = today.diff(due, 'day');
+            let text = '';
+            if (diffDays <= 30) {
+                text = `${diffDays}d Past`;
+            } else if (diffDays <= 365) {
+                const weeks = Math.floor(diffDays / 7);
+                text = `${weeks}w Past`;
+            } else {
+                const months = Math.floor(diffDays / 30);
+                text = `${months}m Past`;
+            }
+            return <span style={{ color: 'var(--danger-500)' }}>{text}</span>;
+        }
+        if (due.isSame(today, 'day')) {
+            return <span style={{ color: 'var(--warning-700)' }}>Today</span>;
+        }
+        const diffDays = due.diff(today, 'day');
+        let resultText = '';
+        if (diffDays <= 10) { 
+            resultText = `Due in ${diffDays}d`; 
+        } else {
+            const diffWeeks = Math.ceil(diffDays / 7);
+            if (diffWeeks <= 6) { 
+                resultText = `Due in ${diffWeeks}w`; 
+            } else { 
+                const diffMonths = Math.ceil(diffDays / 30.44); 
+                resultText = `Due in ${diffMonths}m`; 
+            }
+        }
+        return resultText;
+    };
 
     if (error && !loading) { 
         return (
@@ -461,34 +549,32 @@ const CombinedBillsOverview = ({ style }) => {
                     </div>
 
                     {/* Enhanced Bills List */}
-                    {!isTableCollapsed && (
-                        <div className="enhanced-bills-container">
-                            {tableDataSource.length === 0 ? (
-                                <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--neutral-500)' }}>
-                                    <Text type="secondary">No bills match the current filters for this month.</Text>
-                                </div>
-                            ) : (
-                                tableDataSource.map((record, index) => (
-                                    <EnhancedBillRow
-                                        key={record.id || index}
-                                        record={record}
-                                        index={index}
-                                        onTogglePaid={handleTogglePaid}
-                                        onEdit={handleEdit}
-                                        onDelete={handleDelete}
-                                        getCategoryIcon={getCategoryIcon}
-                                        getCategoryColor={getCategoryColor}
-                                        renderDueIn={renderDueIn}
-                                        rowClassName={rowClassName}
-                                        isMobile={isSmallScreen}
-                                    />
-                                ))
-                            )}
-                        </div>
-                    )}
+                    <div className="enhanced-bills-container">
+                        {mainTableDataSourceFiltered.length === 0 ? (
+                            <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--neutral-500)' }}>
+                                <Text type="secondary">No bills match the current filters for this month.</Text>
+                            </div>
+                        ) : (
+                            mainTableDataSourceFiltered.map((record, index) => (
+                                <EnhancedBillRow
+                                    key={record.id || index}
+                                    record={record}
+                                    index={index}
+                                    onTogglePaid={handleTogglePaid}
+                                    onEdit={handleEdit}
+                                    onDelete={handleDelete}
+                                    getCategoryIcon={getCategoryIcon}
+                                    getCategoryColor={getCategoryColor}
+                                    renderDueIn={renderDueIn}
+                                    rowClassName={rowClassName}
+                                    isMobile={isSmallScreen}
+                                />
+                            ))
+                        )}
+                    </div>
 
                     {/* Footer */}
-                    {!isTableCollapsed && billsDueInDisplayedMonth.length > 0 && paidVisibleCount > 0 && (
+                    {billsDueInDisplayedMonth.length > 0 && paidVisibleCount > 0 && (
                         <div style={{ 
                             textAlign: 'center', 
                             borderTop: '1px solid var(--neutral-200)',
@@ -506,26 +592,12 @@ const CombinedBillsOverview = ({ style }) => {
                     )}
                 </Spin>
 
-                {/* Modals remain the same */}
+                {/* Modals */}
                 {isEditModalVisible && (
                     <EditBillModal
                         open={isEditModalVisible}
                         onCancel={() => { setIsEditModalVisible(false); setEditingBill(null); }}
-                        onSubmit={async (values) => {
-                            const { applyToFuture = {}, ...billValues } = values;
-                            let result;
-                            if (editingBill) {
-                                const fields = Object.entries(applyToFuture).filter(([,v]) => v).map(([k]) => k);
-                                if (fields.length > 0) {
-                                    result = await updateBillWithFuture(editingBill, billValues, fields);
-                                } else {
-                                    result = await updateBill(editingBill, billValues);
-                                }
-                            } else {
-                                result = await addBill(billValues);
-                            }
-                            if (result) { setIsEditModalVisible(false); setEditingBill(null); }
-                        }}
+                        onSubmit={handleModalSubmit}
                         initialData={editingBill}
                     />
                 )}
@@ -554,16 +626,15 @@ const CombinedBillsOverview = ({ style }) => {
                 .enhanced-bill-row {
                     position: relative;
                     display: flex;
-                    align-items: center;
+                    align-items: stretch;
                     background: white;
                     border-radius: 0;
                     border: none;
                     border-bottom: 1px solid var(--neutral-100);
-                    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
                     overflow: hidden;
                     user-select: none;
                     -webkit-user-select: none;
-                    cursor: pointer;
+                    min-height: 64px;
                 }
 
                 .enhanced-bill-row:hover {
@@ -574,21 +645,16 @@ const CombinedBillsOverview = ({ style }) => {
                     border-bottom: none;
                 }
 
-                /* Slide Actions Container */
-                .slide-actions-container {
+                /* Slide Actions Background - Always positioned behind content */
+                .slide-actions-background {
                     position: absolute;
                     top: 0;
                     right: 0;
                     bottom: 0;
                     width: 140px;
                     display: flex;
-                    transform: translateX(100%);
-                    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                     z-index: 1;
-                }
-
-                .slide-actions-container.visible {
-                    transform: translateX(0);
+                    background: transparent;
                 }
 
                 .slide-action {
@@ -599,14 +665,15 @@ const CombinedBillsOverview = ({ style }) => {
                     justify-content: center;
                     border: none;
                     color: white;
-                    font-size: 12px;
+                    font-size: 11px;
                     font-weight: 600;
                     text-transform: uppercase;
                     letter-spacing: 0.5px;
                     cursor: pointer;
                     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-                    gap: 4px;
+                    gap: 2px;
                     min-height: 100%;
+                    outline: none;
                 }
 
                 .slide-action:active {
@@ -629,16 +696,18 @@ const CombinedBillsOverview = ({ style }) => {
                     background: linear-gradient(135deg, #D70015, #B30000);
                 }
 
-                /* Bill Row Content */
+                /* Bill Row Content - This is what slides */
                 .bill-row-content {
+                    position: relative;
                     display: flex;
                     align-items: center;
                     gap: 12px;
                     padding: 16px;
                     width: 100%;
-                    background: inherit;
+                    background: white;
                     z-index: 2;
-                    position: relative;
+                    min-height: 64px;
+                    touch-action: pan-y; /* Allow vertical scrolling but handle horizontal ourselves */
                 }
 
                 .bill-checkbox {
@@ -713,6 +782,11 @@ const CombinedBillsOverview = ({ style }) => {
                     .bill-row-content {
                         padding: 14px 16px;
                         gap: 12px;
+                        min-height: 60px;
+                    }
+
+                    .enhanced-bill-row {
+                        min-height: 60px;
                     }
 
                     .bill-content {
@@ -736,32 +810,26 @@ const CombinedBillsOverview = ({ style }) => {
                         padding: 1px 4px;
                     }
 
-                    /* Enhanced touch targets */
-                    .enhanced-bill-row {
-                        min-height: 64px;
-                    }
-
                     /* Slide actions mobile optimization */
-                    .slide-actions-container {
+                    .slide-actions-background {
                         width: 120px;
                     }
 
                     .slide-action {
-                        font-size: 11px;
-                        gap: 2px;
+                        font-size: 10px;
+                        gap: 1px;
                     }
                 }
 
                 /* Accessibility enhancements */
                 @media (prefers-reduced-motion: reduce) {
                     .enhanced-bill-row,
-                    .slide-actions-container,
-                    .slide-action {
+                    .slide-action,
+                    .bill-row-content {
                         transition: none;
                     }
                 }
 
-                /* High contrast mode support */
                 @media (prefers-contrast: high) {
                     .enhanced-bill-row {
                         border: 2px solid var(--neutral-300);
@@ -787,7 +855,15 @@ const CombinedBillsOverview = ({ style }) => {
                         border-bottom-color: var(--neutral-800);
                     }
 
+                    .bill-row-content {
+                        background: var(--neutral-900);
+                    }
+
                     .enhanced-bill-row:hover {
+                        background-color: var(--neutral-800);
+                    }
+
+                    .enhanced-bill-row:hover .bill-row-content {
                         background-color: var(--neutral-800);
                     }
 
@@ -813,24 +889,17 @@ const CombinedBillsOverview = ({ style }) => {
                     outline-offset: -2px;
                 }
 
-                /* Haptic feedback visual cues */
-                .enhanced-bill-row.haptic-feedback {
-                    animation: hapticPulse 0.15s ease-out;
-                }
-
-                @keyframes hapticPulse {
-                    0% { transform: scale(1); }
-                    50% { transform: scale(1.01); }
-                    100% { transform: scale(1); }
-                }
-
                 /* Performance optimizations */
                 .enhanced-bill-row {
+                    contain: layout style;
+                }
+
+                .bill-row-content {
                     contain: layout style paint;
                     will-change: transform;
                 }
 
-                .slide-actions-container {
+                .slide-actions-background {
                     contain: layout style paint;
                 }
 
@@ -841,10 +910,7 @@ const CombinedBillsOverview = ({ style }) => {
 
                 .enhanced-bill-row {
                     isolation: isolate;
-                }0;
                 }
-
-
             `}</style>
         </>
     );
