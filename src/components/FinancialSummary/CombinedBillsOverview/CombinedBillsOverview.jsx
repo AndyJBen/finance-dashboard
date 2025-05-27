@@ -141,18 +141,18 @@ const EnhancedBillRow = ({
         
         triggerHaptic('medium');
         
-        // Close the actions first
-        setSlideOffset(0);
-        setShowActions(false);
+        // Execute action immediately without closing first
+        if (action === 'edit') {
+            onEdit(record);
+        } else if (action === 'delete') {
+            onDelete(record);
+        }
         
-        // Execute action after animation starts
+        // Close the actions after a brief delay to allow the action to register
         setTimeout(() => {
-            if (action === 'edit') {
-                onEdit(record);
-            } else if (action === 'delete') {
-                onDelete(record);
-            }
-        }, 150);
+            setSlideOffset(0);
+            setShowActions(false);
+        }, 100);
     }, [onEdit, onDelete, record, triggerHaptic]);
 
     // Close actions when tapping elsewhere
@@ -167,7 +167,12 @@ const EnhancedBillRow = ({
 
     // Close actions when scrolling or other interactions
     useEffect(() => {
-        const handleDocumentTouch = () => {
+        const handleDocumentTouch = (e) => {
+            // Don't close if touching the slide actions themselves
+            if (e.target.closest('.slide-actions-background')) {
+                return;
+            }
+            
             if (showActions) {
                 setSlideOffset(0);
                 setShowActions(false);
@@ -175,7 +180,7 @@ const EnhancedBillRow = ({
         };
 
         if (showActions) {
-            document.addEventListener('touchstart', handleDocumentTouch);
+            document.addEventListener('touchstart', handleDocumentTouch, { passive: true });
             return () => document.removeEventListener('touchstart', handleDocumentTouch);
         }
     }, [showActions]);
@@ -190,6 +195,7 @@ const EnhancedBillRow = ({
             <div className="slide-actions-background">
                 <button 
                     className="slide-action edit-action"
+                    onTouchEnd={(e) => handleActionClick('edit', e)}
                     onClick={(e) => handleActionClick('edit', e)}
                     aria-label="Edit bill"
                 >
@@ -198,6 +204,7 @@ const EnhancedBillRow = ({
                 </button>
                 <button 
                     className="slide-action delete-action"
+                    onTouchEnd={(e) => handleActionClick('delete', e)}
                     onClick={(e) => handleActionClick('delete', e)}
                     aria-label="Delete bill"
                 >
@@ -702,7 +709,7 @@ const CombinedBillsOverview = ({ style }) => {
                     display: flex;
                     align-items: center;
                     gap: 12px;
-                    padding: 16px 24px;
+                    padding: 16px 28px;
                     width: 100%;
                     background: white;
                     z-index: 2;
@@ -780,7 +787,7 @@ const CombinedBillsOverview = ({ style }) => {
                     }
 
                     .bill-row-content {
-                        padding: 14px 20px;
+                        padding: 14px 24px;
                         gap: 12px;
                         min-height: 60px;
                     }
