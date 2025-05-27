@@ -46,7 +46,7 @@ dayjs.extend(isSameOrBeforePlugin);
 const { Text } = Typography;
 const { useBreakpoint } = Grid;
 
-// Enhanced Bill Row Component with Haptic Interactions
+// Enhanced Bill Row Component with Slide Actions
 const EnhancedBillRow = ({ 
     record, 
     index, 
@@ -59,16 +59,15 @@ const EnhancedBillRow = ({
     rowClassName,
     isMobile 
 }) => {
-    const [isLongPressing, setIsLongPressing] = useState(false);
-    const [showContextMenu, setShowContextMenu] = useState(false);
     const [slideOffset, setSlideOffset] = useState(0);
     const [isSliding, setIsSliding] = useState(false);
+    const [showActions, setShowActions] = useState(false);
     
-    const longPressTimer = useRef(null);
     const touchStartX = useRef(0);
     const touchStartY = useRef(0);
-    const slideThreshold = 80; // Pixels to trigger action
-    const longPressThreshold = 500; // ms for long press
+    const touchStartTime = useRef(0);
+    const slideThreshold = 60; // Pixels to reveal actions
+    const maxSlide = 140; // Maximum slide distance
 
     // Haptic feedback simulation (would use real haptics on device)
     const triggerHaptic = useCallback((type = 'light') => {
@@ -82,21 +81,14 @@ const EnhancedBillRow = ({
         }
     }, []);
 
-    // Long press handlers
     const handleTouchStart = useCallback((e) => {
         if (!isMobile) return;
         
         const touch = e.touches[0];
         touchStartX.current = touch.clientX;
         touchStartY.current = touch.clientY;
-        
-        // Start long press timer
-        longPressTimer.current = setTimeout(() => {
-            setIsLongPressing(true);
-            setShowContextMenu(true);
-            triggerHaptic('medium');
-        }, longPressThreshold);
-    }, [isMobile, triggerHaptic]);
+        touchStartTime.current = Date.now();
+    }, [isMobile]);
 
     const handleTouchMove = useCallback((e) => {
         if (!isMobile) return;
@@ -105,204 +97,162 @@ const EnhancedBillRow = ({
         const deltaX = touch.clientX - touchStartX.current;
         const deltaY = touch.clientY - touchStartY.current;
         
-        // Cancel long press if user moves too much
-        if (Math.abs(deltaX) > 10 || Math.abs(deltaY) > 10) {
-            clearTimeout(longPressTimer.current);
-            setIsLongPressing(false);
-        }
-        
-        // Handle horizontal slide for quick actions
-        if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 20) {
+        // Only handle horizontal swipes (left swipe = negative deltaX)
+        if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 10) {
+            e.preventDefault(); // Prevent scrolling
             setIsSliding(true);
-            setSlideOffset(Math.max(-120, Math.min(0, deltaX)));
             
-            // Haptic feedback at threshold
-            if (Math.abs(deltaX) > slideThreshold && !isSliding) {
-                triggerHaptic('light');
+            // Only allow left swipe (negative values)
+            const newOffset = Math.max(-maxSlide, Math.min(0, deltaX));
+            setSlideOffset(newOffset);
+            
+            // Show actions when threshold is reached
+            const shouldShowActions = Math.abs(newOffset) > slideThreshold;
+            if (shouldShowActions !== showActions) {
+                setShowActions(shouldShowActions);
+                if (shouldShowActions) {
+                    triggerHaptic('light');
+                }
             }
         }
-    }, [isMobile, triggerHaptic, isSliding]);
+    }, [isMobile, showActions, triggerHaptic]);
 
     const handleTouchEnd = useCallback((e) => {
         if (!isMobile) return;
         
-        clearTimeout(longPressTimer.current);
-        setIsLongPressing(false);
+        const touchDuration = Date.now() - touchStartTime.current;
         
-        // Handle slide actions
+        // If user swiped far enough, keep actions visible
         if (Math.abs(slideOffset) > slideThreshold) {
-            if (slideOffset < -slideThreshold) {
-                // Slide left reveals delete action
-                triggerHaptic('heavy');
-                onDelete(record);
-            }
+            setSlideOffset(-maxSlide); // Snap to full reveal
+            setShowActions(true);
+        } else {
+            // Snap back to original position
+            setSlideOffset(0);
+            setShowActions(false);
         }
         
-        // Reset slide
-        setSlideOffset(0);
         setIsSliding(false);
-    }, [isMobile, slideOffset, onDelete, record, triggerHaptic]);
+    }, [isMobile, slideOffset]);
 
-    // Mouse handlers for desktop
-    const handleMouseDown = useCallback((e) => {
-        if (isMobile) return;
+    // Close actions when clicking elsewhere or after action
+    const handleActionClick = useCallback((action) => {
+        triggerHaptic('medium');
         
-        longPressTimer.current = setTimeout(() => {
-            setShowContextMenu(true);
-        }, longPressThreshold);
-    }, [isMobile]);
-
-    const handleMouseUp = useCallback(() => {
-        clearTimeout(longPressTimer.current);
-    }, []);
-
-    // Context menu items
-    const contextMenuItems = [
-        {
-            key: 'edit',
-            icon: <IconEdit size={20} style={{ color: '#007AFF' }} />,
-            label: 'Edit Bill',
-            onClick: () => {
+        // Animate back to original position
+        setSlideOffset(0);
+        setShowActions(false);
+        
+        // Execute action after animation starts
+        setTimeout(() => {
+            if (action === 'edit') {
                 onEdit(record);
-                setShowContextMenu(false);
-            }
-        },
-        {
-            key: 'delete',
-            icon: <IconTrash size={20} style={{ color: '#FF3B30' }} />,
-            label: 'Delete Bill',
-            onClick: () => {
+            } else if (action === 'delete') {
                 onDelete(record);
-                setShowContextMenu(false);
             }
+        }, 100);
+    }, [onEdit, onDelete, record, triggerHaptic]);
+
+    // Reset slide when clicking on the row content
+    const handleRowClick = useCallback(() => {
+        if (showActions) {
+            setSlideOffset(0);
+            setShowActions(false);
         }
-    ];
+    }, [showActions]);
 
     return (
-        <>
-            <div 
-                key={record.id || index} 
-                className={`enhanced-bill-row ${rowClassName ? rowClassName(record) : ''} ${isLongPressing ? 'long-pressing' : ''}`}
-                style={{
-                    transform: `translateX(${slideOffset}px)`,
-                    transition: isSliding ? 'none' : 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
-                }}
-                onTouchStart={handleTouchStart}
-                onTouchMove={handleTouchMove}
-                onTouchEnd={handleTouchEnd}
-                onMouseDown={handleMouseDown}
-                onMouseUp={handleMouseUp}
-                onMouseLeave={handleMouseUp}
-            >
-                {/* Slide Action Background */}
-                {isMobile && (
-                    <div className="slide-action-background">
-                        <div className="slide-action delete-action">
-                            <IconTrash size={24} />
-                            <span>Delete</span>
-                        </div>
-                    </div>
-                )}
-
-                {/* Main Row Content */}
-                <div className="bill-row-content">
-                    {/* Checkbox */}
-                    <div className="bill-checkbox">
-                        <Checkbox 
-                            className={`status-checkbox small-checkbox ${record.isPaid ? 'checked' : ''}`} 
-                            checked={record.isPaid} 
-                            onChange={() => onTogglePaid(record)} 
-                        />
-                    </div>
-
-                    {/* Bill Content */}
-                    <div className="bill-content">
-                        {/* Top Row: Name and Amount */}
-                        <div className="bill-main-row">
-                            <Text strong className="bill-name">{record.name}</Text>
-                            <Text strong className="bill-amount">
-                                ${Number(record.amount).toLocaleString('en-US', { 
-                                    minimumFractionDigits: 2, 
-                                    maximumFractionDigits: 2 
-                                })}
-                            </Text>
-                        </div>
-
-                        {/* Bottom Row: Category and Due Status */}
-                        <div className="bill-details-row">
-                            {record.category && (
-                                <Tag 
-                                    style={{ 
-                                        margin: 0,
-                                        backgroundColor: 'transparent',
-                                        border: 'none',
-                                        fontSize: '0.75rem',
-                                        padding: '0 4px 0 0'
-                                    }}
-                                >
-                                    <span style={{ 
-                                        marginRight: '6px', 
-                                        display: 'inline-flex', 
-                                        alignItems: 'center' 
-                                    }}>
-                                        {React.cloneElement(getCategoryIcon(record.category), { size: 14 })}
-                                    </span>
-                                    <span style={{ 
-                                        color: getCategoryColor(record.category) === 'default' 
-                                            ? 'var(--neutral-600)' 
-                                            : `var(--${getCategoryColor(record.category)}-600)` 
-                                    }}>
-                                        {record.category}
-                                    </span>
-                                </Tag>
-                            )}
-                            <div className="bill-due-status">
-                                {renderDueIn(record.dueDate, record)}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Long Press Blur Overlay */}
-                {isLongPressing && (
-                    <div className="long-press-overlay" />
-                )}
+        <div 
+            key={record.id || index} 
+            className={`enhanced-bill-row ${rowClassName ? rowClassName(record) : ''}`}
+            style={{
+                transform: `translateX(${slideOffset}px)`,
+                transition: isSliding ? 'none' : 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+            }}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+            onClick={handleRowClick}
+        >
+            {/* Slide Actions Background */}
+            <div className={`slide-actions-container ${showActions ? 'visible' : ''}`}>
+                <button 
+                    className="slide-action edit-action"
+                    onClick={() => handleActionClick('edit')}
+                    aria-label="Edit bill"
+                >
+                    <IconEdit size={20} />
+                    <span>Edit</span>
+                </button>
+                <button 
+                    className="slide-action delete-action"
+                    onClick={() => handleActionClick('delete')}
+                    aria-label="Delete bill"
+                >
+                    <IconTrash size={20} />
+                    <span>Delete</span>
+                </button>
             </div>
 
-            {/* Context Menu Modal */}
-            <Modal
-                open={showContextMenu}
-                footer={null}
-                closable={false}
-                centered
-                width={280}
-                bodyStyle={{ padding: 0 }}
-                maskStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.4)' }}
-                onCancel={() => setShowContextMenu(false)}
-                className="context-menu-modal"
-            >
-                <div className="context-menu-content">
-                    <div className="context-menu-header">
-                        <Text strong style={{ fontSize: '16px' }}>{record.name}</Text>
-                        <Text type="secondary" style={{ fontSize: '14px' }}>
-                            ${Number(record.amount).toFixed(2)}
+            {/* Main Row Content */}
+            <div className="bill-row-content">
+                {/* Checkbox */}
+                <div className="bill-checkbox">
+                    <Checkbox 
+                        className={`status-checkbox small-checkbox ${record.isPaid ? 'checked' : ''}`} 
+                        checked={record.isPaid} 
+                        onChange={() => onTogglePaid(record)} 
+                    />
+                </div>
+
+                {/* Bill Content */}
+                <div className="bill-content">
+                    {/* Top Row: Name and Amount */}
+                    <div className="bill-main-row">
+                        <Text strong className="bill-name">{record.name}</Text>
+                        <Text strong className="bill-amount">
+                            ${Number(record.amount).toLocaleString('en-US', { 
+                                minimumFractionDigits: 2, 
+                                maximumFractionDigits: 2 
+                            })}
                         </Text>
                     </div>
-                    <div className="context-menu-actions">
-                        {contextMenuItems.map(item => (
-                            <div 
-                                key={item.key}
-                                className="context-menu-item"
-                                onClick={item.onClick}
+
+                    {/* Bottom Row: Category and Due Status */}
+                    <div className="bill-details-row">
+                        {record.category && (
+                            <Tag 
+                                style={{ 
+                                    margin: 0,
+                                    backgroundColor: 'transparent',
+                                    border: 'none',
+                                    fontSize: '0.75rem',
+                                    padding: '0 4px 0 0'
+                                }}
                             >
-                                {item.icon}
-                                <span>{item.label}</span>
-                            </div>
-                        ))}
+                                <span style={{ 
+                                    marginRight: '6px', 
+                                    display: 'inline-flex', 
+                                    alignItems: 'center' 
+                                }}>
+                                    {React.cloneElement(getCategoryIcon(record.category), { size: 14 })}
+                                </span>
+                                <span style={{ 
+                                    color: getCategoryColor(record.category) === 'default' 
+                                        ? 'var(--neutral-600)' 
+                                        : `var(--${getCategoryColor(record.category)}-600)` 
+                                }}>
+                                    {record.category}
+                                </span>
+                            </Tag>
+                        )}
+                        <div className="bill-due-status">
+                            {renderDueIn(record.dueDate, record)}
+                        </div>
                     </div>
                 </div>
-            </Modal>
-        </>
+            </div>
+        </div>
     );
 };
 
@@ -613,6 +563,7 @@ const CombinedBillsOverview = ({ style }) => {
                     overflow: hidden;
                     user-select: none;
                     -webkit-user-select: none;
+                    cursor: pointer;
                 }
 
                 .enhanced-bill-row:hover {
@@ -623,55 +574,59 @@ const CombinedBillsOverview = ({ style }) => {
                     border-bottom: none;
                 }
 
-                /* Long Press State */
-                .enhanced-bill-row.long-pressing {
-                    transform: scale(0.98);
-                    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-                    z-index: 10;
-                }
-
-                /* Long Press Blur Overlay */
-                .long-press-overlay {
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    right: 0;
-                    bottom: 0;
-                    background: rgba(255, 255, 255, 0.8);
-                    backdrop-filter: blur(4px);
-                    z-index: 5;
-                    border-radius: inherit;
-                }
-
-                /* Slide Action Background */
-                .slide-action-background {
+                /* Slide Actions Container */
+                .slide-actions-container {
                     position: absolute;
                     top: 0;
                     right: 0;
                     bottom: 0;
-                    width: 120px;
+                    width: 140px;
                     display: flex;
-                    align-items: center;
-                    justify-content: center;
+                    transform: translateX(100%);
+                    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                     z-index: 1;
                 }
 
+                .slide-actions-container.visible {
+                    transform: translateX(0);
+                }
+
                 .slide-action {
+                    flex: 1;
                     display: flex;
                     flex-direction: column;
                     align-items: center;
                     justify-content: center;
-                    height: 100%;
-                    width: 80px;
+                    border: none;
                     color: white;
                     font-size: 12px;
                     font-weight: 600;
                     text-transform: uppercase;
                     letter-spacing: 0.5px;
+                    cursor: pointer;
+                    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+                    gap: 4px;
+                    min-height: 100%;
                 }
 
-                .slide-action.delete-action {
+                .slide-action:active {
+                    transform: scale(0.95);
+                }
+
+                .edit-action {
+                    background: linear-gradient(135deg, #007AFF, #0056CC);
+                }
+
+                .edit-action:hover {
+                    background: linear-gradient(135deg, #0056CC, #003D99);
+                }
+
+                .delete-action {
                     background: linear-gradient(135deg, #FF3B30, #D70015);
+                }
+
+                .delete-action:hover {
+                    background: linear-gradient(135deg, #D70015, #B30000);
                 }
 
                 /* Bill Row Content */
@@ -741,61 +696,6 @@ const CombinedBillsOverview = ({ style }) => {
                     flex-shrink: 0;
                 }
 
-                /* Context Menu Modal */
-                .context-menu-modal .ant-modal-content {
-                    border-radius: 20px;
-                    overflow: hidden;
-                    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-                    backdrop-filter: blur(20px);
-                    border: 1px solid rgba(255, 255, 255, 0.2);
-                }
-
-                .context-menu-modal .ant-modal-body {
-                    padding: 0;
-                }
-
-                .context-menu-content {
-                    background: rgba(255, 255, 255, 0.95);
-                    backdrop-filter: blur(20px);
-                }
-
-                .context-menu-header {
-                    padding: 20px 20px 16px 20px;
-                    text-align: center;
-                    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-                    background: linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(248, 250, 252, 0.8));
-                }
-
-                .context-menu-actions {
-                    padding: 8px 0;
-                }
-
-                .context-menu-item {
-                    display: flex;
-                    align-items: center;
-                    padding: 16px 20px;
-                    cursor: pointer;
-                    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-                    gap: 16px;
-                    font-size: 16px;
-                    font-weight: 500;
-                    border-bottom: 1px solid rgba(0, 0, 0, 0.04);
-                }
-
-                .context-menu-item:last-child {
-                    border-bottom: none;
-                }
-
-                .context-menu-item:hover {
-                    background: rgba(0, 0, 0, 0.04);
-                    transform: translateX(4px);
-                }
-
-                .context-menu-item:active {
-                    transform: translateX(2px);
-                    background: rgba(0, 0, 0, 0.08);
-                }
-
                 /* Fade animation for bill completion */
                 .bill-row-fade-out {
                     opacity: 0.5;
@@ -841,38 +741,22 @@ const CombinedBillsOverview = ({ style }) => {
                         min-height: 64px;
                     }
 
-                    /* Slide action responsiveness */
-                    .slide-action-background {
-                        width: 100px;
+                    /* Slide actions mobile optimization */
+                    .slide-actions-container {
+                        width: 120px;
                     }
 
                     .slide-action {
-                        width: 70px;
                         font-size: 11px;
-                    }
-
-                    /* Context menu mobile optimization */
-                    .context-menu-modal {
-                        margin: 0;
-                        max-width: 100vw;
-                    }
-
-                    .context-menu-modal .ant-modal-content {
-                        margin: 16px;
-                        border-radius: 16px;
-                    }
-
-                    .context-menu-item {
-                        padding: 18px 20px;
-                        font-size: 17px;
+                        gap: 2px;
                     }
                 }
 
                 /* Accessibility enhancements */
                 @media (prefers-reduced-motion: reduce) {
                     .enhanced-bill-row,
-                    .context-menu-item,
-                    .bill-row-content {
+                    .slide-actions-container,
+                    .slide-action {
                         transition: none;
                     }
                 }
@@ -883,13 +767,16 @@ const CombinedBillsOverview = ({ style }) => {
                         border: 2px solid var(--neutral-300);
                     }
 
-                    .context-menu-content {
-                        background: white;
-                        backdrop-filter: none;
+                    .slide-action {
+                        border: 2px solid rgba(255, 255, 255, 0.5);
                     }
 
-                    .context-menu-item {
-                        border-bottom: 2px solid var(--neutral-200);
+                    .edit-action {
+                        background: #0066CC;
+                    }
+
+                    .delete-action {
+                        background: #CC0000;
                     }
                 }
 
@@ -913,24 +800,6 @@ const CombinedBillsOverview = ({ style }) => {
                         background-color: var(--neutral-800);
                         color: var(--neutral-300);
                     }
-
-                    .context-menu-content {
-                        background: rgba(30, 30, 30, 0.95);
-                    }
-
-                    .context-menu-header {
-                        background: linear-gradient(135deg, rgba(40, 40, 40, 0.8), rgba(30, 30, 30, 0.8));
-                        border-bottom-color: rgba(255, 255, 255, 0.1);
-                    }
-
-                    .context-menu-item {
-                        color: var(--neutral-100);
-                        border-bottom-color: rgba(255, 255, 255, 0.1);
-                    }
-
-                    .context-menu-item:hover {
-                        background: rgba(255, 255, 255, 0.1);
-                    }
                 }
 
                 /* Focus states for keyboard navigation */
@@ -939,26 +808,9 @@ const CombinedBillsOverview = ({ style }) => {
                     outline-offset: 2px;
                 }
 
-                .context-menu-item:focus {
-                    outline: 2px solid var(--primary-500);
+                .slide-action:focus {
+                    outline: 2px solid rgba(255, 255, 255, 0.8);
                     outline-offset: -2px;
-                    background: rgba(0, 122, 255, 0.1);
-                }
-
-                /* Animation for context menu appearance */
-                .context-menu-modal .ant-modal-content {
-                    animation: contextMenuSlideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                }
-
-                @keyframes contextMenuSlideIn {
-                    from {
-                        opacity: 0;
-                        transform: translateY(20px) scale(0.95);
-                    }
-                    to {
-                        opacity: 1;
-                        transform: translateY(0) scale(1);
-                    }
                 }
 
                 /* Haptic feedback visual cues */
@@ -968,13 +820,8 @@ const CombinedBillsOverview = ({ style }) => {
 
                 @keyframes hapticPulse {
                     0% { transform: scale(1); }
-                    50% { transform: scale(1.02); }
+                    50% { transform: scale(1.01); }
                     100% { transform: scale(1); }
-                }
-
-                /* Slide threshold indicator */
-                .enhanced-bill-row[data-slide-threshold="true"] {
-                    box-shadow: inset -4px 0 0 #FF3B30;
                 }
 
                 /* Performance optimizations */
@@ -983,7 +830,7 @@ const CombinedBillsOverview = ({ style }) => {
                     will-change: transform;
                 }
 
-                .context-menu-content {
+                .slide-actions-container {
                     contain: layout style paint;
                 }
 
@@ -994,7 +841,10 @@ const CombinedBillsOverview = ({ style }) => {
 
                 .enhanced-bill-row {
                     isolation: isolate;
+                }0;
                 }
+
+
             `}</style>
         </>
     );
