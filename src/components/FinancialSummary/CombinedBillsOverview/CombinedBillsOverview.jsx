@@ -414,18 +414,18 @@ const CombinedBillsOverview = ({ style }) => {
 
     const getCategoryColor = (category) => {
         switch (category?.toLowerCase()) {
-            case 'utilities': return { text: '#4A90E2', bg: '#F0F6FF' }; // Soft blue
-            case 'rent': return { text: '#8B5FBF', bg: '#F5F1FF' }; // Muted purple
-            case 'mortgage': return { text: '#D4703A', bg: '#FFF5F0' }; // Warm orange
-            case 'groceries': return { text: '#5BA854', bg: '#F0FFF0' }; // Natural green
-            case 'subscription': return { text: '#36A9AE', bg: '#F0FFFF' }; // Teal
-            case 'credit card': return { text: '#E85D75', bg: '#FFF0F3' }; // Soft pink
-            case 'loan': return { text: '#B8860B', bg: '#FFFDF0' }; // Muted gold
-            case 'insurance': return { text: '#9370DB', bg: '#F8F5FF' }; // Light purple
-            case 'medical': return { text: '#DC6B19', bg: '#FFF7F0' }; // Soft coral
-            case 'personal care': return { text: '#7B68EE', bg: '#F6F4FF' }; // Periwinkle
-            case 'bill prep': return { text: '#4682B4', bg: '#F4F8FF' }; // Steel blue
-            case 'auto': return { text: '#CD853F', bg: '#FFF8F0' }; // Sandy brown
+            case 'utilities': return { text: '#6B7D8F', bg: '#F8FAFC' }; // Subtle slate blue
+            case 'rent': return { text: '#8B7CA3', bg: '#F9F8FB' }; // Muted lavender
+            case 'mortgage': return { text: '#A3856B', bg: '#FBF9F7' }; // Warm taupe
+            case 'groceries': return { text: '#7A9B76', bg: '#F8FBF8' }; // Soft sage
+            case 'subscription': return { text: '#6B9499', bg: '#F7FAFB' }; // Muted teal
+            case 'credit card': return { text: '#B5838B', bg: '#FCF8F9' }; // Dusty rose
+            case 'loan': return { text: '#A89B6B', bg: '#FCFBF7' }; // Soft olive
+            case 'insurance': return { text: '#9486A3', bg: '#FAF9FB' }; // Light mauve
+            case 'medical': return { text: '#B58A6B', bg: '#FCF9F7' }; // Warm beige
+            case 'personal care': return { text: '#8F8BA3', bg: '#FAF9FB' }; // Soft periwinkle
+            case 'bill prep': return { text: '#7085A3', bg: '#F8F9FB' }; // Muted steel
+            case 'auto': return { text: '#A3936B', bg: '#FCFAF7' }; // Soft amber
             default: return { text: '#8E8E93', bg: '#F7F7F7' }; // iOS default gray
         }
     };
