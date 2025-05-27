@@ -317,9 +317,19 @@ const CombinedBillsOverview = ({ style }) => {
     }, [validBills, displayedMonth, startOfDisplayedMonth, endOfDisplayedMonth]);
 
     const filteredBillsByPaidStatus = useMemo(() => {
-        return showPaidBills 
+        const allBills = showPaidBills 
             ? billsDueInDisplayedMonth 
             : billsDueInDisplayedMonth.filter(bill => !bill.isPaid);
+        
+        // Sort bills: unpaid first, then paid (maintaining original order within each group)
+        return allBills.sort((a, b) => {
+            // If one is paid and the other isn't, unpaid comes first
+            if (a.isPaid !== b.isPaid) {
+                return a.isPaid ? 1 : -1;
+            }
+            // If both have same paid status, maintain original order (by due date)
+            return dayjs(a.dueDate).valueOf() - dayjs(b.dueDate).valueOf();
+        });
     }, [billsDueInDisplayedMonth, showPaidBills]);
 
     const mainTableDataSourceFiltered = useMemo(() => {
