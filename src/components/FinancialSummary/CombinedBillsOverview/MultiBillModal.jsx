@@ -12,6 +12,7 @@ import {
 } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import { FinanceContext } from '../../../contexts/FinanceContext';
+import './MultiBillModal.css';
 
 const { Title, Text } = Typography;
 const { Option } = Select;

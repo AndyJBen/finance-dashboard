@@ -10,6 +10,7 @@ import {
     IconEdit,
     IconBuildingBank
 } from '@tabler/icons-react';
+import './BottomNavBar.css';
 
 // Styles remain the same...
 const navStyle = {

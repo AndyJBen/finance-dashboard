@@ -23,7 +23,8 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import isBetween from 'dayjs/plugin/isBetween';
 // Import the shared CardLayout component
-import CardLayout from '../shared/CardLayout';
+import CardLayout from '../shared/CardLayout/CardLayout';
+import './UpcomingPayments.css';
 
 dayjs.extend(relativeTime);
 dayjs.extend(isSameOrAfter);

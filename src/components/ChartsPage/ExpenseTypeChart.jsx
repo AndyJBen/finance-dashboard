@@ -1,6 +1,7 @@
 import React from 'react';
 import { ResponsivePie } from '@nivo/pie';
 import { theme } from 'antd';
+import './ExpenseTypeChart.css';
 
 // Helper to process bills data
 const processExpenseTypeData = (bills = []) => {

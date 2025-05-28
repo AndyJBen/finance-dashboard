@@ -2,6 +2,7 @@
 import React from 'react';
 import { Card, Spin, Button, Tooltip, Alert } from 'antd';
 import { IconMinus, IconChevronDown } from '@tabler/icons-react';
+import './CardLayout.css';
 
 /**
  * Shared component wrapper for activity cards to ensure consistent styling

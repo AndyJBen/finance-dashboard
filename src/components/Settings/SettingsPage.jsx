@@ -3,6 +3,7 @@ import React from 'react';
 import { Layout } from 'antd';
 import Settings from './Settings';
 import DesktopSettings from './DesktopSettings';
+import './SettingsPage.css';
 
 const { Content } = Layout;
 

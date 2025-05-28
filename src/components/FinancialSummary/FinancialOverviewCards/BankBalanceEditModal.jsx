@@ -9,6 +9,7 @@ import {
   IconCoin
 } from '@tabler/icons-react'; // Using Tabler icons
 import { FinanceContext } from '../../../contexts/FinanceContext'; // Importing finance context
+import './BankBalanceEditModal.css';
 
 const { Title, Text } = Typography;
 

@@ -9,6 +9,7 @@ import {
     IconCreditCard,
     IconCoin
 } from '@tabler/icons-react';
+import './AddCreditCardModal.css';
 
 const { Title } = Typography;
 

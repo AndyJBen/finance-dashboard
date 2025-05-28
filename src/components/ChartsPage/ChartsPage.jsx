@@ -13,6 +13,7 @@ import ExpenseTypeChart from './ExpenseTypeChart';
 
 import { fetchBills } from '../../services/api'; // Assuming fetchBills is correctly implemented
 import { FinanceContext } from '../../contexts/FinanceContext';
+import './ChartsPage.css';
 
 const { Title }  = Typography;
 

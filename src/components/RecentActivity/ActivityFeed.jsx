@@ -12,7 +12,8 @@ import { FinanceContext } from '../../contexts/FinanceContext';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 // Import the shared CardLayout component
-import CardLayout from '../shared/CardLayout';
+import CardLayout from '../shared/CardLayout/CardLayout';
+import './ActivityFeed.css';
 
 dayjs.extend(relativeTime);
 

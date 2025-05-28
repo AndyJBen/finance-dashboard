@@ -1,6 +1,7 @@
 // src/components/skeletons/FinancialOverviewSkeleton.jsx
 import React from 'react';
 import { Row, Col, Card, Skeleton } from 'antd';
+import './FinancialOverviewSkeleton.css';
 
 /**
  * A skeleton loading component that mimics the layout of the

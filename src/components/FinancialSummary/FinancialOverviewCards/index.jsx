@@ -8,7 +8,8 @@ import NetPositionCard from './NetPositionCard';
 import DueBalanceCard from './DueBalanceCard';
 import BankBalanceCard from './BankBalanceCard';
 // Import the skeleton component
-import FinancialOverviewSkeleton from '../../skeletons/FinancialOverviewSkeleton'; // Adjust path if needed
+import FinancialOverviewSkeleton from '../../skeletons/FinancialOverviewSkeleton/FinancialOverviewSkeleton'; // Adjust path if needed
+import './index.css';
 
 // Main container component for the overview cards
 const FinancialOverviewCardsContainer = () => {

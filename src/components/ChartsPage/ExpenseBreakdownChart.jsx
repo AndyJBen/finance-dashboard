@@ -1,6 +1,7 @@
 import React from 'react';
 import { ResponsivePie } from '@nivo/pie';
 import { theme } from 'antd'; // Import AntD theme
+import './ExpenseBreakdownChart.css';
 
 // Google style color palette for the pie chart
 const googleColors = [

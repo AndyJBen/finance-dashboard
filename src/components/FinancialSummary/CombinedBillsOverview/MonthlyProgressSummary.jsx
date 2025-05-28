@@ -8,6 +8,7 @@ import {
     IconCalendarFilled, IconChevronLeft, IconChevronRight
 } from '@tabler/icons-react';
 import dayjs from 'dayjs';
+import './MonthlyProgressSummary.css';
 
 // Use Typography components directly
 const { Text, Title, Paragraph } = Typography;
