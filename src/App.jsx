@@ -1,355 +1,255 @@
-// src/App.jsx
-// Updated with Finance Feed tab replacing Bills tab
-// And Dashboard right column hidden on mobile view
-// Added conditional bottom margin for CombinedBillsOverview on mobile when expanded
-// Corrected import path for FinanceContext
-// Increased conditional margin for expanded list on mobile
-// Integrated SettingsPage component
-// Added ErrorBoundary wrapper
-// Added handleOpenEditBalanceModal function and passed to BottomNavBar
-// Added proper mobile footer spacing
-// UPDATED: Added MultiBillModal integration
-
 import React, { useState, useContext, useEffect } from 'react';
 import { Layout, Row, Col, Typography, Grid } from 'antd';
-// --- CORRECTED IMPORT PATH ---
-import { FinanceContext } from './contexts/FinanceContext'; // Correct path from src/App.jsx
-// --- END CORRECTION ---
+import { FinanceContext } from './contexts/FinanceContext';
 
-// Core pages/components
 import FinancialOverviewCards from './components/FinancialSummary/FinancialOverviewCards';
-import BillsList              from './components/BillsList/BillsList';
-import FinanceFeed            from './components/FinanceFeed/FinanceFeed';
-import UpcomingPayments       from './components/RecentActivity/UpcomingPayments';
-import ActivityFeed           from './components/RecentActivity/ActivityFeed';
+import BillsList from './components/BillsList/BillsList';
+import FinanceFeed from './components/FinanceFeed/FinanceFeed';
+import UpcomingPayments from './components/RecentActivity/UpcomingPayments';
+import ActivityFeed from './components/RecentActivity/ActivityFeed';
 import NonRecurringTransactions from './components/RecentActivity/NonRecurringTransactions';
-import Sidebar                from './components/Sidebar/Sidebar';
-import CombinedBillsOverview  from './components/FinancialSummary/CombinedBillsOverview/CombinedBillsOverview';
-import BillPrepCard           from './components/FinancialSummary/BillPrepCard/BillPrepCard';
-import PastDuePayments        from './components/RecentActivity/PastDuePayments';
-import AppFooter              from './components/Footer/Footer';
-import ChartsPage             from './components/ChartsPage/ChartsPage';
-import BottomNavBar           from './components/Navigation/BottomNavBar/BottomNavBar';
-import EditBillModal          from './components/BillsList/EditBillModal';
-import SettingsPage           from './components/Settings/SettingsPage'; // Import SettingsPage
-import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary'; // Import ErrorBoundary
-// ADDED: Import MultiBillModal component
+import Sidebar from './components/Sidebar/Sidebar';
+import CombinedBillsOverview from './components/FinancialSummary/CombinedBillsOverview/CombinedBillsOverview';
+import BillPrepCard from './components/FinancialSummary/BillPrepCard/BillPrepCard';
+import PastDuePayments from './components/RecentActivity/PastDuePayments';
+import AppFooter from './components/Footer/Footer';
+import ChartsPage from './components/ChartsPage/ChartsPage';
+import BottomNavBar from './components/Navigation/BottomNavBar/BottomNavBar';
+import EditBillModal from './components/BillsList/EditBillModal';
+import SettingsPage from './components/Settings/SettingsPage';
+import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
 import MultiBillModal from './components/FinancialSummary/CombinedBillsOverview/MultiBillModal';
 import BankBalanceEditModal from './components/FinancialSummary/FinancialOverviewCards/BankBalanceEditModal';
 
 const { Content } = Layout;
-const { Title }   = Typography;
+const { Title } = Typography;
 const { useBreakpoint } = Grid;
 
 function MyApp() {
-  // State for selected menu item
   const [selectedMenuKey, setSelected] = useState('dashboard');
-  // Screen size detection
   const screens = useBreakpoint();
-  // Determine if the view is mobile (medium breakpoint and below)
   const isMobileView = !screens.md;
 
-  // Ensure the page always loads scrolled to the very top on mobile
   useEffect(() => {
     if (isMobileView) {
       window.scrollTo(0, 0);
     }
   }, [isMobileView]);
 
-  // State for Edit/Add Bill Modal
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
-  const [editingBill, setEditingBill] = useState(null); // Holds the bill data when editing
-
-  // ADDED: State for MultiBillModal
+  const [editingBill, setEditingBill] = useState(null);
   const [isMultiBillModalVisible, setIsMultiBillModalVisible] = useState(false);
-
-  // State for CombinedBillsOverview Expansion
-  // Default to true because the list starts expanded (isTableCollapsed starts false in CombinedBillsOverview)
   const [isBillsListExpanded, setIsBillsListExpanded] = useState(true);
 
-  // Finance Context - Access data and functions from the provider
   const financeContext = useContext(FinanceContext);
-  // Provide fallback functions to prevent errors if context is not yet available during initial render
   const addBill = financeContext ? financeContext.addBill : () => console.error("FinanceContext not available for addBill");
   const updateBill = financeContext ? financeContext.updateBill : () => console.error("FinanceContext not available for updateBill");
-  // Get the toggle function from context
   const toggleBankBalanceEdit = financeContext ? financeContext.toggleBankBalanceEdit : () => console.error("FinanceContext not available for toggleBankBalanceEdit");
   const isEditingBankBalance = financeContext ? financeContext.isEditingBankBalance : false;
 
-  // --- Modal Handlers ---
-
-  // MODIFIED: Opens the MultiBillModal instead of EditBillModal
   const handleOpenAddBillModal = () => {
     setIsMultiBillModalVisible(true);
   };
 
-  // Opens the modal in 'Edit' mode with the selected bill's data
   const handleOpenEditBillModal = (billRecord) => {
-    setEditingBill(billRecord); // Pre-fill modal with the bill to edit
+    setEditingBill(billRecord);
     setIsEditModalVisible(true);
   };
 
-  // Closes the edit modal and resets the editing state
   const handleModalClose = () => {
     setIsEditModalVisible(false);
     setEditingBill(null);
   };
 
-  // ADDED: Handler to close MultiBillModal
   const handleCloseMultiBillModal = () => {
     setIsMultiBillModalVisible(false);
   };
 
-  // Handles form submission from the EditBillModal
   const handleModalSubmit = async (values) => {
     let success = false;
     try {
-        // If editingBill has data, we are in 'Edit' mode
-        if (editingBill) {
-          if (updateBill) { // Check if updateBill function exists
-              // Pass the bill ID and the updated values
-              success = await updateBill(editingBill.id, values);
-          }
-        // Otherwise, we are in 'Add' mode
-        } else {
-          if (addBill) { // Check if addBill function exists
-              // Pass the new bill values
-              success = await addBill(values);
-          }
+      if (editingBill) {
+        if (updateBill) {
+          success = await updateBill(editingBill.id, values);
         }
-        // If the add/update operation was successful, close the modal
-        if (success) {
-          handleModalClose();
-        } else {
-            // Log an error if the operation failed (context function might return false)
-            console.error("Failed to submit bill via modal.");
+      } else {
+        if (addBill) {
+          success = await addBill(values);
         }
+      }
+      if (success) {
+        handleModalClose();
+      } else {
+        console.error("Failed to submit bill via modal.");
+      }
     } catch (error) {
-        // Log any errors during the async operation
-        console.error("Error submitting bill modal:", error);
+      console.error("Error submitting bill modal:", error);
     }
   };
 
-  // --- NEW: Handler to open Bank Balance Edit Mode ---
   const handleOpenEditBalanceModal = () => {
-    console.log("Triggering bank balance edit mode...");
-    // Call the toggle function from context to set the global state
     if (toggleBankBalanceEdit) {
       toggleBankBalanceEdit(true);
     }
   };
-  // --- END NEW HANDLER ---
 
-  // --- Layout Configuration ---
-  const SIDEBAR_WIDTH = 240; // Width of the sidebar for desktop view
-  // Adjust left margin for main content based on whether the sidebar is visible (desktop only)
+  const SIDEBAR_WIDTH = 240;
   const marginLeft = isMobileView ? 0 : SIDEBAR_WIDTH;
 
-  // --- Navigation Handler ---
-  // Updates the selected menu key based on sidebar/bottom nav clicks
   const handleSelect = ({ key }) => {
-    // Ignore clicks on 'add' or the 'action' button key (center button on mobile)
     if (key !== 'add' && key !== 'action') {
-        // Map 'account' key (from bottom nav) to 'settings' if needed, otherwise use the key directly
-        setSelected(key === 'account' ? 'settings' : key);
+      setSelected(key === 'account' ? 'settings' : key);
     }
   };
 
-  // --- Handler for Bills List Expansion State Change ---
-  // This function will be passed down to CombinedBillsOverview via props
-  // It updates the state in App.jsx when the list expands/collapses
   const handleBillsExpansionChange = (isExpanded) => {
-      setIsBillsListExpanded(isExpanded);
+    setIsBillsListExpanded(isExpanded);
   };
 
-  // --- Content Rendering Logic ---
-  // Determines which main component/page to render based on the selectedMenuKey
   const renderContent = () => {
     switch (selectedMenuKey) {
       case 'dashboard':
         return (
           <Row gutter={isMobileView ? [8, 16] : [24, 24]}>
-            {/* Left Column (Financial Overview & Combined Bills) */}
             <Col xs={24} lg={17}>
               <FinancialOverviewCards />
-              {/* Wrapper Div for Conditional Margin */}
-              {/* This div adds space below CombinedBillsOverview ONLY on mobile when the list is expanded */}
               <div style={{
-                  // *** INCREASED MARGIN BOTTOM ***
-                  // Apply margin bottom ONLY when on mobile AND the list is expanded
-                  marginBottom: (isMobileView && isBillsListExpanded) ? '60px' : '0px', // Increased from 40px
-                  // Optional: Add a smooth transition for the margin change
-                  transition: 'margin-bottom 0.2s ease-in-out'
+                marginBottom: (isMobileView && isBillsListExpanded) ? '60px' : '0px',
+                transition: 'margin-bottom 0.2s ease-in-out'
               }}>
-                {/* Inner div for consistent top margin */}
                 <div style={{ marginTop: isMobileView ? 0 : 24 }}>
                   <CombinedBillsOverview
                     style={{ height: '100%' }}
-                    // Pass modal handlers down
                     onEditBill={handleOpenEditBillModal}
-                    onAddBill={handleOpenAddBillModal} // MODIFIED: This now opens MultiBillModal
-                    // Pass the expansion change handler down
+                    onAddBill={handleOpenAddBillModal}
                     onExpansionChange={handleBillsExpansionChange}
                   />
                 </div>
               </div>
-              {/* End Wrapper Div */}
             </Col>
 
-            {/* Right Column (Feed Cards) - Conditionally rendered: ONLY ON DESKTOP */}
-            {!isMobileView && ( // Only render this column if isMobileView is false
+            {!isMobileView && (
               <Col xs={24} lg={7} style={{ width: '100%' }}>
-                {/* Container div for the right-column cards */}
                 <div
                   style={{
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: 24, // Use fixed gap for desktop view
+                    gap: 24,
                     width: '100%'
                   }}
                 >
-                  {/* These components will now ONLY render when !isMobileView */}
-                  <BillPrepCard style={{ width: '100%', height: 'auto' }} />
-                  <PastDuePayments style={{ width: '100%', height: 'auto' }} />
-                  <NonRecurringTransactions style={{ width: '100%', height: 'auto' }} />
-                  <UpcomingPayments style={{ width: '100%', height: 'auto' }} />
-                  <ActivityFeed style={{ width: '100%', height: 'auto' }} />
+                  {}
                 </div>
               </Col>
             )}
           </Row>
         );
 
-      case 'finance-feed': // Renders the FinanceFeed component
+      case 'finance-feed':
         return <FinanceFeed
-          isMobileView={isMobileView} // Pass mobile view status
-          // Pass modal handlers
+          isMobileView={isMobileView}
           onEditBill={handleOpenEditBillModal}
-          onAddBill={handleOpenAddBillModal} // MODIFIED: This now opens MultiBillModal
+          onAddBill={handleOpenAddBillModal}
         />;
 
-      case 'reports': // Renders the ChartsPage component
+      case 'reports':
         return <ChartsPage />;
 
-      case 'settings': // Renders the SettingsPage component
-        return <SettingsPage isMobileView={isMobileView} />; // Pass mobile view status
+      case 'settings':
+        return <SettingsPage isMobileView={isMobileView} />;
 
-      default: // Fallback for unknown routes
+      default:
         return <Title level={3}>Not Found</Title>;
     }
   };
 
-  // --- Main Content Area Styling ---
   const contentStyle = {
-    padding: isMobileView ? '0 var(--space-12)' : 'var(--space-24)', // Responsive padding (top, left, right)
+    padding: isMobileView ? '0 var(--space-12)' : 'var(--space-24)',
     margin: 0,
-    flexGrow: 1, // Allow content to fill available space
+    flexGrow: 1,
     width: '100%',
     maxWidth: '100%',
-    // Fixed mobile padding - avoiding variables like isTableCollapsed
     paddingBottom: isMobileView ? (isBillsListExpanded ? '100px' : '80px') : 'var(--space-24)'
   };
 
-  // --- Component Return JSX ---
   return (
-    // Wrap the entire application layout with the ErrorBoundary
     <ErrorBoundary>
       <Layout style={{ minHeight: '100vh', maxWidth: '100vw', overflow: 'hidden' }}>
-        {/* Sidebar: Render only if not in mobile view */}
         {!isMobileView && (
-            <Sidebar
-              selectedKey={selectedMenuKey}
-              onSelect={handleSelect}
-              width={SIDEBAR_WIDTH}
-              onEditBalance={handleOpenEditBalanceModal}
-              // onAddBill={handleOpenAddBillModal}
-              // onEditBill={handleOpenEditBillModal}
-            />
+          <Sidebar
+            selectedKey={selectedMenuKey}
+            onSelect={handleSelect}
+            width={SIDEBAR_WIDTH}
+            onEditBalance={handleOpenEditBalanceModal}
+          />
         )}
 
-        {/* Main Layout Area (Content + Footer) */}
         <Layout
           style={{
-            marginLeft, // Apply left margin for sidebar space on desktop
-            transition: 'margin-left 0.2s', // Smooth transition for margin changes
+            marginLeft,
+            transition: 'margin-left 0.2s',
             minHeight: '100vh',
-            overflowY: 'auto', // Allow vertical scrolling for content
-            overflowX: 'hidden', // Prevent horizontal scrolling
-            overscrollBehaviorY: 'contain', // Prevent scrolling parent elements when content scrolls
+            overflowY: 'auto',
+            overflowX: 'hidden',
+            overscrollBehaviorY: 'contain',
             display: 'flex',
             flexDirection: 'column',
-            backgroundColor: 'var(--neutral-100)', // Background color for content area
+            backgroundColor: 'var(--neutral-100)',
             width: '100%',
             maxWidth: '100%',
             padding: 0,
           }}
-          className={isBillsListExpanded ? 'expanded-bills-list' : 'collapsed-bills-list'} // Add class for CSS targeting
+          className={isBillsListExpanded ? 'expanded-bills-list' : 'collapsed-bills-list'}
         >
-          {/* Content Area */}
           <Content style={contentStyle}>
             <div key={selectedMenuKey}
-                 className={isMobileView ? 'page-transition' : undefined}>
+              className={isMobileView ? 'page-transition' : undefined}>
               {renderContent()}
             </div>
           </Content>
-          {/* Footer */}
           <AppFooter />
         </Layout>
 
-        {/* Bottom Navigation Bar: Render only if in mobile view */}
         {isMobileView && (
-            <BottomNavBar
-                selectedKey={selectedMenuKey}
-                onSelect={handleSelect}
-                onAddClick={handleOpenAddBillModal} // MODIFIED: This now opens MultiBillModal
-                // Pass the new handler for editing balance
-                onEditBalanceClick={handleOpenEditBalanceModal}
-            />
+          <BottomNavBar
+            selectedKey={selectedMenuKey}
+            onSelect={handleSelect}
+            onAddClick={handleOpenAddBillModal}
+            onEditBalanceClick={handleOpenEditBalanceModal}
+          />
         )}
 
-        {/* Edit Bill Modal: Render conditionally based on isEditModalVisible state */}
         {isEditModalVisible && (
-            <EditBillModal
-                open={isEditModalVisible} // Control visibility
-                onCancel={handleModalClose} // Handler for closing the modal
-                onSubmit={handleModalSubmit} // Handler for form submission
-                initialData={editingBill} // Pass data for editing, or null for adding
-            />
+          <EditBillModal
+            open={isEditModalVisible}
+            onCancel={handleModalClose}
+            onSubmit={handleModalSubmit}
+            initialData={editingBill}
+          />
         )}
 
-        {/* ADDED: MultiBill Modal */}
         <MultiBillModal
-            open={isMultiBillModalVisible}
-            onClose={handleCloseMultiBillModal}
+          open={isMultiBillModalVisible}
+          onClose={handleCloseMultiBillModal}
         />
 
-        {/* Bank Balance Edit Modal - globally rendered */}
         <BankBalanceEditModal
-            open={isEditingBankBalance}
-            onClose={() => toggleBankBalanceEdit(false)}
+          open={isEditingBankBalance}
+          onClose={() => toggleBankBalanceEdit(false)}
         />
       </Layout>
 
-      {/* Add CSS for mobile spacing */}
       <style jsx global>{`
-        /* Mobile bottom spacing CSS */
         @media (max-width: 768px) {
-          /* Add safe area inset support for iOS devices */
           .ant-layout-content {
             padding-bottom: env(safe-area-inset-bottom, 20px) !important;
           }
-          
-          /* Add additional bottom space when bills list is expanded */
           .expanded-bills-list .ant-layout-content {
             padding-bottom: calc(env(safe-area-inset-bottom, 20px) + 80px) !important;
           }
-          
-          /* Less padding when collapsed */
           .collapsed-bills-list .ant-layout-content {
             padding-bottom: calc(env(safe-area-inset-bottom, 20px) + 60px) !important;
           }
-          
-          /* Fix layout for iOS */
           .bottom-navbar {
             z-index: 1001 !important;
             bottom: env(safe-area-inset-bottom, 0px) !important;
@@ -360,4 +260,4 @@ function MyApp() {
   );
 }
 
-export default MyApp; // Export the main application component
+export default MyApp;
