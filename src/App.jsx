@@ -25,14 +25,14 @@ import ActivityFeed           from './components/RecentActivity/ActivityFeed';
 import NonRecurringTransactions from './components/RecentActivity/NonRecurringTransactions';
 import Sidebar                from './components/Sidebar/Sidebar';
 import CombinedBillsOverview  from './components/FinancialSummary/CombinedBillsOverview/CombinedBillsOverview';
-import BillPrepCard           from './components/FinancialSummary/BillPrepCard';
+import BillPrepCard           from './components/FinancialSummary/BillPrepCard/BillPrepCard';
 import PastDuePayments        from './components/RecentActivity/PastDuePayments';
 import AppFooter              from './components/Footer/Footer';
 import ChartsPage             from './components/ChartsPage/ChartsPage';
-import BottomNavBar           from './components/Navigation/BottomNavBar';
+import BottomNavBar           from './components/Navigation/BottomNavBar/BottomNavBar';
 import EditBillModal          from './components/BillsList/EditBillModal';
 import SettingsPage           from './components/Settings/SettingsPage'; // Import SettingsPage
-import ErrorBoundary from './components/ErrorBoundary'; // Import ErrorBoundary
+import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary'; // Import ErrorBoundary
 // ADDED: Import MultiBillModal component
 import MultiBillModal from './components/FinancialSummary/CombinedBillsOverview/MultiBillModal';
 import BankBalanceEditModal from './components/FinancialSummary/FinancialOverviewCards/BankBalanceEditModal';

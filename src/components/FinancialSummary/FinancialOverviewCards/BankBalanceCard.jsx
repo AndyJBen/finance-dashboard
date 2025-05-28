@@ -5,6 +5,7 @@ import { Card, Col, Space, Statistic, Typography, Tooltip } from 'antd';
 import { IconBuildingBank } from '@tabler/icons-react';
 import { FinanceContext } from '../../../contexts/FinanceContext';
 import BankBalanceEditModal from './BankBalanceEditModal';
+import './BankBalanceCard.css';
 
 const { Text } = Typography;
 

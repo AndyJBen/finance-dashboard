@@ -4,6 +4,7 @@ import React, { useContext } from 'react';
 import { Card, Col, Space, Statistic, Typography } from 'antd';
 import { IconCoinFilled } from '@tabler/icons-react';
 import { FinanceContext } from '../../../contexts/FinanceContext';
+import './NetPositionCard.css';
 
 const { Text } = Typography;
 

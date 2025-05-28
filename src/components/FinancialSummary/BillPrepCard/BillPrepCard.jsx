@@ -9,6 +9,7 @@ import {
 import { FinanceContext } from '../../contexts/FinanceContext'; // Ensure path is correct
 import dayjs from 'dayjs';
 import isBetween from 'dayjs/plugin/isBetween'; // Needed for date filtering
+import './BillPrepCard.css';
 
 dayjs.extend(isBetween);
 

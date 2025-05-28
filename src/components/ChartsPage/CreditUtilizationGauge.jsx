@@ -1,12 +1,13 @@
 import React from 'react';
 import { ResponsiveRadialBar } from '@nivo/radial-bar';
 import { theme, Typography } from 'antd';
+import './CreditUtilizationGauge.css';
 
 const { Text } = Typography;
 
 // --- PLACEHOLDER DATA ---
 // You NEED to add 'limit' to your credit_cards table/API
-const placeholderUtilizationData = [
+const PLACEHOLDER_UTILIZATION_DATA = [
   { id: 'Visa Gold', data: [{ x: 'Util.', y: 65 }], limit: 5000, balance: 3250 }, // y = (balance / limit) * 100
   { id: 'Store Card', data: [{ x: 'Util.', y: 82 }], limit: 1000, balance: 820 },
   { id: 'Travel Rewards', data: [{ x: 'Util.', y: 30 }], limit: 10000, balance: 3000 },

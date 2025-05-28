@@ -20,7 +20,8 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 // Import the shared CardLayout component
-import CardLayout from '../shared/CardLayout';
+import CardLayout from '../shared/CardLayout/CardLayout';
+import './PastDuePayments.css';
 
 dayjs.extend(relativeTime);
 dayjs.extend(isSameOrBefore);

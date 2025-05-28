@@ -19,7 +19,8 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import isBetween from 'dayjs/plugin/isBetween';
 // Import the existing CardLayout component
-import CardLayout from '../shared/CardLayout';
+import CardLayout from '../shared/CardLayout/CardLayout';
+import './NonRecurringTransactions.css';
 
 dayjs.extend(relativeTime);
 dayjs.extend(isBetween);

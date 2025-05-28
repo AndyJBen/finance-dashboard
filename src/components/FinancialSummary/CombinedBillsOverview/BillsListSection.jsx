@@ -6,6 +6,7 @@ import {
 import {
     IconPlus // Keep only needed icons
 } from '@tabler/icons-react';
+import './BillsListSection.css';
 
 const { Text } = Typography;
 const { useBreakpoint } = Grid;
