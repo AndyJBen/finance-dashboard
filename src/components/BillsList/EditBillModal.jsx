@@ -117,7 +117,7 @@ const UnifiedEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
       centered
       width="100%"
       style={{ 
-        maxWidth: '400px',
+        maxWidth: '340px',
         margin: '0 auto',
         padding: 0
       }}
@@ -130,35 +130,40 @@ const UnifiedEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
     >
       {/* Single Unified Card */}
       <div className="unified-modal-card">
-        {/* Dynamic Header Section */}
+        {/* Compact Header with Current Bill Info */}
         <div className="unified-header" style={{
           background: selectedCategory 
-            ? `linear-gradient(135deg, ${categoryInfo.color}10, ${categoryInfo.color}05)`
-            : 'linear-gradient(135deg, var(--primary-100), var(--primary-50))'
+            ? `linear-gradient(135deg, ${categoryInfo.color}08, ${categoryInfo.color}03)`
+            : 'linear-gradient(135deg, var(--primary-50), var(--primary-25))'
         }}>
           <Button 
             type="text" 
             className="header-close-btn"
             onClick={onCancel}
-            icon={<IconX size={18} />}
+            icon={<IconX size={16} />}
           />
           
           <div className="header-content">
-            {selectedCategory && (
-              <Avatar 
-                size={28}
-                style={{ 
-                  backgroundColor: categoryInfo.bgColor,
-                  color: categoryInfo.color,
-                  marginBottom: 4
-                }}
-                icon={React.createElement(categoryInfo.icon, { size: 16 })}
-              />
-            )}
-            <Text className="modal-title">{modalTitle}</Text>
-            {selectedCategory && (
-              <Text className="modal-subtitle">{selectedCategory}</Text>
-            )}
+            <div className="header-main">
+              {selectedCategory && (
+                <Avatar 
+                  size={20}
+                  style={{ 
+                    backgroundColor: categoryInfo.bgColor,
+                    color: categoryInfo.color
+                  }}
+                  icon={React.createElement(categoryInfo.icon, { size: 12 })}
+                />
+              )}
+              <div className="header-text">
+                <Text className="modal-title">{modalTitle}</Text>
+                {initialData && (
+                  <Text className="current-bill-info">
+                    {initialData.name} • ${Number(initialData.amount || 0).toFixed(2)}
+                  </Text>
+                )}
+              </div>
+            </div>
           </div>
         </div>
 
@@ -170,26 +175,23 @@ const UnifiedEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
             name="billForm"
             className="unified-form"
           >
-            {/* Basic Information Section */}
+            {/* Compact Information Section */}
             <div className="form-section">
               <div className="section-header">
-                <IconFileText size={18} className="section-icon" />
-                <div>
-                  <Text className="section-title">Basic Information</Text>
-                  <Text className="section-desc">Name and amount details</Text>
-                </div>
+                <IconFileText size={16} className="section-icon" />
+                <Text className="section-title">Bill Details</Text>
               </div>
               
-              <div className="input-group">
+              <div className="compact-inputs">
                 <Form.Item 
                   name="name" 
-                  rules={[{ required: true, message: 'Bill name is required' }]}
+                  rules={[{ required: true, message: 'Required' }]}
                 >
-                  <div className="input-wrapper">
-                    <Text className="input-label">Bill Name</Text>
+                  <div className="compact-input-wrapper">
+                    <Text className="compact-label">Name</Text>
                     <Input 
-                      placeholder="Enter bill name"
-                      className="unified-input"
+                      placeholder="Bill name"
+                      className="compact-input"
                       variant="borderless"
                     />
                   </div>
@@ -198,66 +200,52 @@ const UnifiedEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
                 <Form.Item 
                   name="amount" 
                   rules={[
-                    { required: true, message: 'Amount is required' },
-                    { type: 'number', min: 0, message: 'Amount must be positive' }
+                    { required: true, message: 'Required' },
+                    { type: 'number', min: 0, message: 'Must be positive' }
                   ]}
                 >
-                  <div className="input-wrapper amount-input">
-                    <Text className="input-label">Amount</Text>
-                    <div className="amount-container">
-                      <Text className="currency">$</Text>
+                  <div className="compact-input-wrapper amount-wrapper">
+                    <Text className="compact-label">Amount</Text>
+                    <div className="compact-amount-container">
+                      <Text className="currency-compact">$</Text>
                       <InputNumber
                         placeholder="0.00"
-                        className="unified-amount"
+                        className="compact-amount"
                         variant="borderless"
                         min={0}
                         step={0.01}
-                        formatter={(value) => value ? `${Number(value).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : ''}
+                        formatter={(value) => value ? Number(value).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : ''}
                         parser={(value) => value?.replace(/,/g, '') || ''}
                         controls={false}
                       />
                     </div>
                   </div>
                 </Form.Item>
-              </div>
-            </div>
 
-            {/* Category & Date Section */}
-            <div className="form-section">
-              <div className="section-header">
-                <IconTag size={18} className="section-icon" />
-                <div>
-                  <Text className="section-title">Classification</Text>
-                  <Text className="section-desc">Category and due date</Text>
-                </div>
-              </div>
-              
-              <div className="input-group">
                 <Form.Item 
                   name="category" 
-                  rules={[{ required: true, message: 'Category is required' }]}
+                  rules={[{ required: true, message: 'Required' }]}
                 >
-                  <div className="input-wrapper">
-                    <Text className="input-label">Category</Text>
+                  <div className="compact-input-wrapper">
+                    <Text className="compact-label">Category</Text>
                     <Select
-                      placeholder="Choose category"
-                      className="unified-select"
+                      placeholder="Select"
+                      className="compact-select"
                       variant="borderless"
                       onChange={setSelectedCategory}
                       optionRender={(option) => {
                         const categoryInfo = getCategoryInfo(option.value);
                         return (
-                          <div className="category-option">
+                          <div className="compact-category-option">
                             <Avatar 
-                              size={24}
+                              size={18}
                               style={{ 
                                 backgroundColor: categoryInfo.bgColor,
-                                color: categoryInfo.color,
-                                marginRight: 8
+                                color: categoryInfo.color
                               }}
-                              icon={React.createElement(categoryInfo.icon, { size: 14 })}
+                              icon={React.createElement(categoryInfo.icon, { size: 11 })}
                             />
-                            <Text>{option.value}</Text>
+                            <Text className="compact-option-text">{option.value}</Text>
                           </div>
                         );
                       }}
@@ -273,16 +261,16 @@ const UnifiedEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
 
                 <Form.Item 
                   name="dueDate" 
-                  rules={[{ required: true, message: 'Due date is required' }]}
+                  rules={[{ required: true, message: 'Required' }]}
                 >
-                  <div className="input-wrapper">
-                    <Text className="input-label">Due Date</Text>
+                  <div className="compact-input-wrapper">
+                    <Text className="compact-label">Due Date</Text>
                     <DatePicker
                       format="MMM DD, YYYY"
                       placeholder="Select date"
-                      className="unified-date"
+                      className="compact-date"
                       variant="borderless"
-                      suffixIcon={<IconCalendar size={16} />}
+                      suffixIcon={<IconCalendar size={14} />}
                       style={{ width: '100%' }}
                     />
                   </div>
@@ -290,40 +278,31 @@ const UnifiedEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
               </div>
             </div>
 
-            {/* Options Section */}
+            {/* Compact Options Section */}
             <div className="form-section">
               <div className="section-header">
-                <IconCheck size={18} className="section-icon" />
-                <div>
-                  <Text className="section-title">Options</Text>
-                  <Text className="section-desc">Status and recurrence</Text>
-                </div>
+                <IconCheck size={16} className="section-icon" />
+                <Text className="section-title">Status</Text>
               </div>
               
-              <div className="options-grid">
+              <div className="compact-options">
                 <Form.Item name="isPaid" valuePropName="checked">
-                  <div className="option-item">
-                    <div className="option-icon paid">
-                      <IconCheck size={16} />
+                  <div className="compact-option">
+                    <div className="compact-option-icon paid">
+                      <IconCheck size={12} />
                     </div>
-                    <div className="option-text">
-                      <Text className="option-title">Mark as Paid</Text>
-                      <Text className="option-desc">This bill is paid</Text>
-                    </div>
-                    <Checkbox className="option-check" />
+                    <Text className="compact-option-text">Paid</Text>
+                    <Checkbox className="compact-checkbox" />
                   </div>
                 </Form.Item>
 
                 <Form.Item name="isRecurring" valuePropName="checked">
-                  <div className="option-item">
-                    <div className="option-icon recurring">
-                      <IconRepeat size={16} />
+                  <div className="compact-option">
+                    <div className="compact-option-icon recurring">
+                      <IconRepeat size={12} />
                     </div>
-                    <div className="option-text">
-                      <Text className="option-title">Recurring Bill</Text>
-                      <Text className="option-desc">Repeats monthly</Text>
-                    </div>
-                    <Checkbox className="option-check" />
+                    <Text className="compact-option-text">Recurring</Text>
+                    <Checkbox className="compact-checkbox" />
                   </div>
                 </Form.Item>
               </div>
@@ -366,299 +345,358 @@ const UnifiedEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
           background: white;
           display: flex;
           flex-direction: column;
-          min-height: 500px;
-          max-height: 85vh;
+          min-height: 420px;
+          max-height: 80vh;
         }
 
-        /* Dynamic Header */
+        /* Compact Header */
         .unified-header {
-          padding: var(--space-16);
+          padding: var(--space-12) var(--space-16);
           border-bottom: 1px solid var(--neutral-200);
           display: flex;
           align-items: center;
           justify-content: space-between;
-          position: relative;
+          min-height: 48px;
         }
 
         .header-close-btn {
-          color: var(--neutral-600) !important;
-          width: 32px !important;
-          height: 32px !important;
-          border-radius: var(--radius-md) !important;
+          color: var(--neutral-500) !important;
+          width: 28px !important;
+          height: 28px !important;
+          border-radius: 6px !important;
           background: var(--neutral-100) !important;
+          padding: 0 !important;
+          min-width: 28px !important;
         }
 
         .header-content {
+          flex: 1;
+          display: flex;
+          justify-content: center;
+          margin: 0 var(--space-12);
+        }
+
+        .header-main {
+          display: flex;
+          align-items: center;
+          gap: var(--space-8);
+        }
+
+        .header-text {
           display: flex;
           flex-direction: column;
-          align-items: center;
-          gap: 2px;
-          position: absolute;
-          left: 50%;
-          transform: translateX(-50%);
+          align-items: flex-start;
         }
 
         .modal-title {
-          font-size: 16px;
+          font-size: 15px;
           font-weight: 600;
           color: var(--neutral-800);
           line-height: 1.2;
+          margin: 0;
         }
 
-        .modal-subtitle {
+        .current-bill-info {
           font-size: 12px;
           color: var(--neutral-500);
           font-weight: 500;
+          line-height: 1.1;
+          margin: 0;
         }
 
-        /* Content Area */
+        /* Compact Content */
         .unified-content {
           flex: 1;
           overflow-y: auto;
-          padding: var(--space-20);
+          padding: var(--space-12) var(--space-16);
         }
 
         .unified-form {
           display: flex;
           flex-direction: column;
-          gap: var(--space-24);
+          gap: var(--space-16);
         }
 
-        /* Form Sections */
+        /* Compact Form Sections */
         .form-section {
           background: var(--neutral-50);
-          border-radius: var(--radius-lg);
-          padding: var(--space-16);
+          border-radius: var(--radius-md);
+          padding: var(--space-12);
           border: 1px solid var(--neutral-200);
         }
 
         .section-header {
           display: flex;
           align-items: center;
-          gap: var(--space-12);
-          margin-bottom: var(--space-16);
+          gap: var(--space-8);
+          margin-bottom: var(--space-12);
         }
 
         .section-icon {
           color: var(--primary-600);
           background: var(--primary-100);
-          padding: 6px;
-          border-radius: var(--radius-md);
+          padding: 4px;
+          border-radius: 4px;
+          flex-shrink: 0;
         }
 
         .section-title {
-          font-size: 14px;
+          font-size: 13px;
           font-weight: 600;
           color: var(--neutral-800);
-          display: block;
+          margin: 0;
         }
 
-        .section-desc {
-          font-size: 12px;
-          color: var(--neutral-500);
-        }
-
-        /* Input Groups */
-        .input-group {
-          display: flex;
-          flex-direction: column;
-          gap: var(--space-16);
-        }
-
-        .input-wrapper {
-          background: white;
-          border-radius: var(--radius-md);
-          padding: var(--space-12);
-          border: 2px solid transparent;
-          transition: all 0.2s ease;
-        }
-
-        .input-wrapper:focus-within {
-          border-color: var(--primary-600);
-          box-shadow: 0 0 0 3px rgba(var(--primary-600), 0.1);
-        }
-
-        .input-label {
-          font-size: 12px;
-          font-weight: 600;
-          color: var(--neutral-700);
-          display: block;
-          margin-bottom: var(--space-8);
-        }
-
-        /* Inputs */
-        .unified-input {
-          font-size: 14px;
-          color: var(--neutral-800);
-          background: transparent !important;
-          border: none !important;
-          box-shadow: none !important;
-          padding: 0 !important;
-          font-weight: 500;
-        }
-
-        .unified-input::placeholder {
-          color: var(--neutral-400);
-        }
-
-        /* Amount Input */
-        .amount-input .amount-container {
-          display: flex;
-          align-items: center;
+        /* Compact Input System */
+        .compact-inputs {
+          display: grid;
+          grid-template-columns: 1fr 80px;
           gap: var(--space-8);
         }
 
-        .currency {
-          font-size: 16px;
-          font-weight: 700;
+        .compact-inputs > :nth-child(1) { grid-column: 1 / -1; } /* Name full width */
+        .compact-inputs > :nth-child(2) { grid-column: 1; }      /* Amount left */
+        .compact-inputs > :nth-child(3) { grid-column: 2; }      /* Category right */
+        .compact-inputs > :nth-child(4) { grid-column: 1 / -1; } /* Date full width */
+
+        .compact-input-wrapper {
+          background: white;
+          border-radius: 6px;
+          padding: var(--space-8);
+          border: 1px solid var(--neutral-200);
+          transition: border-color 0.2s ease;
+        }
+
+        .compact-input-wrapper:focus-within {
+          border-color: var(--primary-600);
+        }
+
+        .compact-label {
+          font-size: 11px;
+          font-weight: 500;
+          color: var(--neutral-600);
+          display: block;
+          margin-bottom: 4px;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+
+        /* Compact Inputs */
+        .compact-input {
+          font-size: 13px;
+          color: var(--neutral-800);
+          background: transparent !important;
+          border: none !important;
+          box-shadow: none !important;
+          padding: 0 !important;
+          font-weight: 500;
+          height: 18px !important;
+          line-height: 18px !important;
+        }
+
+        .compact-input::placeholder {
+          color: var(--neutral-400);
+          font-size: 12px;
+        }
+
+        /* Compact Amount */
+        .compact-amount-container {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+        }
+
+        .currency-compact {
+          font-size: 13px;
+          font-weight: 600;
           color: var(--primary-600);
         }
 
-        .unified-amount.ant-input-number {
+        .compact-amount.ant-input-number {
           background: transparent !important;
           border: none !important;
           box-shadow: none !important;
-          font-size: 16px !important;
-          font-weight: 700 !important;
+          font-size: 13px !important;
+          font-weight: 600 !important;
           color: var(--neutral-800) !important;
           flex: 1;
+          height: 18px !important;
         }
 
-        .unified-amount .ant-input-number-input {
-          font-size: 16px !important;
-          font-weight: 700 !important;
+        .compact-amount .ant-input-number-input {
+          font-size: 13px !important;
+          font-weight: 600 !important;
           background: transparent;
           border: none;
           padding: 0;
+          height: 18px !important;
+          line-height: 18px !important;
         }
 
-        /* Select */
-        .unified-select.ant-select .ant-select-selector {
+        /* Compact Select */
+        .compact-select.ant-select {
+          width: 100%;
+          height: 18px;
+        }
+
+        .compact-select .ant-select-selector {
           background: transparent !important;
           border: none !important;
           box-shadow: none !important;
           padding: 0 !important;
-          font-size: 14px;
+          font-size: 12px !important;
+          font-weight: 500;
+          height: 18px !important;
+          min-height: 18px !important;
+        }
+
+        .compact-select .ant-select-selection-item,
+        .compact-select .ant-select-selection-placeholder {
+          line-height: 18px !important;
+          padding: 0 !important;
+          font-size: 12px !important;
+        }
+
+        .compact-category-option {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          padding: 4px 8px;
+        }
+
+        .compact-option-text {
+          font-size: 12px;
           font-weight: 500;
         }
 
-        .category-option {
-          display: flex;
-          align-items: center;
-          padding: var(--space-8);
-        }
-
-        /* Date Picker */
-        .unified-date.ant-picker {
+        /* Compact Date */
+        .compact-date.ant-picker {
           background: transparent !important;
           border: none !important;
           box-shadow: none !important;
           padding: 0 !important;
-          font-size: 14px;
+          font-size: 12px;
           font-weight: 500;
+          height: 18px !important;
         }
 
-        /* Options Grid */
-        .options-grid {
+        .compact-date .ant-picker-input input {
+          font-size: 12px !important;
+          font-weight: 500;
+          height: 18px !important;
+          line-height: 18px !important;
+        }
+
+        .compact-date .ant-picker-suffix {
+          color: var(--primary-600);
+        }
+
+        /* Compact Options */
+        .compact-options {
           display: flex;
-          flex-direction: column;
           gap: var(--space-12);
         }
 
-        .option-item {
+        .compact-option {
           display: flex;
           align-items: center;
-          gap: var(--space-12);
+          gap: var(--space-8);
           background: white;
-          padding: var(--space-12);
-          border-radius: var(--radius-md);
+          padding: var(--space-8);
+          border-radius: 6px;
+          flex: 1;
+          border: 1px solid var(--neutral-200);
           cursor: pointer;
-          transition: all 0.2s ease;
+          transition: background-color 0.2s ease;
         }
 
-        .option-item:hover {
+        .compact-option:hover {
           background: var(--neutral-50);
         }
 
-        .option-icon {
-          width: 24px;
-          height: 24px;
-          border-radius: 6px;
+        .compact-option-icon {
+          width: 18px;
+          height: 18px;
+          border-radius: 4px;
           display: flex;
           align-items: center;
           justify-content: center;
           color: white;
+          flex-shrink: 0;
         }
 
-        .option-icon.paid {
+        .compact-option-icon.paid {
           background: var(--success-500);
         }
 
-        .option-icon.recurring {
+        .compact-option-icon.recurring {
           background: var(--primary-600);
         }
 
-        .option-text {
+        .compact-option-text {
+          font-size: 12px;
+          font-weight: 500;
+          color: var(--neutral-800);
           flex: 1;
         }
 
-        .option-title {
-          font-size: 14px;
-          font-weight: 600;
-          color: var(--neutral-800);
-          display: block;
-        }
-
-        .option-desc {
-          font-size: 12px;
-          color: var(--neutral-500);
-        }
-
-        .option-check.ant-checkbox-wrapper {
+        .compact-checkbox.ant-checkbox-wrapper {
           font-size: 0;
         }
 
-        .option-check .ant-checkbox-inner {
-          border-radius: 4px;
-          border-color: var(--neutral-300);
+        .compact-checkbox .ant-checkbox {
+          transform: scale(0.9);
         }
 
-        .option-check .ant-checkbox-checked .ant-checkbox-inner {
+        .compact-checkbox .ant-checkbox-inner {
+          border-radius: 3px;
+          border-color: var(--neutral-300);
+          width: 14px;
+          height: 14px;
+        }
+
+        .compact-checkbox .ant-checkbox-checked .ant-checkbox-inner {
           background: var(--primary-600);
           border-color: var(--primary-600);
         }
 
-        /* Footer Actions */
+        .compact-checkbox .ant-checkbox-checked .ant-checkbox-inner::after {
+          width: 4px;
+          height: 8px;
+          border-width: 1.5px;
+        }
+
+        /* Compact Footer */
         .unified-footer {
-          padding: var(--space-16);
+          padding: var(--space-12) var(--space-16);
           border-top: 1px solid var(--neutral-200);
           display: flex;
-          gap: var(--space-12);
+          gap: var(--space-8);
           background: var(--neutral-50);
         }
 
         .footer-cancel {
           flex: 1;
-          height: 44px;
-          border-radius: var(--radius-md);
+          height: 36px;
+          border-radius: 6px;
           font-weight: 500;
           border-color: var(--neutral-300);
+          font-size: 13px;
         }
 
         .footer-save {
           flex: 2;
-          height: 44px;
-          border-radius: var(--radius-md);
+          height: 36px;
+          border-radius: 6px;
           font-weight: 600;
           background: var(--primary-600) !important;
           border-color: var(--primary-600) !important;
           display: flex;
           align-items: center;
           justify-content: center;
-          gap: var(--space-8);
-        }
-
-        .footer-save:hover {
+          gap: 4px;
+          font-size: 13px;
+        }         .footer-save:hover {
           background: var(--primary-700) !important;
           border-color: var(--primary-700) !important;
         }
@@ -666,7 +704,7 @@ const UnifiedEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
         /* Mobile Responsive */
         @media (max-width: 768px) {
           .unified-edit-bill-modal .ant-modal {
-            padding: var(--space-12);
+            padding: var(--space-8);
             margin: 0;
             max-width: 100%;
             width: 100%;
@@ -675,7 +713,7 @@ const UnifiedEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
           }
 
           .unified-edit-bill-modal .ant-modal-content {
-            border-radius: var(--radius-lg);
+            border-radius: var(--radius-md);
             height: 100vh;
             max-height: 100vh;
           }
@@ -686,34 +724,39 @@ const UnifiedEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
           }
 
           .unified-content {
-            padding: var(--space-16);
+            padding: var(--space-8) var(--space-12);
           }
 
-          .input-group {
-            gap: var(--space-12);
+          .compact-inputs {
+            grid-template-columns: 1fr;
+            gap: var(--space-8);
           }
 
-          .unified-form {
-            gap: var(--space-16);
+          .compact-inputs > :nth-child(2) { grid-column: 1; }
+          .compact-inputs > :nth-child(3) { grid-column: 1; }
+
+          .compact-options {
+            flex-direction: column;
+            gap: var(--space-8);
           }
 
           /* iOS Safe Area */
           .unified-footer {
-            padding-bottom: calc(var(--space-16) + env(safe-area-inset-bottom, 0px));
+            padding-bottom: calc(var(--space-12) + env(safe-area-inset-bottom, 0px));
           }
         }
 
         /* Form Validation */
-        .ant-form-item-has-error .input-wrapper {
+        .ant-form-item-has-error .compact-input-wrapper {
           border-color: var(--danger-500) !important;
           background: var(--danger-50) !important;
         }
 
         .ant-form-item-explain-error {
-          font-size: 12px;
+          font-size: 11px;
           color: var(--danger-500);
-          margin-top: var(--space-4);
-          padding-left: var(--space-4);
+          margin-top: 2px;
+          padding-left: 2px;
         }
 
         /* Loading State */
@@ -723,18 +766,18 @@ const UnifiedEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
         }
 
         /* Accessibility */
-        .unified-input:focus,
-        .unified-amount:focus-within,
-        .unified-select:focus-within,
-        .unified-date:focus-within {
-          outline: 2px solid var(--primary-600);
-          outline-offset: 2px;
+        .compact-input:focus,
+        .compact-amount:focus-within,
+        .compact-select:focus-within,
+        .compact-date:focus-within {
+          outline: 1px solid var(--primary-600);
+          outline-offset: 1px;
         }
 
         /* Reduced Motion */
         @media (prefers-reduced-motion: reduce) {
-          .input-wrapper,
-          .option-item,
+          .compact-input-wrapper,
+          .compact-option,
           .footer-save {
             transition: none !important;
           }
@@ -744,23 +787,21 @@ const UnifiedEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
         @media (prefers-color-scheme: dark) {
           .unified-modal-card,
           .form-section,
-          .input-wrapper,
-          .option-item {
+          .compact-input-wrapper,
+          .compact-option {
             background: var(--neutral-800) !important;
             border-color: var(--neutral-600) !important;
           }
 
           .modal-title,
           .section-title,
-          .input-label,
-          .option-title,
-          .unified-input {
+          .compact-label,
+          .compact-option-text,
+          .compact-input {
             color: var(--neutral-100) !important;
           }
 
-          .modal-subtitle,
-          .section-desc,
-          .option-desc {
+          .current-bill-info {
             color: var(--neutral-400) !important;
           }
 
