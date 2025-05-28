@@ -1,1 +1,99 @@
 /* Styles for index */
+/* Global currency formatting styles */
+        .currency-wrapper {
+          position: relative;
+          display: inline-flex;
+          align-items: flex-start;
+        }
+
+        .cents-superscript {
+          font-size: 50%;
+          margin-left: 2px;
+          font-weight: inherit;
+          line-height: 1;
+          opacity: 0.85;
+          vertical-align: text-top;
+          margin-top: 4px;
+        }
+
+        /* Ensure proper vertical alignment in Ant Design Statistic component */
+        .ant-statistic-content-value {
+          display: inline-flex;
+          align-items: flex-start;
+        }
+
+        /* Icon alignment fixes */
+        .ant-space-align-center {
+          align-items: center !important;
+        }
+
+        .ant-space-item {
+          display: flex !important;
+          align-items: center !important;
+        }
+
+        /* Mobile only changes - won't affect desktop */
+        @media (max-width: 768px) {
+          /* Keep all 3 cards in a row on mobile with equal width */
+          .financial-overview-row {
+            display: flex !important;
+            flex-wrap: nowrap !important;
+            margin: 0 !important;
+            width: 100% !important;
+            justify-content: space-between !important;
+          }
+
+          .financial-overview-row .ant-col {
+            flex: 1 1 0 !important;
+            width: 33.33% !important;
+            max-width: 33.33% !important;
+            padding: 0 3px !important;
+          }
+
+          /* More compact cards on mobile */
+          .financial-overview-row .ant-card {
+            border-radius: 10px !important;
+            margin-bottom: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            min-height: 75px !important; /* Corrected from 75 */
+          }
+
+          /* Reduced internal padding */
+          .financial-overview-row .ant-card-body {
+            padding: 8px 10px !important;
+          }
+
+          /* Adjust statistic size */
+          .financial-overview-row .ant-statistic-content {
+            font-size: 18px !important;
+            line-height: 1 !important;
+            margin-top: 4px !important;
+          }
+
+          /* Smaller cents indication */
+          .financial-overview-row .cents-superscript {
+            font-size: 50% !important;
+            margin-top: 2px !important;
+          }
+
+          /* Smaller spacing in header */
+          .financial-overview-row .ant-space {
+            margin-bottom: 4px !important;
+          }
+
+          /* Hide bill prep subtext on mobile */
+          .financial-overview-row .due-balance-subtext {
+            display: none !important;
+          }
+
+          /* Smaller title text */
+          .financial-overview-row .ant-typography {
+            font-size: 0.75rem !important;
+          }
+
+          /* Smaller icons */
+          .financial-overview-row .tabler-icon {
+            width: 16px !important;
+            height: 16px !important;
+          }
+        }
