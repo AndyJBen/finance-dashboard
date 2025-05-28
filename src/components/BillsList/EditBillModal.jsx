@@ -1,4 +1,4 @@
-// Premium Apple-Inspired Edit Bill Modal
+// Unified Apple-Inspired Edit Bill Modal
 import React, { useEffect, useState } from 'react';
 import { Modal, Form, Input, InputNumber, DatePicker, Select, Checkbox, Typography, Button, Avatar } from 'antd';
 import {
@@ -43,7 +43,7 @@ const billCategories = [
     { name: "Other", icon: IconHelp, color: "#8E8E93", bgColor: "#F2F2F7" }
 ];
 
-const PremiumEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
+const UnifiedEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
   const [form] = Form.useForm();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
@@ -110,178 +110,154 @@ const PremiumEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
   const categoryInfo = getCategoryInfo(selectedCategory);
 
   return (
-    <div>
-      <Modal
-        open={open}
-        onCancel={onCancel}
-        footer={null}
-        centered
-        width="100%"
-        style={{ 
-          maxWidth: '380px',
-          margin: '0 auto',
-          padding: 0,
-          top: '10vh'
-        }}
-        bodyStyle={{ padding: 0 }}
-        maskStyle={{
-          backgroundColor: 'rgba(0, 0, 0, 0.6)',
-          backdropFilter: 'blur(40px)'
-        }}
-        className="premium-edit-bill-modal"
-      >
-        <div className="premium-modal-container">
-          {/* Dynamic Header with Category Context */}
-          <div className="premium-modal-header" style={{
-            background: selectedCategory 
-              ? `linear-gradient(135deg, ${categoryInfo.color}15, ${categoryInfo.color}08)`
-              : 'linear-gradient(135deg, #007AFF15, #007AFF08)'
-          }}>
-            <div className="header-backdrop">
-              <Button 
-                type="text" 
-                className="premium-cancel-button"
-                onClick={onCancel}
-                icon={<IconX size={20} />}
+    <Modal
+      open={open}
+      onCancel={onCancel}
+      footer={null}
+      centered
+      width="100%"
+      style={{ 
+        maxWidth: '400px',
+        margin: '0 auto',
+        padding: 0
+      }}
+      bodyStyle={{ padding: 0 }}
+      maskStyle={{
+        backgroundColor: 'rgba(0, 0, 0, 0.4)',
+        backdropFilter: 'blur(12px)'
+      }}
+      className="unified-edit-bill-modal"
+    >
+      {/* Single Unified Card */}
+      <div className="unified-modal-card">
+        {/* Dynamic Header Section */}
+        <div className="unified-header" style={{
+          background: selectedCategory 
+            ? `linear-gradient(135deg, ${categoryInfo.color}10, ${categoryInfo.color}05)`
+            : 'linear-gradient(135deg, var(--primary-100), var(--primary-50))'
+        }}>
+          <Button 
+            type="text" 
+            className="header-close-btn"
+            onClick={onCancel}
+            icon={<IconX size={18} />}
+          />
+          
+          <div className="header-content">
+            {selectedCategory && (
+              <Avatar 
+                size={28}
+                style={{ 
+                  backgroundColor: categoryInfo.bgColor,
+                  color: categoryInfo.color,
+                  marginBottom: 4
+                }}
+                icon={React.createElement(categoryInfo.icon, { size: 16 })}
               />
-              
-              <div className="header-title-section">
-                {selectedCategory && (
-                  <Avatar 
-                    size={32}
-                    className="category-avatar"
-                    style={{ 
-                      backgroundColor: categoryInfo.bgColor,
-                      color: categoryInfo.color,
-                      marginBottom: 4
-                    }}
-                    icon={React.createElement(categoryInfo.icon, { size: 18 })}
-                  />
-                )}
-                <Text className="premium-modal-title">{modalTitle}</Text>
-                {selectedCategory && (
-                  <Text className="premium-modal-subtitle">{selectedCategory} Bill</Text>
-                )}
+            )}
+            <Text className="modal-title">{modalTitle}</Text>
+            {selectedCategory && (
+              <Text className="modal-subtitle">{selectedCategory}</Text>
+            )}
+          </div>
+        </div>
+
+        {/* Form Content */}
+        <div className="unified-content">
+          <Form
+            form={form}
+            layout="vertical"
+            name="billForm"
+            className="unified-form"
+          >
+            {/* Basic Information Section */}
+            <div className="form-section">
+              <div className="section-header">
+                <IconFileText size={18} className="section-icon" />
+                <div>
+                  <Text className="section-title">Basic Information</Text>
+                  <Text className="section-desc">Name and amount details</Text>
+                </div>
               </div>
               
-              <Button 
-                type="primary"
-                className="premium-save-button"
-                onClick={handleSubmit}
-                loading={isSubmitting}
-                icon={<IconCheck size={18} />}
-              >
-                {isSubmitting ? 'Saving' : 'Save'}
-              </Button>
-            </div>
-          </div>
+              <div className="input-group">
+                <Form.Item 
+                  name="name" 
+                  rules={[{ required: true, message: 'Bill name is required' }]}
+                >
+                  <div className="input-wrapper">
+                    <Text className="input-label">Bill Name</Text>
+                    <Input 
+                      placeholder="Enter bill name"
+                      className="unified-input"
+                      variant="borderless"
+                    />
+                  </div>
+                </Form.Item>
 
-          {/* Form Content with Enhanced Cards */}
-          <div className="premium-modal-content">
-            <Form
-              form={form}
-              layout="vertical"
-              name="billForm"
-              className="premium-bill-form"
-            >
-              {/* Primary Information Card */}
-              <div className="premium-form-card">
-                <div className="card-header">
-                  <div className="card-header-icon">
-                    <IconFileText size={20} />
-                  </div>
-                  <div className="card-header-text">
-                    <Text className="card-title">Bill Information</Text>
-                    <Text className="card-subtitle">Essential details for your bill</Text>
-                  </div>
-                </div>
-                
-                <div className="card-content">
-                  <Form.Item 
-                    name="name" 
-                    rules={[{ required: true, message: 'Bill name is required' }]}
-                    className="premium-form-item"
-                  >
-                    <div className="premium-input-wrapper">
-                      <Text className="input-label">Bill Name</Text>
-                      <Input 
-                        placeholder="Enter descriptive name"
-                        className="premium-input"
+                <Form.Item 
+                  name="amount" 
+                  rules={[
+                    { required: true, message: 'Amount is required' },
+                    { type: 'number', min: 0, message: 'Amount must be positive' }
+                  ]}
+                >
+                  <div className="input-wrapper amount-input">
+                    <Text className="input-label">Amount</Text>
+                    <div className="amount-container">
+                      <Text className="currency">$</Text>
+                      <InputNumber
+                        placeholder="0.00"
+                        className="unified-amount"
                         variant="borderless"
+                        min={0}
+                        step={0.01}
+                        formatter={(value) => value ? `${Number(value).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : ''}
+                        parser={(value) => value?.replace(/,/g, '') || ''}
+                        controls={false}
                       />
                     </div>
-                  </Form.Item>
+                  </div>
+                </Form.Item>
+              </div>
+            </div>
 
-                  <Form.Item 
-                    name="amount" 
-                    rules={[
-                      { required: true, message: 'Amount is required' },
-                      { type: 'number', min: 0, message: 'Amount must be positive' }
-                    ]}
-                    className="premium-form-item"
-                  >
-                    <div className="premium-input-wrapper amount-wrapper">
-                      <Text className="input-label">Amount</Text>
-                      <div className="amount-input-container">
-                        <Text className="currency-symbol">$</Text>
-                        <InputNumber
-                          placeholder="0.00"
-                          className="premium-amount-input"
-                          variant="borderless"
-                          min={0}
-                          step={0.01}
-                          formatter={(value) => value ? `${Number(value).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : ''}
-                          parser={(value) => value?.replace(/,/g, '') || ''}
-                          controls={false}
-                        />
-                      </div>
-                    </div>
-                  </Form.Item>
+            {/* Category & Date Section */}
+            <div className="form-section">
+              <div className="section-header">
+                <IconTag size={18} className="section-icon" />
+                <div>
+                  <Text className="section-title">Classification</Text>
+                  <Text className="section-desc">Category and due date</Text>
                 </div>
               </div>
-
-              {/* Category Selection Card */}
-              <div className="premium-form-card">
-                <div className="card-header">
-                  <div className="card-header-icon">
-                    <IconTag size={20} />
-                  </div>
-                  <div className="card-header-text">
-                    <Text className="card-title">Category</Text>
-                    <Text className="card-subtitle">Organize and track your expenses</Text>
-                  </div>
-                </div>
-                
-                <div className="card-content">
-                  <Form.Item 
-                    name="category" 
-                    rules={[{ required: true, message: 'Category is required' }]}
-                    className="premium-form-item"
-                  >
+              
+              <div className="input-group">
+                <Form.Item 
+                  name="category" 
+                  rules={[{ required: true, message: 'Category is required' }]}
+                >
+                  <div className="input-wrapper">
+                    <Text className="input-label">Category</Text>
                     <Select
-                      placeholder="Choose a category"
-                      className="premium-category-select"
+                      placeholder="Choose category"
+                      className="unified-select"
                       variant="borderless"
                       onChange={setSelectedCategory}
-                      dropdownRender={(menu) => (
-                        <div className="category-dropdown">
-                          {menu}
-                        </div>
-                      )}
                       optionRender={(option) => {
                         const categoryInfo = getCategoryInfo(option.value);
                         return (
                           <div className="category-option">
                             <Avatar 
-                              size={28}
+                              size={24}
                               style={{ 
                                 backgroundColor: categoryInfo.bgColor,
                                 color: categoryInfo.color,
-                                marginRight: 12
+                                marginRight: 8
                               }}
-                              icon={React.createElement(categoryInfo.icon, { size: 16 })}
+                              icon={React.createElement(categoryInfo.icon, { size: 14 })}
                             />
-                            <Text className="category-name">{option.value}</Text>
+                            <Text>{option.value}</Text>
                           </div>
                         );
                       }}
@@ -292,294 +268,228 @@ const PremiumEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
                         </Option>
                       ))}
                     </Select>
-                  </Form.Item>
-                </div>
-              </div>
+                  </div>
+                </Form.Item>
 
-              {/* Due Date Card */}
-              <div className="premium-form-card">
-                <div className="card-header">
-                  <div className="card-header-icon">
-                    <IconCalendar size={20} />
-                  </div>
-                  <div className="card-header-text">
-                    <Text className="card-title">Due Date</Text>
-                    <Text className="card-subtitle">When this payment is due</Text>
-                  </div>
-                </div>
-                
-                <div className="card-content">
-                  <Form.Item 
-                    name="dueDate" 
-                    rules={[{ required: true, message: 'Due date is required' }]}
-                    className="premium-form-item"
-                  >
+                <Form.Item 
+                  name="dueDate" 
+                  rules={[{ required: true, message: 'Due date is required' }]}
+                >
+                  <div className="input-wrapper">
+                    <Text className="input-label">Due Date</Text>
                     <DatePicker
-                      format="MMMM DD, YYYY"
-                      placeholder="Select due date"
-                      className="premium-date-picker"
+                      format="MMM DD, YYYY"
+                      placeholder="Select date"
+                      className="unified-date"
                       variant="borderless"
-                      suffixIcon={<IconCalendar size={18} style={{ color: '#007AFF' }} />}
+                      suffixIcon={<IconCalendar size={16} />}
                       style={{ width: '100%' }}
                     />
-                  </Form.Item>
+                  </div>
+                </Form.Item>
+              </div>
+            </div>
+
+            {/* Options Section */}
+            <div className="form-section">
+              <div className="section-header">
+                <IconCheck size={18} className="section-icon" />
+                <div>
+                  <Text className="section-title">Options</Text>
+                  <Text className="section-desc">Status and recurrence</Text>
                 </div>
               </div>
-
-              {/* Options Card */}
-              <div className="premium-form-card">
-                <div className="card-header">
-                  <div className="card-header-icon">
-                    <IconCheck size={20} />
-                  </div>
-                  <div className="card-header-text">
-                    <Text className="card-title">Bill Options</Text>
-                    <Text className="card-subtitle">Payment status and recurrence</Text>
-                  </div>
-                </div>
-                
-                <div className="card-content options-content">
-                  <Form.Item 
-                    name="isPaid" 
-                    valuePropName="checked"
-                    className="premium-form-item"
-                  >
-                    <div className="premium-option-row">
-                      <div className="option-icon-wrapper paid">
-                        <IconCheck size={18} />
-                      </div>
-                      <div className="option-content">
-                        <Text className="option-title">Mark as Paid</Text>
-                        <Text className="option-description">This bill has been paid</Text>
-                      </div>
-                      <Checkbox className="premium-checkbox" />
+              
+              <div className="options-grid">
+                <Form.Item name="isPaid" valuePropName="checked">
+                  <div className="option-item">
+                    <div className="option-icon paid">
+                      <IconCheck size={16} />
                     </div>
-                  </Form.Item>
-
-                  <Form.Item 
-                    name="isRecurring" 
-                    valuePropName="checked"
-                    className="premium-form-item"
-                  >
-                    <div className="premium-option-row">
-                      <div className="option-icon-wrapper recurring">
-                        <IconRepeat size={18} />
-                      </div>
-                      <div className="option-content">
-                        <Text className="option-title">Recurring Bill</Text>
-                        <Text className="option-description">Automatically repeats monthly</Text>
-                      </div>
-                      <Checkbox className="premium-checkbox" />
+                    <div className="option-text">
+                      <Text className="option-title">Mark as Paid</Text>
+                      <Text className="option-desc">This bill is paid</Text>
                     </div>
-                  </Form.Item>
-                </div>
+                    <Checkbox className="option-check" />
+                  </div>
+                </Form.Item>
+
+                <Form.Item name="isRecurring" valuePropName="checked">
+                  <div className="option-item">
+                    <div className="option-icon recurring">
+                      <IconRepeat size={16} />
+                    </div>
+                    <div className="option-text">
+                      <Text className="option-title">Recurring Bill</Text>
+                      <Text className="option-desc">Repeats monthly</Text>
+                    </div>
+                    <Checkbox className="option-check" />
+                  </div>
+                </Form.Item>
               </div>
-            </Form>
-          </div>
+            </div>
+          </Form>
         </div>
-      </Modal>
+
+        {/* Bottom Actions */}
+        <div className="unified-footer">
+          <Button 
+            className="footer-cancel"
+            onClick={onCancel}
+          >
+            Cancel
+          </Button>
+          <Button 
+            type="primary"
+            className="footer-save"
+            onClick={handleSubmit}
+            loading={isSubmitting}
+            icon={<IconCheck size={16} />}
+          >
+            {isSubmitting ? 'Saving...' : 'Save'}
+          </Button>
+        </div>
+      </div>
 
       <style jsx global>{`
-        /* Premium Modal Styling */
-        .premium-edit-bill-modal .ant-modal {
-          padding: 16px;
-        }
-
-        .premium-edit-bill-modal .ant-modal-content {
-          border-radius: 24px;
+        /* Modal Base */
+        .unified-edit-bill-modal .ant-modal-content {
+          border-radius: var(--radius-xl);
           overflow: hidden;
-          box-shadow: 0 32px 64px rgba(0, 0, 0, 0.24), 0 16px 32px rgba(0, 0, 0, 0.16);
-          background: linear-gradient(145deg, #FFFFFF, #FAFBFC);
-          border: 1px solid rgba(255, 255, 255, 0.2);
+          box-shadow: var(--shadow-lg);
+          background: white;
+          padding: 0;
         }
 
-        .premium-modal-container {
-          background: linear-gradient(145deg, #F8F9FA, #FFFFFF);
-          min-height: 60vh;
-          max-height: 80vh;
+        /* Unified Card Container */
+        .unified-modal-card {
+          background: white;
           display: flex;
           flex-direction: column;
+          min-height: 500px;
+          max-height: 85vh;
         }
 
-        /* Enhanced Header */
-        .premium-modal-header {
-          padding: 14px 16px;
-          border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-          backdrop-filter: blur(20px);
-        }
-
-        .header-backdrop {
+        /* Dynamic Header */
+        .unified-header {
+          padding: var(--space-16);
+          border-bottom: 1px solid var(--neutral-200);
           display: flex;
+          align-items: center;
           justify-content: space-between;
-          align-items: center;
+          position: relative;
         }
 
-        .header-title-section {
+        .header-close-btn {
+          color: var(--neutral-600) !important;
+          width: 32px !important;
+          height: 32px !important;
+          border-radius: var(--radius-md) !important;
+          background: var(--neutral-100) !important;
+        }
+
+        .header-content {
           display: flex;
           flex-direction: column;
           align-items: center;
-          gap: 1px;
+          gap: 2px;
+          position: absolute;
+          left: 50%;
+          transform: translateX(-50%);
         }
 
-        .premium-modal-title {
+        .modal-title {
           font-size: 16px;
           font-weight: 600;
-          color: #1D1D1F;
-          letter-spacing: -0.3px;
+          color: var(--neutral-800);
           line-height: 1.2;
         }
 
-        .premium-modal-subtitle {
+        .modal-subtitle {
           font-size: 12px;
+          color: var(--neutral-500);
           font-weight: 500;
-          color: #86868B;
-          letter-spacing: -0.1px;
-        }
-
-        .category-avatar {
-          border: 1px solid rgba(255, 255, 255, 0.8);
-          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .premium-cancel-button {
-          color: #007AFF !important;
-          font-size: 14px;
-          font-weight: 500;
-          padding: 6px !important;
-          height: 32px !important;
-          width: 32px !important;
-          border-radius: 8px !important;
-          background: rgba(0, 122, 255, 0.1) !important;
-          border: none !important;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-
-        .premium-save-button {
-          background: linear-gradient(135deg, #007AFF, #0056CC) !important;
-          border: none !important;
-          border-radius: 8px !important;
-          height: 32px !important;
-          padding: 0 12px !important;
-          font-weight: 600 !important;
-          font-size: 13px !important;
-          box-shadow: 0 2px 6px rgba(0, 122, 255, 0.3) !important;
-          display: flex;
-          align-items: center;
-          gap: 4px;
-        }
-
-        .premium-save-button:hover {
-          background: linear-gradient(135deg, #0056CC, #003D99) !important;
-          transform: translateY(-1px);
-          box-shadow: 0 3px 8px rgba(0, 122, 255, 0.4) !important;
         }
 
         /* Content Area */
-        .premium-modal-content {
+        .unified-content {
           flex: 1;
           overflow-y: auto;
-          padding: 0 16px 16px 16px;
+          padding: var(--space-20);
         }
 
-        .premium-bill-form {
-          width: 100%;
+        .unified-form {
+          display: flex;
+          flex-direction: column;
+          gap: var(--space-24);
         }
 
-        /* Enhanced Form Cards */
-        .premium-form-card {
-          background: linear-gradient(145deg, #FFFFFF, #FDFDFD);
-          border-radius: 16px;
-          margin-bottom: 12px;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06), 0 1px 4px rgba(0, 0, 0, 0.02);
-          border: 1px solid rgba(255, 255, 255, 0.8);
-          overflow: hidden;
+        /* Form Sections */
+        .form-section {
+          background: var(--neutral-50);
+          border-radius: var(--radius-lg);
+          padding: var(--space-16);
+          border: 1px solid var(--neutral-200);
         }
 
-        .card-header {
+        .section-header {
           display: flex;
           align-items: center;
-          padding: 12px 16px 8px 16px;
-          gap: 8px;
-          background: linear-gradient(135deg, rgba(0, 122, 255, 0.02), rgba(0, 122, 255, 0.01));
+          gap: var(--space-12);
+          margin-bottom: var(--space-16);
         }
 
-        .card-header-icon {
-          width: 28px;
-          height: 28px;
-          background: linear-gradient(135deg, #007AFF, #0056CC);
-          border-radius: 7px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: white;
-          box-shadow: 0 2px 6px rgba(0, 122, 255, 0.25);
+        .section-icon {
+          color: var(--primary-600);
+          background: var(--primary-100);
+          padding: 6px;
+          border-radius: var(--radius-md);
         }
 
-        .card-header-text {
-          flex: 1;
-        }
-
-        .card-title {
+        .section-title {
           font-size: 14px;
           font-weight: 600;
-          color: #1D1D1F;
-          letter-spacing: -0.2px;
+          color: var(--neutral-800);
           display: block;
-          margin-bottom: 1px;
         }
 
-        .card-subtitle {
-          font-size: 11px;
-          color: #86868B;
-          letter-spacing: -0.1px;
+        .section-desc {
+          font-size: 12px;
+          color: var(--neutral-500);
         }
 
-        .card-content {
-          padding: 0 16px 12px 16px;
+        /* Input Groups */
+        .input-group {
+          display: flex;
+          flex-direction: column;
+          gap: var(--space-16);
         }
 
-        .options-content {
-          padding: 0 0 12px 0;
-        }
-
-        /* Enhanced Input Styling */
-        .premium-form-item {
-          margin-bottom: 10px !important;
-        }
-
-        .premium-form-item:last-child {
-          margin-bottom: 0 !important;
-        }
-
-        .premium-input-wrapper {
-          background: #F8F9FA;
-          border-radius: 12px;
-          padding: 12px 14px;
+        .input-wrapper {
+          background: white;
+          border-radius: var(--radius-md);
+          padding: var(--space-12);
           border: 2px solid transparent;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          transition: all 0.2s ease;
         }
 
-        .premium-input-wrapper:focus-within {
-          background: #FFFFFF;
-          border-color: #007AFF;
-          box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
-          transform: translateY(-1px);
+        .input-wrapper:focus-within {
+          border-color: var(--primary-600);
+          box-shadow: 0 0 0 3px rgba(var(--primary-600), 0.1);
         }
 
         .input-label {
           font-size: 12px;
           font-weight: 600;
-          color: #1D1D1F;
-          letter-spacing: -0.1px;
+          color: var(--neutral-700);
           display: block;
-          margin-bottom: 6px;
+          margin-bottom: var(--space-8);
         }
 
-        .premium-input {
+        /* Inputs */
+        .unified-input {
           font-size: 14px;
-          color: #1D1D1F;
+          color: var(--neutral-800);
           background: transparent !important;
           border: none !important;
           box-shadow: none !important;
@@ -587,232 +497,176 @@ const PremiumEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
           font-weight: 500;
         }
 
-        .premium-input::placeholder {
-          color: #86868B;
-          font-weight: 400;
+        .unified-input::placeholder {
+          color: var(--neutral-400);
         }
 
-        /* Amount Input Styling */
-        .amount-wrapper {
-          position: relative;
-        }
-
-        .amount-input-container {
+        /* Amount Input */
+        .amount-input .amount-container {
           display: flex;
           align-items: center;
-          gap: 6px;
+          gap: var(--space-8);
         }
 
-        .currency-symbol {
+        .currency {
           font-size: 16px;
           font-weight: 700;
-          color: #007AFF;
-          letter-spacing: -0.2px;
+          color: var(--primary-600);
         }
 
-        .premium-amount-input.ant-input-number {
+        .unified-amount.ant-input-number {
           background: transparent !important;
           border: none !important;
           box-shadow: none !important;
-          font-size: 18px !important;
+          font-size: 16px !important;
           font-weight: 700 !important;
-          color: #1D1D1F !important;
+          color: var(--neutral-800) !important;
           flex: 1;
         }
 
-        .premium-amount-input .ant-input-number-input {
-          font-size: 18px !important;
+        .unified-amount .ant-input-number-input {
+          font-size: 16px !important;
           font-weight: 700 !important;
-          color: #1D1D1F !important;
           background: transparent;
           border: none;
-          box-shadow: none;
           padding: 0;
         }
 
-        /* Category Select Styling */
-        .premium-category-select.ant-select {
-          width: 100%;
-        }
-
-        .premium-category-select .ant-select-selector {
-          background: #F8F9FA !important;
-          border: 2px solid transparent !important;
-          border-radius: 12px !important;
-          padding: 12px 14px !important;
-          min-height: 44px !important;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .premium-category-select.ant-select-focused .ant-select-selector,
-        .premium-category-select:hover .ant-select-selector {
-          background: #FFFFFF !important;
-          border-color: #007AFF !important;
-          box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1) !important;
-          transform: translateY(-1px);
-        }
-
-        .premium-category-select .ant-select-selection-item {
+        /* Select */
+        .unified-select.ant-select .ant-select-selector {
+          background: transparent !important;
+          border: none !important;
+          box-shadow: none !important;
+          padding: 0 !important;
           font-size: 14px;
           font-weight: 500;
-          color: #1D1D1F;
-          padding: 0;
-          line-height: 1;
-        }
-
-        .premium-category-select .ant-select-selection-placeholder {
-          color: #86868B;
-          font-size: 14px;
-          font-weight: 400;
-          line-height: 1;
-        }
-
-        /* Category Dropdown */
-        .category-dropdown {
-          background: #FFFFFF;
-          border-radius: 16px;
-          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06);
-          border: 1px solid rgba(255, 255, 255, 0.8);
-          padding: 6px 0;
-          backdrop-filter: blur(20px);
         }
 
         .category-option {
           display: flex;
           align-items: center;
-          padding: 8px 16px;
-          transition: all 0.2s ease;
-        }
-
-        .category-option:hover {
-          background: #F8F9FA;
-        }
-
-        .category-name {
-          font-size: 14px;
-          font-weight: 500;
-          color: #1D1D1F;
+          padding: var(--space-8);
         }
 
         /* Date Picker */
-        .premium-date-picker.ant-picker {
-          background: #F8F9FA !important;
-          border: 2px solid transparent !important;
-          border-radius: 12px !important;
-          padding: 12px 14px !important;
-          min-height: 44px !important;
-          width: 100%;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .premium-date-picker.ant-picker-focused,
-        .premium-date-picker:hover {
-          background: #FFFFFF !important;
-          border-color: #007AFF !important;
-          box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1) !important;
-          transform: translateY(-1px);
-        }
-
-        .premium-date-picker .ant-picker-input input {
+        .unified-date.ant-picker {
+          background: transparent !important;
+          border: none !important;
+          box-shadow: none !important;
+          padding: 0 !important;
           font-size: 14px;
           font-weight: 500;
-          color: #1D1D1F;
         }
 
-        .premium-date-picker .ant-picker-input input::placeholder {
-          color: #86868B;
-          font-weight: 400;
+        /* Options Grid */
+        .options-grid {
+          display: flex;
+          flex-direction: column;
+          gap: var(--space-12);
         }
 
-        /* Option Rows */
-        .premium-option-row {
+        .option-item {
           display: flex;
           align-items: center;
-          padding: 12px 16px;
-          gap: 12px;
-          border-radius: 12px;
-          margin: 0 16px 8px 16px;
-          background: #F8F9FA;
-          transition: all 0.3s ease;
+          gap: var(--space-12);
+          background: white;
+          padding: var(--space-12);
+          border-radius: var(--radius-md);
           cursor: pointer;
+          transition: all 0.2s ease;
         }
 
-        .premium-option-row:hover {
-          background: #F0F0F0;
-          transform: translateY(-1px);
+        .option-item:hover {
+          background: var(--neutral-50);
         }
 
-        .premium-option-row:last-child {
-          margin-bottom: 0;
-        }
-
-        .option-icon-wrapper {
-          width: 28px;
-          height: 28px;
-          border-radius: 7px;
+        .option-icon {
+          width: 24px;
+          height: 24px;
+          border-radius: 6px;
           display: flex;
           align-items: center;
           justify-content: center;
           color: white;
         }
 
-        .option-icon-wrapper.paid {
-          background: linear-gradient(135deg, #34C759, #28A745);
+        .option-icon.paid {
+          background: var(--success-500);
         }
 
-        .option-icon-wrapper.recurring {
-          background: linear-gradient(135deg, #AF52DE, #8E44AD);
+        .option-icon.recurring {
+          background: var(--primary-600);
         }
 
-        .option-content {
+        .option-text {
           flex: 1;
         }
 
         .option-title {
           font-size: 14px;
           font-weight: 600;
-          color: #1D1D1F;
-          letter-spacing: -0.2px;
+          color: var(--neutral-800);
           display: block;
-          margin-bottom: 1px;
         }
 
-        .option-description {
-          font-size: 11px;
-          color: #86868B;
-          letter-spacing: -0.1px;
+        .option-desc {
+          font-size: 12px;
+          color: var(--neutral-500);
         }
 
-        /* Enhanced Checkboxes */
-        .premium-checkbox.ant-checkbox-wrapper {
+        .option-check.ant-checkbox-wrapper {
           font-size: 0;
         }
 
-        .premium-checkbox .ant-checkbox {
-          transform: scale(1.1);
+        .option-check .ant-checkbox-inner {
+          border-radius: 4px;
+          border-color: var(--neutral-300);
         }
 
-        .premium-checkbox .ant-checkbox-inner {
-          border-radius: 6px;
-          border-color: #D1D1D6;
-          background: #FFFFFF;
-          border-width: 2px;
+        .option-check .ant-checkbox-checked .ant-checkbox-inner {
+          background: var(--primary-600);
+          border-color: var(--primary-600);
         }
 
-        .premium-checkbox .ant-checkbox-checked .ant-checkbox-inner {
-          background: linear-gradient(135deg, #007AFF, #0056CC);
-          border-color: #007AFF;
+        /* Footer Actions */
+        .unified-footer {
+          padding: var(--space-16);
+          border-top: 1px solid var(--neutral-200);
+          display: flex;
+          gap: var(--space-12);
+          background: var(--neutral-50);
         }
 
-        .premium-checkbox .ant-checkbox-checked .ant-checkbox-inner::after {
-          border-color: #FFFFFF;
-          border-width: 2px;
+        .footer-cancel {
+          flex: 1;
+          height: 44px;
+          border-radius: var(--radius-md);
+          font-weight: 500;
+          border-color: var(--neutral-300);
         }
 
-        /* Mobile Responsiveness */
-        @media (max-width: 430px) {
-          .premium-edit-bill-modal .ant-modal {
-            padding: 0;
+        .footer-save {
+          flex: 2;
+          height: 44px;
+          border-radius: var(--radius-md);
+          font-weight: 600;
+          background: var(--primary-600) !important;
+          border-color: var(--primary-600) !important;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: var(--space-8);
+        }
+
+        .footer-save:hover {
+          background: var(--primary-700) !important;
+          border-color: var(--primary-700) !important;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+          .unified-edit-bill-modal .ant-modal {
+            padding: var(--space-12);
             margin: 0;
             max-width: 100%;
             width: 100%;
@@ -820,317 +674,103 @@ const PremiumEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
             top: 0 !important;
           }
 
-          .premium-edit-bill-modal .ant-modal-content {
-            border-radius: 0;
+          .unified-edit-bill-modal .ant-modal-content {
+            border-radius: var(--radius-lg);
             height: 100vh;
             max-height: 100vh;
           }
 
-          .premium-modal-container {
+          .unified-modal-card {
             min-height: 100vh;
             max-height: 100vh;
           }
 
-          .premium-modal-content {
-            padding: 0 12px 16px 12px;
+          .unified-content {
+            padding: var(--space-16);
           }
 
-          .premium-modal-header {
-            padding: 12px;
+          .input-group {
+            gap: var(--space-12);
           }
 
-          .card-header,
-          .card-content {
-            padding-left: 12px;
-            padding-right: 12px;
+          .unified-form {
+            gap: var(--space-16);
           }
 
-          .premium-option-row {
-            margin-left: 12px;
-            margin-right: 12px;
+          /* iOS Safe Area */
+          .unified-footer {
+            padding-bottom: calc(var(--space-16) + env(safe-area-inset-bottom, 0px));
           }
         }
 
-        /* Interactive States */
-        .premium-cancel-button:active,
-        .premium-save-button:active {
-          transform: scale(0.95);
-        }
-
-        .premium-option-row:active {
-          transform: scale(0.98);
-        }
-
-        .premium-checkbox:active {
-          transform: scale(1.2);
-        }
-
-        /* Loading State */
-        .premium-save-button.ant-btn-loading {
-          background: linear-gradient(135deg, #86868B, #6D6D70) !important;
-          box-shadow: 0 4px 12px rgba(134, 134, 139, 0.4) !important;
-        }
-
-        /* Dropdown Animations */
-        .ant-select-dropdown {
-          animation: dropdownSlideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        @keyframes dropdownSlideIn {
-          from {
-            opacity: 0;
-            transform: translateY(-8px) scale(0.95);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-          }
-        }
-
-        /* Date Picker Dropdown */
-        .ant-picker-dropdown {
-          border-radius: 20px !important;
-          box-shadow: 0 16px 48px rgba(0, 0, 0, 0.16), 0 8px 24px rgba(0, 0, 0, 0.08) !important;
-          border: 1px solid rgba(255, 255, 255, 0.8) !important;
-          backdrop-filter: blur(20px);
-          overflow: hidden;
-        }
-
-        .ant-picker-panel {
-          border-radius: 20px;
-          background: linear-gradient(145deg, #FFFFFF, #FDFDFD);
-        }
-
-        .ant-picker-header {
-          background: linear-gradient(135deg, rgba(0, 122, 255, 0.02), rgba(0, 122, 255, 0.01));
-          border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-          padding: 16px;
-        }
-
-        .ant-picker-header-view {
-          font-weight: 600;
-          color: #1D1D1F;
-        }
-
-        .ant-picker-content {
-          padding: 8px 16px 16px 16px;
-        }
-
-        .ant-picker-content th {
-          font-size: 13px;
-          font-weight: 600;
-          color: #86868B;
-          padding: 8px 0;
-        }
-
-        .ant-picker-content td {
-          padding: 2px;
-        }
-
-        .ant-picker-cell {
-          border-radius: 10px;
-        }
-
-        .ant-picker-cell-inner {
-          width: 32px;
-          height: 32px;
-          border-radius: 10px;
-          font-size: 15px;
-          font-weight: 500;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-
-        .ant-picker-cell-today .ant-picker-cell-inner {
-          background: rgba(0, 122, 255, 0.1);
-          color: #007AFF;
-          font-weight: 600;
-        }
-
-        .ant-picker-cell-selected .ant-picker-cell-inner {
-          background: linear-gradient(135deg, #007AFF, #0056CC) !important;
-          color: #FFFFFF !important;
-          box-shadow: 0 4px 12px rgba(0, 122, 255, 0.4);
-        }
-
-        .ant-picker-cell:hover .ant-picker-cell-inner {
-          background: rgba(0, 122, 255, 0.05);
-        }
-
-        /* Enhanced Select Dropdown Items */
-        .ant-select-item {
-          border-radius: 12px !important;
-          margin: 2px 8px !important;
-          padding: 0 !important;
-          border: none !important;
-        }
-
-        .ant-select-item-option {
-          padding: 12px 16px !important;
-        }
-
-        .ant-select-item-option-selected {
-          background: linear-gradient(135deg, rgba(0, 122, 255, 0.1), rgba(0, 122, 255, 0.05)) !important;
-          color: #007AFF !important;
-          font-weight: 600 !important;
-        }
-
-        .ant-select-item-option-active {
-          background: rgba(0, 122, 255, 0.05) !important;
-        }
-
-        /* Form Validation Styling */
-        .ant-form-item-has-error .premium-input-wrapper {
-          border-color: #FF3B30 !important;
-          background: rgba(255, 59, 48, 0.05) !important;
-        }
-
-        .ant-form-item-has-error .premium-category-select .ant-select-selector {
-          border-color: #FF3B30 !important;
-          background: rgba(255, 59, 48, 0.05) !important;
-        }
-
-        .ant-form-item-has-error .premium-date-picker {
-          border-color: #FF3B30 !important;
-          background: rgba(255, 59, 48, 0.05) !important;
+        /* Form Validation */
+        .ant-form-item-has-error .input-wrapper {
+          border-color: var(--danger-500) !important;
+          background: var(--danger-50) !important;
         }
 
         .ant-form-item-explain-error {
-          font-size: 13px;
-          color: #FF3B30;
-          font-weight: 500;
-          margin-top: 8px;
-          padding-left: 4px;
+          font-size: 12px;
+          color: var(--danger-500);
+          margin-top: var(--space-4);
+          padding-left: var(--space-4);
         }
 
-        /* Glassmorphism Effects */
-        .premium-modal-header::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
-          backdrop-filter: blur(20px);
-          z-index: -1;
+        /* Loading State */
+        .footer-save.ant-btn-loading {
+          background: var(--neutral-400) !important;
+          border-color: var(--neutral-400) !important;
         }
 
-        /* Micro-interactions */
-        .premium-form-card {
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .premium-form-card:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06);
-        }
-
-        .card-header-icon {
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .premium-form-card:hover .card-header-icon {
-          transform: scale(1.05);
-          box-shadow: 0 6px 16px rgba(0, 122, 255, 0.4);
-        }
-
-        /* Success States */
-        .premium-save-button.success {
-          background: linear-gradient(135deg, #34C759, #28A745) !important;
-          box-shadow: 0 4px 12px rgba(52, 199, 89, 0.4) !important;
-        }
-
-        /* Dark Mode Support (if needed) */
-        @media (prefers-color-scheme: dark) {
-          .premium-modal-container {
-            background: linear-gradient(145deg, #1C1C1E, #2C2C2E);
-          }
-
-          .premium-form-card {
-            background: linear-gradient(145deg, #2C2C2E, #3A3A3C);
-            border-color: rgba(84, 84, 88, 0.6);
-          }
-
-          .card-title,
-          .premium-modal-title,
-          .input-label,
-          .option-title,
-          .premium-input,
-          .category-name {
-            color: #FFFFFF !important;
-          }
-
-          .card-subtitle,
-          .premium-modal-subtitle,
-          .option-description {
-            color: #98989D !important;
-          }
-
-          .premium-input-wrapper,
-          .premium-category-select .ant-select-selector,
-          .premium-date-picker,
-          .premium-option-row {
-            background: #1C1C1E !important;
-          }
-
-          .premium-input-wrapper:focus-within,
-          .premium-category-select.ant-select-focused .ant-select-selector,
-          .premium-date-picker.ant-picker-focused {
-            background: #2C2C2E !important;
-          }
-        }
-
-        /* Performance Optimizations */
-        .premium-edit-bill-modal * {
-          will-change: transform;
-        }
-
-        .premium-modal-content {
-          contain: layout style paint;
-        }
-
-        /* Accessibility Enhancements */
-        .premium-input:focus,
-        .premium-amount-input:focus-within,
-        .premium-category-select:focus-within,
-        .premium-date-picker:focus-within {
-          outline: 2px solid #007AFF;
+        /* Accessibility */
+        .unified-input:focus,
+        .unified-amount:focus-within,
+        .unified-select:focus-within,
+        .unified-date:focus-within {
+          outline: 2px solid var(--primary-600);
           outline-offset: 2px;
         }
 
+        /* Reduced Motion */
         @media (prefers-reduced-motion: reduce) {
-          .premium-form-card,
-          .premium-input-wrapper,
-          .premium-save-button,
-          .card-header-icon {
+          .input-wrapper,
+          .option-item,
+          .footer-save {
             transition: none !important;
-          }
-          
-          .premium-form-card:hover {
-            transform: none !important;
           }
         }
 
-        /* High Contrast Mode */
-        @media (prefers-contrast: high) {
-          .premium-form-card {
-            border: 2px solid #000000;
+        /* Dark Mode Support */
+        @media (prefers-color-scheme: dark) {
+          .unified-modal-card,
+          .form-section,
+          .input-wrapper,
+          .option-item {
+            background: var(--neutral-800) !important;
+            border-color: var(--neutral-600) !important;
           }
-          
-          .premium-save-button {
-            background: #000000 !important;
-            color: #FFFFFF !important;
+
+          .modal-title,
+          .section-title,
+          .input-label,
+          .option-title,
+          .unified-input {
+            color: var(--neutral-100) !important;
           }
-          
-          .card-header-icon {
-            background: #000000 !important;
+
+          .modal-subtitle,
+          .section-desc,
+          .option-desc {
+            color: var(--neutral-400) !important;
+          }
+
+          .unified-footer {
+            background: var(--neutral-900) !important;
           }
         }
       `}</style>
-    </div>
+    </Modal>
   );
 };
 
-export default PremiumEditBillModal;
+export default UnifiedEditBillModal;
