@@ -1,1 +1,445 @@
 /* Styles for BillsListSection */
+/* BillsListSection.css */
+
+/* ==================================================
+   Monthly Bills Progress Header Styles
+================================================== */
+.bills-header-container {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 12px;
+}
+
+.month-navigation {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.nav-button {
+  margin: 0 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.nav-button:hover {
+  background-color: var(--primary-50); /* Ensure --primary-50 is globally defined or move definition */
+  transform: translateY(-1px);
+}
+
+.nav-button:active {
+  transform: translateY(0px);
+}
+
+.month-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 80px;
+}
+
+.title-progress-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 4px;
+}
+
+.title-container {
+  display: flex;
+  align-items: center;
+}
+
+.calendar-icon {
+  color: var(--primary-600); /* Ensure --primary-600 is globally defined or move definition */
+  margin-right: 8px;
+}
+
+.title-text {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+}
+
+/* ==================================================
+   Typography specific to Bills Section
+================================================== */
+.main-title { /* Assuming this is the title for the bills section */
+  font-size: 0.95rem;
+  line-height: 1.2;
+  margin-right: 6px;
+}
+
+.bills-count {
+  font-size: 0.8rem;
+  opacity: 0.7;
+  font-weight: 600;
+}
+
+.progress-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--primary-600); /* Ensure color variables are globally defined or move definitions */
+  background-color: var(--primary-100); /* Ensure color variables are globally defined or move definitions */
+  padding: 4px 8px;
+  border-radius: 12px;
+  white-space: nowrap;
+}
+
+.month-text {
+  font-size: 1.1rem;
+  line-height: 1.2;
+  margin: 0;
+  color: var(--neutral-800); /* Ensure color variables are globally defined or move definitions */
+}
+
+.year-text {
+  font-size: 0.8rem;
+  line-height: 1.1;
+  color: var(--neutral-600); /* Ensure color variables are globally defined or move definitions */
+  margin: 0;
+}
+
+/* ==================================================
+   Checkbox Styles (Likely for Bill Status in a Table)
+================================================== */
+.status-checkbox.checked .ant-checkbox-checked .ant-checkbox-inner {
+    background-color: var(--success-500) !important; /* Ensure color variables are globally defined */
+    border-color: var(--success-500) !important; /* Ensure color variables are globally defined */
+}
+
+.status-checkbox.checked .ant-checkbox-checked .ant-checkbox-inner::after {
+    border-color: #fff !important;
+}
+
+/* Styles for larger checkboxes within the bills table body */
+.ant-table-tbody .status-checkbox.large-checkbox .ant-checkbox-inner {
+    transform: scale(1.3);
+}
+
+.ant-table-tbody .status-checkbox.large-checkbox {
+    display: inline-flex;
+    align-items: center;
+}
+
+/* ==================================================
+   Custom Tag Colors (for Bill Status/Category)
+================================================== */
+.tag-category { background-color: var(--primary-100); color: var(--primary-700); } /* Ensure variables are globally defined */
+.tag-status-paid { background-color: var(--success-100); color: var(--success-700); } /* Ensure variables are globally defined */
+.tag-status-unpaid { background-color: var(--warning-100); color: var(--warning-700); } /* Ensure variables are globally defined */
+.tag-due-soon { background-color: var(--danger-100); color: var(--danger-700); } /* Ensure variables are globally defined */
+
+/* ==================================================
+   Action Icon Styles (for Bill List Items)
+================================================== */
+.action-icon {
+    color: #bfbfbf !important; /* Consider using a neutral variable if available */
+    font-size: 1rem;
+    transition: color 0.3s ease;
+}
+
+.action-icon-edit:hover { color: var(--primary-600) !important; } /* Ensure variables are globally defined */
+.action-icon-delete:hover { color: var(--danger-500) !important; } /* Ensure variables are globally defined */
+
+/* Layout for action icons within a table cell, if applicable to bills list */
+.ant-table-cell .ant-space-item { display: flex; align-items: center; }
+
+/* ==================================================
+   Responsive Adaptations for Bills Section
+================================================== */
+
+/* Small screens (adjustments for bills header elements) */
+@media (max-width: 480px) {
+  .main-title { /* Assuming this is the title for the bills section */
+    font-size: 0.9rem;
+  }
+
+  .nav-button {
+    margin: 0 8px;
+  }
+
+  .progress-badge {
+    font-size: 0.7rem;
+    padding: 3px 6px;
+  }
+}
+
+/* Mobile styles for month navigation */
+@media (max-width: 768px) {
+  .month-navigation .nav-button {
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 16px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .month-navigation .ant-btn { /* If Ant Design buttons are used as nav-buttons */
+    padding: 0 !important;
+  }
+
+  /* Styles specifically for .bills-overview-table and its mobile presentation */
+  .bills-overview-table {
+    margin-bottom: 20px; /* Spacing below the bills table */
+    margin-top: 8px !important; /* Spacing above the bills table */
+  }
+
+  /* iOS-specific scrollbar fixes for tables if this section contains the table */
+  .bills-overview-table .ant-table-content,
+  .bills-overview-table .ant-table-body {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important; /* For Firefox */
+    -ms-overflow-style: none; /* For IE and Edge */
+  }
+
+  .bills-overview-table .ant-table-content::-webkit-scrollbar,
+  .bills-overview-table .ant-table-body::-webkit-scrollbar {
+    width: 0 !important;
+    height: 0 !important;
+    display: none !important;
+    background: transparent !important;
+  }
+
+  /* Ensure table borders remain visible within the bills table */
+  .bills-overview-table .ant-table-cell {
+    border-bottom: 1px solid var(--neutral-200) !important; /* Ensure variable is globally defined */
+  }
+
+  /* Bills table specific mobile styles: cell padding, font size, etc. */
+  .bills-overview-table .ant-table-tbody > tr > td {
+    padding: 6px 8px !important;
+    height: auto !important;
+    line-height: 1.2 !important;
+    font-size: 0.8rem !important;
+  }
+
+  /* Make table header more compact in bills table */
+  .bills-overview-table .ant-table-thead > tr > th {
+    padding: 8px 8px !important;
+    font-size: 0.7rem !important;
+  }
+
+  /* Style the first column (e.g., checkbox column) to be more compact */
+  .bills-overview-table .ant-table-tbody > tr > td:first-child {
+    padding-left: 8px !important; /* Original: 8px */
+    width: 24px !important;
+  }
+
+  /* Make checkboxes slightly smaller within the bills table */
+  .bills-overview-table .ant-checkbox-inner {
+    width: 14px !important;
+    height: 14px !important;
+  }
+
+  /* Reduce the size of avatars/icons if present in the bills table */
+  .bills-overview-table .ant-avatar {
+    width: 24px !important;
+    height: 24px !important;
+    line-height: 24px !important;
+    font-size: 0.75rem !important;
+  }
+
+  /* Compress action buttons/icons in the bills table */
+  .bills-overview-table .ant-table-cell .ant-space {
+    gap: 4px !important;
+  }
+
+  /* Adjust any icons within the bills table */
+  .bills-overview-table .tabler-icon, /* If you use Tabler icons */
+  .bills-overview-table .anticon { /* Ant Design icons */
+    font-size: 0.9rem !important;
+    width: 16px !important;
+    height: 16px !important;
+  }
+
+  /* Optional: Make due dates and amounts more prominent in bills table */
+  .bills-overview-table .due-date-cell { /* Add this class to your due date <td> or its content */
+    font-weight: 500 !important;
+    white-space: nowrap !important;
+  }
+
+  .bills-overview-table .amount-cell { /* Add this class to your amount <td> or its content */
+    font-weight: 600 !important;
+    white-space: nowrap !important;
+  }
+
+  /* CRITICAL: Remove extra row that creates a gap in Ant Design tables */
+  .bills-overview-table .ant-table-measure-row {
+    display: none !important;
+    height: 0 !important;
+  }
+
+  /* Remove any table header/body spacing issues in bills table */
+  .bills-overview-table .ant-table-header {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
+  .bills-overview-table .ant-table-body {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+
+  .bills-overview-table table {
+    border-spacing: 0 !important;
+    border-collapse: collapse !important;
+  }
+
+  /* Remove borders and shadow from the bills table so it blends with the card */
+  .bills-overview-table .ant-table,
+  .bills-overview-table .ant-table-container,
+  .bills-overview-table .ant-table-container table {
+    box-shadow: none !important;
+    border-left: none !important;
+    border-right: none !important;
+  }
+
+  /* Table header styling for bills table */
+  .bills-overview-table .ant-table-thead > tr > th {
+    padding: 3px 2px !important;
+    font-size: 0.65rem !important;
+    padding-bottom: 2px !important;
+    border-bottom: 1px solid var(--neutral-200) !important; /* Ensure var is globally defined */
+    height: 20px !important;
+  }
+
+  /* Hide the "STATUS" column title text (or first column title) if needed */
+  .bills-overview-table .ant-table-thead > tr > th:first-child {
+    font-size: 0 !important; /* Hides text by making font size 0 */
+    width: 15px !important;
+    max-width: 15px !important;
+    padding-left: 2px !important;
+    padding-right: 2px !important;
+  }
+
+  /* Column width adjustments for bills table header - make these specific to your column content */
+  .bills-overview-table .ant-table-thead > tr > th:nth-child(2) { /* Example: Name column */
+    width: 85px !important;
+    max-width: 85px !important;
+  }
+  .bills-overview-table .ant-table-thead > tr > th:nth-child(3) { /* Example: Amount column */
+    width: 35px !important;
+    max-width: 35px !important;
+  }
+  .bills-overview-table .ant-table-thead > tr > th:nth-child(4) { /* Example: Category column */
+    width: 75px !important;
+    max-width: 75px !important;
+  }
+  .bills-overview-table .ant-table-thead > tr > th:nth-child(5) { /* Example: Due Date column */
+    width: 65px !important;
+    max-width: 65px !important;
+  }
+  .bills-overview-table .ant-table-thead > tr > th:nth-child(6) { /* Example: Due In column */
+    width: 45px !important;
+    max-width: 45px !important;
+  }
+  .bills-overview-table .ant-table-thead > tr > th:last-child { /* Example: Actions column */
+    width: 24px !important;
+    max-width: 24px !important;
+    padding-left: 2px !important;
+    padding-right: 2px !important;
+  }
+
+  /* Table cell styling for bills table body - more compact */
+  .bills-overview-table .ant-table-tbody > tr > td:first-child { /* e.g., Checkbox cell */
+    width: 24px !important;
+    max-width: 24px !important;
+    padding-left: 2px !important;
+    padding-right: 2px !important;
+  }
+  .bills-overview-table .ant-table-tbody > tr > td:nth-child(3) { /* Example: Amount cell */
+    width: 45px !important;
+    max-width: 45px !important;
+  }
+  .bills-overview-table .ant-table-tbody > tr > td:last-child { /* Example: Actions cell */
+    width: 24px !important;
+    max-width: 24px !important;
+    padding-left: 2px !important;
+    padding-right: 2px !important;
+  }
+
+  /* Row height and text styling for bills table */
+  .bills-overview-table .ant-table-tbody > tr > td {
+    padding: 7px 2px !important;
+    font-size: 0.8rem !important;
+    line-height: 1.3 !important;
+    height: 37px !important;
+  }
+  .bills-overview-table .ant-table-tbody > tr {
+     height: 58px !important; /* Ensure this provides enough space for content */
+  }
+
+  .bills-overview-table .ant-typography strong { /* If using Ant Typography for emphasis */
+    font-size: 0.8rem !important;
+  }
+
+  /* Mobile bill cell structure for better layout on small screens */
+  .bills-overview-table .mobile-bill-cell { /* Apply this class to the <td> that needs restructuring */
+    display: flex;
+    flex-direction: column;
+    gap: 6px; /* Space between main info and details */
+    width: 100%;
+  }
+  .bills-overview-table .mobile-bill-main { /* Container for primary bill info (e.g., name, amount) */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    gap: 8px;
+  }
+  .bills-overview-table .mobile-bill-details { /* Container for secondary details (e.g., category, due in) */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    gap: 8px;
+    font-size: 0.75rem;
+    color: var(--neutral-600); /* Ensure var is globally defined */
+  }
+  .bills-overview-table .mobile-bill-details .ant-tag { /* Styling for tags within the details section */
+    margin: 0 !important;
+    flex-shrink: 0;
+    padding: 2px 6px !important;
+    height: auto !important;
+    line-height: 1.2 !important;
+  }
+  .bills-overview-table .mobile-bill-details .due-in-cell { /* Styling for due-in info within details */
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-shrink: 0;
+    gap: 4px;
+  }
+
+  /* Ensure proper spacing in the main content cell (e.g., bill name/description) */
+  .bills-overview-table .ant-table-tbody > tr > td:nth-child(2) { /* Adjust child index as needed */
+    padding: 8px 4px !important;
+    width: calc(100% - 60px) !important; /* Adjust calc based on other fixed-width columns */
+  }
+}
+
+
+/* ==================================================
+   Animation & Transitions for Bills Section
+================================================== */
+/*
+  Note: Some transitions are already defined with their respective selectors
+  (e.g., .nav-button, .action-icon).
+  Redundant declarations are omitted here.
+  Ensure any shared transition variables/mixins are globally available.
+*/
+
+@keyframes billRowFadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+.bill-row-fade-out { /* Apply to table rows when a bill is paid/deleted */
+  animation: billRowFadeOut 0.3s ease forwards;
+}

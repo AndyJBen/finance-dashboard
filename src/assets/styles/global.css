@@ -5,23 +5,23 @@
   --primary-200: #bfdbfe;
   --primary-300: #93c5fd;
   --primary-400: #60a5fa;
-  --primary-500: #3b82f6; /* Main primary color */
+  --primary-500: #3b82f6;
   --primary-600: #2563eb;
   --primary-700: #1d4ed8;
   --primary-800: #1e40af;
   --primary-900: #1e3a8a;
   --primary-950: #172554;
 
-  /* Neutral Colors (Grays) */
+  /* Neutral Colors */
   --neutral-50: #f8fafc;
-  --neutral-100: #f1f5f9; /* Light background */
+  --neutral-100: #f1f5f9;
   --neutral-200: #e2e8f0;
   --neutral-300: #cbd5e1;
-  --neutral-400: #94a3b8; /* Medium text/icons */
+  --neutral-400: #94a3b8;
   --neutral-500: #64748b;
-  --neutral-600: #475569; /* Darker text */
+  --neutral-600: #475569;
   --neutral-700: #334155;
-  --neutral-800: #1e293b; /* Very dark elements */
+  --neutral-800: #1e293b;
   --neutral-900: #0f172a;
   --neutral-950: #020617;
 
@@ -31,7 +31,7 @@
   --success-200: #bbf7d0;
   --success-300: #86efac;
   --success-400: #4ade80;
-  --success-500: #22c55e; /* Main success color */
+  --success-500: #22c55e;
   --success-600: #16a34a;
   --success-700: #15803d;
   --success-800: #166534;
@@ -44,27 +44,27 @@
   --warning-200: #fde68a;
   --warning-300: #fcd34d;
   --warning-400: #fbbf24;
-  --warning-500: #f59e0b; /* Main warning color */
+  --warning-500: #f59e0b;
   --warning-600: #d97706;
   --warning-700: #b45309;
   --warning-800: #92400e;
   --warning-900: #78350f;
   --warning-950: #451a03;
 
-  /* Danger Colors (Error/Red) */
+  /* Danger Colors */
   --danger-50: #fef2f2;
   --danger-100: #fee2e2;
   --danger-200: #fecaca;
   --danger-300: #fca5a5;
   --danger-400: #f87171;
-  --danger-500: #ef4444; /* Main danger color */
+  --danger-500: #ef4444;
   --danger-600: #dc2626;
   --danger-700: #b91c1c;
   --danger-800: #991b1b;
   --danger-900: #7f1d1d;
   --danger-950: #450a0a;
 
-  /* Spacing Variables (example) */
+  /* Spacing Variables */
   --space-4: 4px;
   --space-8: 8px;
   --space-12: 12px;
@@ -75,113 +75,32 @@
   --space-48: 48px;
   --space-64: 64px;
 
-  /* Font Variables (example) */
+  /* Font Variables */
   --font-family-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
-  --font-size-xs: 0.75rem; /* 12px */
-  --font-size-sm: 0.875rem; /* 14px */
-  --font-size-base: 1rem; /* 16px */
-  --font-size-lg: 1.125rem; /* 18px */
-  --font-size-xl: 1.25rem; /* 20px */
-  --font-size-2xl: 1.5rem; /* 24px */
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
 
   /* Border Radius */
-  --border-radius-sm: 0.25rem; /* 4px */
-  --border-radius-md: 0.375rem; /* 6px */
-  --border-radius-lg: 0.5rem; /* 8px */
-  --border-radius-xl: 0.75rem; /* 12px */
+  --border-radius-sm: 0.25rem;
+  --border-radius-md: 0.375rem;
+  --border-radius-lg: 0.5rem;
+  --border-radius-xl: 0.75rem;
   --border-radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.05);
+  --shadow-md: 0 2px 4px rgba(16, 24, 40, 0.06), 0 1px 2px rgba(16, 24, 40, 0.04);
+  --shadow-lg: 0 4px 8px rgba(16, 24, 40, 0.07), 0 2px 4px rgba(16, 24, 40, 0.05);
+
+  /* App Primary Color */
+  --app-primary-color: #0066FF;
 }
-/* ==================================================
-   TABLE OF CONTENTS:
-   
-   1. Imports & Root Variables
-   2. Base & Reset Styles
-   3. Layout Components
-   4. Typography & Text Elements
-   5. Card & Container Components
-   6. Form Elements
-   7. Data Display Components
-   8. Navigation Elements
-   9. Utilities & Helpers
-   10. Responsive Adaptations
-   11. Accessibility Enhancements
-   12. Animation & Transitions
-   
-================================================== */
 
-/* ==================================================
-   1. IMPORTS & ROOT VARIABLES
-================================================== */
-
-/* --- Google Font Import --- */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-
-/* --- CSS Variables Definition --- */
-:root {
-    /* Color palette */
-    --primary-100: #EBF5FF;
-    --primary-200: #CCE5FF;
-    --primary-500: #3388FF;
-    --primary-600: #0066FF; /* Mapped to AntD primaryColor */
-    --primary-700: #0052CC;
-
-    /* Neutrals */
-    --neutral-50: #FAFBFC;
-    --neutral-100: #F5F7FA; /* Mapped to AntD colorBgLayout */
-    --neutral-200: #EDF1F7; /* Mapped to AntD colorBorderSecondary */
-    --neutral-300: #DDE3ED; /* Mapped to AntD colorBorder */
-    --neutral-400: #B0B9C6;
-    --neutral-500: #8994A6;
-    --neutral-600: #6E7E94;
-    --neutral-700: #4D5E80;
-    --neutral-800: #2D4159; /* Mapped to AntD colorTextBase */
-    --neutral-900: #1A2533;
-
-    /* Semantic colors */
-    --success-100: #E5F8EF;
-    --success-500: #26C67B; /* Mapped to AntD colorSuccess */
-    --success-700: #1D9D60;
-
-    --warning-100: #FFF5E5;
-    --warning-500: #FF9233; /* Mapped to AntD colorWarning */
-    --warning-700: #E06500;
-
-    --danger-100: #FEEBEF;
-    --danger-50: #fff5f5; /* Lighter red for overdue background */
-    --danger-500: #F1476F; /* Mapped to AntD colorError */
-    --danger-700: #D1285A;
-
-    /* Shadows */
-    --shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.05);
-    --shadow-md: 0 2px 4px rgba(16, 24, 40, 0.06), 0 1px 2px rgba(16, 24, 40, 0.04);
-    --shadow-lg: 0 4px 8px rgba(16, 24, 40, 0.07), 0 2px 4px rgba(16, 24, 40, 0.05);
-
-    /* Spacing system */
-    --space-4: 0.25rem;
-    --space-8: 0.5rem;
-    --space-12: 0.75rem;
-    --space-16: 1rem;
-    --space-20: 1.25rem;
-    --space-24: 1.5rem;
-    --space-32: 2rem;
-
-    /* Border radius */
-    --radius-sm: 4px;
-    --radius-md: 8px;
-    --radius-lg: 12px;
-    --radius-xl: 16px;
-    --radius-full: 9999px;
-
-    /* Font settings */
-    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-
-    /* App Primary Color */
-    --app-primary-color: #0066FF;
-}
-
-/* ==================================================
-   2. BASE & RESET STYLES
-================================================== */
 
 * {
     box-sizing: border-box;
@@ -196,17 +115,11 @@ body {
     -moz-osx-font-smoothing: grayscale;
     font-size: 15px;
     line-height: 1.6;
-    /* Prevent horizontal movement/scroll */
     overflow-x: hidden;
     overscroll-behavior-x: contain;
-    /* Prevent bounce/scroll past top/bottom */
     overscroll-behavior-y: contain;
     min-height: 100vh;
 }
-
-/* ==================================================
-   3. LAYOUT COMPONENTS
-================================================== */
 
 #root, .ant-layout {
   min-height: 100vh;
@@ -218,15 +131,12 @@ body {
 }
 
 .ant-layout-header {
-    /* Sticky positioning */
     position: sticky !important;
     top: 0 !important;
     z-index: 100 !important;
-    /* Visuals - Make transparent, remove border/shadow */
     background-color: transparent !important;
     border-bottom: none !important;
     box-shadow: none !important;
-    /* Keep layout styles */
     padding: 0 var(--space-24) !important;
     height: 64px;
     line-height: 64px;
@@ -240,71 +150,6 @@ body {
 main.ant-layout-content {
     margin: 0 !important;
 }
-
-/* Monthly Bills Progress Header Styles */
-.bills-header-container {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 12px;
-}
-
-.month-navigation {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 14px;
-}
-
-.nav-button {
-  margin: 0 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.15s ease;
-}
-
-.nav-button:hover {
-  background-color: var(--primary-50);
-  transform: translateY(-1px);
-}
-
-.nav-button:active {
-  transform: translateY(0px);
-}
-
-.month-display {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-width: 80px;
-}
-
-.title-progress-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 4px;
-}
-
-.title-container {
-  display: flex;
-  align-items: center;
-}
-
-.calendar-icon {
-  color: var(--primary-600);
-  margin-right: 8px;
-}
-
-.title-text {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-}
-
-/* ==================================================
-   4. TYPOGRAPHY & TEXT ELEMENTS
-================================================== */
 
 h1, h2, h3, h4, h5, h6 {
     font-weight: 600;
@@ -333,43 +178,6 @@ a:hover {
     color: var(--primary-700);
 }
 
-.main-title {
-  font-size: 0.95rem;
-  line-height: 1.2;
-  margin-right: 6px;
-}
-
-.bills-count {
-  font-size: 0.8rem;
-  opacity: 0.7;
-  font-weight: 600;
-}
-
-.progress-badge {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--primary-600);
-  background-color: var(--primary-100);
-  padding: 4px 8px;
-  border-radius: 12px;
-  white-space: nowrap;
-}
-
-.month-text {
-  font-size: 1.1rem;
-  line-height: 1.2;
-  margin: 0;
-  color: var(--neutral-800);
-}
-
-.year-text {
-  font-size: 0.8rem;
-  line-height: 1.1;
-  color: var(--neutral-600);
-  margin: 0;
-}
-
-/* Currency display styles */
 .currency-wrapper {
   position: relative;
   display: inline-flex;
@@ -385,23 +193,17 @@ a:hover {
   opacity: 0.85;
 }
 
-/* ==================================================
-   5. CARD & CONTAINER COMPONENTS
-================================================== */
-
 .ant-card {
     box-shadow: var(--shadow-md) !important;
     border: 1px solid var(--neutral-200) !important;
 }
 
-/* Category Tags Container */
 .category-tags-container {
     display: flex;
-    flex-wrap: wrap; /* Default wrap behavior */
-    gap: 6px; /* Default gap */
+    flex-wrap: wrap;
+    gap: 6px;
 }
 
-/* Compact Overdue Panel */
 .compact-overdue-panel.ant-collapse-item {
     border: 1px solid var(--neutral-200) !important;
     background-color: #fff !important;
@@ -453,7 +255,6 @@ a:hover {
     border-top-right-radius: 4px !important;
 }
 
-/* MultiBillModal styles */
 .multi-bill-modal .ant-form-item {
   margin-bottom: 12px;
 }
@@ -482,7 +283,6 @@ a:hover {
   box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
 }
 
-/* Apple-inspired card styling */
 .multi-bill-modal .ant-card {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
@@ -492,11 +292,6 @@ a:hover {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-/* ==================================================
-   6. FORM ELEMENTS
-================================================== */
-
-/* Button Styles */
 .ant-btn-primary {
     box-shadow: var(--shadow-sm);
 }
@@ -516,31 +311,10 @@ a:hover {
     border-color: var(--primary-600) !important;
 }
 
-/* Specific override for header buttons */
 .ant-layout-header .ant-btn-default {
-    background-color: #fff !important; /* Ensure buttons have background */
+    background-color: #fff !important;
 }
 
-/* Checkbox Styles */
-.status-checkbox.checked .ant-checkbox-checked .ant-checkbox-inner {
-    background-color: var(--success-500) !important;
-    border-color: var(--success-500) !important;
-}
-
-.status-checkbox.checked .ant-checkbox-checked .ant-checkbox-inner::after {
-    border-color: #fff !important;
-}
-
-.ant-table-tbody .status-checkbox.large-checkbox .ant-checkbox-inner {
-    transform: scale(1.3);
-}
-
-.ant-table-tbody .status-checkbox.large-checkbox {
-    display: inline-flex;
-    align-items: center;
-}
-
-/* Form Input Styles */
 input[type="text"],
 input[type="number"],
 input[type="email"],
@@ -557,11 +331,6 @@ textarea {
   touch-action: auto !important;
 }
 
-/* ==================================================
-   7. DATA DISPLAY COMPONENTS
-================================================== */
-
-/* Table Styling */
 .ant-table-thead > tr > th {
     background-color: var(--neutral-50) !important;
     color: var(--neutral-600);
@@ -592,22 +361,18 @@ textarea {
     border-radius: inherit;
 }
 
-/* Prevent background color change on sorted table column header */
 .ant-table-thead th.ant-table-column-sort {
     background-color: var(--neutral-50) !important;
 }
 
-/* Prevent background color change on sorted table body cells */
 .ant-table-tbody > tr > td.ant-table-column-sort {
     background-color: transparent !important;
 }
 
-/* Ensure row hover still works correctly on sorted columns */
 .ant-table-tbody > tr:hover > td.ant-table-column-sort {
     background-color: var(--ant-table-row-hover-bg, var(--neutral-50)) !important;
 }
 
-/* Tag Styling */
 .ant-tag {
     border-radius: var(--radius-full) !important;
     font-weight: 600;
@@ -619,13 +384,6 @@ textarea {
     line-height: 1.4;
 }
 
-/* Custom Tag Colors */
-.tag-category { background-color: var(--primary-100); color: var(--primary-700); }
-.tag-status-paid { background-color: var(--success-100); color: var(--success-700); }
-.tag-status-unpaid { background-color: var(--warning-100); color: var(--warning-700); }
-.tag-due-soon { background-color: var(--danger-100); color: var(--danger-700); }
-
-/* Filter Tag Style */
 .ant-tag-checkable.filter-tag-checked,
 .ant-tag-checkable.filter-tag-checked:hover {
     background-color: var(--neutral-200, #EDF1F7) !important;
@@ -636,88 +394,28 @@ textarea {
      color: var(--neutral-800, #2D4159) !important;
 }
 
-/* ==================================================
-   8. NAVIGATION ELEMENTS
-================================================== */
-
-/* Action Icon Styles */
-.action-icon {
-    color: #bfbfbf !important;
-    font-size: 1rem;
-    transition: color 0.3s ease;
-}
-
-.action-icon-edit:hover { color: var(--primary-600) !important; }
-.action-icon-delete:hover { color: var(--danger-500) !important; }
-.ant-table-cell .ant-space-item { display: flex; align-items: center; }
-
-/* ==================================================
-   9. UTILITIES & HELPERS
-================================================== */
-
-/* Hide on Mobile Utility */
 .hide-on-mobile {
-    display: block; /* Default display for desktop */
+    display: block;
 }
 
-/* ==================================================
-   10. RESPONSIVE ADAPTATIONS
-================================================== */
-
-/* Small screens */
-@media (max-width: 480px) {
-  .main-title {
-    font-size: 0.9rem;
-  }
-  
-  .nav-button {
-    margin: 0 8px;
-  }
-  
-  .progress-badge {
-    font-size: 0.7rem;
-    padding: 3px 6px;
-  }
-}
-
-/* Mobile styles for month navigation */
 @media (max-width: 768px) {
-  .month-navigation .nav-button {
-    width: 40px !important;
-    height: 40px !important;
-    border-radius: 16px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-  }
-  
-  .month-navigation .ant-btn {
-    padding: 0 !important;
-  }
-}
-
-/* Mobile styles for tablets and phones */
-@media (max-width: 768px) {
-  /* Hide on Mobile Utility */
   .hide-on-mobile {
     display: none !important;
   }
 
-  /* Improve touch targets on mobile */
   .ant-btn,
   .ant-checkbox-wrapper,
   .ant-radio-wrapper,
   .ant-select-selector,
   .ant-input,
   .ant-input-affix-wrapper {
-    min-height: 24px; /* Apple's recommended minimum */
+    min-height: 24px;
   }
-  
+
   .ant-table-cell {
     padding: 12px 8px !important;
   }
 
-  /* Category tag carousel for mobile */
   .category-tags-container {
     flex-wrap: nowrap;
     overflow-x: auto;
@@ -728,32 +426,30 @@ textarea {
     scrollbar-width: none;
     -ms-overflow-style: none;
   }
-  
+
   .category-tags-container::-webkit-scrollbar {
     display: none;
   }
-  
-.category-tags-container > .ant-tag {
-  flex-shrink: 0;
-  padding: 0 8px !important;
-  font-size: 0.8rem !important;
-  height: 24px !important;
-  line-height: 22px !important;
-}
-  
+
+  .category-tags-container > .ant-tag {
+    flex-shrink: 0;
+    padding: 0 8px !important;
+    font-size: 0.8rem !important;
+    height: 24px !important;
+    line-height: 22px !important;
+  }
+
   .category-tags-container .tabler-icon {
     width: 12px !important;
     height: 12px !important;
   }
 
-  /* Smaller 'All Categories' button */
   .all-categories-btn {
     height: 20px !important;
     padding: 0 6px !important;
     font-size: 0.75rem !important;
   }
-  
-  /* Financial overview cards */
+
   .financial-overview-row {
     display: flex !important;
     flex-wrap: nowrap !important;
@@ -761,54 +457,53 @@ textarea {
     width: 100% !important;
     justify-content: space-between !important;
   }
-  
+
   .financial-overview-row .ant-col {
     flex: 1 1 0 !important;
     width: 33.33% !important;
     max-width: 33.33% !important;
     padding: 0 3px !important;
   }
-  
+
   .financial-overview-row .ant-card {
     border-radius: 10px !important;
     margin-bottom: 5px !important;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
     min-height: 75px !important;
   }
-  
+
   .financial-overview-row .ant-card-body {
     padding: 8px 10px !important;
   }
-  
+
   .financial-overview-row .ant-statistic-content {
     font-size: 18px !important;
     line-height: 1 !important;
     margin-top: 4px !important;
   }
-  
+
   .financial-overview-row .cents-superscript {
     font-size: 40% !important;
     margin-top: 2px !important;
   }
-  
+
   .financial-overview-row .ant-space {
     margin-bottom: 4px !important;
   }
-  
+
   .financial-overview-row .due-balance-subtext {
     display: none !important;
   }
-  
+
   .financial-overview-row .ant-typography {
     font-size: 0.6rem !important;
   }
-  
+
   .financial-overview-row .tabler-icon {
     width: 16px !important;
     height: 16px !important;
   }
-  
-  /* Layout adjustments */
+
   main.ant-layout-content {
     padding-left: var(--space-8) !important;
     padding-right: var(--space-8) !important;
@@ -819,80 +514,65 @@ textarea {
     margin-bottom: 0 !important;
     padding-top: 0 !important;
   }
-  
+
   .ant-row {
     margin-left: 0 !important;
     margin-right: 0 !important;
     width: 100% !important;
   }
-  
-  /* Reduce spacing between cards */
+
   .ant-layout-content > div {
     width: 100% !important;
     max-width: 100% !important;
     padding: 0 !important;
     gap: 5px !important;
   }
-  
-  /* Apply spacing between main container elements */
+
   .ant-layout-content > div > div {
     margin-bottom: 5px !important;
   }
-  
+
   .ant-layout {
     padding: 0 !important;
     width: 100% !important;
     min-height: 100vh !important;
   }
-  
-  /* Card body padding - but only for bills overview */
+
   .ant-layout-content > div > div:nth-child(2) .ant-card-body {
-    padding: 15px 15px 25px 15px !important; /* Reduced top padding */
+    padding: 15px 15px 25px 15px !important;
   }
-  
-  /* General card settings */
+
   .ant-card {
     margin-top: 2px !important;
   }
-  
-  /* Bottom spacing with safe area */
+
   .ant-layout-content {
     padding-bottom: 80px !important;
   }
 
-  /* Additional spacing for iPhone safe area */
   @supports (padding: env(safe-area-inset-bottom)) {
     .ant-layout-content {
       padding-bottom: calc(env(safe-area-inset-bottom) + 80px) !important;
     }
   }
-  
-  /* Container for bills overview needs extra space */
-  .bills-overview-table {
-    margin-bottom: 20px;
-  }
-  
-  /* Increase bottom nav z-index to ensure it stays on top */
+
   .bottom-navbar {
     z-index: 1001 !important;
   }
-  
-  /* Hide bottom navbar */
+
   .ant-layout-footer,
   nav.bottom-navbar {
     display: none !important;
   }
 
-  /* Mobile responsive fixes for financial cards */
   .financial-overview-row .ant-card {
     border-radius: 10px !important;
     margin-bottom: 8px !important;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05) !important;
     min-height: 75 !important;
-    height: 60;  /* Force height */
+    height: 60;
   }
-  
-  /* Reduce card body padding to make more compact */
+
   .financial-overview-row .ant-card-body {
     padding: 8px 8px !important;
     height: 75px !important;
@@ -901,100 +581,79 @@ textarea {
     justify-content: space-between !important;
   }
 
-  /* LARGER font size for top card amounts */
   .financial-overview-row .ant-statistic-content {
     font-size: 22px !important;
     line-height: 1.1 !important;
     margin-top: 2px !important;
   }
-  
-  /* Smaller header for more compact layout */
+
   .financial-overview-row .ant-space {
     margin-bottom: 2px !important;
     height: 20px !important;
   }
-  
-  /* Smaller header text */
+
   .financial-overview-row .ant-typography {
     font-size: 0.75rem !important;
   }
 
-  /* Adjust the position of the currency values */
   .financial-overview-row .currency-wrapper {
     line-height: 1 !important;
   }
-  
+
   .financial-overview-row .cents-superscript {
     font-size: 40% !important;
     margin-top: 2px !important;
     line-height: 1 !important;
   }
-  
-  /* Fix for the progress stats section - LARGER FONT */
+
   .ant-col-xs-8 .ant-statistic .ant-statistic-title {
     font-size: 0.75rem !important;
     margin-bottom: 2px !important;
   }
-  
+
   .ant-col-xs-8 .ant-statistic .ant-statistic-content {
-    font-size: 0.9rem !important;  /* Increased from 0.9rem */
+    font-size: 0.9rem !important;
     font-weight: 600 !important;
   }
-  
-  /* Adjust spacing in monthly progress card */
-  .month-navigation {
-    margin-bottom: 10px !important;
-  }
-  
-  /* Fix table layout */
-  .bills-overview-table {
-    margin-top: 8px !important;
-  }
-  
-  /* Hide tooltips on mobile */
+
   .ant-tooltip {
     display: none !important;
   }
-  
-  /* This prevents the tooltip trigger attribute from working on mobile */
-  *[data-tour], 
-  *[data-tooltip-id], 
-  *[data-tooltip], 
-  *[data-tip], 
+
+  *[data-tour],
+  *[data-tooltip-id],
+  *[data-tooltip],
+  *[data-tip],
   *[aria-describedby] {
     pointer-events: auto !important;
   }
-  
-  /* For React Tooltip libraries that use data attributes */
+
   [data-tooltip-root],
   [data-tooltip-container] {
     display: none !important;
     visibility: hidden !important;
     opacity: 0 !important;
   }
-  
-  /* Enhanced mobile experience for MultiBillModal */
+
   .multi-bill-modal .ant-card {
     margin-left: -4px;
     margin-right: -4px;
     border-radius: 16px;
   }
-  
+
   .multi-bill-modal .ant-form-item-label > label {
     font-size: 14px;
   }
-  
+
   .multi-bill-modal .ant-btn-dashed {
     border-width: 2px;
     font-weight: 500;
   }
-  
-  /* Improve form spacing */
+
   .multi-bill-modal .ant-form-item-explain {
     margin-top: 4px;
   }
-  
-  /* Enhanced focus states */
+
   .multi-bill-modal .ant-input:focus,
   .multi-bill-modal .ant-input-number-focused,
   .multi-bill-modal .ant-select-focused .ant-select-selector,
@@ -1002,35 +661,30 @@ textarea {
     border-color: #40a9ff;
     box-shadow: 0 0 0 3px rgba(24, 144, 255, 0.15);
   }
-  
-  /* iOS-specific scrollbar fixes */
-  /* Hide horizontal scrollbar in Ant Design tables but preserve the content and grid lines */
-  .ant-table-content {
+
+  .ant-table-content { /* General table scroll on iOS */
     overflow-x: auto !important;
     -webkit-overflow-scrolling: touch !important;
   }
-  
-  /* These will hide the actual scrollbar on iOS while keeping functionality */
+
   .ant-table-content::-webkit-scrollbar,
-  .ant-table-body::-webkit-scrollbar {
+  .ant-table-body::-webkit-scrollbar { /* General table scrollbar hiding on iOS */
     width: 0 !important;
     height: 0 !important;
     display: none !important;
     background: transparent !important;
   }
-  
-  /* For Firefox */
+
   .ant-table-content,
-  .ant-table-body {
+  .ant-table-body { /* General table scrollbar hiding for Firefox */
     scrollbar-width: none !important;
   }
-  
-  /* Hide the main page scrollbar */
+
   html, body {
     scrollbar-width: none !important;
     -webkit-overflow-scrolling: touch !important;
   }
-  
+
   html::-webkit-scrollbar,
   body::-webkit-scrollbar {
     width: 0 !important;
@@ -1038,24 +692,17 @@ textarea {
     display: none !important;
     background: transparent !important;
   }
-  
-  /* Ensure table borders remain visible */
-  .ant-table-cell {
-    border-bottom: 1px solid var(--neutral-200) !important;
-  }
-  
-  /* Make sure the layout doesn't have extra scrollbars */
+
   .ant-layout {
     overflow-x: hidden !important;
   }
-  
-  /* Target any scrollable areas in the app */
-  div[style*="overflow"], 
-  div[style*="overflow-y"], 
+
+  div[style*="overflow"],
+  div[style*="overflow-y"],
   div[style*="overflow-x"] {
     -webkit-overflow-scrolling: touch !important;
   }
-  
+
   div[style*="overflow"]::-webkit-scrollbar,
   div[style*="overflow-y"]::-webkit-scrollbar,
   div[style*="overflow-x"]::-webkit-scrollbar {
@@ -1063,308 +710,54 @@ textarea {
     height: 0 !important;
     display: none !important;
   }
-  
-  /* Target the specific layout area */
-  .ant-layout-content {
+
+  .ant-layout-content { /* General layout content scroll */
     overflow: auto !important;
     -webkit-overflow-scrolling: touch !important;
   }
-  
+
   .ant-layout-content::-webkit-scrollbar {
     width: 0 !important;
     height: 0 !important;
     display: none !important;
   }
-  
-  /* Bills table specific mobile styles */
-  .bills-overview-table .ant-table-tbody > tr > td {
-    padding: 6px 8px !important; /* Reduced vertical and horizontal padding */
-    height: auto !important; /* Allow height to shrink */
-    line-height: 1.2 !important; /* Tighter line height */
-    font-size: 0.8rem !important; /* Slightly smaller font */
-  }
-  
-  /* Make table header more compact */
-  .bills-overview-table .ant-table-thead > tr > th {
-    padding: 8px 8px !important; /* Reduced padding */
-    font-size: 0.7rem !important; /* Smaller font for headers */
-  }
-  
-/* Style the first column to be even more compact */
-.bills-overview-table .ant-table-tbody > tr > td:first-child {
-  padding-left: 8px !important;
-  width: 24px !important; /* Minimum width for checkbox column */
 }
 
-/* Make checkboxes slightly smaller */
-.bills-overview-table .ant-checkbox-inner {
-  width: 14px !important;
-  height: 14px !important;
-}
-
-/* Reduce the size of avatars/icons if present */
-.bills-overview-table .ant-avatar {
-  width: 24px !important;
-  height: 24px !important;
-  line-height: 24px !important;
-  font-size: 0.75rem !important;
-}
-
-/* Compress action buttons/icons */
-.bills-overview-table .ant-table-cell .ant-space {
-  gap: 4px !important;
-}
-
-/* Adjust any icons within the table */
-.bills-overview-table .tabler-icon,
-.bills-overview-table .anticon {
-  font-size: 0.9rem !important;
-  width: 16px !important;
-  height: 16px !important;
-}
-
-/* Optional: Make due dates and amounts more prominent */
-.bills-overview-table .due-date-cell {
-  font-weight: 500 !important;
-  white-space: nowrap !important;
-}
-
-.bills-overview-table .amount-cell {
-  font-weight: 600 !important;
-  white-space: nowrap !important;
-}
-
-/* CRITICAL: Remove extra row that creates a gap */
-.bills-overview-table .ant-table-measure-row {
-  display: none !important;
-  height: 0 !important;
-}
-
-/* Remove any table header/body spacing issues */
-.bills-overview-table .ant-table-header {
-  margin-bottom: 0 !important;
-  padding-bottom: 0 !important;
-}
-
-.bills-overview-table .ant-table-body {
-  margin-top: 0 !important;
-  padding-top: 0 !important;
-}
-
-.bills-overview-table table {
-  border-spacing: 0 !important;
-  border-collapse: collapse !important;
-}
-
-/* Remove borders and shadow from table so it blends with the card */
-.bills-overview-table .ant-table,
-.bills-overview-table .ant-table-container,
-.bills-overview-table .ant-table-container table {
-  box-shadow: none !important;
-  border-left: none !important;
-  border-right: none !important;
-}
-
-/* Table header styling */
-.bills-overview-table .ant-table-thead > tr > th {
-  padding: 3px 2px !important;
-  font-size: 0.65rem !important;
-  padding-bottom: 2px !important;
-  border-bottom: 1px solid var(--neutral-200) !important;
-  height: 20px !important; /* Shorter height */
-}
-
-/* Hide the "STATUS" column title text */
-.bills-overview-table .ant-table-thead > tr > th:first-child {
-  font-size: 0 !important;
-  width: 15px !important; /* More compact */
-  max-width: 15px !important;
-  padding-left: 2px !important;
-  padding-right: 2px !important;
-}
-
-/* Column width adjustments - even narrower */
-.bills-overview-table .ant-table-thead > tr > th:nth-child(2) { /* Name */
-  width: 85px !important;
-  max-width: 85px !important;
-}
-
-.bills-overview-table .ant-table-thead > tr > th:nth-child(3) { /* Amount */
-  width: 35px !important; /* Even narrower */
-  max-width: 35px !important;
-}
-
-.bills-overview-table .ant-table-thead > tr > th:nth-child(4) { /* Category */
-  width: 75px !important;
-  max-width: 75px !important;
-}
-
-.bills-overview-table .ant-table-thead > tr > th:nth-child(5) { /* Due Date */
-  width: 65px !important;
-  max-width: 65px !important;
-}
-
-.bills-overview-table .ant-table-thead > tr > th:nth-child(6) { /* Due In */
-  width: 45px !important; /* Even narrower */
-  max-width: 45px !important;
-}
-
-.bills-overview-table .ant-table-thead > tr > th:last-child { /* Actions */
-  width: 24px !important;
-  max-width: 24px !important;
-  padding-left: 2px !important;
-  padding-right: 2px !important;
-}
-
-/* Table cell styling - more compact */
-.bills-overview-table .ant-table-tbody > tr > td:first-child {
-  width: 24px !important;
-  max-width: 24px !important;
-  padding-left: 2px !important;
-  padding-right: 2px !important;
-}
-
-.bills-overview-table .ant-table-tbody > tr > td:nth-child(3) {
-  width: 45px !important;
-  max-width: 45px !important;
-}
-
-.bills-overview-table .ant-table-tbody > tr > td:last-child {
-  width: 24px !important;
-  max-width: 24px !important;
-  padding-left: 2px !important;
-  padding-right: 2px !important;
-}
-
-/* Increase row height by 15% and improve spacing */
-.bills-overview-table .ant-table-tbody > tr > td {
-  padding: 7px 2px !important;
-  font-size: 0.8rem !important;
-  line-height: 1.3 !important;
-  height: 37px !important; /* Increased from 32px (15% more) */
-}
-
-.bills-overview-table .ant-table-tbody > tr {
-  height: 58px !important; /* Increased from 50px (15% more) */
-}
-
-.bills-overview-table .ant-typography strong {
-  font-size: 0.8rem !important;
-}
-
-/* Better alignment for mobile bill cells */
-.bills-overview-table .mobile-bill-cell {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  width: 100%;
-}
-
-.bills-overview-table .mobile-bill-main {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  gap: 8px;
-}
-
-.bills-overview-table .mobile-bill-details {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  gap: 8px;
-  font-size: 0.75rem;
-  color: var(--neutral-600);
-}
-
-.bills-overview-table .mobile-bill-details .ant-tag {
-  margin: 0 !important;
-  flex-shrink: 0;
-  padding: 2px 6px !important;
-  height: auto !important;
-  line-height: 1.2 !important;
-}
-
-.bills-overview-table .mobile-bill-details .due-in-cell {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  flex-shrink: 0;
-  gap: 4px;
-}
-
-/* Ensure proper spacing in table cells */
-.bills-overview-table .ant-table-tbody > tr > td:nth-child(2) {
-  padding: 8px 4px !important;
-  width: calc(100% - 60px) !important;
-}
-}
-
-/* Desktop specific styles for MultiBillModal */
 @media (min-width: 769px) {
-.multi-bill-modal .ant-card {
-  transition: all 0.2s ease;
-}
+  .multi-bill-modal .ant-card {
+    transition: all 0.2s ease;
+  }
 
-.multi-bill-modal .ant-card:hover {
-  border-color: #1890ff;
-}
-}
-
-
-/* ==================================================
- 11. ACCESSIBILITY ENHANCEMENTS
-================================================== */
-
-
-/* ==================================================
- 12. ANIMATION & TRANSITIONS
-================================================== */
-
-.nav-button {
-transition: all 0.15s ease;
-}
-
-.action-icon {
-transition: color 0.3s ease;
+  .multi-bill-modal .ant-card:hover {
+    border-color: #1890ff;
+  }
 }
 
 .compact-overdue-panel > .ant-collapse-header {
-transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease;
 }
 
 .multi-bill-modal .ant-input,
 .multi-bill-modal .ant-input-number,
 .multi-bill-modal .ant-select-selector,
 .multi-bill-modal .ant-picker {
-transition: all 0.3s ease;
+  transition: all 0.3s ease;
 }
 
 .multi-bill-modal .ant-card {
-transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 a {
-transition: color 0.2s ease;
+  transition: color 0.2s ease;
 }
 
 @keyframes pageFadeIn {
-from { opacity: 0; transform: translateY(8px); }
-to   { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .page-transition {
-opacity: 0;
-animation: pageFadeIn 0.3s ease-out forwards;
-}
-
-/* Fade out effect for bills table rows */
-@keyframes billRowFadeOut {
-from { opacity: 1; }
-to { opacity: 0; }
-}
-
-.bill-row-fade-out {
-animation: billRowFadeOut 0.3s ease forwards;
+  opacity: 0;
+  animation: pageFadeIn 0.3s ease-out forwards;
 }
