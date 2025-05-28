@@ -1,7 +1,6 @@
 // src/components/ErrorBoundary.jsx
 import React from 'react';
 import { Result, Button } from 'antd';
-import './ErrorBoundary.css';
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
