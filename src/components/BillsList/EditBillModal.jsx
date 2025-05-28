@@ -22,7 +22,7 @@ import {
     IconHelp
 } from '@tabler/icons-react';
 import dayjs from 'dayjs';
-import './EditBillModal.css';
+import './styles/EditBillModal.css';
 
 const { Option } = Select;
 const { Text } = Typography;

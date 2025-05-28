@@ -10,7 +10,6 @@ import {
 import PropTypes from 'prop-types';
 import { FinanceContext } from '../../contexts/FinanceContext';
 import EditBillModal from './EditBillModal';
-import './DashboardBillsList.css';
 
 const DashboardBillsList = ({
   bills: propBills,

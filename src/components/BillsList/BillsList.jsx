@@ -12,7 +12,6 @@ import {
 import PropTypes from 'prop-types';
 import { FinanceContext } from '../../contexts/FinanceContext';
 import EditBillModal from './EditBillModal';
-import './BillsList.css';
 
 const BillsList = ({ loading: propLoading }) => {
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
