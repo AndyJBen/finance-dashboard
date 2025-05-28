@@ -117,7 +117,7 @@ const UnifiedEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
       centered
       width="100%"
       style={{ 
-        maxWidth: '340px',
+        maxWidth: '480px',
         margin: '0 auto',
         padding: 0
       }}
@@ -175,136 +175,136 @@ const UnifiedEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
             name="billForm"
             className="unified-form"
           >
-            {/* Compact Information Section */}
+            {/* Horizontal Layout Form */}
             <div className="form-section">
               <div className="section-header">
                 <IconFileText size={16} className="section-icon" />
                 <Text className="section-title">Bill Details</Text>
               </div>
               
-              <div className="compact-inputs">
-                <Form.Item 
-                  name="name" 
-                  rules={[{ required: true, message: 'Required' }]}
-                >
-                  <div className="compact-input-wrapper">
-                    <Text className="compact-label">Name</Text>
-                    <Input 
-                      placeholder="Bill name"
-                      className="compact-input"
-                      variant="borderless"
-                    />
-                  </div>
-                </Form.Item>
-
-                <Form.Item 
-                  name="amount" 
-                  rules={[
-                    { required: true, message: 'Required' },
-                    { type: 'number', min: 0, message: 'Must be positive' }
-                  ]}
-                >
-                  <div className="compact-input-wrapper amount-wrapper">
-                    <Text className="compact-label">Amount</Text>
-                    <div className="compact-amount-container">
-                      <Text className="currency-compact">$</Text>
-                      <InputNumber
-                        placeholder="0.00"
-                        className="compact-amount"
+              <div className="horizontal-inputs">
+                <div className="input-row">
+                  <Form.Item 
+                    name="name" 
+                    rules={[{ required: true, message: 'Required' }]}
+                    className="name-input"
+                  >
+                    <div className="compact-input-wrapper">
+                      <Text className="compact-label">Name</Text>
+                      <Input 
+                        placeholder="Bill name"
+                        className="compact-input"
                         variant="borderless"
-                        min={0}
-                        step={0.01}
-                        formatter={(value) => value ? Number(value).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : ''}
-                        parser={(value) => value?.replace(/,/g, '') || ''}
-                        controls={false}
                       />
                     </div>
-                  </div>
-                </Form.Item>
+                  </Form.Item>
 
-                <Form.Item 
-                  name="category" 
-                  rules={[{ required: true, message: 'Required' }]}
-                >
-                  <div className="compact-input-wrapper">
-                    <Text className="compact-label">Category</Text>
-                    <Select
-                      placeholder="Select"
-                      className="compact-select"
-                      variant="borderless"
-                      onChange={setSelectedCategory}
-                      optionRender={(option) => {
-                        const categoryInfo = getCategoryInfo(option.value);
-                        return (
-                          <div className="compact-category-option">
-                            <Avatar 
-                              size={18}
-                              style={{ 
-                                backgroundColor: categoryInfo.bgColor,
-                                color: categoryInfo.color
-                              }}
-                              icon={React.createElement(categoryInfo.icon, { size: 11 })}
-                            />
-                            <Text className="compact-option-text">{option.value}</Text>
-                          </div>
-                        );
-                      }}
-                    >
-                      {billCategories.map(category => (
-                        <Option key={category.name} value={category.name}>
-                          {category.name}
-                        </Option>
-                      ))}
-                    </Select>
-                  </div>
-                </Form.Item>
-
-                <Form.Item 
-                  name="dueDate" 
-                  rules={[{ required: true, message: 'Required' }]}
-                >
-                  <div className="compact-input-wrapper">
-                    <Text className="compact-label">Due Date</Text>
-                    <DatePicker
-                      format="MMM DD, YYYY"
-                      placeholder="Select date"
-                      className="compact-date"
-                      variant="borderless"
-                      suffixIcon={<IconCalendar size={14} />}
-                      style={{ width: '100%' }}
-                    />
-                  </div>
-                </Form.Item>
-              </div>
-            </div>
-
-            {/* Compact Options Section */}
-            <div className="form-section">
-              <div className="section-header">
-                <IconCheck size={16} className="section-icon" />
-                <Text className="section-title">Status</Text>
-              </div>
-              
-              <div className="compact-options">
-                <Form.Item name="isPaid" valuePropName="checked">
-                  <div className="compact-option">
-                    <div className="compact-option-icon paid">
-                      <IconCheck size={12} />
+                  <Form.Item 
+                    name="amount" 
+                    rules={[
+                      { required: true, message: 'Required' },
+                      { type: 'number', min: 0, message: 'Must be positive' }
+                    ]}
+                    className="amount-input"
+                  >
+                    <div className="compact-input-wrapper amount-wrapper">
+                      <Text className="compact-label">Amount</Text>
+                      <div className="compact-amount-container">
+                        <Text className="currency-compact">$</Text>
+                        <InputNumber
+                          placeholder="0.00"
+                          className="compact-amount"
+                          variant="borderless"
+                          min={0}
+                          step={0.01}
+                          formatter={(value) => value ? Number(value).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : ''}
+                          parser={(value) => value?.replace(/,/g, '') || ''}
+                          controls={false}
+                        />
+                      </div>
                     </div>
-                    <Text className="compact-option-text">Paid</Text>
-                    <Checkbox className="compact-checkbox" />
-                  </div>
-                </Form.Item>
+                  </Form.Item>
+                </div>
 
-                <Form.Item name="isRecurring" valuePropName="checked">
-                  <div className="compact-option">
-                    <div className="compact-option-icon recurring">
-                      <IconRepeat size={12} />
+                <div className="input-row">
+                  <Form.Item 
+                    name="category" 
+                    rules={[{ required: true, message: 'Required' }]}
+                    className="category-input"
+                  >
+                    <div className="compact-input-wrapper">
+                      <Text className="compact-label">Category</Text>
+                      <Select
+                        placeholder="Select category"
+                        className="compact-select"
+                        variant="borderless"
+                        onChange={setSelectedCategory}
+                        optionRender={(option) => {
+                          const categoryInfo = getCategoryInfo(option.value);
+                          return (
+                            <div className="compact-category-option">
+                              <Avatar 
+                                size={18}
+                                style={{ 
+                                  backgroundColor: categoryInfo.bgColor,
+                                  color: categoryInfo.color
+                                }}
+                                icon={React.createElement(categoryInfo.icon, { size: 11 })}
+                              />
+                              <Text className="compact-option-text">{option.value}</Text>
+                            </div>
+                          );
+                        }}
+                      >
+                        {billCategories.map(category => (
+                          <Option key={category.name} value={category.name}>
+                            {category.name}
+                          </Option>
+                        ))}
+                      </Select>
                     </div>
-                    <Text className="compact-option-text">Recurring</Text>
-                    <Checkbox className="compact-checkbox" />
-                  </div>
-                </Form.Item>
+                  </Form.Item>
+
+                  <Form.Item 
+                    name="dueDate" 
+                    rules={[{ required: true, message: 'Required' }]}
+                    className="date-input"
+                  >
+                    <div className="compact-input-wrapper">
+                      <Text className="compact-label">Due Date</Text>
+                      <DatePicker
+                        format="MMM DD, YYYY"
+                        placeholder="Select date"
+                        className="compact-date"
+                        variant="borderless"
+                        suffixIcon={<IconCalendar size={14} />}
+                        style={{ width: '100%' }}
+                      />
+                    </div>
+                  </Form.Item>
+                </div>
+
+                <div className="input-row options-row">
+                  <Form.Item name="isPaid" valuePropName="checked" className="option-item">
+                    <div className="compact-option">
+                      <div className="compact-option-icon paid">
+                        <IconCheck size={12} />
+                      </div>
+                      <Text className="compact-option-text">Mark as Paid</Text>
+                      <Checkbox className="compact-checkbox" />
+                    </div>
+                  </Form.Item>
+
+                  <Form.Item name="isRecurring" valuePropName="checked" className="option-item">
+                    <div className="compact-option">
+                      <div className="compact-option-icon recurring">
+                        <IconRepeat size={12} />
+                      </div>
+                      <Text className="compact-option-text">Recurring Bill</Text>
+                      <Checkbox className="compact-checkbox" />
+                    </div>
+                  </Form.Item>
+                </div>
               </div>
             </div>
           </Form>
@@ -345,8 +345,8 @@ const UnifiedEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
           background: white;
           display: flex;
           flex-direction: column;
-          min-height: 420px;
-          max-height: 80vh;
+          min-height: 280px;
+          max-height: 70vh;
         }
 
         /* Compact Header */
@@ -404,20 +404,20 @@ const UnifiedEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
           margin: 0;
         }
 
-        /* Compact Content */
+        /* Ultra Compact Content */
         .unified-content {
           flex: 1;
           overflow-y: auto;
-          padding: var(--space-12) var(--space-16);
+          padding: var(--space-8) var(--space-16);
         }
 
         .unified-form {
           display: flex;
           flex-direction: column;
-          gap: var(--space-16);
+          gap: 0;
         }
 
-        /* Compact Form Sections */
+        /* Single Compact Section */
         .form-section {
           background: var(--neutral-50);
           border-radius: var(--radius-md);
@@ -447,17 +447,34 @@ const UnifiedEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
           margin: 0;
         }
 
-        /* Compact Input System */
-        .compact-inputs {
-          display: grid;
-          grid-template-columns: 1fr 80px;
-          gap: var(--space-8);
+        /* Horizontal Input Layout */
+        .horizontal-inputs {
+          display: flex;
+          flex-direction: column;
+          gap: var(--space-12);
         }
 
-        .compact-inputs > :nth-child(1) { grid-column: 1 / -1; } /* Name full width */
-        .compact-inputs > :nth-child(2) { grid-column: 1; }      /* Amount left */
-        .compact-inputs > :nth-child(3) { grid-column: 2; }      /* Category right */
-        .compact-inputs > :nth-child(4) { grid-column: 1 / -1; } /* Date full width */
+        .input-row {
+          display: grid;
+          grid-template-columns: 2fr 1fr;
+          gap: var(--space-12);
+          align-items: start;
+        }
+
+        .input-row.options-row {
+          grid-template-columns: 1fr 1fr;
+        }
+
+        .name-input {
+          grid-column: 1 / -1;
+        }
+
+        .amount-input,
+        .category-input,
+        .date-input,
+        .option-item {
+          margin-bottom: 0 !important;
+        }
 
         .compact-input-wrapper {
           background: white;
@@ -591,12 +608,7 @@ const UnifiedEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
           color: var(--primary-600);
         }
 
-        /* Compact Options */
-        .compact-options {
-          display: flex;
-          gap: var(--space-12);
-        }
-
+        /* Inline Options */
         .compact-option {
           display: flex;
           align-items: center;
@@ -604,7 +616,6 @@ const UnifiedEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
           background: white;
           padding: var(--space-8);
           border-radius: 6px;
-          flex: 1;
           border: 1px solid var(--neutral-200);
           cursor: pointer;
           transition: background-color 0.2s ease;
@@ -633,7 +644,7 @@ const UnifiedEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
           background: var(--primary-600);
         }
 
-        .compact-option-text {
+        .compact-option .compact-option-text {
           font-size: 12px;
           font-weight: 500;
           color: var(--neutral-800);
@@ -669,6 +680,34 @@ const UnifiedEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
         /* Compact Footer */
         .unified-footer {
           padding: var(--space-12) var(--space-16);
+          border-top: 1px solid var(--neutral-200);
+          display: flex;
+          gap: var(--space-8);
+          background: var(--neutral-50);
+        }
+
+        .footer-cancel {
+          flex: 1;
+          height: 36px;
+          border-radius: 6px;
+          font-weight: 500;
+          border-color: var(--neutral-300);
+          font-size: 13px;
+        }
+
+        .footer-save {
+          flex: 2;
+          height: 36px;
+          border-radius: 6px;
+          font-weight: 600;
+          background: var(--primary-600) !important;
+          border-color: var(--primary-600) !important;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 4px;
+          font-size: 13px;
+        } var(--space-12) var(--space-16);
           border-top: 1px solid var(--neutral-200);
           display: flex;
           gap: var(--space-8);
