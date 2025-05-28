@@ -3,15 +3,9 @@ import { Layout, Row, Col, Typography, Grid } from 'antd';
 import { FinanceContext } from './contexts/FinanceContext';
 
 import FinancialOverviewCards from './components/FinancialSummary/FinancialOverviewCards';
-import BillsList from './components/BillsList/BillsList';
 import FinanceFeed from './components/FinanceFeed/FinanceFeed';
-import UpcomingPayments from './components/RecentActivity/UpcomingPayments';
-import ActivityFeed from './components/RecentActivity/ActivityFeed';
-import NonRecurringTransactions from './components/RecentActivity/NonRecurringTransactions';
 import Sidebar from './components/Sidebar/Sidebar';
 import CombinedBillsOverview from './components/FinancialSummary/CombinedBillsOverview/CombinedBillsOverview';
-import BillPrepCard from './components/FinancialSummary/BillPrepCard/BillPrepCard';
-import PastDuePayments from './components/RecentActivity/PastDuePayments';
 import AppFooter from './components/Footer/Footer';
 import ChartsPage from './components/ChartsPage/ChartsPage';
 import BottomNavBar from './components/Navigation/BottomNavBar/BottomNavBar';
