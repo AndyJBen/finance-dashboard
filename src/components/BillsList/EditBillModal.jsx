@@ -117,7 +117,7 @@ const UnifiedEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
       centered
       width="100%"
       style={{ 
-        maxWidth: '480px',
+        maxWidth: '95vw',
         margin: '0 auto',
         padding: 0
       }}
@@ -136,13 +136,6 @@ const UnifiedEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
             ? `linear-gradient(135deg, ${categoryInfo.color}08, ${categoryInfo.color}03)`
             : 'linear-gradient(135deg, var(--primary-50), var(--primary-25))'
         }}>
-          <Button 
-            type="text" 
-            className="header-close-btn"
-            onClick={onCancel}
-            icon={<IconX size={16} />}
-          />
-          
           <div className="header-content">
             <div className="header-main">
               {selectedCategory && (
@@ -331,13 +324,23 @@ const UnifiedEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
       </div>
 
       <style jsx global>{`
-        /* Modal Base */
+        /* Mobile-First Design */
+        .unified-edit-bill-modal .ant-modal {
+          padding: var(--space-8);
+          margin: 0;
+          max-width: 100%;
+          width: 100%;
+        }
+
         .unified-edit-bill-modal .ant-modal-content {
-          border-radius: var(--radius-xl);
+          border-radius: var(--radius-lg);
           overflow: hidden;
           box-shadow: var(--shadow-lg);
           background: white;
           padding: 0;
+          width: 100%;
+          max-width: 95vw;
+          margin: 0 auto;
         }
 
         /* Unified Card Container */
@@ -345,35 +348,23 @@ const UnifiedEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
           background: white;
           display: flex;
           flex-direction: column;
-          min-height: 280px;
-          max-height: 70vh;
+          height: auto;
+          max-height: none;
         }
 
-        /* Compact Header */
+        /* Mobile Header */
         .unified-header {
-          padding: var(--space-12) var(--space-16);
+          padding: var(--space-16);
           border-bottom: 1px solid var(--neutral-200);
           display: flex;
           align-items: center;
-          justify-content: space-between;
-          min-height: 48px;
-        }
-
-        .header-close-btn {
-          color: var(--neutral-500) !important;
-          width: 28px !important;
-          height: 28px !important;
-          border-radius: 6px !important;
-          background: var(--neutral-100) !important;
-          padding: 0 !important;
-          min-width: 28px !important;
+          justify-content: center;
         }
 
         .header-content {
-          flex: 1;
           display: flex;
           justify-content: center;
-          margin: 0 var(--space-12);
+          width: 100%;
         }
 
         .header-main {
@@ -389,7 +380,7 @@ const UnifiedEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
         }
 
         .modal-title {
-          font-size: 15px;
+          font-size: 16px;
           font-weight: 600;
           color: var(--neutral-800);
           line-height: 1.2;
@@ -397,18 +388,16 @@ const UnifiedEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
         }
 
         .current-bill-info {
-          font-size: 12px;
+          font-size: 13px;
           color: var(--neutral-500);
           font-weight: 500;
           line-height: 1.1;
           margin: 0;
         }
 
-        /* Ultra Compact Content */
+        /* Mobile Content */
         .unified-content {
-          flex: 1;
-          overflow-y: auto;
-          padding: var(--space-8) var(--space-16);
+          padding: var(--space-16);
         }
 
         .unified-form {
@@ -417,11 +406,11 @@ const UnifiedEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
           gap: 0;
         }
 
-        /* Single Compact Section */
+        /* Mobile Form Section */
         .form-section {
           background: var(--neutral-50);
           border-radius: var(--radius-md);
-          padding: var(--space-12);
+          padding: var(--space-16);
           border: 1px solid var(--neutral-200);
         }
 
@@ -429,29 +418,29 @@ const UnifiedEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
           display: flex;
           align-items: center;
           gap: var(--space-8);
-          margin-bottom: var(--space-12);
+          margin-bottom: var(--space-16);
         }
 
         .section-icon {
           color: var(--primary-600);
           background: var(--primary-100);
-          padding: 4px;
-          border-radius: 4px;
+          padding: 6px;
+          border-radius: 6px;
           flex-shrink: 0;
         }
 
         .section-title {
-          font-size: 13px;
+          font-size: 14px;
           font-weight: 600;
           color: var(--neutral-800);
           margin: 0;
         }
 
-        /* Horizontal Input Layout */
+        /* Mobile Input Layout */
         .horizontal-inputs {
           display: flex;
           flex-direction: column;
-          gap: var(--space-12);
+          gap: var(--space-16);
         }
 
         .input-row {
@@ -463,6 +452,7 @@ const UnifiedEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
 
         .input-row.options-row {
           grid-template-columns: 1fr 1fr;
+          gap: var(--space-8);
         }
 
         .name-input {
@@ -478,8 +468,8 @@ const UnifiedEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
 
         .compact-input-wrapper {
           background: white;
-          border-radius: 6px;
-          padding: var(--space-8);
+          border-radius: var(--radius-md);
+          padding: var(--space-12);
           border: 1px solid var(--neutral-200);
           transition: border-color 0.2s ease;
         }
@@ -489,42 +479,42 @@ const UnifiedEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
         }
 
         .compact-label {
-          font-size: 11px;
-          font-weight: 500;
+          font-size: 12px;
+          font-weight: 600;
           color: var(--neutral-600);
           display: block;
-          margin-bottom: 4px;
+          margin-bottom: var(--space-8);
           text-transform: uppercase;
-          letter-spacing: 0.5px;
+          letter-spacing: 0.3px;
         }
 
-        /* Compact Inputs */
+        /* Mobile Inputs */
         .compact-input {
-          font-size: 13px;
+          font-size: 15px;
           color: var(--neutral-800);
           background: transparent !important;
           border: none !important;
           box-shadow: none !important;
           padding: 0 !important;
           font-weight: 500;
-          height: 18px !important;
-          line-height: 18px !important;
+          height: 24px !important;
+          line-height: 24px !important;
         }
 
         .compact-input::placeholder {
           color: var(--neutral-400);
-          font-size: 12px;
+          font-size: 14px;
         }
 
-        /* Compact Amount */
+        /* Mobile Amount */
         .compact-amount-container {
           display: flex;
           align-items: center;
-          gap: 4px;
+          gap: var(--space-8);
         }
 
         .currency-compact {
-          font-size: 13px;
+          font-size: 15px;
           font-weight: 600;
           color: var(--primary-600);
         }
@@ -533,27 +523,27 @@ const UnifiedEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
           background: transparent !important;
           border: none !important;
           box-shadow: none !important;
-          font-size: 13px !important;
+          font-size: 15px !important;
           font-weight: 600 !important;
           color: var(--neutral-800) !important;
           flex: 1;
-          height: 18px !important;
+          height: 24px !important;
         }
 
         .compact-amount .ant-input-number-input {
-          font-size: 13px !important;
+          font-size: 15px !important;
           font-weight: 600 !important;
           background: transparent;
           border: none;
           padding: 0;
-          height: 18px !important;
-          line-height: 18px !important;
+          height: 24px !important;
+          line-height: 24px !important;
         }
 
-        /* Compact Select */
+        /* Mobile Select */
         .compact-select.ant-select {
           width: 100%;
-          height: 18px;
+          height: 24px;
         }
 
         .compact-select .ant-select-selector {
@@ -561,61 +551,61 @@ const UnifiedEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
           border: none !important;
           box-shadow: none !important;
           padding: 0 !important;
-          font-size: 12px !important;
+          font-size: 14px !important;
           font-weight: 500;
-          height: 18px !important;
-          min-height: 18px !important;
+          height: 24px !important;
+          min-height: 24px !important;
         }
 
         .compact-select .ant-select-selection-item,
         .compact-select .ant-select-selection-placeholder {
-          line-height: 18px !important;
+          line-height: 24px !important;
           padding: 0 !important;
-          font-size: 12px !important;
+          font-size: 14px !important;
         }
 
         .compact-category-option {
           display: flex;
           align-items: center;
-          gap: 6px;
-          padding: 4px 8px;
+          gap: var(--space-8);
+          padding: var(--space-8);
         }
 
         .compact-option-text {
-          font-size: 12px;
+          font-size: 14px;
           font-weight: 500;
         }
 
-        /* Compact Date */
+        /* Mobile Date */
         .compact-date.ant-picker {
           background: transparent !important;
           border: none !important;
           box-shadow: none !important;
           padding: 0 !important;
-          font-size: 12px;
+          font-size: 14px;
           font-weight: 500;
-          height: 18px !important;
+          height: 24px !important;
         }
 
         .compact-date .ant-picker-input input {
-          font-size: 12px !important;
+          font-size: 14px !important;
           font-weight: 500;
-          height: 18px !important;
-          line-height: 18px !important;
+          height: 24px !important;
+          line-height: 24px !important;
         }
 
         .compact-date .ant-picker-suffix {
           color: var(--primary-600);
         }
 
-        /* Inline Options */
+        /* Mobile Options */
         .compact-option {
           display: flex;
           align-items: center;
           gap: var(--space-8);
           background: white;
-          padding: var(--space-8);
-          border-radius: 6px;
+          padding: var(--space-12);
+          border-radius: var(--radius-md);
           border: 1px solid var(--neutral-200);
           cursor: pointer;
           transition: background-color 0.2s ease;
@@ -626,9 +616,9 @@ const UnifiedEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
         }
 
         .compact-option-icon {
-          width: 18px;
-          height: 18px;
-          border-radius: 4px;
+          width: 20px;
+          height: 20px;
+          border-radius: 6px;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -645,7 +635,7 @@ const UnifiedEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
         }
 
         .compact-option .compact-option-text {
-          font-size: 12px;
+          font-size: 14px;
           font-weight: 500;
           color: var(--neutral-800);
           flex: 1;
@@ -656,14 +646,14 @@ const UnifiedEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
         }
 
         .compact-checkbox .ant-checkbox {
-          transform: scale(0.9);
+          transform: scale(1.1);
         }
 
         .compact-checkbox .ant-checkbox-inner {
-          border-radius: 3px;
+          border-radius: 4px;
           border-color: var(--neutral-300);
-          width: 14px;
-          height: 14px;
+          width: 16px;
+          height: 16px;
         }
 
         .compact-checkbox .ant-checkbox-checked .ant-checkbox-inner {
@@ -672,41 +662,42 @@ const UnifiedEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
         }
 
         .compact-checkbox .ant-checkbox-checked .ant-checkbox-inner::after {
-          width: 4px;
-          height: 8px;
-          border-width: 1.5px;
+          width: 5px;
+          height: 9px;
+          border-width: 2px;
         }
 
-        /* Compact Footer */
+        /* Mobile Footer */
         .unified-footer {
-          padding: var(--space-12) var(--space-16);
+          padding: var(--space-16);
           border-top: 1px solid var(--neutral-200);
           display: flex;
-          gap: var(--space-8);
+          gap: var(--space-12);
           background: var(--neutral-50);
+          margin-top: var(--space-8);
         }
 
         .footer-cancel {
           flex: 1;
-          height: 36px;
-          border-radius: 6px;
+          height: 44px;
+          border-radius: var(--radius-md);
           font-weight: 500;
           border-color: var(--neutral-300);
-          font-size: 13px;
+          font-size: 15px;
         }
 
         .footer-save {
           flex: 2;
-          height: 36px;
-          border-radius: 6px;
+          height: 44px;
+          border-radius: var(--radius-md);
           font-weight: 600;
           background: var(--primary-600) !important;
           border-color: var(--primary-600) !important;
           display: flex;
           align-items: center;
           justify-content: center;
-          gap: 4px;
-          font-size: 13px;
+          gap: var(--space-8);
+          font-size: 15px;
         } var(--space-12) var(--space-16);
           border-top: 1px solid var(--neutral-200);
           display: flex;
