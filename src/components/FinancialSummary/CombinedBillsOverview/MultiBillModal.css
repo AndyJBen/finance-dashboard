@@ -1,1 +1,207 @@
-/* Styles for MultiBillModal */
+.multi-bill-modal .ant-modal-content {
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15), 0 2px 10px rgba(0, 0, 0, 0.12);
+    overflow: hidden;
+    padding: 0;
+}
+
+.modal-header {
+    padding: 16px 24px;
+    background: linear-gradient(135deg, #1D4ED8, #3B82F6);
+    color: white;
+    border-radius: 20px 20px 0 0;
+}
+
+.modal-icon-container {
+    width: 38px;
+    height: 38px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.modal-title {
+    color: white !important;
+    margin: 0 !important;
+    font-size: 18px !important;
+}
+
+.bill-form {
+    padding: 16px;
+    overflow-y: auto;
+}
+
+.bill-cards-container {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.bill-card {
+    border-radius: 16px;
+    background-color: #FAFBFC;
+    border: 1px solid #EDF1F7;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.bill-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.bill-number {
+    color: #1D4ED8;
+    font-size: 15px;
+}
+
+.remove-button {
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+.bill-form-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.field-row {
+    display: flex;
+    gap: 12px;
+}
+
+.amount-field {
+    flex: 1;
+    margin-bottom: 0 !important;
+}
+
+.category-field {
+    flex: 1.5;
+    margin-bottom: 0 !important;
+}
+
+.bill-input {
+    height: 44px !important;
+    border-radius: 12px !important;
+    font-size: 15px !important;
+}
+
+.bill-select .ant-select-selector {
+    height: 44px !important;
+    padding-top: 6px !important;
+    border-radius: 12px !important;
+    font-size: 15px !important;
+}
+
+.date-picker {
+    width: 100% !important;
+}
+
+.field-icon {
+    color: #1D4ED8 !important;
+    margin-right: 8px;
+}
+
+.options-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.checkbox-item {
+    margin-bottom: 0 !important;
+}
+
+.styled-checkbox {
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.checkbox-icon {
+    color: #1D4ED8;
+}
+
+.add-bill-button {
+    height: 46px;
+    border-radius: 14px;
+    border-color: #1D4ED8;
+    border-width: 1.5px;
+    border-style: dashed;
+    color: #1D4ED8;
+    font-weight: 500;
+    font-size: 15px;
+    margin-top: 4px;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    padding: 14px 24px;
+    border-top: 1px solid #F0F0F0;
+    gap: 16px;
+}
+
+.modal-footer .ant-btn {
+    padding: 0 20px;
+    height: 44px;
+    font-size: 15px;
+    border-radius: 12px;
+    min-width: 100px;
+}
+
+.cancel-button {
+    color: #64748B;
+    border-color: #E2E8F0;
+}
+
+.complete-button {
+    background-color: #1D4ED8;
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .multi-bill-modal .ant-modal {
+        max-width: 600px !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .bill-input,
+    .bill-select .ant-select-selector {
+        font-size: 16px !important;
+    }
+
+    .modal-footer .ant-btn {
+        min-width: 80px;
+    }
+
+    .bill-card-header {
+        margin-bottom: 8px;
+    }
+
+    .bill-form {
+        padding: 12px;
+        max-height: 60vh;
+    }
+
+    .add-bill-button:active {
+        transform: scale(0.98);
+        transition: transform 0.2s;
+    }
+}
+
+@media (min-width: 769px) {
+    .bill-form {
+        max-height: 70vh;
+    }
+}
