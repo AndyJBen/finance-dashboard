@@ -8,7 +8,7 @@ import {
     IconClock, // Icon for Remaining
     IconCurrencyDollar // Icon for Total Amount
 } from '@tabler/icons-react';
-import { FinanceContext } from '../../contexts/FinanceContext';
+import { FinanceContext } from '../../../contexts/FinanceContext';
 import './MonthlyProgressCard.css';
 
 const { Text, Title } = Typography;
