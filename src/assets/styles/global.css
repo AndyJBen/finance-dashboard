@@ -109,7 +109,7 @@
 body {
     margin: 0;
     padding: 0;
-    font-family: var(--font-sans);
+    font-family: var(--font-family-sans);
     font-feature-settings: 'liga' 1, 'calt' 1;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -253,43 +253,6 @@ a:hover {
 .ant-collapse-item.ant-collapse-item-active > .compact-overdue-panel > .ant-collapse-header {
     border-top-left-radius: 4px !important;
     border-top-right-radius: 4px !important;
-}
-
-.multi-bill-modal .ant-form-item {
-  margin-bottom: 12px;
-}
-
-.multi-bill-modal .ant-input,
-.multi-bill-modal .ant-input-number,
-.multi-bill-modal .ant-select-selector,
-.multi-bill-modal .ant-picker {
-  transition: all 0.3s ease;
-  border-color: #d9d9d9;
-}
-
-.multi-bill-modal .ant-input:hover,
-.multi-bill-modal .ant-input-number:hover,
-.multi-bill-modal .ant-select-selector:hover,
-.multi-bill-modal .ant-picker:hover {
-  border-color: #40a9ff;
-  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
-}
-
-.multi-bill-modal .ant-input:focus,
-.multi-bill-modal .ant-input-number-focused,
-.multi-bill-modal .ant-select-focused .ant-select-selector,
-.multi-bill-modal .ant-picker-focused {
-  border-color: #40a9ff;
-  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
-}
-
-.multi-bill-modal .ant-card {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.multi-bill-modal .ant-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .ant-btn-primary {
@@ -569,8 +532,8 @@ textarea {
     border-radius: 10px !important;
     margin-bottom: 8px !important;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05) !important;
-    min-height: 75 !important;
-    height: 60;
+    min-height: 75px !important; /* Corrected from 75 to 75px */
+    height: 60px; /* Corrected from 60 to 60px */
   }
 
   .financial-overview-row .ant-card-body {
@@ -635,33 +598,6 @@ textarea {
     opacity: 0 !important;
   }
 
-  .multi-bill-modal .ant-card {
-    margin-left: -4px;
-    margin-right: -4px;
-    border-radius: 16px;
-  }
-
-  .multi-bill-modal .ant-form-item-label > label {
-    font-size: 14px;
-  }
-
-  .multi-bill-modal .ant-btn-dashed {
-    border-width: 2px;
-    font-weight: 500;
-  }
-
-  .multi-bill-modal .ant-form-item-explain {
-    margin-top: 4px;
-  }
-
-  .multi-bill-modal .ant-input:focus,
-  .multi-bill-modal .ant-input-number-focused,
-  .multi-bill-modal .ant-select-focused .ant-select-selector,
-  .multi-bill-modal .ant-picker-focused {
-    border-color: #40a9ff;
-    box-shadow: 0 0 0 3px rgba(24, 144, 255, 0.15);
-  }
-
   .ant-table-content { /* General table scroll on iOS */
     overflow-x: auto !important;
     -webkit-overflow-scrolling: touch !important;
@@ -721,35 +657,6 @@ textarea {
     height: 0 !important;
     display: none !important;
   }
-}
-
-@media (min-width: 769px) {
-  .multi-bill-modal .ant-card {
-    transition: all 0.2s ease;
-  }
-
-  .multi-bill-modal .ant-card:hover {
-    border-color: #1890ff;
-  }
-}
-
-.compact-overdue-panel > .ant-collapse-header {
-  transition: background-color 0.3s ease;
-}
-
-.multi-bill-modal .ant-input,
-.multi-bill-modal .ant-input-number,
-.multi-bill-modal .ant-select-selector,
-.multi-bill-modal .ant-picker {
-  transition: all 0.3s ease;
-}
-
-.multi-bill-modal .ant-card {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-a {
-  transition: color 0.2s ease;
 }
 
 @keyframes pageFadeIn {

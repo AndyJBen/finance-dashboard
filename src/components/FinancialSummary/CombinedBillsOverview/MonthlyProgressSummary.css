@@ -1,116 +1,117 @@
 /* Styles for MonthlyProgressSummary */
-                /* Default display settings */
-                .desktop-header {
-                    display: block;
-                }
-                .mobile-header {
-                    display: none;
-                }
 
-                /* Media query for mobile devices */
-                @media (max-width: 768px) {
-                    .desktop-header {
-                        display: none;
-                    }
-                    .mobile-header {
-                        display: block;
-                        margin-bottom: 12px;
-                    }
+/* Default display settings */
+.desktop-header {
+    display: block;
+}
+.mobile-header {
+    display: none;
+}
 
-                    /* Mobile styles */
-                    .month-navigation {
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                        margin-bottom: 14px;
-                    }
+/* Media query for mobile devices */
+@media (max-width: 768px) {
+    .desktop-header {
+        display: none;
+    }
+    .mobile-header {
+        display: block;
+        margin-bottom: var(--space-12); /* Was 12px */
+    }
 
-                    .nav-button {
-                        margin: 0 12px;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                    }
+    /* Mobile styles */
+    .month-navigation {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 14px; /* No direct match for --space- variable, keeping as is or use var(--space-12) or var(--space-16) if approximation is okay */
+    }
 
-                    .month-display {
-                        display: flex;
-                        flex-direction: column;
-                        align-items: center;
-                        min-width: 80px;
-                    }
+    .nav-button {
+        margin: 0 var(--space-12); /* Was 0 12px */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 
-                    .month-text {
-                        font-size: 1.1rem;
-                        line-height: 1.2;
-                        margin: 0;
-                        color: var(--neutral-800);
-                    }
+    .month-display {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-width: 80px;
+    }
 
-                    .year-text {
-                        font-size: 0.8rem;
-                        line-height: 1.1;
-                        color: var(--neutral-600);
-                        margin: 0;
-                    }
+    .month-text {
+        font-size: 1.1rem;
+        line-height: 1.2;
+        margin: 0;
+        color: var(--neutral-800);
+    }
 
-                    .title-progress-row {
-                        display: flex;
-                        justify-content: space-between;
-                        align-items: center;
-                        padding: 0 4px;
-                    }
+    .year-text {
+        font-size: 0.8rem;
+        line-height: 1.1;
+        color: var(--neutral-600);
+        margin: 0;
+    }
 
-                    .title-container {
-                        display: flex;
-                        align-items: center;
-                    }
+    .title-progress-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 var(--space-4); /* Was 0 4px */
+    }
 
-                    .calendar-icon {
-                        color: var(--primary-600);
-                        margin-right: 8px;
-                    }
+    .title-container {
+        display: flex;
+        align-items: center;
+    }
 
-                    .title-text {
-                        display: flex;
-                        flex-wrap: wrap;
-                        align-items: baseline;
-                    }
+    .calendar-icon {
+        color: var(--primary-600);
+        margin-right: var(--space-8); /* Was 8px */
+    }
 
-                    .main-title {
-                        font-size: 0.95rem;
-                        line-height: 1.2;
-                        margin-right: 6px;
-                    }
+    .title-text {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+    }
 
-                    .bills-count {
-                        font-size: 0.8rem;
-                        opacity: 0.7;
-                        font-weight: 600;
-                    }
+    .main-title {
+        font-size: 0.95rem;
+        line-height: 1.2;
+        margin-right: 6px; /* No direct match for --space- variable, keeping as is or use var(--space-4) or var(--space-8) */
+    }
 
-                    .progress-badge {
-                        font-size: 0.75rem;
-                        font-weight: 600;
-                        color: var(--primary-600);
-                        background-color: var(--primary-100);
-                        padding: 4px 8px;
-                        border-radius: 12px;
-                        white-space: nowrap;
-                    }
-                }
+    .bills-count {
+        font-size: 0.8rem;
+        opacity: 0.7;
+        font-weight: 600;
+    }
 
-                /* Very small screens */
-                @media (max-width: 480px) {
-                    .main-title {
-                        font-size: 0.9rem;
-                    }
-                    
-                    .nav-button {
-                        margin: 0 8px;
-                    }
-                    
-                    .progress-badge {
-                        font-size: 0.7rem;
-                        padding: 3px 6px;
-                    }
-                }
+    .progress-badge {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--primary-600);
+        background-color: var(--primary-100);
+        padding: var(--space-4) var(--space-8); /* Was 4px 8px */
+        border-radius: var(--border-radius-xl); /* Was 12px, var(--border-radius-xl) is 0.75rem. If base font is 16px, this is 12px. If 15px, it's 11.25px. Adjust if precise 12px is critical and distinct from 0.75rem. */
+        white-space: nowrap;
+    }
+}
+
+/* Very small screens */
+@media (max-width: 480px) {
+    .main-title {
+        font-size: 0.9rem;
+    }
+    
+    .nav-button {
+        margin: 0 var(--space-8); /* Was 0 8px */
+    }
+    
+    .progress-badge {
+        font-size: 0.7rem;
+        padding: 3px 6px; /* No direct matches for --space- variables, keeping as is or approximate */
+    }
+}

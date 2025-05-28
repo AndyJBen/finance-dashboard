@@ -7,18 +7,18 @@
 .bills-header-container {
   display: flex;
   flex-direction: column;
-  margin-bottom: 12px;
+  margin-bottom: var(--space-12); /* Was 12px */
 }
 
 .month-navigation {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 14px;
+  margin-bottom: 14px; /* No direct --space- variable match. Keep or use var(--space-12) or var(--space-16) if approximation is okay. */
 }
 
 .nav-button {
-  margin: 0 12px;
+  margin: 0 var(--space-12); /* Was 0 12px */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -26,7 +26,7 @@
 }
 
 .nav-button:hover {
-  background-color: var(--primary-50); /* Ensure --primary-50 is globally defined or move definition */
+  background-color: var(--primary-50);
   transform: translateY(-1px);
 }
 
@@ -45,7 +45,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 4px;
+  padding: 0 var(--space-4); /* Was 0 4px */
 }
 
 .title-container {
@@ -54,8 +54,8 @@
 }
 
 .calendar-icon {
-  color: var(--primary-600); /* Ensure --primary-600 is globally defined or move definition */
-  margin-right: 8px;
+  color: var(--primary-600);
+  margin-right: var(--space-8); /* Was 8px */
 }
 
 .title-text {
@@ -70,7 +70,7 @@
 .main-title { /* Assuming this is the title for the bills section */
   font-size: 0.95rem;
   line-height: 1.2;
-  margin-right: 6px;
+  margin-right: 6px; /* No direct --space- variable match. Keep or use var(--space-4) or var(--space-8). */
 }
 
 .bills-count {
@@ -80,12 +80,12 @@
 }
 
 .progress-badge {
-  font-size: 0.75rem;
+  font-size: 0.75rem; /* Matches var(--font-size-xs) */
   font-weight: 600;
-  color: var(--primary-600); /* Ensure color variables are globally defined or move definitions */
-  background-color: var(--primary-100); /* Ensure color variables are globally defined or move definitions */
-  padding: 4px 8px;
-  border-radius: 12px;
+  color: var(--primary-600);
+  background-color: var(--primary-100);
+  padding: var(--space-4) var(--space-8); /* Was 4px 8px */
+  border-radius: var(--border-radius-xl); /* Was 12px, var(--border-radius-xl) is 0.75rem. Visual check advised. */
   white-space: nowrap;
 }
 
@@ -93,13 +93,13 @@
   font-size: 1.1rem;
   line-height: 1.2;
   margin: 0;
-  color: var(--neutral-800); /* Ensure color variables are globally defined or move definitions */
+  color: var(--neutral-800);
 }
 
 .year-text {
   font-size: 0.8rem;
   line-height: 1.1;
-  color: var(--neutral-600); /* Ensure color variables are globally defined or move definitions */
+  color: var(--neutral-600);
   margin: 0;
 }
 
@@ -107,12 +107,12 @@
    Checkbox Styles (Likely for Bill Status in a Table)
 ================================================== */
 .status-checkbox.checked .ant-checkbox-checked .ant-checkbox-inner {
-    background-color: var(--success-500) !important; /* Ensure color variables are globally defined */
-    border-color: var(--success-500) !important; /* Ensure color variables are globally defined */
+    background-color: var(--success-500) !important;
+    border-color: var(--success-500) !important;
 }
 
 .status-checkbox.checked .ant-checkbox-checked .ant-checkbox-inner::after {
-    border-color: #fff !important;
+    border-color: white !important; /* Consider var(--color-white, #fff) if defined globally */
 }
 
 /* Styles for larger checkboxes within the bills table body */
@@ -128,24 +128,25 @@
 /* ==================================================
    Custom Tag Colors (for Bill Status/Category)
 ================================================== */
-.tag-category { background-color: var(--primary-100); color: var(--primary-700); } /* Ensure variables are globally defined */
-.tag-status-paid { background-color: var(--success-100); color: var(--success-700); } /* Ensure variables are globally defined */
-.tag-status-unpaid { background-color: var(--warning-100); color: var(--warning-700); } /* Ensure variables are globally defined */
-.tag-due-soon { background-color: var(--danger-100); color: var(--danger-700); } /* Ensure variables are globally defined */
+.tag-category { background-color: var(--primary-100); color: var(--primary-700); }
+.tag-status-paid { background-color: var(--success-100); color: var(--success-700); }
+.tag-status-unpaid { background-color: var(--warning-100); color: var(--warning-700); }
+.tag-due-soon { background-color: var(--danger-100); color: var(--danger-700); }
 
 /* ==================================================
    Action Icon Styles (for Bill List Items)
 ================================================== */
 .action-icon {
-    color: #bfbfbf !important; /* Consider using a neutral variable if available */
-    font-size: 1rem;
+    color: #bfbfbf !important; /* Consider var(--neutral-400) or a specific --color-grey-icon variable */
+    font-size: 1rem; /* Matches var(--font-size-base) */
     transition: color 0.3s ease;
 }
 
-.action-icon-edit:hover { color: var(--primary-600) !important; } /* Ensure variables are globally defined */
-.action-icon-delete:hover { color: var(--danger-500) !important; } /* Ensure variables are globally defined */
+.action-icon-edit:hover { color: var(--primary-600) !important; }
+.action-icon-delete:hover { color: var(--danger-500) !important; }
 
 /* Layout for action icons within a table cell, if applicable to bills list */
+/* This could be global if this pattern is used in many tables. For now, keeping it specific. */
 .ant-table-cell .ant-space-item { display: flex; align-items: center; }
 
 /* ==================================================
@@ -159,21 +160,21 @@
   }
 
   .nav-button {
-    margin: 0 8px;
+    margin: 0 var(--space-8); /* Was 0 8px */
   }
 
   .progress-badge {
     font-size: 0.7rem;
-    padding: 3px 6px;
+    padding: 3px 6px; /* Custom small padding, no direct --space- variable match */
   }
 }
 
-/* Mobile styles for month navigation */
+/* Mobile styles for month navigation and bills-overview-table */
 @media (max-width: 768px) {
   .month-navigation .nav-button {
     width: 40px !important;
     height: 40px !important;
-    border-radius: 16px !important;
+    border-radius: 16px !important; /* Custom radius, var(--border-radius-xl) is 0.75rem */
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -185,8 +186,8 @@
 
   /* Styles specifically for .bills-overview-table and its mobile presentation */
   .bills-overview-table {
-    margin-bottom: 20px; /* Spacing below the bills table */
-    margin-top: 8px !important; /* Spacing above the bills table */
+    margin-bottom: var(--space-20); /* Was 20px */
+    margin-top: var(--space-8) !important; /* Was 8px */
   }
 
   /* iOS-specific scrollbar fixes for tables if this section contains the table */
@@ -208,12 +209,12 @@
 
   /* Ensure table borders remain visible within the bills table */
   .bills-overview-table .ant-table-cell {
-    border-bottom: 1px solid var(--neutral-200) !important; /* Ensure variable is globally defined */
+    border-bottom: 1px solid var(--neutral-200) !important;
   }
 
   /* Bills table specific mobile styles: cell padding, font size, etc. */
   .bills-overview-table .ant-table-tbody > tr > td {
-    padding: 6px 8px !important;
+    padding: 6px var(--space-8) !important; /* Was 6px 8px */
     height: auto !important;
     line-height: 1.2 !important;
     font-size: 0.8rem !important;
@@ -221,13 +222,13 @@
 
   /* Make table header more compact in bills table */
   .bills-overview-table .ant-table-thead > tr > th {
-    padding: 8px 8px !important;
+    padding: var(--space-8) var(--space-8) !important; /* Was 8px 8px */
     font-size: 0.7rem !important;
   }
 
   /* Style the first column (e.g., checkbox column) to be more compact */
   .bills-overview-table .ant-table-tbody > tr > td:first-child {
-    padding-left: 8px !important; /* Original: 8px */
+    padding-left: var(--space-8) !important; /* Was 8px */
     width: 24px !important;
   }
 
@@ -242,12 +243,12 @@
     width: 24px !important;
     height: 24px !important;
     line-height: 24px !important;
-    font-size: 0.75rem !important;
+    font-size: 0.75rem !important; /* Matches var(--font-size-xs) */
   }
 
   /* Compress action buttons/icons in the bills table */
   .bills-overview-table .ant-table-cell .ant-space {
-    gap: 4px !important;
+    gap: var(--space-4) !important; /* Was 4px */
   }
 
   /* Adjust any icons within the bills table */
@@ -302,10 +303,11 @@
 
   /* Table header styling for bills table */
   .bills-overview-table .ant-table-thead > tr > th {
-    padding: 3px 2px !important;
+    /* Padding updated above. font-size, padding-bottom, border, height are very specific */
+    padding: 3px 2px !important; /* Keeping highly custom small paddings */
     font-size: 0.65rem !important;
     padding-bottom: 2px !important;
-    border-bottom: 1px solid var(--neutral-200) !important; /* Ensure var is globally defined */
+    border-bottom: 1px solid var(--neutral-200) !important;
     height: 20px !important;
   }
 
@@ -314,8 +316,8 @@
     font-size: 0 !important; /* Hides text by making font size 0 */
     width: 15px !important;
     max-width: 15px !important;
-    padding-left: 2px !important;
-    padding-right: 2px !important;
+    padding-left: 2px !important; /* Custom small padding */
+    padding-right: 2px !important; /* Custom small padding */
   }
 
   /* Column width adjustments for bills table header - make these specific to your column content */
@@ -342,16 +344,16 @@
   .bills-overview-table .ant-table-thead > tr > th:last-child { /* Example: Actions column */
     width: 24px !important;
     max-width: 24px !important;
-    padding-left: 2px !important;
-    padding-right: 2px !important;
+    padding-left: 2px !important; /* Custom small padding */
+    padding-right: 2px !important; /* Custom small padding */
   }
 
   /* Table cell styling for bills table body - more compact */
   .bills-overview-table .ant-table-tbody > tr > td:first-child { /* e.g., Checkbox cell */
     width: 24px !important;
     max-width: 24px !important;
-    padding-left: 2px !important;
-    padding-right: 2px !important;
+    padding-left: 2px !important; /* Custom small padding */
+    padding-right: 2px !important; /* Custom small padding */
   }
   .bills-overview-table .ant-table-tbody > tr > td:nth-child(3) { /* Example: Amount cell */
     width: 45px !important;
@@ -360,13 +362,14 @@
   .bills-overview-table .ant-table-tbody > tr > td:last-child { /* Example: Actions cell */
     width: 24px !important;
     max-width: 24px !important;
-    padding-left: 2px !important;
-    padding-right: 2px !important;
+    padding-left: 2px !important; /* Custom small padding */
+    padding-right: 2px !important; /* Custom small padding */
   }
 
   /* Row height and text styling for bills table */
   .bills-overview-table .ant-table-tbody > tr > td {
-    padding: 7px 2px !important;
+    /* Padding updated above. font-size, line-height, height are very specific */
+    padding: 7px 2px !important; /* Custom small padding */
     font-size: 0.8rem !important;
     line-height: 1.3 !important;
     height: 37px !important;
@@ -383,7 +386,7 @@
   .bills-overview-table .mobile-bill-cell { /* Apply this class to the <td> that needs restructuring */
     display: flex;
     flex-direction: column;
-    gap: 6px; /* Space between main info and details */
+    gap: 6px; /* Custom gap, between var(--space-4) and var(--space-8) */
     width: 100%;
   }
   .bills-overview-table .mobile-bill-main { /* Container for primary bill info (e.g., name, amount) */
@@ -391,21 +394,21 @@
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    gap: 8px;
+    gap: var(--space-8); /* Was 8px */
   }
   .bills-overview-table .mobile-bill-details { /* Container for secondary details (e.g., category, due in) */
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    gap: 8px;
-    font-size: 0.75rem;
-    color: var(--neutral-600); /* Ensure var is globally defined */
+    gap: var(--space-8); /* Was 8px */
+    font-size: 0.75rem; /* Matches var(--font-size-xs) */
+    color: var(--neutral-600);
   }
   .bills-overview-table .mobile-bill-details .ant-tag { /* Styling for tags within the details section */
     margin: 0 !important;
     flex-shrink: 0;
-    padding: 2px 6px !important;
+    padding: 2px 6px !important; /* Custom small padding */
     height: auto !important;
     line-height: 1.2 !important;
   }
@@ -414,12 +417,12 @@
     align-items: center;
     justify-content: flex-end;
     flex-shrink: 0;
-    gap: 4px;
+    gap: var(--space-4); /* Was 4px */
   }
 
   /* Ensure proper spacing in the main content cell (e.g., bill name/description) */
   .bills-overview-table .ant-table-tbody > tr > td:nth-child(2) { /* Adjust child index as needed */
-    padding: 8px 4px !important;
+    padding: var(--space-8) var(--space-4) !important; /* Was 8px 4px */
     width: calc(100% - 60px) !important; /* Adjust calc based on other fixed-width columns */
   }
 }

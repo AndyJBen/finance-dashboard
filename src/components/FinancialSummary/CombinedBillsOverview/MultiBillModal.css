@@ -1,3 +1,44 @@
+/* === Styles moved from global.css === */
+.multi-bill-modal .ant-form-item {
+  margin-bottom: 12px;
+}
+
+.multi-bill-modal .ant-input,
+.multi-bill-modal .ant-input-number,
+.multi-bill-modal .ant-select-selector,
+.multi-bill-modal .ant-picker {
+  transition: all 0.3s ease;
+  border-color: #d9d9d9; /* Default border color */
+}
+
+.multi-bill-modal .ant-input:hover,
+.multi-bill-modal .ant-input-number:hover,
+.multi-bill-modal .ant-select-selector:hover,
+.multi-bill-modal .ant-picker:hover {
+  border-color: #40a9ff; /* Ant Design blue-5 */
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
+}
+
+.multi-bill-modal .ant-input:focus,
+.multi-bill-modal .ant-input-number-focused,
+.multi-bill-modal .ant-select-focused .ant-select-selector,
+.multi-bill-modal .ant-picker-focused {
+  border-color: #40a9ff; /* Ant Design blue-5 */
+  box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+}
+
+.multi-bill-modal .ant-card {
+  /* General transition for card, may be overridden by media query */
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.multi-bill-modal .ant-card:hover {
+  /* General hover effect for card, may be combined/overridden by media query */
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* === Original MultiBillModal.css styles === */
 .multi-bill-modal .ant-modal-content {
     border-radius: 20px;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15), 0 2px 10px rgba(0, 0, 0, 0.12);
@@ -7,7 +48,7 @@
 
 .modal-header {
     padding: 16px 24px;
-    background: linear-gradient(135deg, #1D4ED8, #3B82F6);
+    background: linear-gradient(135deg, #1D4ED8, #3B82F6); /* Uses hardcoded colors, consider CSS variables if matching theme */
     color: white;
     border-radius: 20px 20px 0 0;
 }
@@ -40,12 +81,12 @@
     gap: 14px;
 }
 
-.bill-card {
+.bill-card { /* This is a custom class, not .multi-bill-modal .ant-card */
     border-radius: 16px;
-    background-color: #FAFBFC;
-    border: 1px solid #EDF1F7;
+    background-color: #FAFBFC; /* Consider var(--neutral-50) or var(--neutral-100) */
+    border: 1px solid #EDF1F7;   /* Consider var(--neutral-200) */
     overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04); /* Consider var(--shadow-sm) */
 }
 
 .bill-card-header {
@@ -56,7 +97,7 @@
 }
 
 .bill-number {
-    color: #1D4ED8;
+    color: #1D4ED8; /* Consider var(--primary-700) */
     font-size: 15px;
 }
 
@@ -91,25 +132,25 @@
     margin-bottom: 0 !important;
 }
 
-.bill-input {
+.bill-input { /* Custom class for inputs within .bill-card */
     height: 44px !important;
     border-radius: 12px !important;
     font-size: 15px !important;
 }
 
-.bill-select .ant-select-selector {
+.bill-select .ant-select-selector { /* Custom class for selects within .bill-card */
     height: 44px !important;
-    padding-top: 6px !important;
+    padding-top: 6px !important; /* This might need adjustment based on line-height */
     border-radius: 12px !important;
     font-size: 15px !important;
 }
 
-.date-picker {
+.date-picker { /* Custom class for date pickers */
     width: 100% !important;
 }
 
 .field-icon {
-    color: #1D4ED8 !important;
+    color: #1D4ED8 !important; /* Consider var(--primary-700) */
     margin-right: 8px;
 }
 
@@ -129,16 +170,16 @@
 }
 
 .checkbox-icon {
-    color: #1D4ED8;
+    color: #1D4ED8; /* Consider var(--primary-700) */
 }
 
 .add-bill-button {
     height: 46px;
     border-radius: 14px;
-    border-color: #1D4ED8;
+    border-color: #1D4ED8; /* Consider var(--primary-700) */
     border-width: 1.5px;
     border-style: dashed;
-    color: #1D4ED8;
+    color: #1D4ED8; /* Consider var(--primary-700) */
     font-weight: 500;
     font-size: 15px;
     margin-top: 4px;
@@ -148,7 +189,7 @@
     display: flex;
     justify-content: flex-end;
     padding: 14px 24px;
-    border-top: 1px solid #F0F0F0;
+    border-top: 1px solid #F0F0F0; /* Consider var(--neutral-200) */
     gap: 16px;
 }
 
@@ -161,12 +202,12 @@
 }
 
 .cancel-button {
-    color: #64748B;
-    border-color: #E2E8F0;
+    color: #64748B;       /* Consider var(--neutral-500) */
+    border-color: #E2E8F0; /* Consider var(--neutral-200) */
 }
 
 .complete-button {
-    background-color: #1D4ED8;
+    background-color: #1D4ED8; /* Consider var(--primary-700) */
 }
 
 @media (min-width: 769px) and (max-width: 1024px) {
@@ -176,7 +217,37 @@
 }
 
 @media (max-width: 768px) {
-    .bill-input,
+    /* Styles moved from global.css specific to mobile for .multi-bill-modal */
+    .multi-bill-modal .ant-card {
+      margin-left: -4px;
+      margin-right: -4px;
+      border-radius: 16px;
+    }
+
+    .multi-bill-modal .ant-form-item-label > label {
+      font-size: 14px;
+    }
+
+    .multi-bill-modal .ant-btn-dashed { /* This targets Ant Design's dashed button *inside* .multi-bill-modal */
+      border-width: 2px;
+      font-weight: 500;
+    }
+
+    .multi-bill-modal .ant-form-item-explain {
+      margin-top: 4px;
+    }
+
+    /* More specific focus for mobile inputs within .multi-bill-modal */
+    .multi-bill-modal .ant-input:focus,
+    .multi-bill-modal .ant-input-number-focused,
+    .multi-bill-modal .ant-select-focused .ant-select-selector,
+    .multi-bill-modal .ant-picker-focused {
+      border-color: #40a9ff; /* Ant Design blue-5, ensures consistency if general rule is overridden */
+      box-shadow: 0 0 0 3px rgba(24, 144, 255, 0.15); /* Slightly different shadow for mobile */
+    }
+
+    /* Original mobile styles for MultiBillModal */
+    .bill-input, /* These are your custom classes, not antd overrides */
     .bill-select .ant-select-selector {
         font-size: 16px !important;
     }
@@ -194,14 +265,27 @@
         max-height: 60vh;
     }
 
-    .add-bill-button:active {
+    .add-bill-button:active { /* Custom class, not antd */
         transform: scale(0.98);
         transition: transform 0.2s;
     }
 }
 
 @media (min-width: 769px) {
+    /* Original desktop styles for MultiBillModal */
     .bill-form {
-        max-height: 70vh;
+        max-height: 70vh; /* Increased from 60vh to 70vh as per original */
+    }
+
+    /* Styles for .multi-bill-modal .ant-card on desktop (min-width: 769px) */
+    /* These were confirmed to be identical to what was in global.css for this breakpoint, */
+    /* and the global.css versions were removed. These are the authoritative versions. */
+    .multi-bill-modal .ant-card {
+      transition: all 0.2s ease;
+    }
+
+    .multi-bill-modal .ant-card:hover {
+      border-color: #1890ff; /* Ant Design blue-6 */
+      /* The general hover (transform & box-shadow) will also apply if not overridden */
     }
 }

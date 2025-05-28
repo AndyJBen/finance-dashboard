@@ -1,300 +1,290 @@
 /* Styles for CombinedBillsOverview */
-                /* Enhanced Bills Container */
-                .enhanced-bills-container {
-                    display: flex;
-                    flex-direction: column;
-                    margin-top: 8px;
-                    background: white;
-                    border-radius: 12px;
-                    overflow: hidden;
-                }
 
-                /* Enhanced Bill Row */
-                .enhanced-bill-row {
-                    position: relative;
-                    display: flex;
-                    align-items: stretch;
-                    background: white;
-                    border-radius: 0;
-                    border: none;
-                    border-bottom: 1px solid var(--neutral-100);
-                    overflow: hidden;
-                    user-select: none;
-                    -webkit-user-select: none;
-                    min-height: 64px;
-                }
+/* Enhanced Bills Container */
+.enhanced-bills-container {
+    display: flex;
+    flex-direction: column;
+    margin-top: var(--space-8); /* Was 8px */
+    background: white; /* Consider a CSS variable if pure white is part of your theme, e.g., var(--color-white, white) */
+    border-radius: var(--border-radius-xl); /* Was 12px, assumes 0.75rem is an acceptable visual match for 12px */
+    overflow: hidden;
+    isolation: isolate; /* Keep for stacking contexts */
+}
 
-                .enhanced-bill-row:hover {
-                    background-color: var(--neutral-50);
-                }
+/* Enhanced Bill Row */
+.enhanced-bill-row {
+    position: relative;
+    display: flex;
+    align-items: stretch;
+    background: white; /* Consider a CSS variable */
+    border-radius: 0;
+    border: none;
+    border-bottom: 1px solid var(--neutral-100);
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+    min-height: 64px;
+    contain: layout style; /* Keep for performance */
+    isolation: isolate; /* Keep for stacking contexts */
+}
 
-                .enhanced-bill-row:last-child {
-                    border-bottom: none;
-                }
+.enhanced-bill-row:hover {
+    background-color: var(--neutral-50);
+}
 
-                /* Slide Actions Background - Always positioned behind content */
-                .slide-actions-background {
-                    position: absolute;
-                    top: 0;
-                    right: 0;
-                    bottom: 0;
-                    width: 140px;
-                    display: flex;
-                    z-index: 1;
-                    background: transparent;
-                }
+/* Apply hover effect to content as well if needed, ensuring it was intended */
+.enhanced-bill-row:hover .bill-row-content {
+    background-color: var(--neutral-50); /* Assuming this is desired to match row hover */
+}
 
-                .slide-action {
-                    flex: 1;
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    justify-content: center;
-                    border: none;
-                    color: white;
-                    font-size: 11px;
-                    font-weight: 600;
-                    text-transform: uppercase;
-                    letter-spacing: 0.5px;
-                    cursor: pointer;
-                    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-                    gap: 2px;
-                    min-height: 100%;
-                    outline: none;
-                }
+.enhanced-bill-row:last-child {
+    border-bottom: none;
+}
 
-                .slide-action:active {
-                    transform: scale(0.95);
-                }
+/* Slide Actions Background - Always positioned behind content */
+.slide-actions-background {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 140px; /* Specific dimension for slide action width */
+    display: flex;
+    z-index: 1;
+    background: transparent;
+    contain: layout style paint; /* Keep for performance */
+}
 
-                .edit-action {
-                    background: linear-gradient(135deg, #007AFF, #0056CC);
-                }
+.slide-action {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    color: white;
+    font-size: 11px; /* Specific fine-tuned font size */
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    gap: 2px; /* Specific small gap */
+    min-height: 100%;
+    outline: none;
+}
 
-                .edit-action:hover {
-                    background: linear-gradient(135deg, #0056CC, #003D99);
-                }
+.slide-action:active {
+    transform: scale(0.95);
+}
 
-                .delete-action {
-                    background: linear-gradient(135deg, #FF3B30, #D70015);
-                }
+/* Action button backgrounds - these are highly specific gradients */
+.edit-action {
+    background: linear-gradient(135deg, #007AFF, #0056CC); /* Consider CSS vars if these blues are from your primary palette */
+}
 
-                .delete-action:hover {
-                    background: linear-gradient(135deg, #D70015, #B30000);
-                }
+.edit-action:hover {
+    background: linear-gradient(135deg, #0056CC, #003D99);
+}
 
-                /* Bill Row Content - This is what slides */
-                .bill-row-content {
-                    position: relative;
-                    display: flex;
-                    align-items: center;
-                    gap: 12px;
-                    padding: 16px 28px;
-                    width: 100%;
-                    background: white;
-                    z-index: 2;
-                    min-height: 64px;
-                    touch-action: pan-y; /* Allow vertical scrolling but handle horizontal ourselves */
-                }
+.delete-action {
+    background: linear-gradient(135deg, #FF3B30, #D70015); /* Consider CSS vars if these reds are from your danger palette */
+}
 
-                .bill-checkbox {
-                    flex-shrink: 0;
-                }
+.delete-action:hover {
+    background: linear-gradient(135deg, #D70015, #B30000);
+}
 
-                .bill-content {
-                    flex: 1;
-                    min-width: 0;
-                    display: flex;
-                    flex-direction: column;
-                    gap: 6px;
-                }
+/* Bill Row Content - This is what slides */
+.bill-row-content {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: var(--space-12); /* Was 12px */
+    padding: var(--space-16) 28px; /* Vertical padding uses variable, horizontal 28px is custom */
+    width: 100%;
+    background: white; /* Consider a CSS variable */
+    z-index: 2;
+    min-height: 64px;
+    touch-action: pan-y;
+    contain: layout style paint; /* Keep for performance */
+    will-change: transform; /* Keep for performance */
+}
 
-                .bill-main-row {
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    gap: 12px;
-                }
+.bill-checkbox {
+    flex-shrink: 0;
+}
 
-                .bill-name {
-                    font-size: 14px;
-                    font-weight: 600;
-                    color: var(--neutral-800);
-                    line-height: 1.3;
-                    flex: 1;
-                    min-width: 0;
-                    word-break: break-word;
-                }
+.bill-content {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px; /* Custom gap, between --space-4 and --space-8 */
+}
 
-                .bill-amount {
-                    font-size: 14px;
-                    font-weight: 600;
-                    color: var(--neutral-900);
-                    line-height: 1;
-                    flex-shrink: 0;
-                }
+.bill-main-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-12); /* Was 12px */
+}
 
-                .bill-details-row {
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    gap: 8px;
-                }
+.bill-name {
+    font-size: 14px; /* Specific font size, close to --font-size-sm (0.875rem) */
+    font-weight: 600;
+    color: var(--neutral-800);
+    line-height: 1.3;
+    flex: 1;
+    min-width: 0;
+    word-break: break-word;
+}
 
-                .bill-due-status {
-                    font-size: 12px;
-                    font-weight: 500;
-                    padding: 2px 6px;
-                    border-radius: 6px;
-                    background-color: var(--neutral-100);
-                    color: var(--neutral-700);
-                    white-space: nowrap;
-                    flex-shrink: 0;
-                }
+.bill-amount {
+    font-size: 14px; /* Specific font size */
+    font-weight: 600;
+    color: var(--neutral-900);
+    line-height: 1;
+    flex-shrink: 0;
+}
 
-                /* Fade animation for bill completion */
-                .bill-row-fade-out {
-                    opacity: 0.5;
-                    transform: scale(0.98);
-                    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                }
+.bill-details-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-8); /* Was 8px */
+}
 
-                /* Mobile optimizations */
-                @media (max-width: 768px) {
-                    .enhanced-bills-container {
-                        margin-top: 6px;
-                        border-radius: 0;
-                    }
+.bill-due-status {
+    font-size: 12px; /* Specific font size, matches --font-size-xs (0.75rem) */
+    font-weight: 500;
+    padding: 2px 6px; /* Custom padding for small badge */
+    border-radius: 6px; /* Custom radius. var(--border-radius-md) is 0.375rem (approx 5.6px to 6px depending on base font) */
+    background-color: var(--neutral-100);
+    color: var(--neutral-700);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
 
-                    .bill-row-content {
-                        padding: 14px 24px;
-                        gap: 12px;
-                        min-height: 60px;
-                    }
+/* Fade animation for bill completion */
+.bill-row-fade-out {
+    opacity: 0.5;
+    transform: scale(0.98);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
 
-                    .enhanced-bill-row {
-                        min-height: 60px;
-                    }
+/* Mobile optimizations */
+@media (max-width: 768px) {
+    .enhanced-bills-container {
+        margin-top: 6px; /* Custom small margin */
+        border-radius: 0; /* Override for edge-to-edge feel on mobile */
+    }
 
-                    .bill-content {
-                        gap: 4px;
-                    }
+    .bill-row-content {
+        padding: 14px var(--space-24); /* Vertical 14px custom, horizontal uses variable */
+        gap: var(--space-12); /* Was 12px */
+        min-height: 60px;
+    }
 
-                    .bill-main-row {
-                        gap: 8px;
-                    }
+    .enhanced-bill-row {
+        min-height: 60px;
+    }
 
-                    .bill-name {
-                        font-size: 13px;
-                    }
+    .bill-content {
+        gap: var(--space-4); /* Was 4px */
+    }
 
-                    .bill-amount {
-                        font-size: 13px;
-                    }
+    .bill-main-row {
+        gap: var(--space-8); /* Was 8px */
+    }
 
-                    .bill-due-status {
-                        font-size: 11px;
-                        padding: 1px 4px;
-                    }
+    .bill-name {
+        font-size: 13px; /* Specific mobile font size */
+    }
 
-                    /* Slide actions mobile optimization */
-                    .slide-actions-background {
-                        width: 120px;
-                    }
+    .bill-amount {
+        font-size: 13px; /* Specific mobile font size */
+    }
 
-                    .slide-action {
-                        font-size: 10px;
-                        gap: 1px;
-                    }
-                }
+    .bill-due-status {
+        font-size: 11px; /* Specific mobile font size */
+        padding: 1px var(--space-4); /* Vertical 1px custom, horizontal uses variable */
+    }
 
-                /* Accessibility enhancements */
-                @media (prefers-reduced-motion: reduce) {
-                    .enhanced-bill-row,
-                    .slide-action,
-                    .bill-row-content {
-                        transition: none;
-                    }
-                }
+    /* Slide actions mobile optimization */
+    .slide-actions-background {
+        width: 120px; /* Adjusted width for smaller screens */
+    }
 
-                @media (prefers-contrast: high) {
-                    .enhanced-bill-row {
-                        border: 2px solid var(--neutral-300);
-                    }
+    .slide-action {
+        font-size: 10px; /* Smaller font for compact actions */
+        gap: 1px; /* Tighter gap */
+    }
+}
 
-                    .slide-action {
-                        border: 2px solid rgba(255, 255, 255, 0.5);
-                    }
+/* Accessibility enhancements */
+@media (prefers-reduced-motion: reduce) {
+    .enhanced-bill-row,
+    .slide-action,
+    .bill-row-content {
+        transition: none;
+    }
+}
 
-                    .edit-action {
-                        background: #0066CC;
-                    }
+@media (prefers-contrast: high) {
+    .enhanced-bill-row {
+        border: 2px solid var(--neutral-300);
+    }
 
-                    .delete-action {
-                        background: #CC0000;
-                    }
-                }
+    .slide-action {
+        border: 2px solid rgba(255, 255, 255, 0.5);
+    }
 
-                /* Dark mode preparation */
-                @media (prefers-color-scheme: dark) {
-                    .enhanced-bill-row {
-                        background: var(--neutral-900);
-                        border-bottom-color: var(--neutral-800);
-                    }
+    .edit-action {
+        background: var(--primary-700, #0066CC); /* Using a variable if #0066CC matches one, e.g. primary-700 or 800 */
+    }
 
-                    .bill-row-content {
-                        background: var(--neutral-900);
-                    }
+    .delete-action {
+        background: var(--danger-600, #CC0000); /* Using a variable if #CC0000 matches one, e.g. danger-600 or 700 */
+    }
+}
 
-                    .enhanced-bill-row:hover {
-                        background-color: var(--neutral-800);
-                    }
+/* Dark mode preparation */
+@media (prefers-color-scheme: dark) {
+    .enhanced-bill-row {
+        background: var(--neutral-900);
+        border-bottom-color: var(--neutral-800);
+    }
 
-                    .enhanced-bill-row:hover .bill-row-content {
-                        background-color: var(--neutral-800);
-                    }
+    .bill-row-content {
+        background: var(--neutral-900);
+    }
 
-                    .bill-name,
-                    .bill-amount {
-                        color: var(--neutral-100);
-                    }
+    .enhanced-bill-row:hover {
+        background-color: var(--neutral-800);
+    }
 
-                    .bill-due-status {
-                        background-color: var(--neutral-800);
-                        color: var(--neutral-300);
-                    }
-                }
+    .enhanced-bill-row:hover .bill-row-content { /* This ensures content also changes background on hover */
+        background-color: var(--neutral-800);
+    }
 
-                /* Focus states for keyboard navigation */
-                .enhanced-bill-row:focus-within {
-                    outline: 2px solid var(--primary-500);
-                    outline-offset: 2px;
-                }
+    .bill-name,
+    .bill-amount {
+        color: var(--neutral-100);
+    }
 
-                .slide-action:focus {
-                    outline: 2px solid rgba(255, 255, 255, 0.8);
-                    outline-offset: -2px;
-                }
+    .bill-due-status {
+        background-color: var(--neutral-800);
+        color: var(--neutral-300);
+    }
+}
 
-                /* Performance optimizations */
-                .enhanced-bill-row {
-                    contain: layout style;
-                }
+/* Focus states for keyboard navigation */
+.enhanced-bill-row:focus-within {
+    outline: 2px solid var(--primary-500);
+    outline-offset: 2px;
+}
 
-                .bill-row-content {
-                    contain: layout style paint;
-                    will-change: transform;
-                }
-
-                .slide-actions-background {
-                    contain: layout style paint;
-                }
-
-                /* Ensure proper stacking contexts */
-                .enhanced-bills-container {
-                    isolation: isolate;
-                }
-
-                .enhanced-bill-row {
-                    isolation: isolate;
-                }
+.slide-action:focus {
+    outline: 2px solid rgba(255, 255, 255, 0.8); /* White outline for visibility on dark action buttons */
+    outline-offset: -2px;
+}
