@@ -6,7 +6,7 @@ import {
     IconCurrencyDollar, IconCertificate, IconMedicineSyrup, IconUser, IconCalendarTime, // Category Icons
     IconMinus, IconChevronDown, IconBoxMultiple // Collapse/Expand Icons, Icon for combined items
 } from '@tabler/icons-react';
-import { FinanceContext } from '../../contexts/FinanceContext'; // Ensure path is correct
+import { FinanceContext } from '../../../contexts/FinanceContext';
 import dayjs from 'dayjs';
 import isBetween from 'dayjs/plugin/isBetween'; // Needed for date filtering
 import './BillPrepCard.css';
