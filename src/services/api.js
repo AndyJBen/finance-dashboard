@@ -10,9 +10,9 @@ const handleApiError = async (response) => {
     let errorBody = null;
     const contentType = response.headers.get("content-type");
     if (contentType && contentType.includes("application/json")) {
-        try { errorBody = await response.json(); } catch (e) { /* ignore */ }
+        try { errorBody = await response.json(); } catch { /* ignore */ }
     } else {
-        try { errorBody = await response.text(); } catch (e) { /* ignore */ }
+        try { errorBody = await response.text(); } catch { /* ignore */ }
     }
     console.error("API request failed:", response.status, response.statusText, errorBody);
     let errorMessage = `HTTP error! status: ${response.status} ${response.statusText}`;
