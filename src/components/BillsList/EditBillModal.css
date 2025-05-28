@@ -1,1 +1,568 @@
 /* Styles for EditBillModal */
+        /* Mobile-First Design */
+        .unified-edit-bill-modal .ant-modal {
+          padding: var(--space-8);
+          margin: 0;
+          max-width: 100%;
+          width: 100%;
+        }
+
+        .unified-edit-bill-modal .ant-modal-content {
+          border-radius: var(--radius-lg);
+          overflow: hidden;
+          box-shadow: var(--shadow-lg);
+          background: white;
+          padding: 0;
+          width: 100%;
+          max-width: 95vw;
+          margin: 0 auto;
+        }
+
+        /* Unified Card Container */
+        .unified-modal-card {
+          background: white;
+          display: flex;
+          flex-direction: column;
+          height: auto;
+          max-height: none;
+        }
+
+        /* Mobile Header */
+        .unified-header {
+          padding: var(--space-16);
+          border-bottom: 1px solid var(--neutral-200);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .header-content {
+          display: flex;
+          justify-content: center;
+          width: 100%;
+        }
+
+        .header-main {
+          display: flex;
+          align-items: center;
+          gap: var(--space-8);
+        }
+
+        .header-text {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .modal-title {
+          font-size: 16px;
+          font-weight: 600;
+          color: var(--neutral-800);
+          line-height: 1.2;
+          margin: 0;
+        }
+
+        .current-bill-info {
+          font-size: 13px;
+          color: var(--neutral-500);
+          font-weight: 500;
+          line-height: 1.1;
+          margin: 0;
+        }
+
+        /* Mobile Content */
+        .unified-content {
+          padding: var(--space-16);
+        }
+
+        .unified-form {
+          display: flex;
+          flex-direction: column;
+          gap: 0;
+        }
+
+        /* Mobile Form Section */
+        .form-section {
+          background: var(--neutral-50);
+          border-radius: var(--radius-md);
+          padding: var(--space-16);
+          border: 1px solid var(--neutral-200);
+        }
+
+        .section-header {
+          display: flex;
+          align-items: center;
+          gap: var(--space-8);
+          margin-bottom: var(--space-16);
+        }
+
+        .section-icon {
+          color: var(--primary-600);
+          background: var(--primary-100);
+          padding: 6px;
+          border-radius: 6px;
+          flex-shrink: 0;
+        }
+
+        .section-title {
+          font-size: 14px;
+          font-weight: 600;
+          color: var(--neutral-800);
+          margin: 0;
+        }
+
+        /* Mobile Input Layout */
+        .horizontal-inputs {
+          display: flex;
+          flex-direction: column;
+          gap: var(--space-16);
+        }
+
+        .input-row {
+          display: grid;
+          grid-template-columns: 2fr 1fr;
+          gap: var(--space-12);
+          align-items: start;
+        }
+
+        .input-row.options-row {
+          grid-template-columns: 1fr 1fr;
+          gap: var(--space-8);
+        }
+
+        .name-input {
+          grid-column: 1 / -1;
+        }
+
+        .amount-input,
+        .category-input,
+        .date-input,
+        .option-item {
+          margin-bottom: 0 !important;
+        }
+
+        .compact-input-wrapper {
+          background: white;
+          border-radius: var(--radius-md);
+          padding: var(--space-12);
+          border: 1px solid var(--neutral-200);
+          transition: border-color 0.2s ease;
+        }
+
+        .compact-input-wrapper:focus-within {
+          border-color: var(--primary-600);
+        }
+
+        .compact-label {
+          font-size: 12px;
+          font-weight: 600;
+          color: var(--neutral-600);
+          display: block;
+          margin-bottom: var(--space-8);
+          text-transform: uppercase;
+          letter-spacing: 0.3px;
+        }
+
+        /* Mobile Inputs */
+        .compact-input {
+          font-size: 15px;
+          color: var(--neutral-800);
+          background: transparent !important;
+          border: none !important;
+          box-shadow: none !important;
+          padding: 0 !important;
+          font-weight: 500;
+          height: 24px !important;
+          line-height: 24px !important;
+        }
+
+        .compact-input::placeholder {
+          color: var(--neutral-400);
+          font-size: 14px;
+        }
+
+        /* Mobile Amount */
+        .compact-amount-container {
+          display: flex;
+          align-items: center;
+          gap: var(--space-8);
+        }
+
+        .currency-compact {
+          font-size: 15px;
+          font-weight: 600;
+          color: var(--primary-600);
+        }
+
+        .compact-amount.ant-input-number {
+          background: transparent !important;
+          border: none !important;
+          box-shadow: none !important;
+          font-size: 15px !important;
+          font-weight: 600 !important;
+          color: var(--neutral-800) !important;
+          flex: 1;
+          height: 24px !important;
+        }
+
+        .compact-amount .ant-input-number-input {
+          font-size: 15px !important;
+          font-weight: 600 !important;
+          background: transparent;
+          border: none;
+          padding: 0;
+          height: 24px !important;
+          line-height: 24px !important;
+        }
+
+        /* Mobile Select */
+        .compact-select.ant-select {
+          width: 100%;
+          height: 24px;
+        }
+
+        .compact-select .ant-select-selector {
+          background: transparent !important;
+          border: none !important;
+          box-shadow: none !important;
+          padding: 0 !important;
+          font-size: 14px !important;
+          font-weight: 500;
+          height: 24px !important;
+          min-height: 24px !important;
+        }
+
+        .compact-select .ant-select-selection-item,
+        .compact-select .ant-select-selection-placeholder {
+          line-height: 24px !important;
+          padding: 0 !important;
+          font-size: 14px !important;
+        }
+
+        .compact-category-option {
+          display: flex;
+          align-items: center;
+          gap: var(--space-8);
+          padding: var(--space-8);
+        }
+
+        .compact-option-text { /* This class was defined twice, keeping the first one. Ensure this is the intended style */
+          font-size: 14px;
+          font-weight: 500;
+          /* color: var(--neutral-800); /* This was in the second definition under .compact-option .compact-option-text */
+          /* flex: 1; /* This was in the second definition under .compact-option .compact-option-text */
+        }
+
+
+        /* Mobile Date */
+        .compact-date.ant-picker {
+          background: transparent !important;
+          border: none !important;
+          box-shadow: none !important;
+          padding: 0 !important;
+          font-size: 14px;
+          font-weight: 500;
+          height: 24px !important;
+        }
+
+        .compact-date .ant-picker-input input {
+          font-size: 14px !important;
+          font-weight: 500;
+          height: 24px !important;
+          line-height: 24px !important;
+        }
+
+        .compact-date .ant-picker-suffix {
+          color: var(--primary-600);
+        }
+
+        /* Mobile Options */
+        .compact-option {
+          display: flex;
+          align-items: center;
+          gap: var(--space-8);
+          background: white;
+          padding: var(--space-12);
+          border-radius: var(--radius-md);
+          border: 1px solid var(--neutral-200);
+          cursor: pointer;
+          transition: background-color 0.2s ease;
+        }
+
+        .compact-option:hover {
+          background: var(--neutral-50);
+        }
+
+        .compact-option-icon {
+          width: 20px;
+          height: 20px;
+          border-radius: 6px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+          flex-shrink: 0;
+        }
+
+        .compact-option-icon.paid {
+          background: var(--success-500);
+        }
+
+        .compact-option-icon.recurring {
+          background: var(--primary-600);
+        }
+
+        .compact-option .compact-option-text { /* Second definition of .compact-option-text, more specific */
+          font-size: 14px; /* Already defined above, but specificity might make this one apply */
+          font-weight: 500; /* Already defined above */
+          color: var(--neutral-800);
+          flex: 1;
+        }
+
+        .compact-checkbox.ant-checkbox-wrapper {
+          font-size: 0; /* This hides any text within the wrapper if not overridden by a child */
+        }
+
+        .compact-checkbox .ant-checkbox {
+          transform: scale(1.1);
+        }
+
+        .compact-checkbox .ant-checkbox-inner {
+          border-radius: 4px;
+          border-color: var(--neutral-300);
+          width: 16px;
+          height: 16px;
+        }
+
+        .compact-checkbox .ant-checkbox-checked .ant-checkbox-inner {
+          background: var(--primary-600);
+          border-color: var(--primary-600);
+        }
+
+        .compact-checkbox .ant-checkbox-checked .ant-checkbox-inner::after {
+          width: 5px;
+          height: 9px;
+          border-width: 2px;
+        }
+
+        /* Mobile Footer */
+        .unified-footer {
+          padding: var(--space-16);
+          border-top: 1px solid var(--neutral-200);
+          display: flex;
+          gap: var(--space-12);
+          background: var(--neutral-50);
+          margin-top: var(--space-8);
+        }
+
+        .footer-cancel { /* First definition of .footer-cancel */
+          flex: 1;
+          height: 44px;
+          border-radius: var(--radius-md);
+          font-weight: 500;
+          border-color: var(--neutral-300); /* This will likely be overridden by Ant Design's default button styles if using <Button> */
+          font-size: 15px;
+        }
+
+        .footer-save { /* First definition of .footer-save */
+          flex: 2;
+          height: 44px;
+          border-radius: var(--radius-md);
+          font-weight: 600;
+          background: var(--primary-600) !important;
+          border-color: var(--primary-600) !important;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: var(--space-8);
+          font-size: 15px;
+        }
+        /*
+          The syntax error was here.
+          Original incorrect line:
+          } var(--space-12) var(--space-16);
+          Followed by:
+            border-top: 1px solid var(--neutral-200);
+            display: flex;
+            gap: var(--space-8);
+            background: var(--neutral-50);
+          }
+          This block has been removed as it's not valid CSS.
+        */
+
+        .footer-cancel { /* Second definition of .footer-cancel - this will override the one above */
+          flex: 1;
+          height: 36px;
+          border-radius: 6px;
+          font-weight: 500;
+          border-color: var(--neutral-300); /* Again, check Ant Design button styling */
+          font-size: 13px;
+        }
+
+        .footer-save { /* Second definition of .footer-save - this will override the one above */
+          flex: 2;
+          height: 36px;
+          border-radius: 6px;
+          font-weight: 600;
+          background: var(--primary-600) !important;
+          border-color: var(--primary-600) !important;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 4px;
+          font-size: 13px;
+        }
+        .footer-save:hover { /* This applies to the second .footer-save definition */
+          background: var(--primary-700) !important;
+          border-color: var(--primary-700) !important;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+          .unified-edit-bill-modal .ant-modal {
+            padding: var(--space-8);
+            margin: 0;
+            max-width: 100%;
+            width: 100%;
+            height: 100%; /* Consider if this should be 100vh or auto */
+            top: 0 !important;
+          }
+
+          .unified-edit-bill-modal .ant-modal-content {
+            border-radius: var(--radius-md); /* Consider var(--radius-none) for full screen on mobile */
+            height: 100vh; /* This makes the modal content take the full viewport height */
+            max-height: 100vh;
+            display: flex; /* Added to allow .unified-modal-card to flex grow if needed */
+            flex-direction: column; /* Added */
+          }
+
+          .unified-modal-card {
+            min-height: 100vh; /* If .ant-modal-content is 100vh, this might be redundant or could be flex: 1 */
+            max-height: 100vh; /* As above */
+            flex: 1; /* Added to make it fill the .ant-modal-content */
+            display: flex; /* Added */
+            flex-direction: column; /* Added */
+          }
+
+          .unified-content {
+            padding: var(--space-8) var(--space-12);
+            flex-grow: 1; /* Allows content to take available space if modal card is flex */
+            overflow-y: auto; /* Important for scrollable content on small screens */
+          }
+
+          /* Assuming .horizontal-inputs is the intended target here, not .compact-inputs */
+          .horizontal-inputs {
+            grid-template-columns: 1fr; /* This won't apply as .horizontal-inputs is flex, not grid. If you meant .input-row: */
+            gap: var(--space-8);
+          }
+          /* If you intended to change .input-row within .horizontal-inputs on mobile: */
+          .input-row { /* This will change all .input-row instances */
+            grid-template-columns: 1fr; /* Overrides the 2fr 1fr default */
+          }
+          .input-row.options-row { /* This will also become 1fr due to the above, unless more specific */
+             grid-template-columns: 1fr; /* Explicitly set if needed, or 1fr 1fr if that's still desired */
+          }
+
+
+          /* .compact-inputs > :nth-child(2) { grid-column: 1; } /* .compact-inputs is not defined, assuming typo for .input-row or .horizontal-inputs children */
+          /* .compact-inputs > :nth-child(3) { grid-column: 1; } */
+
+
+          /* Assuming .input-row.options-row is the target for .compact-options behavior */
+          .input-row.options-row { /* If this is what .compact-options referred to */
+            flex-direction: column; /* This is a grid, so flex-direction doesn't apply. If you want stacked items: */
+            grid-template-columns: 1fr; /* This would stack them */
+            gap: var(--space-8);
+          }
+
+          /* iOS Safe Area */
+          .unified-footer {
+            padding-bottom: calc(var(--space-12) + env(safe-area-inset-bottom, 0px));
+          }
+        }
+
+        /* Form Validation */
+        .ant-form-item-has-error .compact-input-wrapper {
+          border-color: var(--danger-500) !important;
+          background: var(--danger-50) !important;
+        }
+
+        .ant-form-item-explain-error {
+          font-size: 11px;
+          color: var(--danger-500);
+          margin-top: 2px;
+          padding-left: 2px;
+        }
+
+        /* Loading State */
+        .footer-save.ant-btn-loading { /* This will apply to the second .footer-save definition due to cascade */
+          background: var(--neutral-400) !important;
+          border-color: var(--neutral-400) !important;
+        }
+
+        /* Accessibility */
+        .compact-input:focus,
+        .compact-amount:focus-within, /* .compact-amount is an antd InputNumber, :focus-within on its wrapper might be better */
+        .compact-select:focus-within, /* .compact-select is an antd Select, :focus-within on its wrapper might be better */
+        .compact-date:focus-within { /* .compact-date is an antd DatePicker, :focus-within on its wrapper might be better */
+          outline: 1px solid var(--primary-600); /* Be careful, Ant Design components have their own focus styling */
+          outline-offset: 1px;
+        }
+
+        /* Reduced Motion */
+        @media (prefers-reduced-motion: reduce) {
+          .compact-input-wrapper,
+          .compact-option,
+          .footer-save { /* This will apply to the second .footer-save definition */
+            transition: none !important;
+          }
+        }
+
+        /* Dark Mode Support */
+        @media (prefers-color-scheme: dark) {
+          .unified-edit-bill-modal .ant-modal-content, /* Added for modal background in dark mode */
+          .unified-modal-card,
+          .form-section,
+          .compact-input-wrapper,
+          .compact-option {
+            background: var(--neutral-800) !important; /* Ensure --neutral-800 is dark enough */
+            border-color: var(--neutral-600) !important; /* Ensure --neutral-600 provides enough contrast */
+          }
+
+          .modal-title,
+          .section-title,
+          .compact-label,
+          .compact-option .compact-option-text, /* Made more specific */
+          .compact-input,
+          .compact-amount .ant-input-number-input, /* For amount input text */
+          .compact-select .ant-select-selection-item, /* For select text */
+          .compact-date .ant-picker-input input /* For date input text */
+           {
+            color: var(--neutral-100) !important; /* Ensure --neutral-100 is light enough */
+          }
+
+          .current-bill-info,
+          .compact-input::placeholder,
+          .compact-select .ant-select-selection-placeholder {
+            color: var(--neutral-400) !important; /* Ensure --neutral-400 has good contrast */
+          }
+
+          .unified-header, /* Added for header border in dark mode */
+          .unified-footer { /* Added for footer border in dark mode */
+            border-color: var(--neutral-700) !important; /* Or a suitable dark border color */
+          }
+
+          .unified-footer {
+            background: var(--neutral-900) !important; /* Ensure --neutral-900 is a dark footer background */
+          }
+
+          /* Consider dark mode for icons and other elements if needed */
+          .section-icon {
+            background: var(--primary-800); /* Darker background for icon */
+            color: var(--primary-200); /* Lighter icon color */
+          }
+          .currency-compact,
+          .compact-date .ant-picker-suffix {
+            color: var(--primary-400); /* Adjusted primary color for dark mode */
+          }
+        }
