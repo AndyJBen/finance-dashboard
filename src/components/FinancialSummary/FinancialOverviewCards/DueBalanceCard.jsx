@@ -1,5 +1,3 @@
-// src/components/FinancialSummary/FinancialOverviewCards/DueBalanceCard.jsx
-
 import React, { useContext } from 'react';
 import { Card, Col, Space, Statistic, Typography } from 'antd';
 import { IconFlagFilled, IconCircleCheck } from '@tabler/icons-react';
@@ -8,7 +6,6 @@ import './DueBalanceCard.css';
 
 const { Text } = Typography;
 
-// Helper: format dollars and superscript cents (no dot)
 const formatCurrencySuperscript = (value) => {
   if (value === null || value === undefined || isNaN(Number(value))) {
     return '-';
@@ -28,7 +25,6 @@ const formatCurrencySuperscript = (value) => {
   );
 };
 
-// Basic currency for subtext
 const formatCurrency = (value) => {
   const number = Number(value) || 0;
   return number.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
@@ -52,7 +48,6 @@ const DueBalanceCard = ({ isMobile, styles, isComponentLoading }) => {
   );
 
   const generateDueSubtext = () => {
-    // Don't generate subtext for mobile view
     if (isMobile) return null;
     
     const hasCC = (totalCreditCardBalance ?? 0) > 0;

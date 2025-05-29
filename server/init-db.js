@@ -1,4 +1,3 @@
-// server/init-db.js
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '.env') });
 const pool = require('./db');
@@ -37,6 +36,7 @@ async function init() {
         name       TEXT    NOT NULL,
         balance    NUMERIC NOT NULL,
         sort_order INT     DEFAULT 0,
+        include_in_due_balance BOOLEAN DEFAULT TRUE,
         created_at TIMESTAMP DEFAULT NOW(),
         updated_at TIMESTAMP DEFAULT NOW()
       );
@@ -51,4 +51,3 @@ async function init() {
 }
 
 init();
- 
