@@ -1,7 +1,6 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { Layout, Row, Col, Typography, Grid } from 'antd';
 import { FinanceContext } from './contexts/FinanceContext';
-
 import FinancialOverviewCards from './components/FinancialSummary/FinancialOverviewCards';
 import FinanceFeed from './components/FinanceFeed/FinanceFeed';
 import Sidebar from './components/Sidebar/Sidebar';
