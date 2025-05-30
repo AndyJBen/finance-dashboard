@@ -52,7 +52,7 @@ router.post('/', async (req, res) => {
     
     const result = await db.query(
       `INSERT INTO credit_cards (name, balance, sort_order, include_in_due_balance) VALUES ($1, $2, $3, $4) RETURNING *`,
-      [name.trim(), initialBalance.toFixed(2), nextSortOrder, newIncludeInDueBalance]
+      [name.trim(), initialBalance, nextSortOrder, newIncludeInDueBalance]
     );
     
     res.status(201).json(formatCardResponse(result.rows[0]));
