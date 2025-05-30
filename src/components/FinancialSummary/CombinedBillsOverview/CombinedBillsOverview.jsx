@@ -192,27 +192,29 @@ const EnhancedBillRow = ({
             className={`enhanced-bill-row ${rowClassName ? rowClassName(record) : ''}`}
             onClick={handleRowClick}
         >
-            {/* Slide Actions Background - Always present but hidden */}
-            <div className="slide-actions-background">
-                <button 
-                    className="slide-action edit-action"
-                    onTouchEnd={(e) => handleActionClick('edit', e)}
-                    onClick={(e) => handleActionClick('edit', e)}
-                    aria-label="Edit bill"
-                >
-                    <IconEdit size={18} />
-                    <span>Edit</span>
-                </button>
-                <button 
-                    className="slide-action delete-action"
-                    onTouchEnd={(e) => handleActionClick('delete', e)}
-                    onClick={(e) => handleActionClick('delete', e)}
-                    aria-label="Delete bill"
-                >
-                    <IconTrash size={18} />
-                    <span>Delete</span>
-                </button>
-            </div>
+            {/* Slide Actions Background - mobile only */}
+            {isMobile && (
+                <div className="slide-actions-background">
+                    <button
+                        className="slide-action edit-action"
+                        onTouchEnd={(e) => handleActionClick('edit', e)}
+                        onClick={(e) => handleActionClick('edit', e)}
+                        aria-label="Edit bill"
+                    >
+                        <IconEdit size={18} />
+                        <span>Edit</span>
+                    </button>
+                    <button
+                        className="slide-action delete-action"
+                        onTouchEnd={(e) => handleActionClick('delete', e)}
+                        onClick={(e) => handleActionClick('delete', e)}
+                        aria-label="Delete bill"
+                    >
+                        <IconTrash size={18} />
+                        <span>Delete</span>
+                    </button>
+                </div>
+            )}
 
             {/* Main Row Content - This slides to reveal actions */}
             <div 
@@ -242,12 +244,35 @@ const EnhancedBillRow = ({
                     {/* Top Row: Name and Amount */}
                     <div className="bill-main-row">
                         <Text strong className="bill-name">{record.name}</Text>
-                        <Text strong className="bill-amount">
-                            ${Number(record.amount).toLocaleString('en-US', { 
-                                minimumFractionDigits: 2, 
-                                maximumFractionDigits: 2 
-                            })}
-                        </Text>
+                        <div className="bill-amount-wrapper">
+                            <Text strong className="bill-amount">
+                                ${Number(record.amount).toLocaleString('en-US', {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2
+                                })}
+                            </Text>
+                            {!isMobile && (
+                                <Dropdown
+                                    menu={{
+                                        items: [
+                                            { key: 'edit', icon: <IconEdit size={16} />, label: 'Edit', onClick: () => onEdit(record) },
+                                            { key: 'delete', icon: <IconTrash size={16} />, label: 'Delete', danger: true, onClick: () => onDelete(record) }
+                                        ],
+                                        onClick: e => e.domEvent.stopPropagation()
+                                    }}
+                                    trigger={[ 'click' ]}
+                                    placement="bottomRight"
+                                >
+                                    <Button
+                                        className="bill-action-dropdown-trigger"
+                                        type="text"
+                                        size="small"
+                                        icon={<IconDotsVertical size={16} />}
+                                        onClick={e => e.stopPropagation()}
+                                    />
+                                </Dropdown>
+                            )}
+                        </div>
                     </div>
 
                     {/* Bottom Row: Category and Due Status */}
