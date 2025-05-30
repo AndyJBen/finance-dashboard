@@ -256,6 +256,34 @@ const EnhancedBillRow = ({
                                     {renderDueIn(record.dueDate, record)}
                                 </div>
                             </div>
+                            {record.category && (
+                                <Tag
+                                    className="bill-category-tag"
+                                    style={{
+                                        margin: 0,
+                                        backgroundColor: 'transparent',
+                                        border: 'none',
+                                        fontSize: '0.75rem',
+                                        padding: '0 4px 0 0'
+                                    }}
+                                >
+                                    <span style={{
+                                        marginRight: '6px',
+                                        display: 'inline-flex',
+                                        alignItems: 'center'
+                                    }}>
+                                        {React.cloneElement(getCategoryIcon(record.category), {
+                                            size: 14,
+                                            style: { color: getCategoryColor(record.category).text }
+                                        })}
+                                    </span>
+                                    <span style={{
+                                        color: getCategoryColor(record.category).text
+                                    }}>
+                                        {record.category}
+                                    </span>
+                                </Tag>
+                            )}
                             <Dropdown
                                 menu={{
                                     items: [
@@ -278,36 +306,6 @@ const EnhancedBillRow = ({
                         </div>
                     </div>
 
-                    {/* Bottom Row: Category */}
-                    <div className="bill-details-row">
-                        {record.category && (
-                            <Tag
-                                style={{
-                                    margin: 0,
-                                    backgroundColor: 'transparent',
-                                    border: 'none',
-                                    fontSize: '0.75rem',
-                                    padding: '0 4px 0 0'
-                                }}
-                            >
-                                <span style={{ 
-                                    marginRight: '6px', 
-                                    display: 'inline-flex', 
-                                    alignItems: 'center' 
-                                }}>
-                                    {React.cloneElement(getCategoryIcon(record.category), { 
-                                        size: 14,
-                                        style: { color: getCategoryColor(record.category).text }
-                                    })}
-                                </span>
-                                <span style={{ 
-                                    color: getCategoryColor(record.category).text
-                                }}>
-                                    {record.category}
-                                </span>
-                            </Tag>
-                        )}
-                    </div>
                 </div>
             </div>
         </div>
