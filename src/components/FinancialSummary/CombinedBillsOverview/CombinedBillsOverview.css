@@ -6,7 +6,6 @@
     flex-direction: column;
     margin-top: var(--space-8); /* Was 8px */
     background: white; /* Consider a CSS variable if pure white is part of your theme, e.g., var(--color-white, white) */
-    border-radius: var(--border-radius-xl); /* Was 12px, assumes 0.75rem is an acceptable visual match for 12px */
     overflow: hidden;
     isolation: isolate; /* Keep for stacking contexts */
 }
@@ -248,35 +247,7 @@
     }
 }
 
-/* Dark mode preparation */
-@media (prefers-color-scheme: dark) {
-    .enhanced-bill-row {
-        background: var(--neutral-900);
-        border-bottom-color: var(--neutral-800);
-    }
 
-    .bill-row-content {
-        background: var(--neutral-900);
-    }
-
-    .enhanced-bill-row:hover {
-        background-color: var(--neutral-800);
-    }
-
-    .enhanced-bill-row:hover .bill-row-content { /* This ensures content also changes background on hover */
-        background-color: var(--neutral-800);
-    }
-
-    .bill-name,
-    .bill-amount {
-        color: var(--neutral-100);
-    }
-
-    .bill-due-status {
-        background-color: var(--neutral-800);
-        color: var(--neutral-300);
-    }
-}
 
 /* Focus states for keyboard navigation */
 .enhanced-bill-row:focus-within {
