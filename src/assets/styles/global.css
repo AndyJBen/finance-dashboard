@@ -337,7 +337,6 @@ textarea {
 }
 
 .ant-tag {
-    border-radius: var(--radius-full) !important;
     font-weight: 600;
     font-size: 0.75rem;
     padding: var(--space-4) var(--space-8);
