@@ -26,3 +26,12 @@ src/
 ```
 
 This layout keeps styles next to their components while sharing common variables and utilities from `global.css`.
+
+## Deployment Note
+
+Whenever deploying or updating the server, ensure the database schema is
+initialized by running:
+
+```
+node server/init-db.js
+```

@@ -13,7 +13,7 @@ async function init() {
         VALUES ('bankBalance','0')
         ON CONFLICT (key) DO NOTHING;
     `);
-    console.log('✔ app_settings ready');
+    console.log('✔ app_settings schema ensured');
 
     await pool.query(`
       CREATE TABLE IF NOT EXISTS bills (
@@ -28,7 +28,7 @@ async function init() {
         updated_at   TIMESTAMP DEFAULT NOW()
       );
     `);
-    console.log('✔ bills ready');
+    console.log('✔ bills schema ensured');
 
     await pool.query(`
       CREATE TABLE IF NOT EXISTS credit_cards (
@@ -41,7 +41,12 @@ async function init() {
         updated_at TIMESTAMP DEFAULT NOW()
       );
     `);
-    console.log('✔ credit_cards ready');
+    await pool.query(`
+      ALTER TABLE credit_cards
+        ADD COLUMN IF NOT EXISTS sort_order INT DEFAULT 0,
+        ADD COLUMN IF NOT EXISTS include_in_due_balance BOOLEAN DEFAULT TRUE;
+    `);
+    console.log('✔ credit_cards schema ensured');
   } catch (err) {
     console.error('❌ Initialization error:', err);
   } finally  {
