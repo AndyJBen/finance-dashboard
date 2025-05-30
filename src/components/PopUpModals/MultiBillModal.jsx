@@ -213,6 +213,8 @@ export default function MultiBillModal({ open, onClose }) {
                           min={0}
                           precision={2}
                           className="bill-input"
+                          inputMode="decimal"
+                          pattern="[0-9]*"
                         />
                       </Form.Item>
                       
