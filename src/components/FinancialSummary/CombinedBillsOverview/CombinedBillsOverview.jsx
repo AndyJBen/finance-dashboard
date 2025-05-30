@@ -625,15 +625,22 @@ const CombinedBillsOverview = ({ style }) => {
 
                     {/* Footer */}
                     {billsDueInDisplayedMonth.length > 0 && paidVisibleCount > 0 && (
-                        <div style={{ 
-                            textAlign: 'center', 
-                            borderTop: '1px solid var(--neutral-200)',
-                            padding: 'var(--space-12) var(--space-20)'
-                        }}>
+                        <div
+                            style={{
+                                textAlign: 'center',
+                                borderTop: '1px solid var(--neutral-200)',
+                                padding: 'var(--space-12) var(--space-20)',
+                                cursor: 'pointer'
+                            }}
+                            onClick={() => setShowPaidBills(prev => !prev)}
+                        >
                             <Button
                                 type="text"
                                 icon={showPaidBills ? <IconEyeOff size={16} /> : <IconEye size={16} />}
-                                onClick={() => setShowPaidBills(prev => !prev)}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setShowPaidBills(prev => !prev);
+                                }}
                                 style={{ color: 'var(--neutral-600)' }}
                             >
                                 {showPaidBills ? 'Hide Paid Bills' : 'Show All Bills'}
