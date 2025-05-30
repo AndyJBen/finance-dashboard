@@ -11,8 +11,8 @@ import {
   IconCheck, IconArrowsShuffle
 } from '@tabler/icons-react';
 import dayjs from 'dayjs';
-import { FinanceContext } from '../../../contexts/FinanceContext';
-import './MultiBillModal.css';
+import { FinanceContext } from '../../contexts/FinanceContext';
+import './styles/MultiBillModal.css';
 
 const { Title, Text } = Typography;
 const { Option } = Select;

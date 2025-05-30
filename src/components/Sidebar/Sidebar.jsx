@@ -36,8 +36,8 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 
 import { FinanceContext } from '../../contexts/FinanceContext';
-import AddCreditCardModal from './AddCreditCardModal';
-import EditCreditCardModal from './EditCreditCardModal';
+import AddCreditCardModal from '../PopUpModals/AddCreditCardModal';
+import EditCreditCardModal from '../PopUpModals/EditCreditCardModal';
 import './Sidebar.css';
 
 const { Sider } = Layout;

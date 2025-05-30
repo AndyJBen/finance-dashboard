@@ -8,11 +8,11 @@ import CombinedBillsOverview from './components/FinancialSummary/CombinedBillsOv
 import AppFooter from './components/Footer/Footer';
 import ChartsPage from './components/ChartsPage/ChartsPage';
 import BottomNavBar from './components/Navigation/BottomNavBar/BottomNavBar';
-import EditBillModal from './components/BillsList/EditBillModal';
+import EditBillModal from './components/PopUpModals/EditBillModal';
 import SettingsPage from './components/Settings/SettingsPage';
 import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
-import MultiBillModal from './components/FinancialSummary/CombinedBillsOverview/MultiBillModal';
-import BankBalanceEditModal from './components/FinancialSummary/FinancialOverviewCards/BankBalanceEditModal';
+import MultiBillModal from './components/PopUpModals/MultiBillModal';
+import BankBalanceEditModal from './components/PopUpModals/BankBalanceEditModal';
 
 const { Content } = Layout;
 const { Title } = Typography;

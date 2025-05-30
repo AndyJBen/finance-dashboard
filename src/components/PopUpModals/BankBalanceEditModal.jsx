@@ -8,8 +8,8 @@ import {
   IconCheck,
   IconCoin
 } from '@tabler/icons-react'; // Using Tabler icons
-import { FinanceContext } from '../../../contexts/FinanceContext'; // Importing finance context
-import './BankBalanceEditModal.css';
+import { FinanceContext } from '../../contexts/FinanceContext'; // Importing finance context
+import './styles/BankBalanceEditModal.css';
 
 const { Title, Text } = Typography;
 

@@ -18,8 +18,8 @@ import {
     IconEyeOff
 } from '@tabler/icons-react';
 import { FinanceContext } from '../../../contexts/FinanceContext';
-import EditBillModal from '../../BillsList/EditBillModal';
-import MultiBillModal from './MultiBillModal';
+import EditBillModal from '../../PopUpModals/EditBillModal';
+import MultiBillModal from '../../PopUpModals/MultiBillModal';
 import MonthlyProgressSummary from './MonthlyProgressSummary';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';

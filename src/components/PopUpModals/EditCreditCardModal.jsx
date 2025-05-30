@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Form, Input, InputNumber, Typography, message, Row, Col } from 'antd';
 import { IconEdit, IconCreditCard, IconCoin } from '@tabler/icons-react';
-import './EditCreditCardModal.css';
+import './styles/EditCreditCardModal.css';
 
 const { Title } = Typography;
 
