@@ -282,12 +282,19 @@ const MobileFinanceFeed = () => {
           )}
         />
         {pastDueBills.length > 4 && (
-          <div className="show-more-container">
+          <div
+            className="show-more-container"
+            onClick={() => toggleShowAll('pastDue')}
+            style={{ cursor: 'pointer' }}
+          >
             <Button
               type="link"
               className="show-more-button"
               style={{ color: '#F1476F' }}
-              onClick={() => toggleShowAll('pastDue')}
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleShowAll('pastDue');
+              }}
             >
               {showAll.pastDue ? 'Show Less' : 'Show All'}
             </Button>
@@ -340,12 +347,19 @@ const MobileFinanceFeed = () => {
           )}
         />
         {billPrep.length > 4 && (
-          <div className="show-more-container">
+          <div
+            className="show-more-container"
+            onClick={() => toggleShowAll('billPrep')}
+            style={{ cursor: 'pointer' }}
+          >
             <Button
               type="link"
               className="show-more-button"
               style={{ color: '#1890FF' }}
-              onClick={() => toggleShowAll('billPrep')}
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleShowAll('billPrep');
+              }}
             >
               {showAll.billPrep ? 'Show Less' : 'Show All'}
             </Button>
@@ -473,12 +487,19 @@ const MobileFinanceFeed = () => {
           )}
         />
         {upcoming.length > 4 && (
-          <div className="show-more-container">
+          <div
+            className="show-more-container"
+            onClick={() => toggleShowAll('upcoming')}
+            style={{ cursor: 'pointer' }}
+          >
             <Button
               type="link"
               className="show-more-button"
               style={{ color: '#0066FF' }}
-              onClick={() => toggleShowAll('upcoming')}
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleShowAll('upcoming');
+              }}
             >
               {showAll.upcoming ? 'Show Less' : 'Show All'}
             </Button>
@@ -532,12 +553,19 @@ const MobileFinanceFeed = () => {
           )}
         />
         {recentActivity.length > 4 && (
-          <div className="show-more-container">
+          <div
+            className="show-more-container"
+            onClick={() => toggleShowAll('recentActivity')}
+            style={{ cursor: 'pointer' }}
+          >
             <Button
               type="link"
               className="show-more-button"
-              style={{color: '#722ED1'}}
-              onClick={() => toggleShowAll('recentActivity')}
+              style={{ color: '#722ED1' }}
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleShowAll('recentActivity');
+              }}
             >
               {showAll.recentActivity ? 'Show Less' : 'Show All'}
             </Button>
