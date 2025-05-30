@@ -60,7 +60,13 @@ export const FinanceProvider = ({ children }) => {
 
   const pastDueBills = bills.filter(bill => {
     const dueDate = dayjs(bill.dueDate);
-    return !bill.isPaid && dueDate.isValid() && dueDate.isBefore(dayjs(), 'day');
+    const isBillPrep = bill.category?.toLowerCase() === 'bill prep';
+    return (
+      !bill.isPaid &&
+      !isBillPrep &&
+      dueDate.isValid() &&
+      dueDate.isBefore(dayjs(), 'day')
+    );
   });
 
   const totalCreditCardBalanceAll = creditCards.reduce((sum, card) => sum + Number(card.balance || 0), 0);

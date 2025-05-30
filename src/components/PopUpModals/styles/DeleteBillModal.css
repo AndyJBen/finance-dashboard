@@ -1,0 +1,113 @@
+/* Styles for DeleteBillModal */
+.delete-bill-modal .ant-modal-content {
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15), 0 2px 10px rgba(0,0,0,0.12);
+  overflow: hidden;
+  padding: 0;
+}
+
+.modal-header {
+  padding: 16px 24px;
+  background: linear-gradient(135deg, #DC2626, #EF4444);
+  color: white;
+  border-radius: 20px 20px 0 0;
+}
+
+.modal-icon-container {
+  width: 38px;
+  height: 38px;
+  background-color: rgba(255,255,255,0.2);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.modal-title {
+  color: white !important;
+  margin: 0 !important;
+  font-size: 18px !important;
+  font-weight: 600 !important;
+}
+
+.delete-content {
+  padding: 24px;
+  text-align: center;
+}
+
+.bill-info {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.bill-amount {
+  font-size: 20px;
+  font-weight: 600;
+  color: #dc2626;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 14px 24px;
+  border-top: 1px solid #F0F0F0;
+  gap: 12px;
+}
+
+.modal-footer .ant-btn {
+  padding: 0 20px;
+  height: 44px;
+  font-size: 15px;
+  border-radius: 12px;
+  min-width: 100px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cancel-button {
+  color: #4B5563;
+  background-color: #FFFFFF;
+  border-color: #D1D5DB;
+}
+.cancel-button:hover {
+  background-color: #F9FAFB !important;
+  border-color: #9CA3AF !important;
+  color: #1F2937 !important;
+}
+
+.delete-single-button {
+  background-color: #F87171;
+  border-color: #F87171;
+}
+.delete-single-button:hover {
+  background-color: #EF4444 !important;
+  border-color: #EF4444 !important;
+}
+
+.delete-all-button {
+  background-color: #DC2626;
+  border-color: #DC2626;
+}
+.delete-all-button:hover {
+  background-color: #B91C1C !important;
+  border-color: #B91C1C !important;
+}
+
+@media (max-width: 768px) {
+  .modal-footer .ant-btn {
+    min-width: 90px;
+    height: 40px;
+    font-size: 14px;
+  }
+  .modal-header {
+    padding: 14px 16px;
+  }
+  .delete-content {
+    padding: 20px 16px;
+  }
+}

@@ -20,6 +20,7 @@ import {
 import { FinanceContext } from '../../../contexts/FinanceContext';
 import EditBillModal from '../../PopUpModals/EditBillModal';
 import MultiBillModal from '../../PopUpModals/MultiBillModal';
+import DeleteBillModal from '../../PopUpModals/DeleteBillModal';
 import MonthlyProgressSummary from './MonthlyProgressSummary';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -327,6 +328,8 @@ const CombinedBillsOverview = ({ style }) => {
     const [selectedCategory, setSelectedCategory] = useState('All');
     const [showPaidBills, setShowPaidBills] = useState(false);
     const [fadingBillId, setFadingBillId] = useState(null);
+    const [isDeleteModalVisible, setDeleteModalVisible] = useState(false);
+    const [billToDelete, setBillToDelete] = useState(null);
 
     const screens = useBreakpoint();
     const isSmallScreen = screens.xs || screens.sm;
@@ -376,16 +379,13 @@ const CombinedBillsOverview = ({ style }) => {
         setIsEditModalVisible(true);
     };
     
-    const handleDelete = async (record) => {
-        if (!record || typeof record.id === 'undefined') { 
-            message.error('Cannot delete bill: Invalid data.'); 
-            return; 
+    const handleDelete = (record) => {
+        if (!record || typeof record.id === 'undefined') {
+            message.error('Cannot delete bill: Invalid data.');
+            return;
         }
-        try { 
-            await deleteBill(record.id); 
-        } catch (error) { 
-            message.error(`Deletion error: ${error.message || 'Unknown'}`); 
-        }
+        setBillToDelete(record);
+        setDeleteModalVisible(true);
     };
 
     const handleTogglePaid = async (record) => {
@@ -413,9 +413,39 @@ const CombinedBillsOverview = ({ style }) => {
         } else {
             result = await addBill(billValues);
         }
-        if (result) { 
-            setIsEditModalVisible(false); 
-            setEditingBill(null); 
+        if (result) {
+            setIsEditModalVisible(false);
+            setEditingBill(null);
+        }
+    };
+
+    const confirmDeleteCurrent = async () => {
+        if (!billToDelete) return;
+        try {
+            await deleteBill(billToDelete.id);
+        } catch (error) {
+            message.error(`Deletion error: ${error.message || 'Unknown'}`);
+        } finally {
+            setDeleteModalVisible(false);
+            setBillToDelete(null);
+        }
+    };
+
+    const confirmDeleteFuture = async () => {
+        if (!billToDelete) return;
+        try {
+            await deleteBill(billToDelete.id);
+            const futureBills = bills.filter(
+                b => b.isRecurring && b.name === billToDelete.name && dayjs(b.dueDate).isAfter(dayjs(billToDelete.dueDate))
+            );
+            for (const fb of futureBills) {
+                await deleteBill(fb.id);
+            }
+        } catch (error) {
+            message.error(`Deletion error: ${error.message || 'Unknown'}`);
+        } finally {
+            setDeleteModalVisible(false);
+            setBillToDelete(null);
         }
     };
 
@@ -624,16 +654,20 @@ const CombinedBillsOverview = ({ style }) => {
                     </div>
 
                     {/* Footer */}
-                    {billsDueInDisplayedMonth.length > 0 && paidVisibleCount > 0 && (
-                        <div
-                            style={{
-                                textAlign: 'center',
-                                borderTop: '1px solid var(--neutral-200)',
-                                padding: 'var(--space-12) var(--space-20)',
-                                cursor: 'pointer'
-                            }}
-                            onClick={() => setShowPaidBills(prev => !prev)}
-                        >
+                    <div
+                        style={{
+                            textAlign: 'center',
+                            borderTop: '1px solid var(--neutral-200)',
+                            padding: 'var(--space-12) var(--space-20)',
+                            cursor: 'pointer'
+                        }}
+                        onClick={
+                            billsDueInDisplayedMonth.length > 0 && paidVisibleCount > 0
+                                ? () => setShowPaidBills(prev => !prev)
+                                : undefined
+                        }
+                    >
+                        {billsDueInDisplayedMonth.length > 0 && paidVisibleCount > 0 && (
                             <Button
                                 type="text"
                                 icon={showPaidBills ? <IconEyeOff size={16} /> : <IconEye size={16} />}
@@ -645,8 +679,8 @@ const CombinedBillsOverview = ({ style }) => {
                             >
                                 {showPaidBills ? 'Hide Paid Bills' : 'Show All Bills'}
                             </Button>
-                        </div>
-                    )}
+                        )}
+                    </div>
                 </Spin>
 
                 {/* Modals */}
@@ -664,6 +698,16 @@ const CombinedBillsOverview = ({ style }) => {
                 <MultiBillModal
                     open={isMultiModalVisible}
                     onClose={() => setMultiModalVisible(false)}
+                />
+            )}
+
+            {isDeleteModalVisible && (
+                <DeleteBillModal
+                    open={isDeleteModalVisible}
+                    bill={billToDelete}
+                    onCancel={() => { setDeleteModalVisible(false); setBillToDelete(null); }}
+                    onDeleteCurrent={confirmDeleteCurrent}
+                    onDeleteFuture={confirmDeleteFuture}
                 />
             )}
         </>
