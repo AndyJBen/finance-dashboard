@@ -148,7 +148,7 @@
 .amount-and-due {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: end;
 }
 
 .bill-name {
