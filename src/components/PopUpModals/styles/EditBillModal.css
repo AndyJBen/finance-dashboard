@@ -20,12 +20,10 @@
   background: white;
   display: flex;
   flex-direction: column;
-  height: auto;
-  max-height: none;
 }
 
 .unified-header {
-  padding: var(--space-16);
+  padding: var(--space-12);
   border-bottom: 1px solid var(--neutral-200);
   display: flex;
   align-items: center;
@@ -66,11 +64,8 @@
   margin: 0;
 }
 
-.unified-content {
-  padding: var(--space-16);
-}
-
 .unified-form {
+  padding: var(--space-12);
   display: flex;
   flex-direction: column;
   gap: 0;
@@ -331,40 +326,17 @@
 }
 
 .unified-footer {
-  padding: var(--space-16);
+  padding: var(--space-12);
   border-top: 1px solid var(--neutral-200);
   display: flex;
-  gap: var(--space-12);
-  background: var(--neutral-50);
-  margin-top: var(--space-8);
-}
-
-.footer-cancel {
-  flex: 1;
-  height: 44px;
-  border-radius: var(--radius-md);
-  font-weight: 500;
-  border-color: var(--neutral-300);
-  font-size: 15px;
-}
-
-.footer-save {
-  flex: 2;
-  height: 44px;
-  border-radius: var(--radius-md);
-  font-weight: 600;
-  background: var(--primary-600) !important;
-  border-color: var(--primary-600) !important;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   gap: var(--space-8);
-  font-size: 15px;
+  background: var(--neutral-50);
 }
+
 
 .footer-cancel {
   flex: 1;
-  height: 36px;
+  height: 32px;
   border-radius: 6px;
   font-weight: 500;
   border-color: var(--neutral-300);
@@ -373,7 +345,7 @@
 
 .footer-save {
   flex: 2;
-  height: 36px;
+  height: 32px;
   border-radius: 6px;
   font-weight: 600;
   background: var(--primary-600) !important;
@@ -395,30 +367,27 @@
     margin: 0;
     max-width: 100%;
     width: 100%;
-    height: 100%;
     top: 0 !important;
   }
 
   .unified-edit-bill-modal .ant-modal-content {
     border-radius: var(--radius-md);
-    height: 100vh;
-    max-height: 100vh;
     display: flex;
     flex-direction: column;
   }
 
   .unified-modal-card {
-    min-height: 100vh;
-    max-height: 100vh;
-    flex: 1;
     display: flex;
     flex-direction: column;
   }
 
-  .unified-content {
+  .unified-form {
     padding: var(--space-8) var(--space-12);
-    flex-grow: 1;
-    overflow-y: auto;
+  }
+
+  .unified-header,
+  .unified-footer {
+    padding: var(--space-8) var(--space-12);
   }
 
   .horizontal-inputs {
@@ -476,49 +445,3 @@
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  .unified-edit-bill-modal .ant-modal-content,
-  .unified-modal-card,
-  .form-section,
-  .compact-input-wrapper,
-  .compact-option {
-    background: var(--neutral-800) !important;
-    border-color: var(--neutral-600) !important;
-  }
-
-  .modal-title,
-  .section-title,
-  .compact-label,
-  .compact-option .compact-option-text,
-  .compact-input,
-  .compact-amount .ant-input-number-input,
-  .compact-select .ant-select-selection-item,
-  .compact-date .ant-picker-input input
-   {
-    color: var(--neutral-100) !important;
-  }
-
-  .current-bill-info,
-  .compact-input::placeholder,
-  .compact-select .ant-select-selection-placeholder {
-    color: var(--neutral-400) !important;
-  }
-
-  .unified-header,
-  .unified-footer {
-    border-color: var(--neutral-700) !important;
-  }
-
-  .unified-footer {
-    background: var(--neutral-900) !important;
-  }
-
-  .section-icon {
-    background: var(--primary-800);
-    color: var(--primary-200);
-  }
-  .currency-compact,
-  .compact-date .ant-picker-suffix {
-    color: var(--primary-400);
-  }
-}
