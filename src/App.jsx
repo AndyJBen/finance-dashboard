@@ -114,7 +114,7 @@ function MyApp() {
       case 'dashboard':
         return (
           <Row gutter={isMobileView ? [8, 16] : [24, 24]}>
-            <Col xs={24} lg={17}>
+            <Col xs={24} lg={24}>
               <FinancialOverviewCards />
               <div style={{
                 marginBottom: (isMobileView && isBillsListExpanded) ? '60px' : '0px',
