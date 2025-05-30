@@ -55,8 +55,8 @@ const DueBalanceCard = ({ isMobile, styles, isComponentLoading }) => {
     const cc = formatCurrency(totalCreditCardBalance);
     let subtext = '';
 
-    if (hasAnyPastDueBills && hasCC) subtext = `Incl. ${past} in Bill Prep | ${cc} CC`;
-    else if (hasAnyPastDueBills) subtext = `Incl. ${past} in Bill Prep`;
+    if (hasAnyPastDueBills && hasCC) subtext = `Incl. ${past} Past Due | ${cc} CC`;
+    else if (hasAnyPastDueBills) subtext = `Incl. ${past} Past Due`;
     else if (hasCC) subtext = `Incl. ${cc} CC`;
 
     return subtext ? (
