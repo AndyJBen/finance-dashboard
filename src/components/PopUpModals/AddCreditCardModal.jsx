@@ -6,7 +6,7 @@ import {
     IconCreditCard,
     IconCoin
 } from '@tabler/icons-react';
-import './AddCreditCardModal.css';
+import './styles/AddCreditCardModal.css';
 
 const { Title } = Typography;
 
