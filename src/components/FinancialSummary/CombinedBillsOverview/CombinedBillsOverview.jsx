@@ -654,16 +654,20 @@ const CombinedBillsOverview = ({ style }) => {
                     </div>
 
                     {/* Footer */}
-                    {billsDueInDisplayedMonth.length > 0 && paidVisibleCount > 0 && (
-                        <div
-                            style={{
-                                textAlign: 'center',
-                                borderTop: '1px solid var(--neutral-200)',
-                                padding: 'var(--space-12) var(--space-20)',
-                                cursor: 'pointer'
-                            }}
-                            onClick={() => setShowPaidBills(prev => !prev)}
-                        >
+                    <div
+                        style={{
+                            textAlign: 'center',
+                            borderTop: '1px solid var(--neutral-200)',
+                            padding: 'var(--space-12) var(--space-20)',
+                            cursor: 'pointer'
+                        }}
+                        onClick={
+                            billsDueInDisplayedMonth.length > 0 && paidVisibleCount > 0
+                                ? () => setShowPaidBills(prev => !prev)
+                                : undefined
+                        }
+                    >
+                        {billsDueInDisplayedMonth.length > 0 && paidVisibleCount > 0 && (
                             <Button
                                 type="text"
                                 icon={showPaidBills ? <IconEyeOff size={16} /> : <IconEye size={16} />}
@@ -675,8 +679,8 @@ const CombinedBillsOverview = ({ style }) => {
                             >
                                 {showPaidBills ? 'Hide Paid Bills' : 'Show All Bills'}
                             </Button>
-                        </div>
-                    )}
+                        )}
+                    </div>
                 </Spin>
 
                 {/* Modals */}
