@@ -131,8 +131,9 @@
 /* Wrapper for bill name and category tag */
 .bill-name-and-category {
     display: flex;
-    align-items: center;
-    gap: var(--space-8);
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-4);
     flex: 1;
     min-width: 0;
 }
@@ -243,6 +244,8 @@
     }
 
     .bill-name-and-category {
+        flex-direction: column;
+        align-items: flex-start;
         gap: var(--space-4);
     }
 
