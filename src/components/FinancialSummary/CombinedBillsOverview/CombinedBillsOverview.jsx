@@ -243,19 +243,8 @@ const EnhancedBillRow = ({
                 <div className="bill-content">
                     {/* Top Row: Name and Amount */}
                     <div className="bill-main-row">
-                        <Text strong className="bill-name">{record.name}</Text>
-                        <div className="bill-amount-section">
-                            <div className="amount-and-due">
-                                <Text strong className="bill-amount">
-                                    ${Number(record.amount).toLocaleString('en-US', {
-                                        minimumFractionDigits: 2,
-                                        maximumFractionDigits: 2
-                                    })}
-                                </Text>
-                                <div className="bill-due-status">
-                                    {renderDueIn(record.dueDate, record)}
-                                </div>
-                            </div>
+                        <div className="bill-name-and-category">
+                            <Text strong className="bill-name">{record.name}</Text>
                             {record.category && (
                                 <Tag
                                     className="bill-category-tag"
@@ -284,6 +273,19 @@ const EnhancedBillRow = ({
                                     </span>
                                 </Tag>
                             )}
+                        </div>
+                        <div className="bill-amount-section">
+                            <div className="amount-and-due">
+                                <Text strong className="bill-amount">
+                                    ${Number(record.amount).toLocaleString('en-US', {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2
+                                    })}
+                                </Text>
+                                <div className="bill-due-status">
+                                    {renderDueIn(record.dueDate, record)}
+                                </div>
+                            </div>
                             <Dropdown
                                 menu={{
                                     items: [
