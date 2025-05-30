@@ -1,6 +1,6 @@
 // MobileFinanceFeed.jsx
-import React, { useState, useContext } from 'react';
-import { Typography, Card, Space, List, Badge, Tag, Avatar, Button } from 'antd'; 
+import React, { useState, useEffect, useCallback } from 'react';
+import { Typography, Card, Space, List, Badge, Tag, Avatar, Button, Select, Spin } from 'antd';
 import {
   IconAlertOctagon,
   IconClipboardList,
@@ -20,6 +20,8 @@ import {
   IconShoppingBag,
   IconHelp, 
   IconCalendar,
+  IconChevronLeft,
+  IconChevronRight,
   IconCurrencyDollar,
   IconCertificate, 
   IconMedicineSyrup, 
@@ -28,7 +30,8 @@ import {
   IconUser
 } from '@tabler/icons-react';
 
-import { FinanceContext } from '../../contexts/FinanceContext';
+import { fetchBills } from '../../services/api';
+import dayjs from 'dayjs';
 import './styles/MobileFinanceFeed.css';
 
 const { Text, Title } = Typography;
@@ -59,7 +62,24 @@ const getCategoryIcon = (category, size = 16) => {
 };
 
 const MobileFinanceFeed = () => {
-  const financeContext = useContext(FinanceContext);
+
+  const [feedMonth, setFeedMonth] = useState(dayjs());
+  const [feedBills, setFeedBills] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const loadFeedBills = useCallback(async (target = feedMonth) => {
+    setLoading(true);
+    try {
+      const data = await fetchBills(target.format('YYYY-MM'), true);
+      setFeedBills(Array.isArray(data) ? data : []);
+    } catch {
+      setFeedBills([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [feedMonth]);
+
+  useEffect(() => { loadFeedBills(); }, [feedMonth, loadFeedBills]);
 
   const formatAmount = (value) =>
     Number(value || 0).toLocaleString('en-US', {
@@ -67,14 +87,17 @@ const MobileFinanceFeed = () => {
       maximumFractionDigits: 2,
     });
 
-  // Get the data we need for each section
-  // Past Due Bills
-  const pastDueBills = financeContext.pastDueBills || [];
+  // Get the data we need for each section using the locally loaded bills
+  const pastDueBills = feedBills.filter(bill => {
+    const dueDate = dayjs(bill.dueDate);
+    const isBillPrep = bill.category?.toLowerCase() === 'bill prep';
+    return !bill.isPaid && !isBillPrep && dueDate.isValid() && dueDate.isBefore(feedMonth.startOf('month'));
+  });
 
   // Bill Prep items
-  const billPrepItems = financeContext.bills?.filter(bill => 
+  const billPrepItems = feedBills.filter(bill =>
     bill.category?.toLowerCase() === 'bill prep' && !bill.isPaid
-  ) || [];
+  );
 
   // Group Bill Prep items by name
   const groupedBillPrepItems = billPrepItems.reduce((acc, bill) => {
@@ -97,18 +120,19 @@ const MobileFinanceFeed = () => {
   const billPrep = Object.values(groupedBillPrepItems);
 
   // Non-Recurring Bills
-  const nonRecurring = financeContext.bills?.filter(bill => !bill.isRecurring) || [];
+  const nonRecurring = feedBills.filter(bill => !bill.isRecurring);
 
   // Upcoming Bills (unpaid bills with future due dates)
   const today = new Date();
-  const upcoming = financeContext.bills?.filter(bill => 
+  const upcoming = feedBills.filter(bill =>
     !bill.isPaid && new Date(bill.dueDate) >= today
-  ) || [];
+  );
 
   // Recent Activity (paid bills, ordered by payment date)
-  const recentActivity = financeContext.bills?.filter(bill => 
-    bill.isPaid
-  ).sort((a, b) => new Date(b.dueDate) - new Date(a.dueDate)).slice(0, 10) || [];
+  const recentActivity = feedBills
+    .filter(bill => bill.isPaid)
+    .sort((a, b) => new Date(b.dueDate) - new Date(a.dueDate))
+    .slice(0, 10);
 
   // Calculate totals for each section
   const pastDueTotal = pastDueBills.reduce((sum, bill) => sum + Number(bill.amount || 0), 0);
@@ -242,7 +266,32 @@ const MobileFinanceFeed = () => {
   );
 
   return (
+    <Spin spinning={loading}>
     <div className="finance-feed-mobile">
+      <div style={{ display: 'flex', alignItems: 'center', marginBottom: 8 }}>
+        <Button
+          type="text"
+          icon={<IconChevronLeft size={16} />}
+          onClick={() => setFeedMonth(prev => prev.subtract(1, 'month'))}
+        />
+        <span style={{ flexGrow: 1, textAlign: 'center', fontWeight: 600 }}>
+          {feedMonth.format('MMMM')}
+        </span>
+        <Button
+          type="text"
+          icon={<IconChevronRight size={16} />}
+          onClick={() => setFeedMonth(prev => prev.add(1, 'month'))}
+        />
+        <Select
+          value={feedMonth.year()}
+          style={{ width: 80, marginLeft: 8 }}
+          onChange={year => setFeedMonth(prev => prev.year(year))}
+        >
+          {Array.from({ length: 5 }, (_, i) => dayjs().year() - 2 + i).map(y => (
+            <Select.Option key={y} value={y}>{y}</Select.Option>
+          ))}
+        </Select>
+      </div>
       <Title level={4} style={{ marginBottom: 16 }}>Finance Feed</Title>
 
       {/* Past Due Payments */}
@@ -581,6 +630,7 @@ const MobileFinanceFeed = () => {
         )}
       </SectionCard>
     </div>
+    </Spin>
   );
 };
 
