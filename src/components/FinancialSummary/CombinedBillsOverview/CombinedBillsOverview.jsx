@@ -244,13 +244,18 @@ const EnhancedBillRow = ({
                     {/* Top Row: Name and Amount */}
                     <div className="bill-main-row">
                         <Text strong className="bill-name">{record.name}</Text>
-                        <div className="bill-amount-wrapper">
-                            <Text strong className="bill-amount">
-                                ${Number(record.amount).toLocaleString('en-US', {
-                                    minimumFractionDigits: 2,
-                                    maximumFractionDigits: 2
-                                })}
-                            </Text>
+                        <div className="bill-amount-section">
+                            <div className="amount-and-due">
+                                <Text strong className="bill-amount">
+                                    ${Number(record.amount).toLocaleString('en-US', {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2
+                                    })}
+                                </Text>
+                                <div className="bill-due-status">
+                                    {renderDueIn(record.dueDate, record)}
+                                </div>
+                            </div>
                             <Dropdown
                                 menu={{
                                     items: [
@@ -273,11 +278,11 @@ const EnhancedBillRow = ({
                         </div>
                     </div>
 
-                    {/* Bottom Row: Category and Due Status */}
+                    {/* Bottom Row: Category */}
                     <div className="bill-details-row">
                         {record.category && (
-                            <Tag 
-                                style={{ 
+                            <Tag
+                                style={{
                                     margin: 0,
                                     backgroundColor: 'transparent',
                                     border: 'none',
@@ -302,9 +307,6 @@ const EnhancedBillRow = ({
                                 </span>
                             </Tag>
                         )}
-                        <div className="bill-due-status">
-                            {renderDueIn(record.dueDate, record)}
-                        </div>
                     </div>
                 </div>
             </div>
