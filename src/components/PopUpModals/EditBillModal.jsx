@@ -57,6 +57,19 @@ const UnifiedEditBillModal = ({ open, onCancel, onSubmit, bill }) => {
     isRecurring: false,
   });
 
+  const formatAmount = (value) =>
+    value !== null && value !== undefined && value !== ''
+      ? Number(value).toLocaleString('en-US', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })
+      : '';
+
+  const parseAmount = (value) => {
+    const numeric = parseFloat((value || '').toString().replace(/,/g, ''));
+    return Number.isNaN(numeric) ? '' : numeric;
+  };
+
   // Find category info
   const getCategoryInfo = (categoryName) => {
     return billCategories.find(cat => cat.name === categoryName) || billCategories[billCategories.length - 1];
@@ -211,11 +224,11 @@ const UnifiedEditBillModal = ({ open, onCancel, onSubmit, bill }) => {
                     </div>
                   </Form.Item>
 
-                  <Form.Item 
-                    name="amount" 
+                  <Form.Item
+                    name="amount"
                     rules={[
                       { required: true, message: 'Required' },
-                      { type: 'number', min: 0, message: 'Must be positive' }
+                      { type: 'number', min: 0.01, message: 'Must be positive' }
                     ]}
                     className="amount-input"
                   >
@@ -227,15 +240,16 @@ const UnifiedEditBillModal = ({ open, onCancel, onSubmit, bill }) => {
                           placeholder="0.00"
                           className="compact-amount"
                           variant="borderless"
-                          min={0}
+                          min={0.01}
                           step={0.01}
                           value={formData.amount}
                           onChange={(value) => {
-                            setFormData(prev => ({ ...prev, amount: value }));
-                            form.setFieldsValue({ amount: value });
+                            const parsed = parseAmount(value);
+                            setFormData(prev => ({ ...prev, amount: parsed }));
+                            form.setFieldsValue({ amount: parsed });
                           }}
-                          formatter={(value) => value ? Number(value).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : ''}
-                          parser={(value) => value?.replace(/,/g, '') || ''}
+                          formatter={formatAmount}
+                          parser={parseAmount}
                           controls={false}
                           inputMode="decimal"
                           pattern="[0-9]*"
