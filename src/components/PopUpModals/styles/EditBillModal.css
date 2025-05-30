@@ -6,7 +6,7 @@
 }
 
 .unified-edit-bill-modal .ant-modal-content {
-  border-radius: var(--radius-lg);
+  border-radius: 8px;
   overflow: hidden;
   box-shadow: var(--shadow-lg);
   background: white;
@@ -20,6 +20,8 @@
   background: white;
   display: flex;
   flex-direction: column;
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 .unified-header {
@@ -114,7 +116,8 @@
 }
 
 .input-row.options-row {
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  justify-content: flex-end;
   gap: var(--space-8);
 }
 
@@ -131,7 +134,7 @@
 
 .compact-input-wrapper {
   background: white;
-  border-radius: var(--radius-md);
+  border-radius: 8px;
   padding: var(--space-12);
   border: 1px solid var(--neutral-200);
   transition: border-color 0.2s ease;
@@ -172,6 +175,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-8);
+  border-radius: 8px;
 }
 
 .currency-compact {
@@ -331,6 +335,7 @@
   display: flex;
   gap: var(--space-8);
   background: var(--neutral-50);
+  border-radius: 0 0 8px 8px;
 }
 
 
@@ -371,7 +376,7 @@
   }
 
   .unified-edit-bill-modal .ant-modal-content {
-    border-radius: var(--radius-md);
+    border-radius: 8px;
     display: flex;
     flex-direction: column;
   }
@@ -398,17 +403,14 @@
     grid-template-columns: 1fr;
   }
   .input-row.options-row {
-     grid-template-columns: 1fr;
-  }
-
-  .input-row.options-row {
     flex-direction: column;
-    grid-template-columns: 1fr;
+    align-items: flex-end;
     gap: var(--space-8);
   }
 
   .unified-footer {
     padding-bottom: calc(var(--space-12) + env(safe-area-inset-bottom, 0px));
+    border-radius: 0 0 8px 8px;
   }
 }
 

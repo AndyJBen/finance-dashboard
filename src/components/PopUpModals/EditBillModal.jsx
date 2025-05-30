@@ -314,9 +314,6 @@ const UnifiedEditBillModal = ({ open, onCancel, onSubmit, bill }) => {
                 <div className="input-row options-row">
                   <Form.Item name="isPaid" valuePropName="checked" className="option-item">
                     <div className="compact-option">
-                      <div className="compact-option-icon paid">
-                        <IconCheck size={12} />
-                      </div>
                       <Text className="compact-option-text">Mark as Paid</Text>
                       <Checkbox
                         className="compact-checkbox"
@@ -332,9 +329,6 @@ const UnifiedEditBillModal = ({ open, onCancel, onSubmit, bill }) => {
 
                   <Form.Item name="isRecurring" valuePropName="checked" className="option-item">
                     <div className="compact-option">
-                      <div className="compact-option-icon recurring">
-                        <IconRepeat size={12} />
-                      </div>
                       <Text className="compact-option-text">Recurring Bill</Text>
                       <Checkbox
                         className="compact-checkbox"
