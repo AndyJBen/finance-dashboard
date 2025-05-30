@@ -128,11 +128,18 @@
     gap: var(--space-12); /* Was 12px */
 }
 
-/* Wrapper for amount and desktop action menu */
-.bill-amount-wrapper {
+/* Wrapper for amount, due date and action menu */
+.bill-amount-section {
     display: flex;
-    align-items: center;
+    justify-content: space-between;
+    align-items: flex-start;
     gap: var(--space-8);
+}
+
+.amount-and-due {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 }
 
 .bill-name {
@@ -186,6 +193,7 @@
 .bill-due-status {
     font-size: 12px; /* Specific font size, matches --font-size-xs (0.75rem) */
     font-weight: 500;
+    margin-top: 4px;
     padding: 2px 6px; /* Custom padding for small badge */
     border-radius: 6px; /* Custom radius. var(--border-radius-md) is 0.375rem (approx 5.6px to 6px depending on base font) */
     background-color: var(--neutral-100);
@@ -240,6 +248,7 @@
 
     .bill-due-status {
         font-size: 11px; /* Specific mobile font size */
+        margin-top: 4px;
         padding: 1px var(--space-4); /* Vertical 1px custom, horizontal uses variable */
     }
 

@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useRef } from 'react';
 import { Layout, Row, Col, Typography, Grid } from 'antd';
 import { FinanceContext } from './contexts/FinanceContext';
 import FinancialOverviewCards from './components/FinancialSummary/FinancialOverviewCards';
@@ -13,6 +13,7 @@ import SettingsPage from './components/Settings/SettingsPage';
 import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
 import MultiBillModal from './components/PopUpModals/MultiBillModal';
 import BankBalanceEditModal from './components/PopUpModals/BankBalanceEditModal';
+import isIos from './utils/isIos';
 
 const { Content } = Layout;
 const { Title } = Typography;
@@ -22,12 +23,21 @@ function MyApp() {
   const [selectedMenuKey, setSelected] = useState('dashboard');
   const screens = useBreakpoint();
   const isMobileView = !screens.md;
+  const layoutRef = useRef(null);
 
   useEffect(() => {
     if (isMobileView) {
       window.scrollTo(0, 0);
     }
   }, [isMobileView]);
+
+  useEffect(() => {
+    requestAnimationFrame(() => {
+      if (isIos() && layoutRef.current) {
+        layoutRef.current.scrollTop = 0;
+      }
+    });
+  }, []);
 
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
   const [editingBill, setEditingBill] = useState(null);
@@ -193,6 +203,7 @@ function MyApp() {
             padding: 0,
           }}
           className={isBillsListExpanded ? 'expanded-bills-list' : 'collapsed-bills-list'}
+          ref={layoutRef}
         >
           <Content style={contentStyle}>
             <div key={selectedMenuKey}
@@ -217,7 +228,7 @@ function MyApp() {
             open={isEditModalVisible}
             onCancel={handleModalClose}
             onSubmit={handleModalSubmit}
-            initialData={editingBill}
+            bill={editingBill}
           />
         )}
 

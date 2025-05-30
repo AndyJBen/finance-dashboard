@@ -244,42 +244,45 @@ const EnhancedBillRow = ({
                     {/* Top Row: Name and Amount */}
                     <div className="bill-main-row">
                         <Text strong className="bill-name">{record.name}</Text>
-                        <div className="bill-amount-wrapper">
-                            <Text strong className="bill-amount">
-                                ${Number(record.amount).toLocaleString('en-US', {
-                                    minimumFractionDigits: 2,
-                                    maximumFractionDigits: 2
-                                })}
-                            </Text>
-                            {!isMobile && (
-                                <Dropdown
-                                    menu={{
-                                        items: [
-                                            { key: 'edit', icon: <IconEdit size={16} />, label: 'Edit', onClick: () => onEdit(record) },
-                                            { key: 'delete', icon: <IconTrash size={16} />, label: 'Delete', danger: true, onClick: () => onDelete(record) }
-                                        ],
-                                        onClick: e => e.domEvent.stopPropagation()
-                                    }}
-                                    trigger={[ 'click' ]}
-                                    placement="bottomRight"
-                                >
-                                    <Button
-                                        className="bill-action-dropdown-trigger"
-                                        type="text"
-                                        size="small"
-                                        icon={<IconDotsVertical size={16} />}
-                                        onClick={e => e.stopPropagation()}
-                                    />
-                                </Dropdown>
-                            )}
+                        <div className="bill-amount-section">
+                            <div className="amount-and-due">
+                                <Text strong className="bill-amount">
+                                    ${Number(record.amount).toLocaleString('en-US', {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2
+                                    })}
+                                </Text>
+                                <div className="bill-due-status">
+                                    {renderDueIn(record.dueDate, record)}
+                                </div>
+                            </div>
+                            <Dropdown
+                                menu={{
+                                    items: [
+                                        { key: 'edit', icon: <IconEdit size={16} />, label: 'Edit', onClick: () => onEdit(record) },
+                                        { key: 'delete', icon: <IconTrash size={16} />, label: 'Delete', danger: true, onClick: () => onDelete(record) }
+                                    ],
+                                    onClick: e => e.domEvent.stopPropagation()
+                                }}
+                                trigger={[ 'click' ]}
+                                placement="bottomRight"
+                            >
+                                <Button
+                                    className="bill-action-dropdown-trigger"
+                                    type="text"
+                                    size="small"
+                                    icon={<IconDotsVertical size={16} />}
+                                    onClick={e => e.stopPropagation()}
+                                />
+                            </Dropdown>
                         </div>
                     </div>
 
-                    {/* Bottom Row: Category and Due Status */}
+                    {/* Bottom Row: Category */}
                     <div className="bill-details-row">
                         {record.category && (
-                            <Tag 
-                                style={{ 
+                            <Tag
+                                style={{
                                     margin: 0,
                                     backgroundColor: 'transparent',
                                     border: 'none',
@@ -304,9 +307,6 @@ const EnhancedBillRow = ({
                                 </span>
                             </Tag>
                         )}
-                        <div className="bill-due-status">
-                            {renderDueIn(record.dueDate, record)}
-                        </div>
                     </div>
                 </div>
             </div>
@@ -648,7 +648,7 @@ const CombinedBillsOverview = ({ style }) => {
                         open={isEditModalVisible}
                         onCancel={() => { setIsEditModalVisible(false); setEditingBill(null); }}
                         onSubmit={handleModalSubmit}
-                        initialData={editingBill}
+                        bill={editingBill}
                     />
                 )}
             </Card>
