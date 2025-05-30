@@ -44,34 +44,47 @@ const billCategories = [
     { name: "Other", icon: IconHelp, color: "#8E8E93", bgColor: "#F2F2F7" }
 ];
 
-const UnifiedEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
+const UnifiedEditBillModal = ({ open, onCancel, onSubmit, bill }) => {
   const [form] = Form.useForm();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [formData, setFormData] = useState({
+    name: '',
+    amount: null,
+    category: null,
+    dueDate: null,
+    isPaid: false,
+    isRecurring: false,
+  });
 
   // Find category info
   const getCategoryInfo = (categoryName) => {
     return billCategories.find(cat => cat.name === categoryName) || billCategories[billCategories.length - 1];
   };
 
-  // Initialize form when modal opens
+  // Initialize form when modal opens or bill changes
   useEffect(() => {
     if (open) {
-      if (initialData) {
-        form.setFieldsValue({
-          ...initialData,
-          dueDate: initialData.dueDate && dayjs(initialData.dueDate).isValid() ? dayjs(initialData.dueDate) : null,
-          isRecurring: Boolean(initialData.isRecurring),
-          isPaid: Object.prototype.hasOwnProperty.call(initialData, 'isPaid') ? Boolean(initialData.isPaid) : false,
-        });
-        setSelectedCategory(initialData.category);
+      if (bill) {
+        const normalized = {
+          name: bill.name || '',
+          amount: bill.amount,
+          category: bill.category || null,
+          dueDate: bill.dueDate && dayjs(bill.dueDate).isValid() ? dayjs(bill.dueDate) : null,
+          isRecurring: !!bill.isRecurring,
+          isPaid: Object.prototype.hasOwnProperty.call(bill, 'isPaid') ? !!bill.isPaid : false,
+        };
+        setFormData(normalized);
+        form.setFieldsValue(normalized);
+        setSelectedCategory(bill.category);
       } else {
-        form.resetFields();
-        form.setFieldsValue({ isPaid: false, isRecurring: false });
+        const defaults = { name: '', amount: null, category: null, dueDate: null, isPaid: false, isRecurring: false };
+        setFormData(defaults);
+        form.setFieldsValue(defaults);
         setSelectedCategory(null);
       }
     }
-  }, [open, initialData, form]);
+  }, [open, bill, form]);
 
   // Reset submitting state when modal closes
   useEffect(() => {
@@ -94,8 +107,8 @@ const UnifiedEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
         isRecurring: Boolean(values.isRecurring)
       };
       
-      if (initialData && initialData.id) {
-        formattedValues.id = initialData.id;
+      if (bill && bill.id) {
+        formattedValues.id = bill.id;
       }
 
       setIsSubmitting(true);
@@ -107,7 +120,7 @@ const UnifiedEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
     }
   };
 
-  const modalTitle = initialData ? 'Edit Bill' : 'Create New Bill';
+  const modalTitle = bill ? 'Edit Bill' : 'Create New Bill';
   const categoryInfo = getCategoryInfo(selectedCategory);
 
   return (
@@ -151,9 +164,9 @@ const UnifiedEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
               )}
               <div className="header-text">
                 <Text className="modal-title">{modalTitle}</Text>
-                {initialData && (
+                {bill && (
                   <Text className="current-bill-info">
-                    {initialData.name} • ${Number(initialData.amount || 0).toFixed(2)}
+                    {bill.name} • ${Number(bill.amount || 0).toFixed(2)}
                   </Text>
                 )}
               </div>
@@ -185,10 +198,16 @@ const UnifiedEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
                   >
                     <div className="compact-input-wrapper">
                       <Text className="compact-label">Name</Text>
-                      <Input 
+                      <Input
                         placeholder="Bill name"
                         className="compact-input"
                         variant="borderless"
+                        value={formData.name}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          setFormData(prev => ({ ...prev, name: value }));
+                          form.setFieldsValue({ name: value });
+                        }}
                       />
                     </div>
                   </Form.Item>
@@ -211,6 +230,11 @@ const UnifiedEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
                           variant="borderless"
                           min={0}
                           step={0.01}
+                          value={formData.amount}
+                          onChange={(value) => {
+                            setFormData(prev => ({ ...prev, amount: value }));
+                            form.setFieldsValue({ amount: value });
+                          }}
                           formatter={(value) => value ? Number(value).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : ''}
                           parser={(value) => value?.replace(/,/g, '') || ''}
                           controls={false}
@@ -232,7 +256,12 @@ const UnifiedEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
                         placeholder="Select category"
                         className="compact-select"
                         variant="borderless"
-                        onChange={setSelectedCategory}
+                        value={formData.category}
+                        onChange={(value) => {
+                          setSelectedCategory(value);
+                          setFormData(prev => ({ ...prev, category: value }));
+                          form.setFieldsValue({ category: value });
+                        }}
                         optionRender={(option) => {
                           const categoryInfo = getCategoryInfo(option.value);
                           return (
@@ -273,6 +302,11 @@ const UnifiedEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
                         variant="borderless"
                         suffixIcon={<IconCalendar size={14} />}
                         style={{ width: '100%' }}
+                        value={formData.dueDate}
+                        onChange={(date) => {
+                          setFormData(prev => ({ ...prev, dueDate: date }));
+                          form.setFieldsValue({ dueDate: date });
+                        }}
                       />
                     </div>
                   </Form.Item>
@@ -285,7 +319,15 @@ const UnifiedEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
                         <IconCheck size={12} />
                       </div>
                       <Text className="compact-option-text">Mark as Paid</Text>
-                      <Checkbox className="compact-checkbox" />
+                      <Checkbox
+                        className="compact-checkbox"
+                        checked={formData.isPaid}
+                        onChange={(e) => {
+                          const checked = e.target.checked;
+                          setFormData(prev => ({ ...prev, isPaid: checked }));
+                          form.setFieldsValue({ isPaid: checked });
+                        }}
+                      />
                     </div>
                   </Form.Item>
 
@@ -295,7 +337,15 @@ const UnifiedEditBillModal = ({ open, onCancel, onSubmit, initialData }) => {
                         <IconRepeat size={12} />
                       </div>
                       <Text className="compact-option-text">Recurring Bill</Text>
-                      <Checkbox className="compact-checkbox" />
+                      <Checkbox
+                        className="compact-checkbox"
+                        checked={formData.isRecurring}
+                        onChange={(e) => {
+                          const checked = e.target.checked;
+                          setFormData(prev => ({ ...prev, isRecurring: checked }));
+                          form.setFieldsValue({ isRecurring: checked });
+                        }}
+                      />
                     </div>
                   </Form.Item>
                 </div>

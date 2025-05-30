@@ -648,7 +648,7 @@ const CombinedBillsOverview = ({ style }) => {
                         open={isEditModalVisible}
                         onCancel={() => { setIsEditModalVisible(false); setEditingBill(null); }}
                         onSubmit={handleModalSubmit}
-                        initialData={editingBill}
+                        bill={editingBill}
                     />
                 )}
             </Card>
