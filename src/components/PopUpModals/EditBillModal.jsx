@@ -174,14 +174,13 @@ const UnifiedEditBillModal = ({ open, onCancel, onSubmit, bill }) => {
           </div>
         </div>
 
-        {/* Form Content */}
-        <div className="unified-content">
-          <Form
-            form={form}
-            layout="vertical"
-            name="billForm"
-            className="unified-form"
-          >
+        <Form
+          id="billForm"
+          form={form}
+          layout="vertical"
+          name="billForm"
+          className="unified-form"
+        >
             {/* Horizontal Layout Form */}
             <div className="form-section">
               <div className="section-header">
@@ -352,9 +351,7 @@ const UnifiedEditBillModal = ({ open, onCancel, onSubmit, bill }) => {
               </div>
             </div>
           </Form>
-        </div>
 
-        {/* Bottom Actions */}
         <div className="unified-footer">
           <Button 
             className="footer-cancel"
