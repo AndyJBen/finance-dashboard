@@ -237,6 +237,8 @@ const UnifiedEditBillModal = ({ open, onCancel, onSubmit, bill }) => {
                           formatter={(value) => value ? Number(value).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : ''}
                           parser={(value) => value?.replace(/,/g, '') || ''}
                           controls={false}
+                          inputMode="decimal"
+                          pattern="[0-9]*"
                         />
                       </div>
                     </div>

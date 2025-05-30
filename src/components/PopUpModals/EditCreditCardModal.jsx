@@ -133,6 +133,8 @@ const EditCreditCardModal = ({ open, onClose, onSubmit, cardData }) => {
             parser={(value) => value?.replace(/\$\s?|(,*)/g, '') ?? ''}
             style={{ width: '100%', height: inputHeight, borderRadius: '8px' }}
             placeholder="Enter the current balance"
+            inputMode="decimal"
+            pattern="[0-9]*"
           />
         </Form.Item>
       </Form>
