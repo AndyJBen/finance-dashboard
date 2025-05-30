@@ -131,7 +131,6 @@
 /* Wrapper for amount, due date and action menu */
 .bill-amount-section {
     display: flex;
-    justify-content: space-between;
     align-items: center;
     gap: var(--space-8);
 }
@@ -199,6 +198,7 @@
 .bill-category-tag {
     display: inline-flex;
     align-items: center;
+    white-space: nowrap;
 }
 
 /* Fade animation for bill completion */
@@ -249,6 +249,11 @@
         font-size: 11px; /* Specific mobile font size */
         margin-top: 4px;
         padding: 1px var(--space-4); /* Vertical 1px custom, horizontal uses variable */
+    }
+
+    .bill-amount-section {
+        flex-wrap: wrap;
+        gap: var(--space-4);
     }
 
     /* Slide actions mobile optimization */
