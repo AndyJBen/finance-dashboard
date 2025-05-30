@@ -128,6 +128,13 @@
     gap: var(--space-12); /* Was 12px */
 }
 
+/* Wrapper for amount and desktop action menu */
+.bill-amount-wrapper {
+    display: flex;
+    align-items: center;
+    gap: var(--space-8);
+}
+
 .bill-name {
     font-size: 14px; /* Specific font size, close to --font-size-sm (0.875rem) */
     font-weight: 600;
@@ -144,6 +151,30 @@
     color: var(--neutral-900);
     line-height: 1;
     flex-shrink: 0;
+}
+
+/* Three-dot menu trigger (desktop only) */
+
+.bill-action-dropdown-trigger.ant-btn {
+    padding: 4px;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--neutral-500);
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    opacity: 1;
+    pointer-events: auto;
+    transition: color 0.2s ease;
+    margin-left: var(--space-4);
+    flex-shrink: 0;
+}
+
+.bill-action-dropdown-trigger.ant-btn:hover {
+    color: var(--primary-600);
 }
 
 .bill-details-row {
@@ -202,6 +233,10 @@
 
     .bill-amount {
         font-size: 13px; /* Specific mobile font size */
+    }
+
+    .bill-action-dropdown-trigger {
+        display: none !important;
     }
 
     .bill-due-status {
