@@ -32,7 +32,7 @@ const FinancialOverviewSkeleton = () => {
     <Row gutter={[8, 8]} style={{ marginBottom: 8 }} className="financial-overview-skeleton">
       {/* Create 3 placeholder columns */}
       {[1, 2, 3].map(i => (
-        <Col xs={8} sm={8} md={8} key={i}>
+        <Col xs={24} sm={8} md={8} key={i}>
           {/* Use Ant Design Card and Skeleton components */}
           <Card style={cardStyle} bodyStyle={bodyStyle} className="skeleton-card">
             {/* Skeleton for the title/icon area */}
