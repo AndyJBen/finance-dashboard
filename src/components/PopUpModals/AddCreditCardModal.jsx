@@ -122,6 +122,8 @@ const AddCreditCardModal = ({ open, onClose, onSubmit }) => {
             parser={(value) => value?.replace(/\$\s?|(,*)/g, '') ?? ''}
             style={{ width: '100%', height: inputHeight, borderRadius: '8px' }}
             placeholder="0.00"
+            inputMode="decimal"
+            pattern="[0-9]*"
           />
         </Form.Item>
 

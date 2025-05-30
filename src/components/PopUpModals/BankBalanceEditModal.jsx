@@ -173,6 +173,8 @@ export default function BankBalanceEditModal({ open, onClose }) {
                 precision={2} // Allow up to 2 decimal places
                 controls={false} // Hide spinner controls
                 style={{ width: '100%' }} // Ensure input takes full width
+                inputMode="decimal"
+                pattern="[0-9]*"
               />
             </Form.Item>
 
