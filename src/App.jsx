@@ -217,7 +217,7 @@ function MyApp() {
             open={isEditModalVisible}
             onCancel={handleModalClose}
             onSubmit={handleModalSubmit}
-            initialData={editingBill}
+            bill={editingBill}
           />
         )}
 
