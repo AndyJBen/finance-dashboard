@@ -22,6 +22,7 @@ import EditBillModal from '../../PopUpModals/EditBillModal';
 import MultiBillModal from '../../PopUpModals/MultiBillModal';
 import DeleteBillModal from '../../PopUpModals/DeleteBillModal';
 import MonthlyProgressSummary from './MonthlyProgressSummary';
+import { fetchBills } from '../../../services/api';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import updateLocale from 'dayjs/plugin/updateLocale';
@@ -318,9 +319,18 @@ const EnhancedBillRow = ({
 // Main Component
 const CombinedBillsOverview = ({ style }) => {
     const {
-        loading, error, deleteBill, updateBill, updateBillWithFuture, addBill,
-        displayedMonth, goToPreviousMonth, goToNextMonth, bills,
+        deleteBill,
+        updateBill,
+        updateBillWithFuture,
+        addBill,
     } = useContext(FinanceContext);
+
+    // Local state for month navigation and bills so that changing months here
+    // does not affect the global FinanceContext month or bills
+    const [overviewMonth, setOverviewMonth] = useState(dayjs());
+    const [localBills, setLocalBills] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     
     const [isEditModalVisible, setIsEditModalVisible] = useState(false);
     const [isMultiModalVisible, setMultiModalVisible] = useState(false);
@@ -334,17 +344,36 @@ const CombinedBillsOverview = ({ style }) => {
     const screens = useBreakpoint();
     const isSmallScreen = screens.xs || screens.sm;
 
+    const loadBills = useCallback(async (targetMonth = overviewMonth) => {
+        setLoading(true);
+        setError(null);
+        try {
+            const monthString = targetMonth.format('YYYY-MM');
+            const fetched = await fetchBills(monthString, true);
+            setLocalBills(Array.isArray(fetched) ? fetched : []);
+        } catch (err) {
+            setLocalBills([]);
+            setError(err);
+        } finally {
+            setLoading(false);
+        }
+    }, [overviewMonth]);
+
+    useEffect(() => {
+        loadBills();
+    }, [overviewMonth, loadBills]);
+
     // Data processing logic
-    const validBills = Array.isArray(bills) ? bills : [];
-    const startOfDisplayedMonth = displayedMonth.startOf('month');
-    const endOfDisplayedMonth = displayedMonth.endOf('month');
+    const validBills = Array.isArray(localBills) ? localBills : [];
+    const startOfDisplayedMonth = overviewMonth.startOf('month');
+    const endOfDisplayedMonth = overviewMonth.endOf('month');
 
     const billsDueInDisplayedMonth = useMemo(() => {
         return validBills.filter(bill => {
             const dueDate = dayjs(bill.dueDate);
             return dueDate.isValid() && dueDate.isBetween(startOfDisplayedMonth, endOfDisplayedMonth, 'day', '[]');
         });
-    }, [validBills, displayedMonth, startOfDisplayedMonth, endOfDisplayedMonth]);
+    }, [validBills, overviewMonth, startOfDisplayedMonth, endOfDisplayedMonth]);
 
     const filteredBillsByPaidStatus = useMemo(() => {
         const allBills = showPaidBills 
@@ -395,6 +424,7 @@ const CombinedBillsOverview = ({ style }) => {
             await new Promise(res => setTimeout(res, 300));
         }
         await updateBill(record, { isPaid: markingAsPaid });
+        await loadBills();
         if (markingAsPaid) {
             setFadingBillId(null);
         }
@@ -416,6 +446,7 @@ const CombinedBillsOverview = ({ style }) => {
         if (result) {
             setIsEditModalVisible(false);
             setEditingBill(null);
+            await loadBills();
         }
     };
 
@@ -428,6 +459,7 @@ const CombinedBillsOverview = ({ style }) => {
         } finally {
             setDeleteModalVisible(false);
             setBillToDelete(null);
+            await loadBills();
         }
     };
 
@@ -435,12 +467,13 @@ const CombinedBillsOverview = ({ style }) => {
         if (!billToDelete) return;
         try {
             await deleteBill(billToDelete.id);
-            const futureBills = bills.filter(
+            const futureBills = localBills.filter(
                 b => b.isRecurring && b.name === billToDelete.name && dayjs(b.dueDate).isAfter(dayjs(billToDelete.dueDate))
             );
             for (const fb of futureBills) {
                 await deleteBill(fb.id);
             }
+            await loadBills();
         } catch (error) {
             message.error(`Deletion error: ${error.message || 'Unknown'}`);
         } finally {
@@ -554,9 +587,9 @@ const CombinedBillsOverview = ({ style }) => {
                     <div style={{ padding: 'var(--space-20)', paddingBottom: 'calc(var(--space-20) * 0.1)' }}>
                         <MonthlyProgressSummary
                             loading={loading}
-                            displayedMonth={displayedMonth}
-                            goToPreviousMonth={goToPreviousMonth}
-                            goToNextMonth={goToNextMonth}
+                            displayedMonth={overviewMonth}
+                            goToPreviousMonth={() => setOverviewMonth(prev => prev.subtract(1, 'month'))}
+                            goToNextMonth={() => setOverviewMonth(prev => prev.add(1, 'month'))}
                             totalBillsInDisplayedMonth={billsDueInDisplayedMonth.length}
                             paidBillsInDisplayedMonth={billsDueInDisplayedMonth.filter(b => b.isPaid).length}
                             totalAmountForAllBillsInDisplayedMonth={billsDueInDisplayedMonth.reduce((sum, bill) => (typeof bill.amount === 'number' ? sum + bill.amount : sum), 0)}
