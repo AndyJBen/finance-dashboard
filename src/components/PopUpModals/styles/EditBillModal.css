@@ -403,7 +403,6 @@
     grid-template-columns: 1fr;
   }
   .input-row.options-row {
-    flex-direction: column;
     align-items: flex-end;
     gap: var(--space-8);
   }
