@@ -251,27 +251,25 @@ const EnhancedBillRow = ({
                                     maximumFractionDigits: 2
                                 })}
                             </Text>
-                            {!isMobile && (
-                                <Dropdown
-                                    menu={{
-                                        items: [
-                                            { key: 'edit', icon: <IconEdit size={16} />, label: 'Edit', onClick: () => onEdit(record) },
-                                            { key: 'delete', icon: <IconTrash size={16} />, label: 'Delete', danger: true, onClick: () => onDelete(record) }
-                                        ],
-                                        onClick: e => e.domEvent.stopPropagation()
-                                    }}
-                                    trigger={[ 'click' ]}
-                                    placement="bottomRight"
-                                >
-                                    <Button
-                                        className="bill-action-dropdown-trigger"
-                                        type="text"
-                                        size="small"
-                                        icon={<IconDotsVertical size={16} />}
-                                        onClick={e => e.stopPropagation()}
-                                    />
-                                </Dropdown>
-                            )}
+                            <Dropdown
+                                menu={{
+                                    items: [
+                                        { key: 'edit', icon: <IconEdit size={16} />, label: 'Edit', onClick: () => onEdit(record) },
+                                        { key: 'delete', icon: <IconTrash size={16} />, label: 'Delete', danger: true, onClick: () => onDelete(record) }
+                                    ],
+                                    onClick: e => e.domEvent.stopPropagation()
+                                }}
+                                trigger={[ 'click' ]}
+                                placement="bottomRight"
+                            >
+                                <Button
+                                    className="bill-action-dropdown-trigger"
+                                    type="text"
+                                    size="small"
+                                    icon={<IconDotsVertical size={16} />}
+                                    onClick={e => e.stopPropagation()}
+                                />
+                            </Dropdown>
                         </div>
                     </div>
 
