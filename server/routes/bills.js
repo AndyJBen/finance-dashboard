@@ -30,30 +30,45 @@ const formatBillResponse = (row) => {
 
 const deleteFutureRecurringInstances = async (masterId, currentBillDueDate) => {
   const deleteQuery = `DELETE FROM bills WHERE master_id = $1 AND due_date > $2`;
+  console.log('deleteFutureRecurringInstances query:', deleteQuery, [masterId, currentBillDueDate]);
   await db.query(deleteQuery, [masterId, currentBillDueDate]);
 };
 
 const createRecurringInstance = async (masterId, baseBill, monthsToAdd) => {
   const targetDueDate = dayjs(baseBill.due_date || baseBill.dueDate).add(monthsToAdd, 'month');
   const targetMonth = targetDueDate.format('YYYY-MM');
-  const exists = await db.query(`SELECT 1 FROM bills WHERE master_id = $1 AND TO_CHAR(due_date, 'YYYY-MM') = $2`, [masterId, targetMonth]);
+  const existsQuery = `SELECT 1 FROM bills WHERE master_id = $1 AND TO_CHAR(due_date, 'YYYY-MM') = $2`;
+  console.log('createRecurringInstance existsQuery:', existsQuery, [masterId, targetMonth]);
+  const exists = await db.query(existsQuery, [masterId, targetMonth]);
   if (exists.rows.length === 0) {
-    await db.query(`INSERT INTO bills (master_id, amount, due_date, is_paid) VALUES ($1, $2, $3, false)`, [masterId, baseBill.amount, targetDueDate.format('YYYY-MM-DD')]);
+    const insertQuery = `INSERT INTO bills (master_id, amount, due_date, is_paid) VALUES ($1, $2, $3, false)`;
+    const params = [masterId, baseBill.amount, targetDueDate.format('YYYY-MM-DD')];
+    console.log('createRecurringInstance insertQuery:', insertQuery, params);
+    await db.query(insertQuery, params);
   }
 };
 
 const ensureInstancesUpToMonth = async (month) => {
   const targetDate = dayjs(`${month}-01`).endOf('month');
-  const masters = await db.query("SELECT id FROM bill_master WHERE recurrence_pattern = 'monthly'");
+  const mastersQuery = "SELECT id FROM bill_master WHERE recurrence_pattern = 'monthly'";
+  console.log('ensureInstancesUpToMonth mastersQuery:', mastersQuery);
+  const masters = await db.query(mastersQuery);
   for (const m of masters.rows) {
-    const latest = await db.query("SELECT amount, due_date FROM bills WHERE master_id = $1 ORDER BY due_date DESC LIMIT 1", [m.id]);
+    const latestQuery = "SELECT amount, due_date FROM bills WHERE master_id = $1 ORDER BY due_date DESC LIMIT 1";
+    console.log('ensureInstancesUpToMonth latestQuery:', latestQuery, [m.id]);
+    const latest = await db.query(latestQuery, [m.id]);
     if (latest.rows.length === 0) continue;
     let nextDate = dayjs(latest.rows[0].due_date).add(1, 'month');
     const amount = parseFloat(latest.rows[0].amount);
     while (nextDate.isSameOrBefore(targetDate, 'month')) {
-      const exists = await db.query("SELECT 1 FROM bills WHERE master_id = $1 AND TO_CHAR(due_date,'YYYY-MM') = $2", [m.id, nextDate.format('YYYY-MM')]);
+      const existsQuery = "SELECT 1 FROM bills WHERE master_id = $1 AND TO_CHAR(due_date,'YYYY-MM') = $2";
+      console.log('ensureInstancesUpToMonth existsQuery:', existsQuery, [m.id, nextDate.format('YYYY-MM')]);
+      const exists = await db.query(existsQuery, [m.id, nextDate.format('YYYY-MM')]);
       if (exists.rows.length === 0) {
-        await db.query("INSERT INTO bills (master_id, amount, due_date, is_paid) VALUES ($1, $2, $3, false)", [m.id, amount, nextDate.format('YYYY-MM-DD')]);
+        const insertQuery = "INSERT INTO bills (master_id, amount, due_date, is_paid) VALUES ($1, $2, $3, false)";
+        const params = [m.id, amount, nextDate.format('YYYY-MM-DD')];
+        console.log('ensureInstancesUpToMonth insertQuery:', insertQuery, params);
+        await db.query(insertQuery, params);
       }
       nextDate = nextDate.add(1, 'month');
     }
@@ -65,6 +80,7 @@ router.get('/', async (req, res) => {
   const view = req.query.view;
   if (!month || !/^\d{4}-\d{2}$/.test(month)) return res.status(400).json({ error: 'Invalid or missing month query parameter. Use YYYY-MM format.' });
   try {
+    console.log('GET /api/bills params:', { month, view });
     await ensureInstancesUpToMonth(month);
     const start = dayjs(month).startOf('month').format('YYYY-MM-DD');
     const end = dayjs(month).endOf('month').format('YYYY-MM-DD');
@@ -76,6 +92,7 @@ router.get('/', async (req, res) => {
       query = `SELECT b.*, m.name, m.category, m.recurrence_pattern FROM bills b JOIN bill_master m ON b.master_id = m.id WHERE b.due_date BETWEEN $1 AND $2 ORDER BY b.due_date ASC`;
       params = [start, end];
     }
+    console.log('GET /api/bills query:', query, params);
     const result = await db.query(query, params);
     console.log("Bills returned from DB:", result.rows);
     res.json(result.rows.map(formatBillResponse));
@@ -95,40 +112,44 @@ router.post('/', async (req, res) => {
   }
 
   const { name, amount, dueDate } = billData;
-  const category = billData.hasOwnProperty('category') ? billData.category : null;
+  let category = billData.category ?? null;
+  if (typeof category === 'string' && category.trim() === '') {
+    category = null;
+  }
   const isPaid = Boolean(billData.isPaid);
   const isRecurring = Boolean(billData.isRecurring);
   const recurrence = isRecurring ? 'monthly' : 'none';
 
   try {
     let masterId;
-    const existingMaster = await db.query(
-      `SELECT id, recurrence_pattern FROM bill_master WHERE name = $1 AND (category IS NOT DISTINCT FROM $2) LIMIT 1`,
-      [name.trim(), category]
-    );
+    const existingMasterQuery =
+      `SELECT id, recurrence_pattern FROM bill_master WHERE name = $1 AND (category IS NOT DISTINCT FROM $2) LIMIT 1`;
+    const existingParams = [name.trim(), category];
+    console.log('POST /api/bills existingMasterQuery:', existingMasterQuery, existingParams);
+    const existingMaster = await db.query(existingMasterQuery, existingParams);
 
     if (existingMaster.rows.length === 0) {
-      const masterRes = await db.query(
-        `INSERT INTO bill_master (name, category, recurrence_pattern)
-         VALUES ($1, $2, $3) RETURNING id`,
-        [name.trim(), category, recurrence]
-      );
+      const insertMasterQuery =
+        `INSERT INTO bill_master (name, category, recurrence_pattern) VALUES ($1, $2, $3) RETURNING id`;
+      const insertMasterParams = [name.trim(), category, recurrence];
+      console.log('POST /api/bills insertMasterQuery:', insertMasterQuery, insertMasterParams);
+      const masterRes = await db.query(insertMasterQuery, insertMasterParams);
       masterId = masterRes.rows[0].id;
     } else {
       masterId = existingMaster.rows[0].id;
       if (existingMaster.rows[0].recurrence_pattern !== recurrence) {
-        await db.query(
-          'UPDATE bill_master SET recurrence_pattern = $1 WHERE id = $2',
-          [recurrence, masterId]
-        );
+        const updateMasterQuery = 'UPDATE bill_master SET recurrence_pattern = $1 WHERE id = $2';
+        const updateParams = [recurrence, masterId];
+        console.log('POST /api/bills updateMasterQuery:', updateMasterQuery, updateParams);
+        await db.query(updateMasterQuery, updateParams);
       }
     }
 
-    const result = await db.query(
-      `INSERT INTO bills (master_id, amount, due_date, is_paid)
-       VALUES ($1, $2, $3, $4) RETURNING *`,
-      [masterId, amount, dueDate, isPaid]
-    );
+    const insertBillQuery =
+      `INSERT INTO bills (master_id, amount, due_date, is_paid) VALUES ($1, $2, $3, $4) RETURNING *`;
+    const insertBillParams = [masterId, amount, dueDate, isPaid];
+    console.log('POST /api/bills insertBillQuery:', insertBillQuery, insertBillParams);
+    const result = await db.query(insertBillQuery, insertBillParams);
 
     const createdBill = result.rows[0];
 
@@ -136,13 +157,14 @@ router.post('/', async (req, res) => {
       await createRecurringInstance(masterId, createdBill, 1);
     }
 
-    const joined = await db.query(
+    const joinedQuery =
       `SELECT b.*, m.name, m.category, m.recurrence_pattern
        FROM bills b
        JOIN bill_master m ON b.master_id = m.id
-       WHERE b.id = $1`,
-      [createdBill.id]
-    );
+       WHERE b.id = $1`;
+    const joinedParams = [createdBill.id];
+    console.log('POST /api/bills joinedQuery:', joinedQuery, joinedParams);
+    const joined = await db.query(joinedQuery, joinedParams);
 
     res.status(201).json(formatBillResponse(joined.rows[0]));
 
