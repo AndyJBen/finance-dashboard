@@ -80,7 +80,7 @@ router.get('/', async (req, res) => {
     console.log("Bills returned from DB:", result.rows);
     res.json(result.rows.map(formatBillResponse));
   } catch (err) {
-    console.error('Error fetching bills:', err);
+    console.error('GET /api/bills error:', err.stack || err);
     res.status(500).json({ error: 'Internal server error while fetching bills.' });
   }
 });
