@@ -94,7 +94,8 @@ router.post('/', async (req, res) => {
     return res.status(400).json({ error: validationError });
   }
 
-  const { name, amount, dueDate, category = null } = billData;
+  const { name, amount, dueDate } = billData;
+  const category = billData.hasOwnProperty('category') ? billData.category : null;
   const isPaid = Boolean(billData.isPaid);
   const isRecurring = Boolean(billData.isRecurring);
   const recurrence = isRecurring ? 'monthly' : 'none';
@@ -102,7 +103,7 @@ router.post('/', async (req, res) => {
   try {
     let masterId;
     const existingMaster = await db.query(
-      `SELECT id, recurrence_pattern FROM bill_master WHERE name = $1 AND ((category IS NULL AND $2 IS NULL) OR category = $2) LIMIT 1`,
+      `SELECT id, recurrence_pattern FROM bill_master WHERE name = $1 AND (category IS NOT DISTINCT FROM $2) LIMIT 1`,
       [name.trim(), category]
     );
 
