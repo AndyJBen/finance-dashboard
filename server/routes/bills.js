@@ -85,4 +85,70 @@ router.get('/', async (req, res) => {
   }
 });
 
+router.post('/', async (req, res) => {
+  const billData = req.body;
+  console.log('POST /api/bills payload:', billData);
+
+  const validationError = validateBillData(billData);
+  if (validationError) {
+    return res.status(400).json({ error: validationError });
+  }
+
+  const { name, amount, dueDate, category = null } = billData;
+  const isPaid = Boolean(billData.isPaid);
+  const isRecurring = Boolean(billData.isRecurring);
+  const recurrence = isRecurring ? 'monthly' : 'none';
+
+  try {
+    let masterId;
+    const existingMaster = await db.query(
+      `SELECT id, recurrence_pattern FROM bill_master WHERE name = $1 AND ((category IS NULL AND $2 IS NULL) OR category = $2) LIMIT 1`,
+      [name.trim(), category]
+    );
+
+    if (existingMaster.rows.length === 0) {
+      const masterRes = await db.query(
+        `INSERT INTO bill_master (name, category, recurrence_pattern)
+         VALUES ($1, $2, $3) RETURNING id`,
+        [name.trim(), category, recurrence]
+      );
+      masterId = masterRes.rows[0].id;
+    } else {
+      masterId = existingMaster.rows[0].id;
+      if (existingMaster.rows[0].recurrence_pattern !== recurrence) {
+        await db.query(
+          'UPDATE bill_master SET recurrence_pattern = $1 WHERE id = $2',
+          [recurrence, masterId]
+        );
+      }
+    }
+
+    const result = await db.query(
+      `INSERT INTO bills (master_id, amount, due_date, is_paid)
+       VALUES ($1, $2, $3, $4) RETURNING *`,
+      [masterId, amount, dueDate, isPaid]
+    );
+
+    const createdBill = result.rows[0];
+
+    if (isRecurring) {
+      await createRecurringInstance(masterId, createdBill, 1);
+    }
+
+    const joined = await db.query(
+      `SELECT b.*, m.name, m.category, m.recurrence_pattern
+       FROM bills b
+       JOIN bill_master m ON b.master_id = m.id
+       WHERE b.id = $1`,
+      [createdBill.id]
+    );
+
+    res.status(201).json(formatBillResponse(joined.rows[0]));
+
+  } catch (err) {
+    console.error('POST /api/bills error:', err.stack || err);
+    res.status(500).json({ error: 'Internal server error while creating bill.' });
+  }
+});
+
 module.exports = router;
