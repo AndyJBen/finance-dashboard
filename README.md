@@ -35,3 +35,6 @@ initialized by running:
 ```
 node server/init-db.js
 ```
+
+If upgrading from a previous version run the migration scripts found in
+`server/migrations` on your database before starting the server.
