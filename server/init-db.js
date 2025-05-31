@@ -16,16 +16,26 @@ async function init() {
     console.log('✔ app_settings schema ensured');
 
     await pool.query(`
+      CREATE TABLE IF NOT EXISTS bill_master (
+        id SERIAL PRIMARY KEY,
+        name TEXT NOT NULL,
+        category TEXT,
+        recurrence_pattern TEXT DEFAULT 'none',
+        created_at TIMESTAMP DEFAULT NOW(),
+        updated_at TIMESTAMP DEFAULT NOW()
+      );
+    `);
+    console.log('✔ bill_master schema ensured');
+
+    await pool.query(`
       CREATE TABLE IF NOT EXISTS bills (
-        id           SERIAL PRIMARY KEY,
-        name         TEXT    NOT NULL,
-        amount       NUMERIC NOT NULL,
-        due_date     DATE    NOT NULL,
-        category     TEXT,
-        is_paid      BOOLEAN DEFAULT FALSE,
-        is_recurring BOOLEAN DEFAULT FALSE,
-        created_at   TIMESTAMP DEFAULT NOW(),
-        updated_at   TIMESTAMP DEFAULT NOW()
+        id         SERIAL PRIMARY KEY,
+        master_id  INT NOT NULL REFERENCES bill_master(id) ON DELETE CASCADE,
+        amount     NUMERIC NOT NULL,
+        due_date   DATE    NOT NULL,
+        is_paid    BOOLEAN DEFAULT FALSE,
+        created_at TIMESTAMP DEFAULT NOW(),
+        updated_at TIMESTAMP DEFAULT NOW()
       );
     `);
     console.log('✔ bills schema ensured');

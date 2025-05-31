@@ -17,82 +17,88 @@ const validateBillData = (data) => {
 
 const formatBillResponse = (row) => {
     if (!row) return null;
-    // Ensure boolean values are returned correctly
     return {
         id: row.id,
+        masterId: row.master_id,
         name: row.name,
         amount: parseFloat(row.amount),
         dueDate: row.due_date ? dayjs(row.due_date).format('YYYY-MM-DD') : null,
         category: row.category,
-        isPaid: Boolean(row.is_paid), // Explicitly cast to boolean
-        isRecurring: Boolean(row.is_recurring), // Explicitly cast to boolean
+        isPaid: Boolean(row.is_paid),
+        isRecurring: row.recurrence_pattern !== 'none',
         createdAt: row.created_at,
         updatedAt: row.updated_at
-        // Note: We are not adding 'source: projected' here as this backend
-        // logic creates *actual* records for the next month.
     };
 };
 
 // Helper function to delete future recurring instances
-const deleteFutureRecurringInstances = async (billName, billAmount, currentBillDueDate) => {
-    console.log(`[Helper] Deleting future recurring instances for "${billName}" after ${currentBillDueDate}`);
+const deleteFutureRecurringInstances = async (masterId, currentBillDueDate) => {
+    console.log(`[Helper] Deleting future instances for master ${masterId} after ${currentBillDueDate}`);
     try {
         const deleteFutureQuery = `
             DELETE FROM bills
-            WHERE name = $1
-              AND amount = $2
-              AND is_recurring = true
-              AND due_date > $3`;
-        const deleteParams = [billName, billAmount, currentBillDueDate];
+            WHERE master_id = $1
+              AND due_date > $2`;
+        const deleteParams = [masterId, currentBillDueDate];
         const deleteResult = await db.query(deleteFutureQuery, deleteParams);
-        console.log(`[Helper] Deleted ${deleteResult.rowCount} future recurring instance(s) for "${billName}".`);
-        return deleteResult.rowCount; // Return count of deleted items
-    } catch (deleteError) {
-        console.error(`[Helper] Error deleting future recurring instances for "${billName}":`, deleteError);
-        throw deleteError; // Re-throw the error to be caught by the caller
+        console.log(`[Helper] Deleted ${deleteResult.rowCount} future instance(s) for master ${masterId}.`);
+        return deleteResult.rowCount;
+    } catch (err) {
+        console.error(`[Helper] Error deleting future instances for master ${masterId}:`, err);
+        throw err;
     }
 };
 
 // Helper function to create the next recurring instance
 // Used by POST (for N+1) and PATCH (for N+2 or N+1 if newly recurring)
-const createRecurringInstance = async (baseBill, monthsToAdd) => {
+const createRecurringInstance = async (masterId, baseBill, monthsToAdd) => {
     const targetDueDate = dayjs(baseBill.due_date || baseBill.dueDate).add(monthsToAdd, 'month');
     const targetMonthString = targetDueDate.format('YYYY-MM');
-    const billName = baseBill.name;
-    const billAmount = baseBill.amount;
-    const billCategory = baseBill.category;
 
-    console.log(`[Helper] Checking/creating recurring instance for "${billName}" for ${targetMonthString} (+${monthsToAdd} months)`);
+    console.log(`[Helper] Checking/creating recurring instance for master ${masterId} for ${targetMonthString}`);
 
     try {
-        // Check if an instance already exists for the target month
         const checkExistingQuery = `
             SELECT id FROM bills
-            WHERE name = $1
-              AND amount = $2
-              AND is_recurring = true
-              AND TO_CHAR(due_date, 'YYYY-MM') = $3`;
-        const checkResult = await db.query(checkExistingQuery, [billName, billAmount, targetMonthString]);
+            WHERE master_id = $1
+              AND TO_CHAR(due_date, 'YYYY-MM') = $2`;
+        const checkResult = await db.query(checkExistingQuery, [masterId, targetMonthString]);
 
         if (checkResult.rows.length === 0) {
-            console.log(`[Helper] Creating +${monthsToAdd} month recurring instance for "${billName}" for ${targetMonthString}`);
             await db.query(
-                `INSERT INTO bills (name, amount, due_date, category, is_paid, is_recurring)
-                 VALUES ($1, $2, $3, $4, $5, $6)`,
-                [billName, billAmount, targetDueDate.format('YYYY-MM-DD'), billCategory, false, true]
+                `INSERT INTO bills (master_id, amount, due_date, is_paid)
+                 VALUES ($1, $2, $3, $4)`,
+                [masterId, baseBill.amount, targetDueDate.format('YYYY-MM-DD'), false]
             );
-            return true; // Indicate creation happened
+            return true;
         } else {
-            console.log(`[Helper] +${monthsToAdd} month recurring instance for "${billName}" for ${targetMonthString} already exists. Skipping creation.`);
-            return false; // Indicate creation was skipped
+            console.log(`[Helper] Instance for master ${masterId} in ${targetMonthString} already exists.`);
+            return false;
         }
-    } catch (recurringError) {
-        console.error(`[Helper] Error creating +${monthsToAdd} month recurring instance for "${billName}":`, recurringError);
-        // Log the error but don't necessarily fail the primary operation (POST/PATCH)
+    } catch (err) {
+        console.error(`[Helper] Error creating instance for master ${masterId}:`, err);
         return false;
     }
 };
 
+
+const ensureInstancesUpToMonth = async (targetMonth) => {
+    const targetDate = dayjs(targetMonth + '-01').endOf('month');
+    const mastersRes = await db.query("SELECT id FROM bill_master WHERE recurrence_pattern = 'monthly'");
+    for (const m of mastersRes.rows) {
+        const latestRes = await db.query("SELECT amount, due_date FROM bills WHERE master_id = $1 ORDER BY due_date DESC LIMIT 1", [m.id]);
+        if (latestRes.rows.length === 0) continue;
+        let nextDate = dayjs(latestRes.rows[0].due_date).add(1, 'month');
+        const amount = parseFloat(latestRes.rows[0].amount);
+        while (nextDate.isSameOrBefore(targetDate, 'month')) {
+            const exist = await db.query("SELECT 1 FROM bills WHERE master_id=$1 AND TO_CHAR(due_date,'YYYY-MM')=$2", [m.id, nextDate.format('YYYY-MM')]);
+            if (exist.rows.length === 0) {
+                await db.query("INSERT INTO bills (master_id, amount, due_date, is_paid) VALUES ($1,$2,$3,false)", [m.id, amount, nextDate.format('YYYY-MM-DD')]);
+            }
+            nextDate = nextDate.add(1, 'month');
+        }
+    }
+};
 
 // --- End Helper Functions ---
 
@@ -107,6 +113,7 @@ router.get('/', async (req, res) => {
     return res.status(400).json({ error: 'Invalid or missing month query parameter. Use YYYY-MM format.' });
   }
   try {
+    await ensureInstancesUpToMonth(monthString);
     const startDate = dayjs(monthString).startOf('month').format('YYYY-MM-DD');
     const endDate = dayjs(monthString).endOf('month').format('YYYY-MM-DD');
     let queryText;
@@ -117,24 +124,27 @@ router.get('/', async (req, res) => {
         // Fetch bills due in the specified month OR overdue bills from before this month
         console.log(`Backend fetching bills for month ${monthString} AND all prior overdue bills.`);
         queryText = `
-            SELECT * FROM bills
+            SELECT b.*, m.name, m.category, m.recurrence_pattern
+            FROM bills b
+            JOIN bill_master m ON b.master_id = m.id
             WHERE
-                (due_date >= $1 AND due_date <= $2) -- Bills due in the month
+                (b.due_date >= $1 AND b.due_date <= $2)
                 OR
-                (due_date < $1 AND is_paid = false) -- Overdue bills
+                (b.due_date < $1 AND b.is_paid = false)
             ORDER BY
-                -- Prioritize overdue bills first, then sort by due date
-                CASE WHEN due_date < $1 AND is_paid = false THEN 0 ELSE 1 END,
-                due_date ASC;
+                CASE WHEN b.due_date < $1 AND b.is_paid = false THEN 0 ELSE 1 END,
+                b.due_date ASC;
         `;
         queryParams = [startDate, endDate];
     } else {
         // Default: Fetch only bills due within the specified month
         console.log(`Backend fetching bills for month ${monthString} only.`);
         queryText = `
-            SELECT * FROM bills
-            WHERE due_date >= $1 AND due_date <= $2
-            ORDER BY due_date ASC;
+            SELECT b.*, m.name, m.category, m.recurrence_pattern
+            FROM bills b
+            JOIN bill_master m ON b.master_id = m.id
+            WHERE b.due_date >= $1 AND b.due_date <= $2
+            ORDER BY b.due_date ASC;
         `;
         queryParams = [startDate, endDate];
     }
@@ -169,22 +179,53 @@ router.post('/', async (req, res) => {
 
   try {
     // Insert the primary bill record
-    const result = await db.query(
-      `INSERT INTO bills (name, amount, due_date, category, is_paid, is_recurring)
-       VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
-      [name.trim(), amount, dueDate, category, isPaid, isRecurring]
+    // Find or create master record
+    const recurrence = isRecurring ? 'monthly' : 'none';
+    let masterId;
+    const existingMaster = await db.query(
+      `SELECT id, recurrence_pattern FROM bill_master WHERE name = $1 AND (
+          (category IS NULL AND $2 IS NULL) OR category = $2
+       ) LIMIT 1`,
+      [name.trim(), category]
     );
-    const createdBill = result.rows[0]; // Get the newly created bill details
+    if (existingMaster.rows.length === 0) {
+      const masterRes = await db.query(
+        `INSERT INTO bill_master (name, category, recurrence_pattern)
+         VALUES ($1, $2, $3) RETURNING id`,
+        [name.trim(), category, recurrence]
+      );
+      masterId = masterRes.rows[0].id;
+    } else {
+      masterId = existingMaster.rows[0].id;
+      if (existingMaster.rows[0].recurrence_pattern !== recurrence) {
+        await db.query(
+          'UPDATE bill_master SET recurrence_pattern = $1 WHERE id = $2',
+          [recurrence, masterId]
+        );
+      }
+    }
+
+    const result = await db.query(
+      `INSERT INTO bills (master_id, amount, due_date, is_paid)
+       VALUES ($1, $2, $3, $4) RETURNING *`,
+      [masterId, amount, dueDate, isPaid]
+    );
+    const createdBill = result.rows[0];
 
     // >> START: Create N+1 recurring instance if needed <<
-    if (createdBill.is_recurring) {
-      // Use the helper function to create the next month's instance
-      await createRecurringInstance(createdBill, 1); // Add 1 month
+    if (isRecurring) {
+      await createRecurringInstance(masterId, createdBill, 1);
     }
     // >> END: Create N+1 recurring instance <<
 
-    // Send response with the initially created bill
-    res.status(201).json(formatBillResponse(createdBill));
+    const joined = await db.query(
+      `SELECT b.*, m.name, m.category, m.recurrence_pattern
+       FROM bills b
+       JOIN bill_master m ON b.master_id = m.id
+       WHERE b.id = $1`,
+      [createdBill.id]
+    );
+    res.status(201).json(formatBillResponse(joined.rows[0]));
 
   } catch (err) {
     console.error('Error adding bill to DB:', err);
@@ -211,11 +252,16 @@ router.patch('/:id', async (req, res) => {
   // Fetch original bill data to compare changes
   let originalBill;
   try {
-      const originalResult = await db.query('SELECT * FROM bills WHERE id = $1', [billIdInt]);
+      const originalResult = await db.query(
+        `SELECT b.*, m.name, m.category, m.recurrence_pattern
+         FROM bills b
+         JOIN bill_master m ON b.master_id = m.id
+         WHERE b.id = $1`,
+        [billIdInt]
+      );
       if (originalResult.rows.length === 0) {
           return res.status(404).json({ error: 'Bill not found.' });
       }
-      // Use formatter to ensure consistent boolean types for comparison
       originalBill = formatBillResponse(originalResult.rows[0]);
       console.log(`Original bill data (formatted) for ID ${id}:`, originalBill);
   } catch(err) {
@@ -224,73 +270,83 @@ router.patch('/:id', async (req, res) => {
   }
 
   // Build Update Query Dynamically
-  const keyMapping = { dueDate: 'due_date', isPaid: 'is_paid', isRecurring: 'is_recurring' };
+  const billFieldMap = { dueDate: 'due_date', isPaid: 'is_paid', amount: 'amount' };
+  const masterFieldMap = { name: 'name', category: 'category', isRecurring: 'recurrence_pattern' };
   const allowedUpdates = Object.keys(updates).filter(key => key !== 'id' && key !== 'createdAt' && key !== 'updatedAt');
   if (allowedUpdates.length === 0) {
       return res.status(400).json({ error: 'No update data provided.' });
   }
 
-  const setClauses = [];
-  const values = [];
+  const billSet = [];
+  const billValues = [];
+  const masterSet = [];
+  const masterValues = [];
   let valueIndex = 1;
 
-  // Iterate through provided updates, validate, and build query parts
   allowedUpdates.forEach(key => {
-      const dbKey = keyMapping[key] || key; // Map camelCase to snake_case if needed
       let value = updates[key];
 
-      // --- Type validation/conversion ---
-      if (key === 'isPaid' || key === 'isRecurring') {
-          value = Boolean(value); // Ensure boolean
-          console.log(`Processing update for key: ${key}, raw value: ${updates[key]}, converted value: ${value}`);
-      } else if (key === 'amount') {
-          value = Number(value);
-          if (isNaN(value) || value < 0) {
-              console.warn(`Skipping invalid amount update for ID ${id}`);
-              return; // Skip this field if invalid
+      if (billFieldMap[key]) {
+          if (key === 'isPaid') {
+              value = Boolean(value);
+          } else if (key === 'amount') {
+              value = Number(value);
+              if (isNaN(value) || value < 0) return;
+          } else if (key === 'dueDate') {
+              if (value !== null && !dayjs(value).isValid()) return;
+              value = value ? dayjs(value).format('YYYY-MM-DD') : null;
           }
-      } else if (key === 'dueDate') {
-          if (value !== null && !dayjs(value).isValid()) {
-              console.warn(`Skipping invalid dueDate update for ID ${id}`);
-              return; // Skip this field if invalid
+          billSet.push(`${billFieldMap[key]} = $${valueIndex}`);
+          billValues.push(value);
+          valueIndex++;
+      } else if (masterFieldMap[key]) {
+          if (key === 'name') {
+              value = String(value).trim();
+              if (value === '') return;
+          } else if (key === 'isRecurring') {
+              value = value ? 'monthly' : 'none';
           }
-          value = value ? dayjs(value).format('YYYY-MM-DD') : null;
-      } else if (key === 'name') {
-          value = String(value).trim();
-          if (value === '') {
-              console.warn(`Skipping empty name update for ID ${id}`);
-              return; // Skip this field if invalid
-          }
+          masterSet.push(`${masterFieldMap[key]} = $${valueIndex}`);
+          masterValues.push(value);
+          valueIndex++;
       }
-      // Add other type checks as needed (e.g., category)
-
-      setClauses.push(`${dbKey} = $${valueIndex}`);
-      values.push(value); // Add the potentially converted value
-      valueIndex++;
   });
 
-  // If no valid fields remain after validation
-  if (setClauses.length === 0) {
+  if (billSet.length === 0 && masterSet.length === 0) {
       return res.status(400).json({ error: 'Invalid update data provided (after validation).' });
   }
 
-  // Construct the final UPDATE query
-  const updateQuery = `UPDATE bills SET ${setClauses.join(', ')} WHERE id = $${valueIndex} RETURNING *`;
-  const queryParams = [...values, billIdInt]; // Add bill ID for the WHERE clause
+  let updatedRow;
+  if (billSet.length > 0) {
+      const updateQuery = `UPDATE bills SET ${billSet.join(', ')} WHERE id = $${valueIndex} RETURNING *`;
+      const queryParams = [...billValues, billIdInt];
+      console.log(`Executing update for bill ID ${id}:`, updateQuery, queryParams);
+      const result = await db.query(updateQuery, queryParams);
+      if (result.rows.length === 0) {
+          return res.status(404).json({ error: 'Bill not found during update.' });
+      }
+      updatedRow = result.rows[0];
+  } else {
+      const resFetch = await db.query('SELECT * FROM bills WHERE id = $1', [billIdInt]);
+      updatedRow = resFetch.rows[0];
+  }
+
+  if (masterSet.length > 0) {
+      const masterQuery = `UPDATE bill_master SET ${masterSet.join(', ')} WHERE id = $${masterValues.length + 1}`;
+      const masterParams = [...masterValues, originalBill.masterId];
+      await db.query(masterQuery, masterParams);
+  }
 
   try {
-    // Execute the main update query
-    console.log(`Executing update for bill ID ${id}:`, updateQuery, queryParams);
-    const result = await db.query(updateQuery, queryParams);
-
-    // Check if the update affected any row (should affect 1)
-    if (result.rows.length === 0) {
-        // This case might happen if the ID was valid initially but deleted concurrently
-        return res.status(404).json({ error: 'Bill not found during update.' });
-    }
-
-    // Get the fully updated bill data from the RETURNING clause
-    const updatedBillFromDb = formatBillResponse(result.rows[0]);
+    // Fetch the joined record after updates
+    const joinedUpdated = await db.query(
+      `SELECT b.*, m.name, m.category, m.recurrence_pattern
+       FROM bills b
+       JOIN bill_master m ON b.master_id = m.id
+       WHERE b.id = $1`,
+      [billIdInt]
+    );
+    const updatedBillFromDb = formatBillResponse(joinedUpdated.rows[0]);
     console.log(`Successfully updated bill ID ${id}. New data (formatted):`, updatedBillFromDb);
 
     // --- >> START: Modified Recurring Bill Logic << ---
@@ -302,11 +358,9 @@ router.patch('/:id', async (req, res) => {
 
     // 1. Create future instance?
     if (justMarkedPaid && isNowRecurring) {
-        // If paid and still recurring, create the N+2 instance
-        await createRecurringInstance(updatedBillFromDb, 2); // Add 2 months
+        await createRecurringInstance(updatedBillFromDb.masterId, updatedBillFromDb, 2);
     } else if (justMarkedRecurring) {
-        // If newly marked as recurring, create the N+1 instance
-        await createRecurringInstance(updatedBillFromDb, 1); // Add 1 month
+        await createRecurringInstance(updatedBillFromDb.masterId, updatedBillFromDb, 1);
     } else if (justMarkedPaid && !isNowRecurring) {
         console.log(`Bill ID ${id} marked paid but IS NOT recurring. Skipping next instance creation.`);
     }
@@ -314,7 +368,7 @@ router.patch('/:id', async (req, res) => {
     // 2. Delete future instances?
     if (justUnmarkedRecurring) {
         // If unmarked as recurring, delete all future instances
-        await deleteFutureRecurringInstances(originalBill.name, originalBill.amount, originalBill.dueDate);
+        await deleteFutureRecurringInstances(originalBill.masterId, originalBill.dueDate);
     }
     // --- << END: Modified Recurring Bill Logic << ---
 
@@ -343,7 +397,10 @@ router.delete('/:id', async (req, res) => {
   try {
     // --- >> START: Fetch bill details before deleting << ---
     const fetchResult = await db.query(
-      'SELECT name, amount, due_date, is_recurring FROM bills WHERE id = $1',
+      `SELECT b.master_id, b.amount, b.due_date, m.recurrence_pattern
+       FROM bills b
+       JOIN bill_master m ON b.master_id = m.id
+       WHERE b.id = $1`,
       [billIdInt]
     );
 
@@ -356,11 +413,10 @@ router.delete('/:id', async (req, res) => {
     // --- << END: Fetch bill details << ---
 
     // --- >> START: Delete future instances if recurring << ---
-    if (billToDelete.is_recurring) {
+    if (billToDelete.recurrence_pattern !== 'none') {
       console.log(`Bill ID ${id} was recurring. Deleting future instances before final delete.`);
       try {
-        // Use the helper function to delete future instances
-        await deleteFutureRecurringInstances(billToDelete.name, billToDelete.amount, billToDelete.due_date);
+        await deleteFutureRecurringInstances(billToDelete.master_id, billToDelete.due_date);
       } catch (deleteError) {
         // Log error but proceed with deleting the main bill unless critical
         console.error(`Error during future instance cleanup for bill ID ${id}:`, deleteError);
@@ -372,7 +428,7 @@ router.delete('/:id', async (req, res) => {
 
     // --- >> START: Delete the requested bill itself << ---
     console.log(`Backend: Executing final DELETE query for bill ID: ${id}`);
-    const deletePrimaryResult = await db.query('DELETE FROM bills WHERE id = $1 RETURNING id, name', [billIdInt]);
+    const deletePrimaryResult = await db.query('DELETE FROM bills WHERE id = $1 RETURNING id', [billIdInt]);
 
     // Check if the primary delete was successful (should be, as we found it earlier)
     if (deletePrimaryResult.rowCount === 0) {
@@ -381,7 +437,7 @@ router.delete('/:id', async (req, res) => {
          return res.status(500).json({ error: 'Internal server error during final deletion step.' });
     }
 
-    console.log(`Backend: Successfully deleted bill ID: ${id}, Name: ${deletePrimaryResult.rows[0]?.name}`);
+    console.log(`Backend: Successfully deleted bill ID: ${id}`);
     // Respond with 204 No Content on successful deletion
     res.status(204).send();
     // --- << END: Delete the requested bill itself << ---
