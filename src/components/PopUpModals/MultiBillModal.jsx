@@ -24,7 +24,7 @@ const billCategories = [
   "Bill Prep", "Auto", "Other"
 ];
 
-export default function MultiBillModal({ open, onClose }) {
+export default function MultiBillModal({ open, onClose, onBillsAdded }) {
   const [form] = Form.useForm();
   const { addBill, displayedMonth, loadBillsForMonth } = useContext(FinanceContext);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -83,7 +83,15 @@ export default function MultiBillModal({ open, onClose }) {
       if (loadBillsForMonth) {
         await loadBillsForMonth(displayedMonth);
       }
-      
+
+      if (onBillsAdded) {
+        try {
+          await onBillsAdded();
+        } catch (callbackErr) {
+          console.error('onBillsAdded callback failed:', callbackErr);
+        }
+      }
+
       form.resetFields();
       onClose();
     } catch (errInfo) {

@@ -726,6 +726,7 @@ const CombinedBillsOverview = ({ style }) => {
                 <MultiBillModal
                     open={isMultiModalVisible}
                     onClose={() => setMultiModalVisible(false)}
+                    onBillsAdded={loadBills}
                 />
             )}
 
