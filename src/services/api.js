@@ -84,7 +84,7 @@ export const updateBill = async (id, updatedData) => {
 
 export const deleteBill = async (id) => {
     try {
-        const response = await fetch(`${API_URL}/bills/${id}`, { method: 'DELETE' });
+        const response = await fetch(`${API_URL}/bills/${id}?mode=instance`, { method: 'DELETE' });
         if (response.ok || response.status === 204) {
             return true;
         } else {
@@ -92,6 +92,23 @@ export const deleteBill = async (id) => {
         }
     } catch (error) {
         console.error(`Error in deleteBill for ID ${id}:`, error);
+        throw error;
+    }
+};
+
+export const deleteMasterBill = async (masterId, fromDate) => {
+    try {
+        let url = `${API_URL}/master-bills/${masterId}`;
+        if (fromDate) {
+            url += `?from=${encodeURIComponent(fromDate)}`;
+        }
+        const response = await fetch(url, { method: 'DELETE' });
+        if (response.ok || response.status === 204) {
+            return true;
+        }
+        throw await handleApiError(response);
+    } catch (error) {
+        console.error(`Error in deleteMasterBill for ID ${masterId}:`, error);
         throw error;
     }
 };
