@@ -2,6 +2,8 @@
 const express = require('express');
 const db = require('../db');
 const dayjs = require('dayjs');
+const isSameOrBefore = require('dayjs/plugin/isSameOrBefore');
+dayjs.extend(isSameOrBefore);
 
 const router = express.Router();
 
