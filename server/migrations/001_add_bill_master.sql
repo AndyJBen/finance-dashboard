@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS bill_master (
 ALTER TABLE bills
     ADD COLUMN IF NOT EXISTS master_id INT;
 
--- Insert master records based on existing bills
+-- Insert master records based on existing bills (this must come BEFORE dropping columns)
 WITH distinct_bills AS (
     SELECT DISTINCT name, category, CASE WHEN is_recurring THEN 'monthly' ELSE 'none' END AS recurrence_pattern
     FROM bills
@@ -36,7 +36,7 @@ WHERE b.master_id IS NULL
 -- Make master_id mandatory
 ALTER TABLE bills ALTER COLUMN master_id SET NOT NULL;
 
--- Drop old columns now stored in master table
+-- Drop old columns now stored in master table (must be after the update)
 ALTER TABLE bills
     DROP COLUMN IF EXISTS name,
     DROP COLUMN IF EXISTS category,
