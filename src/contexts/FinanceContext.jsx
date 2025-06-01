@@ -63,11 +63,12 @@ export const FinanceProvider = ({ children }) => {
   const pastDueBills = bills.filter(bill => {
     const dueDate = dayjs(bill.dueDate);
     const isBillPrep = bill.category?.toLowerCase() === 'bill prep';
+    const startOfCurrentMonth = dayjs().startOf('month');
     return (
       !bill.isPaid &&
       !isBillPrep &&
       dueDate.isValid() &&
-      dueDate.isBefore(dayjs(), 'day')
+      dueDate.isBefore(startOfCurrentMonth, 'day')
     );
   });
 
@@ -78,7 +79,10 @@ export const FinanceProvider = ({ children }) => {
   }, 0);
 
   const hasAnyPastDueBills = pastDueBills.length > 0;
-  const pastDueAmountFromPreviousMonths = pastDueBills.reduce((sum, bill) => sum + Number(bill.amount || 0), 0);
+  const pastDueAmountFromPreviousMonths = pastDueBills.reduce(
+    (sum, bill) => sum + Number(bill.amount || 0),
+    0
+  );
 
   const currentDueAmt = bills.reduce((sum, bill) => {
     const dueDate = dayjs(bill.dueDate);
