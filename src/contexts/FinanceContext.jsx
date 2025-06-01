@@ -1,7 +1,7 @@
 import React, { createContext, useState, useEffect, useCallback } from 'react';
 import dayjs from 'dayjs';
 import {
-  fetchBills, addBill, updateBill, deleteBill,
+  fetchBills, addBill, updateBill, deleteBill, deleteMasterBill,
   fetchBankBalance, updateBankBalance,
   fetchCreditCards, addCreditCard, updateCreditCard, deleteCreditCard, apiReorderCreditCards
 } from '../services/api';
@@ -237,6 +237,26 @@ export const FinanceProvider = ({ children }) => {
     }
   };
 
+  const handleDeleteMasterBill = async (masterId, fromDate) => {
+    if (!masterId) {
+      message.error('Invalid master bill ID for deletion');
+      return false;
+    }
+    try {
+      const result = await deleteMasterBill(masterId, fromDate);
+      if (result) {
+        message.success('Recurring bills deleted');
+        await loadBillsForMonth();
+        return true;
+      }
+      return false;
+    } catch (err) {
+      console.error('Error deleting master bill:', err);
+      message.error(err.message || 'Failed to delete recurring bills');
+      return false;
+    }
+  };
+
   const loadBankBalance = useCallback(async () => {
     setLoadingBalance(true);
     try {
@@ -433,6 +453,7 @@ export const FinanceProvider = ({ children }) => {
     updateBill: handleUpdateBill,
     updateBillWithFuture: handleUpdateBillWithFuture,
     deleteBill: handleDeleteBill,
+    deleteMasterBill: handleDeleteMasterBill,
     updateBalance: handleUpdateBalance,
     createCreditCard: handleCreateCreditCard,
     editCreditCard: handleEditCreditCard,

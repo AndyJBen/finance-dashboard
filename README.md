@@ -83,7 +83,8 @@ DATABASE_URL=postgresql://your_user:your_password@your_host:5432/your_db_name
 - `GET /api/bills?month=YYYY-MM&view=current_and_overdue`
 - `POST /api/bills` – `{ name, amount, dueDate, isPaid, isRecurring, category }`
 - `PATCH /api/bills/:id`
-- `DELETE /api/bills/:id`
+- `DELETE /api/bills/:id?mode=instance`
+- `DELETE /api/master-bills/:id`
 
 ### Credit Cards
 - `GET /api/credit_cards`

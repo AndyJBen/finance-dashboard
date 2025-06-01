@@ -88,10 +88,10 @@ router.get('/', async (req, res) => {
     const end = dayjs(month).endOf('month').format('YYYY-MM-DD');
     let query, params;
     if (view === 'current_and_overdue') {
-      query = `SELECT b.*, m.name, m.category, m.recurrence_pattern FROM bills b JOIN bill_master m ON b.master_id = m.id WHERE (b.due_date BETWEEN $1 AND $2) OR (b.due_date < $1 AND b.is_paid = false) ORDER BY CASE WHEN b.due_date < $1 AND b.is_paid = false THEN 0 ELSE 1 END, b.due_date ASC`;
+      query = `SELECT b.*, m.name, m.category, m.recurrence_pattern FROM bills b JOIN bill_master m ON b.master_id = m.id WHERE b.is_deleted = false AND ((b.due_date BETWEEN $1 AND $2) OR (b.due_date < $1 AND b.is_paid = false)) ORDER BY CASE WHEN b.due_date < $1 AND b.is_paid = false THEN 0 ELSE 1 END, b.due_date ASC`;
       params = [start, end];
     } else {
-      query = `SELECT b.*, m.name, m.category, m.recurrence_pattern FROM bills b JOIN bill_master m ON b.master_id = m.id WHERE b.due_date BETWEEN $1 AND $2 ORDER BY b.due_date ASC`;
+      query = `SELECT b.*, m.name, m.category, m.recurrence_pattern FROM bills b JOIN bill_master m ON b.master_id = m.id WHERE b.is_deleted = false AND b.due_date BETWEEN $1 AND $2 ORDER BY b.due_date ASC`;
       params = [start, end];
     }
     console.log('GET /api/bills query:', query, params);
@@ -173,6 +173,37 @@ router.post('/', async (req, res) => {
   } catch (err) {
     console.error('POST /api/bills error:', err.stack || err);
     res.status(500).json({ error: 'Internal server error while creating bill.' });
+  }
+});
+
+router.delete('/:id', async (req, res) => {
+  const { id } = req.params;
+  const mode = req.query.mode;
+  const billId = parseInt(id, 10);
+  if (isNaN(billId)) {
+    return res.status(400).json({ error: 'Invalid bill ID.' });
+  }
+
+  try {
+    if (mode === 'instance') {
+      const result = await db.query(
+        'UPDATE bills SET is_deleted = true WHERE id = $1 RETURNING *',
+        [billId]
+      );
+      if (result.rowCount === 0) {
+        return res.status(404).json({ error: 'Bill not found.' });
+      }
+      return res.json(formatBillResponse(result.rows[0]));
+    }
+
+    const result = await db.query('DELETE FROM bills WHERE id = $1 RETURNING id', [billId]);
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: 'Bill not found.' });
+    }
+    return res.status(204).send();
+  } catch (err) {
+    console.error('DELETE /api/bills/:id error:', err.stack || err);
+    res.status(500).json({ error: 'Internal server error while deleting bill.' });
   }
 });
 

@@ -9,6 +9,7 @@ const pool = require('./db'); // Import the database pool setup
 const balanceRoutes = require('./routes/balance');
 const billsRoutes = require('./routes/bills');
 const creditCardsRoutes = require('./routes/credit_cards');
+const masterBillsRoutes = require('./routes/master_bills');
 
 console.log('--- Environment Variables ---');
 console.log('NODE_ENV:', process.env.NODE_ENV);
@@ -97,6 +98,9 @@ try {
 
     console.log("INFO: Mounting /api/bills routes...");
     app.use('/api/bills', billsRoutes);
+
+    console.log("INFO: Mounting /api/master-bills routes...");
+    app.use('/api/master-bills', masterBillsRoutes);
 
     console.log("INFO: Mounting /api/credit_cards routes...");
     app.use('/api/credit_cards', creditCardsRoutes);

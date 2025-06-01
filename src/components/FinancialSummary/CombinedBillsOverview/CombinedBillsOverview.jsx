@@ -320,6 +320,7 @@ const EnhancedBillRow = ({
 const CombinedBillsOverview = ({ style }) => {
     const {
         deleteBill,
+        deleteMasterBill,
         updateBill,
         updateBillWithFuture,
         addBill,
@@ -466,13 +467,7 @@ const CombinedBillsOverview = ({ style }) => {
     const confirmDeleteFuture = async () => {
         if (!billToDelete) return;
         try {
-            await deleteBill(billToDelete.id);
-            const futureBills = localBills.filter(
-                b => b.isRecurring && b.name === billToDelete.name && dayjs(b.dueDate).isAfter(dayjs(billToDelete.dueDate))
-            );
-            for (const fb of futureBills) {
-                await deleteBill(fb.id);
-            }
+            await deleteMasterBill(billToDelete.masterId, billToDelete.dueDate);
             await loadBills();
         } catch (error) {
             message.error(`Deletion error: ${error.message || 'Unknown'}`);
