@@ -52,7 +52,7 @@ const createRecurringInstance = async (masterId, baseBill, monthsToAdd) => {
 
 const ensureInstancesUpToMonth = async (month) => {
   const targetDate = dayjs(`${month}-01`).endOf('month');
-  const mastersQuery = "SELECT id FROM bill_master WHERE recurrence_pattern = 'monthly'";
+  const mastersQuery = "SELECT id FROM bill_master WHERE recurrence_pattern = 'monthly' AND is_active = TRUE";
   console.log('ensureInstancesUpToMonth mastersQuery:', mastersQuery);
   const masters = await db.query(mastersQuery);
   for (const m of masters.rows) {
@@ -173,6 +173,98 @@ router.post('/', async (req, res) => {
   } catch (err) {
     console.error('POST /api/bills error:', err.stack || err);
     res.status(500).json({ error: 'Internal server error while creating bill.' });
+  }
+});
+
+router.patch('/:id', async (req, res) => {
+  const { id } = req.params;
+  const billId = parseInt(id, 10);
+  if (isNaN(billId)) {
+    return res.status(400).json({ error: 'Invalid bill ID.' });
+  }
+
+  const { amount, dueDate, isPaid, name, category } = req.body;
+
+  const billUpdates = [];
+  const billValues = [];
+  let idx = 1;
+
+  if (amount !== undefined) {
+    if (typeof amount !== 'number' || isNaN(amount)) {
+      return res.status(400).json({ error: 'Amount must be a valid number.' });
+    }
+    billUpdates.push(`amount = $${idx}`);
+    billValues.push(amount);
+    idx++;
+  }
+
+  if (dueDate !== undefined) {
+    if (!dayjs(dueDate).isValid()) {
+      return res.status(400).json({ error: 'Invalid due date provided.' });
+    }
+    billUpdates.push(`due_date = $${idx}`);
+    billValues.push(dayjs(dueDate).format('YYYY-MM-DD'));
+    idx++;
+  }
+
+  if (isPaid !== undefined) {
+    billUpdates.push(`is_paid = $${idx}`);
+    billValues.push(Boolean(isPaid));
+    idx++;
+  }
+
+  const masterUpdates = [];
+  const masterValues = [];
+  let mIdx = 1;
+
+  if (name !== undefined) {
+    if (typeof name !== 'string' || name.trim() === '') {
+      return res.status(400).json({ error: 'Bill name cannot be empty.' });
+    }
+    masterUpdates.push(`name = $${mIdx}`);
+    masterValues.push(name.trim());
+    mIdx++;
+  }
+
+  if (category !== undefined) {
+    masterUpdates.push(`category = $${mIdx}`);
+    masterValues.push(category && category !== '' ? category : null);
+    mIdx++;
+  }
+
+  if (billUpdates.length === 0 && masterUpdates.length === 0) {
+    return res.status(400).json({ error: 'No valid fields provided for update.' });
+  }
+
+  try {
+    if (billUpdates.length > 0) {
+      const billQuery = `UPDATE bills SET ${billUpdates.join(', ')}, updated_at = NOW() WHERE id = $${idx} RETURNING *`;
+      const result = await db.query(billQuery, [...billValues, billId]);
+      if (result.rowCount === 0) {
+        return res.status(404).json({ error: 'Bill not found.' });
+      }
+    }
+
+    if (masterUpdates.length > 0) {
+      const masterQuery = `UPDATE bill_master SET ${masterUpdates.join(', ')}, updated_at = NOW() WHERE id = (SELECT master_id FROM bills WHERE id = $${mIdx})`;
+      await db.query(masterQuery, [...masterValues, billId]);
+    }
+
+    const joined = await db.query(
+      `SELECT b.*, m.name, m.category, m.recurrence_pattern
+       FROM bills b JOIN bill_master m ON b.master_id = m.id
+       WHERE b.id = $1`,
+      [billId]
+    );
+
+    if (joined.rows.length === 0) {
+      return res.status(404).json({ error: 'Bill not found.' });
+    }
+
+    res.json(formatBillResponse(joined.rows[0]));
+  } catch (err) {
+    console.error('PATCH /api/bills/:id error:', err.stack || err);
+    res.status(500).json({ error: 'Internal server error while updating bill.' });
   }
 });
 
