@@ -88,10 +88,22 @@ router.get('/', async (req, res) => {
     const end = dayjs(month).endOf('month').format('YYYY-MM-DD');
     let query, params;
     if (view === 'current_and_overdue') {
-      query = `SELECT b.*, m.name, m.category, m.recurrence_pattern FROM bills b JOIN bill_master m ON b.master_id = m.id WHERE b.is_deleted = false AND ((b.due_date BETWEEN $1 AND $2) OR (b.due_date < $1 AND b.is_paid = false)) ORDER BY CASE WHEN b.due_date < $1 AND b.is_paid = false THEN 0 ELSE 1 END, b.due_date ASC`;
+      query = `SELECT b.*, m.name, m.category, m.recurrence_pattern
+               FROM bills b
+               JOIN bill_master m ON b.master_id = m.id
+               WHERE b.is_deleted = false
+                 AND m.is_active = TRUE
+                 AND ((b.due_date BETWEEN $1 AND $2) OR (b.due_date < $1 AND b.is_paid = false))
+               ORDER BY CASE WHEN b.due_date < $1 AND b.is_paid = false THEN 0 ELSE 1 END, b.due_date ASC`;
       params = [start, end];
     } else {
-      query = `SELECT b.*, m.name, m.category, m.recurrence_pattern FROM bills b JOIN bill_master m ON b.master_id = m.id WHERE b.is_deleted = false AND b.due_date BETWEEN $1 AND $2 ORDER BY b.due_date ASC`;
+      query = `SELECT b.*, m.name, m.category, m.recurrence_pattern
+               FROM bills b
+               JOIN bill_master m ON b.master_id = m.id
+               WHERE b.is_deleted = false
+                 AND m.is_active = TRUE
+                 AND b.due_date BETWEEN $1 AND $2
+               ORDER BY b.due_date ASC`;
       params = [start, end];
     }
     console.log('GET /api/bills query:', query, params);
