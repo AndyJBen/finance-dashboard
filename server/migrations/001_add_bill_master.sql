@@ -42,8 +42,17 @@ ALTER TABLE bills
     DROP COLUMN IF EXISTS category,
     DROP COLUMN IF EXISTS is_recurring;
 
--- Add foreign key constraint
-ALTER TABLE bills
-    ADD CONSTRAINT IF NOT EXISTS bills_master_fk FOREIGN KEY (master_id) REFERENCES bill_master(id) ON DELETE CASCADE;
+-- Add foreign key constraint only if it doesn't already exist
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.table_constraints 
+        WHERE constraint_name = 'bills_master_fk'
+    ) THEN
+        ALTER TABLE bills
+        ADD CONSTRAINT bills_master_fk FOREIGN KEY (master_id) REFERENCES bill_master(id) ON DELETE CASCADE;
+    END IF;
+END
+$$;
 
 COMMIT;
