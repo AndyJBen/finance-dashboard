@@ -13,10 +13,7 @@ router.get('/', async (req, res) => {
       WHERE b.is_deleted = FALSE
         AND m.is_active = TRUE
         AND b.is_paid = FALSE
-        AND (
-          b.due_date <= date_trunc('month', CURRENT_DATE) + INTERVAL '1 month - 1 day'
-          OR LOWER(m.category) = 'bill prep'
-        )`;
+        AND b.due_date <= date_trunc('month', CURRENT_DATE) + INTERVAL '1 month - 1 day'`;
     const billsResult = await db.query(billsQuery);
     const billsTotal = parseFloat(billsResult.rows[0].total_due) || 0;
 
