@@ -324,6 +324,8 @@ const CombinedBillsOverview = ({ style }) => {
         updateBill,
         updateBillWithFuture,
         addBill,
+        bills: contextBills,
+        displayedMonth: contextDisplayedMonth
     } = useContext(FinanceContext);
 
     // Local state for month navigation and bills so that changing months here
@@ -363,6 +365,13 @@ const CombinedBillsOverview = ({ style }) => {
     useEffect(() => {
         loadBills();
     }, [overviewMonth, loadBills]);
+
+    // Keep local bills in sync with context when months match
+    useEffect(() => {
+        if (dayjs(contextDisplayedMonth).isSame(overviewMonth, 'month')) {
+            setLocalBills(Array.isArray(contextBills) ? contextBills : []);
+        }
+    }, [contextBills, contextDisplayedMonth, overviewMonth]);
 
     // Data processing logic
     const validBills = Array.isArray(localBills) ? localBills : [];
