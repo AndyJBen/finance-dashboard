@@ -11,6 +11,7 @@ const balanceRoutes = require('./routes/balance');
 const billsRoutes = require('./routes/bills');
 const creditCardsRoutes = require('./routes/credit_cards');
 const masterBillsRoutes = require('./routes/master_bills');
+const dueBalanceRoutes = require('./routes/due_balance');
 
 console.log('--- Environment Variables ---');
 console.log('NODE_ENV:', process.env.NODE_ENV);
@@ -110,6 +111,9 @@ async function startServer() {
 
         console.log("INFO: Mounting /api/master-bills routes...");
         app.use('/api/master-bills', masterBillsRoutes);
+
+        console.log("INFO: Mounting /api/due-balance routes...");
+        app.use('/api/due-balance', dueBalanceRoutes);
 
         console.log("INFO: Mounting /api/credit_cards routes...");
         app.use('/api/credit_cards', creditCardsRoutes);

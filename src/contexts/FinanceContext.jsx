@@ -3,7 +3,8 @@ import dayjs from 'dayjs';
 import {
   fetchBills, addBill, updateBill, deleteBill, deleteMasterBill,
   fetchBankBalance, updateBankBalance,
-  fetchCreditCards, addCreditCard, updateCreditCard, deleteCreditCard, apiReorderCreditCards
+  fetchCreditCards, addCreditCard, updateCreditCard, deleteCreditCard, apiReorderCreditCards,
+  fetchDueBalance
 } from '../services/api';
 import { message } from 'antd';
 
@@ -45,6 +46,7 @@ export const FinanceProvider = ({ children }) => {
   const [displayedMonth, setDisplayedMonth] = useState(dayjs());
   const [bankBalance, setBankBalance] = useState(null);
   const [creditCards, setCreditCards] = useState([]);
+  const [dueBalanceTotal, setDueBalanceTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [loadingBalance, setLoadingBalance] = useState(true);
   const [loadingCreditCards, setLoadingCreditCards] = useState(true);
@@ -86,16 +88,6 @@ export const FinanceProvider = ({ children }) => {
     return !bill.isPaid && isCurrentMonth ? sum + Number(bill.amount || 0) : sum;
   }, 0);
 
-   const dueBalanceTotal = bills.reduce((sum, bill) => {
-     if (bill.isPaid) return sum;
-     const dueDate = dayjs(bill.dueDate);
-     const isCurrentOrPast =
-       dueDate.isValid() && dueDate.isSameOrBefore(displayedMonth.endOf('month'));
-     const isBillPrep = bill.category?.toLowerCase() === 'bill prep';
-     return isCurrentOrPast || isBillPrep
-       ? sum + Number(bill.amount || 0)
-       : sum;
-  }, 0) + totalIncludedCreditCardBalance;
 
   const goToPreviousMonth = useCallback(() => {
     setDisplayedMonth(prev => prev.subtract(1, 'month'));
@@ -310,6 +302,20 @@ export const FinanceProvider = ({ children }) => {
     }
   }, []);
 
+  const loadDueBalance = useCallback(async () => {
+    try {
+      const data = await fetchDueBalance();
+      if (data && typeof data.total === 'number') {
+        setDueBalanceTotal(data.total);
+      } else {
+        setDueBalanceTotal(0);
+      }
+    } catch (err) {
+      console.error('Error loading due balance:', err);
+      setDueBalanceTotal(0);
+    }
+  }, []);
+
   const handleCreateCreditCard = async (cardData) => {
     try {
       const result = await addCreditCard(cardData);
@@ -427,6 +433,10 @@ export const FinanceProvider = ({ children }) => {
     loadCreditCards();
   }, [loadBankBalance, loadCreditCards]);
 
+  useEffect(() => {
+    loadDueBalance();
+  }, [bills, creditCards, loadDueBalance]);
+
   const contextValue = {
     bills,
     pastDueBills,
@@ -459,7 +469,8 @@ export const FinanceProvider = ({ children }) => {
     editCreditCard: handleEditCreditCard,
     removeCreditCard: handleRemoveCreditCard,
     reorderCreditCards: handleReorderCreditCards,
-    loadBillsForMonth
+    loadBillsForMonth,
+    loadDueBalance
   };
 
   return (

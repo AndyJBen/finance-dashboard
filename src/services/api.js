@@ -259,3 +259,17 @@ export const apiReorderCreditCards = async (orderedCards) => {
         return false;
     }
 };
+
+export const fetchDueBalance = async () => {
+    try {
+        const response = await fetch(`${API_URL}/due-balance`);
+        if (!response.ok) {
+            throw await handleApiError(response);
+        }
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error in fetchDueBalance:', error);
+        throw error;
+    }
+};
