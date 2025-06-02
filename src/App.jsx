@@ -14,6 +14,7 @@ import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
 import MultiBillModal from './components/PopUpModals/MultiBillModal';
 import BankBalanceEditModal from './components/PopUpModals/BankBalanceEditModal';
 import isIos from './utils/isIos';
+import './assets/styles/dashboard.css';
 
 const { Content } = Layout;
 const { Title } = Typography;
@@ -139,31 +140,18 @@ function MyApp() {
           );
         }
         return (
-          <Row gutter={[24, 24]}>
-            <Col xs={24} lg={6}>
+          <div className="dashboard-grid">
+            <div className="dashboard-grid-left">
               <FinancialOverviewCards />
-            </Col>
-            <Col xs={24} lg={10}>
               <CombinedBillsOverview
-                style={{ height: '100%', marginTop: 24 }}
+                style={{ height: '100%' }}
                 onEditBill={handleOpenEditBillModal}
                 onAddBill={handleOpenAddBillModal}
                 onExpansionChange={handleBillsExpansionChange}
               />
-            </Col>
-            <Col xs={24} lg={8} style={{ width: '100%' }}>
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 24,
-                  width: '100%',
-                }}
-              >
-                <FinanceFeed onEditBill={handleOpenEditBillModal} onAddBill={handleOpenAddBillModal} />
-              </div>
-            </Col>
-          </Row>
+            </div>
+            <FinanceFeed onEditBill={handleOpenEditBillModal} onAddBill={handleOpenAddBillModal} />
+          </div>
         );
 
       case 'finance-feed':
