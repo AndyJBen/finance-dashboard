@@ -76,7 +76,7 @@ const MonthlyProgressSummary = ({
                 {/* Month Navigation */}
                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: 'var(--space-20)' }}>
                     <Tooltip title="Previous Month">
-                        <Button shape="circle" icon={<IconChevronLeft size={16} />} onClick={goToPreviousMonth} style={{ margin: '0 var(--space-16)' }} />
+                        <Button icon={<IconChevronLeft size={16} />} onClick={goToPreviousMonth} style={{ margin: '0 var(--space-16)' }} />
                     </Tooltip>
                     <div style={{ textAlign: 'center', minWidth: '100px' }}>
                         <Paragraph style={{ margin: 0, fontWeight: 600, fontSize: '1.25rem', lineHeight: 1.2, color: 'var(--neutral-800)', marginBottom: '2px' }}>
@@ -87,7 +87,7 @@ const MonthlyProgressSummary = ({
                         </Paragraph>
                     </div>
                     <Tooltip title="Next Month">
-                        <Button shape="circle" icon={<IconChevronRight size={16} />} onClick={goToNextMonth} style={{ margin: '0 var(--space-16)' }} />
+                        <Button icon={<IconChevronRight size={16} />} onClick={goToNextMonth} style={{ margin: '0 var(--space-16)' }} />
                     </Tooltip>
                 </div>
             </div>
@@ -98,7 +98,6 @@ const MonthlyProgressSummary = ({
                 <div className="month-navigation">
                     <Tooltip title="Previous Month">
                         <Button 
-                            shape="circle" 
                             icon={<IconChevronLeft size={16} />} 
                             onClick={goToPreviousMonth} 
                             className="nav-button"
@@ -110,7 +109,6 @@ const MonthlyProgressSummary = ({
                     </div>
                     <Tooltip title="Next Month">
                         <Button 
-                            shape="circle" 
                             icon={<IconChevronRight size={16} />} 
                             onClick={goToNextMonth} 
                             className="nav-button"

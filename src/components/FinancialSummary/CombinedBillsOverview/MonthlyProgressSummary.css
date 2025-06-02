@@ -31,6 +31,9 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        width: 32px;
+        height: 32px;
+        border-radius: var(--border-radius-md);
     }
 
     .month-display {
@@ -108,6 +111,9 @@
     
     .nav-button {
         margin: 0 var(--space-8); /* Was 0 8px */
+        width: 28px;
+        height: 28px;
+        border-radius: var(--border-radius-md);
     }
     
     .progress-badge {
