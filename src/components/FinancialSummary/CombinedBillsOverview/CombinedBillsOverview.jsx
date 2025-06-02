@@ -275,13 +275,6 @@ const EnhancedBillRow = ({
                                         {dayjs(record.dueDate).isValid() ? dayjs(record.dueDate).format('MM/DD/YYYY') : ''}
                                     </span>
                                 </div>
-                                    </span>
-                                    <span style={{
-                                        color: getCategoryColor(record.category).text
-                                    }}>
-                                        {record.category}
-                                    </span>
-                                </Tag>
                             )}
                         </div>
                         <div className="bill-amount-section">
