@@ -14,6 +14,7 @@ import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
 import MultiBillModal from './components/PopUpModals/MultiBillModal';
 import BankBalanceEditModal from './components/PopUpModals/BankBalanceEditModal';
 import isIos from './utils/isIos';
+import './assets/styles/dashboard.css';
 
 const { Content } = Layout;
 const { Title } = Typography;
@@ -140,7 +141,7 @@ function MyApp() {
         }
         return (
           <div className="dashboard-grid">
-            <div className="dashboard-left">
+            <div className="dashboard-grid-left">
               <FinancialOverviewCards />
               <CombinedBillsOverview
                 style={{ height: '100%' }}
@@ -149,6 +150,7 @@ function MyApp() {
                 onExpansionChange={handleBillsExpansionChange}
               />
             </div>
+
             <div className="dashboard-right">
               <FinanceFeed
                 onEditBill={handleOpenEditBillModal}
@@ -157,7 +159,6 @@ function MyApp() {
             </div>
           </div>
         );
-
       case 'finance-feed':
         return <FinanceFeed
           isMobileView={isMobileView}

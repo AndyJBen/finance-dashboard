@@ -1,0 +1,21 @@
+.dashboard-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-24);
+  width: 100%;
+}
+
+@media (min-width: 992px) {
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 380px;
+    gap: var(--space-24);
+    align-items: start;
+  }
+
+  .dashboard-grid-left {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-24);
+  }
+}
