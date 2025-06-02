@@ -386,17 +386,24 @@ const CombinedBillsOverview = ({ style }) => {
     }, [validBills, overviewMonth, startOfDisplayedMonth, endOfDisplayedMonth]);
 
     const filteredBillsByPaidStatus = useMemo(() => {
-        const allBills = showPaidBills 
-            ? billsDueInDisplayedMonth 
+        const allBills = showPaidBills
+            ? billsDueInDisplayedMonth
             : billsDueInDisplayedMonth.filter(bill => !bill.isPaid);
-        
-        // Sort bills: unpaid first, then paid (maintaining original order within each group)
-        return allBills.sort((a, b) => {
-            // If one is paid and the other isn't, unpaid comes first
-            if (a.isPaid !== b.isPaid) {
-                return a.isPaid ? 1 : -1;
-            }
-            // If both have same paid status, maintain original order (by due date)
+
+        // Sort bills in the following order:
+        //   1. Unpaid "Bill Prep" bills, by due date
+        //   2. Other unpaid bills, by due date
+        //   3. Paid bills, by due date
+        return allBills.slice().sort((a, b) => {
+            const aBillPrep = !a.isPaid && a.category?.toLowerCase() === 'bill prep';
+            const bBillPrep = !b.isPaid && b.category?.toLowerCase() === 'bill prep';
+
+            if (aBillPrep && !bBillPrep) return -1;
+            if (!aBillPrep && bBillPrep) return 1;
+
+            if (!a.isPaid && b.isPaid) return -1;
+            if (a.isPaid && !b.isPaid) return 1;
+
             return dayjs(a.dueDate).valueOf() - dayjs(b.dueDate).valueOf();
         });
     }, [billsDueInDisplayedMonth, showPaidBills]);
