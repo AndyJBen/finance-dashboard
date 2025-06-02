@@ -211,16 +211,17 @@
     white-space: nowrap;
 }
 
-.category-and-date {
+.due-date-and-status {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
 }
 
 .bill-due-date {
     font-size: 0.75rem;
     color: var(--neutral-500);
+    white-space: nowrap;
 }
 
 /* Fade animation for bill completion */
@@ -277,6 +278,10 @@
         font-size: 11px; /* Specific mobile font size */
         margin-top: 4px;
         padding: 1px var(--space-4); /* Vertical 1px custom, horizontal uses variable */
+    }
+
+    .bill-due-date {
+        font-size: 11px;
     }
 
     .bill-amount-section {
