@@ -1,6 +1,7 @@
 // Unified Apple-Inspired Edit Bill Modal
 import React, { useEffect, useState } from 'react';
 import { Modal, Form, Input, InputNumber, DatePicker, Select, Checkbox, Typography, Button, Avatar } from 'antd';
+import ConfirmApplyModal from './ConfirmApplyModal';
 import {
     IconEdit,
     IconPlus,
@@ -48,6 +49,8 @@ const UnifiedEditBillModal = ({ open, onCancel, onSubmit, bill }) => {
   const [form] = Form.useForm();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [pendingValues, setPendingValues] = useState(null);
   const [formData, setFormData] = useState({
     name: '',
     amount: null,
@@ -122,24 +125,48 @@ const UnifiedEditBillModal = ({ open, onCancel, onSubmit, bill }) => {
         isPaid: Boolean(values.isPaid),
         isRecurring: Boolean(values.isRecurring)
       };
-      
+
       if (bill && bill.id) {
         formattedValues.id = bill.id;
+        setPendingValues(formattedValues);
+        setConfirmOpen(true);
+      } else {
+        setIsSubmitting(true);
+        await onSubmit(formattedValues);
+        setIsSubmitting(false);
       }
-
-      setIsSubmitting(true);
-      await onSubmit(formattedValues);
-      setIsSubmitting(false);
     } catch (err) {
       console.error('Form validation failed:', err);
       setIsSubmitting(false);
     }
   };
 
+  const handleApplySingle = async () => {
+    if (!pendingValues) return;
+    setIsSubmitting(true);
+    await onSubmit(pendingValues);
+    setIsSubmitting(false);
+    setConfirmOpen(false);
+    setPendingValues(null);
+  };
+
+  const handleApplyAll = async () => {
+    if (!pendingValues) return;
+    setIsSubmitting(true);
+    await onSubmit({
+      ...pendingValues,
+      applyToFuture: { amount: true, dueDate: true, category: true }
+    });
+    setIsSubmitting(false);
+    setConfirmOpen(false);
+    setPendingValues(null);
+  };
+
   const modalTitle = bill ? 'Edit Bill' : 'Create New Bill';
   const categoryInfo = getCategoryInfo(selectedCategory);
 
   return (
+    <>
     <Modal
       open={open}
       onCancel={onCancel}
@@ -384,6 +411,15 @@ const UnifiedEditBillModal = ({ open, onCancel, onSubmit, bill }) => {
         </div>
       </div>
     </Modal>
+    {bill && (
+      <ConfirmApplyModal
+        open={confirmOpen}
+        onCancel={() => { setConfirmOpen(false); setPendingValues(null); }}
+        onJustThis={handleApplySingle}
+        onAllFuture={handleApplyAll}
+      />
+    )}
+    </>
   );
 };
 
