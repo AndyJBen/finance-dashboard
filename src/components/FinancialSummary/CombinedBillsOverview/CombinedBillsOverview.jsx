@@ -284,8 +284,13 @@ const EnhancedBillRow = ({
                                         maximumFractionDigits: 2
                                     })}
                                 </Text>
-                                <div className="bill-due-status">
-                                    {renderDueIn(record.dueDate, record)}
+                                <div className="due-date-and-status">
+                                    <span className="bill-due-date">
+                                        {dayjs(record.dueDate).isValid() ? dayjs(record.dueDate).format('MM/DD/YYYY') : ''}
+                                    </span>
+                                    <div className="bill-due-status">
+                                        {renderDueIn(record.dueDate, record)}
+                                    </div>
                                 </div>
                             </div>
                             <Dropdown
