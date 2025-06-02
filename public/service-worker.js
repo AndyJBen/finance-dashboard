@@ -2,20 +2,23 @@ const CACHE_NAME = 'financely-v1';
 const urlsToCache = [
   '/',
   '/index.html',
-  '/src/main.jsx',
-  '/src/assets/styles/global.css',
+  '/vite.svg',
   // Add other important assets here
 ];
 
 // Install a service worker
 self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => {
-        console.log('Opened cache');
-        return cache.addAll(urlsToCache);
-      })
-  );
+  event.waitUntil((async () => {
+    const cache = await caches.open(CACHE_NAME);
+    console.log('Opened cache');
+    for (const url of urlsToCache) {
+      try {
+        await cache.add(url);
+      } catch (e) {
+        console.error('Failed to cache', url, e);
+      }
+    }
+  })());
 });
 
 // Cache and return requests
