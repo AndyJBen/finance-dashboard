@@ -1,30 +1,8 @@
 // src/components/FinancialSummary/CombinedBillsOverview/CombinedBillsOverview.jsx
 
 import React, { useState, useContext, useMemo, useCallback } from 'react';
-import {
-  Button,
-  Space,
-  Spin,
-  Alert,
-  Checkbox,
-  Tag,
-  Card,
-  Typography,
-  message,
-  Dropdown,
-  Grid,
-} from 'antd';
-import {
-  IconCalendarFilled,
-  IconEdit,
-  IconTrash,
-  IconPlus,
-  IconChevronLeft,
-  IconChevronRight,
-  IconDotsVertical,
-  IconEye,
-  IconEyeOff,
-} from '@tabler/icons-react';
+import {Button,Space,Spin,Alert,Checkbox,Tag,Card,Typography,message,Dropdown,Grid,} from 'antd';
+import {IconCalendarFilled,IconEdit,IconTrash,IconPlus,IconChevronLeft,IconChevronRight,IconDotsVertical,IconEye,IconEyeOff,} from '@tabler/icons-react';
 import { categoryIcons } from '../../../utils/categoryIcons';
 import { FinanceContext } from '../../../contexts/FinanceContext';
 import EditBillModal from '../../PopUpModals/EditBillModal';
