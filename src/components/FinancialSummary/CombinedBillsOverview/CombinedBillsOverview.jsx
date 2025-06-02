@@ -8,15 +8,12 @@ import {
 } from 'antd';
 import {
     IconCalendarFilled, IconEdit, IconTrash, IconPlus, IconChevronLeft,
-    IconChevronRight, IconHome, IconBolt, IconWifi,
-    IconCreditCard, IconCar, IconShoppingCart, IconHelp,
-    IconCalendar, IconCurrencyDollar, IconCircleCheck, IconClock,
-    IconCertificate, IconMedicineSyrup, IconCalendarTime,
-    IconUser,
+    IconChevronRight,
     IconDotsVertical,
     IconEye,
     IconEyeOff
 } from '@tabler/icons-react';
+import { categoryIcons } from '../../../utils/categoryIcons';
 import { FinanceContext } from '../../../contexts/FinanceContext';
 import EditBillModal from '../../PopUpModals/EditBillModal';
 import MultiBillModal from '../../PopUpModals/MultiBillModal';
@@ -47,9 +44,8 @@ const EnhancedBillRow = ({
     index, 
     onTogglePaid, 
     onEdit, 
-    onDelete, 
-    getCategoryIcon, 
-    getCategoryColor, 
+    onDelete,
+    getCategoryColor,
     renderDueIn, 
     rowClassName,
     isMobile 
@@ -262,12 +258,12 @@ const EnhancedBillRow = ({
                                         <span style={{
                                             marginRight: '6px',
                                             display: 'inline-flex',
-                                            alignItems: 'center'
+                                            alignItems: 'center',
+                                            color: getCategoryColor(record.category).text
                                         }}>
-                                            {React.cloneElement(getCategoryIcon(record.category), {
-                                                size: 14,
-                                                style: { color: getCategoryColor(record.category).text }
-                                            })}
+                                            <span className="material-symbols-outlined">
+                                                {categoryIcons[record.category] || 'category'}
+                                            </span>
                                         </span>
                                         <span style={{
                                             color: getCategoryColor(record.category).text
@@ -506,21 +502,6 @@ const CombinedBillsOverview = ({ style }) => {
     const rowClassName = (record) => (record.id === fadingBillId ? 'bill-row-fade-out' : '');
 
     // Helper functions
-    const getCategoryIcon = (category) => {
-        const lowerCategory = category?.toLowerCase() || '';
-        if (lowerCategory.includes('rent') || lowerCategory.includes('mortgage')) return <IconHome size={16} />;
-        if (lowerCategory.includes('electric') || lowerCategory.includes('utilit')) return <IconBolt size={16} />;
-        if (lowerCategory.includes('card')) return <IconCreditCard size={16} />;
-        if (lowerCategory.includes('auto') || lowerCategory.includes('car')) return <IconCar size={16} />;
-        if (lowerCategory.includes('grocery')) return <IconShoppingCart size={16} />;
-        if (lowerCategory.includes('subscription')) return <IconCalendar size={16} />;
-        if (lowerCategory.includes('loan')) return <IconCurrencyDollar size={16} />;
-        if (lowerCategory.includes('insurance')) return <IconCertificate size={16} />;
-        if (lowerCategory.includes('medical')) return <IconMedicineSyrup size={16} />;
-        if (lowerCategory.includes('personal care')) return <IconUser size={16} />;
-        if (lowerCategory.includes('bill prep')) return <IconCalendarTime size={16} />;
-        return <IconHelp size={16} />;
-    };
 
     const getCategoryColor = (category) => {
         switch (category?.toLowerCase()) {
@@ -669,12 +650,11 @@ const CombinedBillsOverview = ({ style }) => {
                                             fontSize: '0.85rem' 
                                         }}
                                     >
-                                        {React.cloneElement(getCategoryIcon(category), { 
-                                            size: 18,
-                                            style: { 
-                                                color: selectedCategory === category ? getCategoryColor(category).text : 'var(--neutral-700)' 
-                                            }
-                                        })} 
+                                        <span className="material-symbols-outlined" style={{
+                                            color: selectedCategory === category ? getCategoryColor(category).text : 'var(--neutral-700)'
+                                        }}>
+                                            {categoryIcons[category] || 'category'}
+                                        </span>
                                         <span>{category}</span>
                                     </Tag.CheckableTag>
                                 ))}
@@ -697,7 +677,6 @@ const CombinedBillsOverview = ({ style }) => {
                                     onTogglePaid={handleTogglePaid}
                                     onEdit={handleEdit}
                                     onDelete={handleDelete}
-                                    getCategoryIcon={getCategoryIcon}
                                     getCategoryColor={getCategoryColor}
                                     renderDueIn={renderDueIn}
                                     rowClassName={rowClassName}

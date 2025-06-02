@@ -5,30 +5,13 @@ import {
   IconAlertOctagon,
   IconClipboardList,
   IconRepeatOff,
-  IconHourglassHigh,
-  IconTimeDuration15,
-  IconChevronDown,
   IconChevronUp,
   IconCircleCheck,
   IconClock,
-  IconCar,
-  IconHome,
-  IconDeviceLaptop,
-  IconWifi,
-  IconDroplet,
-  IconCreditCard,
-  IconShoppingBag,
-  IconHelp, 
-  IconCalendar,
   IconChevronLeft,
-  IconChevronRight,
-  IconCurrencyDollar,
-  IconCertificate, 
-  IconMedicineSyrup, 
-  IconScissors,
-  IconCalendarTime,
-  IconUser
+  IconChevronRight
 } from '@tabler/icons-react';
+import { categoryIcons } from '../../utils/categoryIcons';
 
 import { fetchBills } from '../../services/api';
 import dayjs from 'dayjs';
@@ -36,30 +19,6 @@ import './styles/MobileFinanceFeed.css';
 
 const { Text, Title } = Typography;
 
-// Helper function to get icon based on category
-const getCategoryIcon = (category, size = 16) => {
-  const lowerCategory = category?.toLowerCase() || '';
-
-  if (lowerCategory.includes('car') || lowerCategory.includes('auto')) 
-    return <IconCar size={size} style={{ color: '#FF9233' }} />;
-  if (lowerCategory.includes('home') || lowerCategory.includes('rent')) 
-    return <IconHome size={size} style={{ color: '#F1476F' }} />;
-  if (lowerCategory.includes('internet') || lowerCategory.includes('wifi')) 
-    return <IconWifi size={size} style={{ color: '#0066FF' }} />;
-  if (lowerCategory.includes('water')) 
-    return <IconDroplet size={size} style={{ color: '#26C67B' }} />;
-  if (lowerCategory.includes('gas')) 
-    return <IconDroplet size={size} style={{ color: '#FF9233' }} />;
-  if (lowerCategory.includes('subscription') || lowerCategory.includes('chatgpt')) 
-    return <IconDeviceLaptop size={size} style={{ color: '#0066FF' }} />;
-  if (lowerCategory.includes('medical')) 
-    return <IconClipboardList size={size} style={{ color: '#F1476F' }} />;
-  if (lowerCategory.includes('clothing')) 
-    return <IconShoppingBag size={size} style={{ color: '#0066FF' }} />;
-  if (lowerCategory.includes('passport') || lowerCategory.includes('photos')) 
-    return <IconCreditCard size={size} style={{ color: '#26C67B' }} />;
-  return <IconCreditCard size={size} style={{ color: '#0066FF' }} />;
-};
 
 const MobileFinanceFeed = () => {
 
@@ -311,7 +270,11 @@ const MobileFinanceFeed = () => {
                 shape="circle"
                 className="feed-item-avatar"
                 style={{ backgroundColor: '#FFF5F5', borderRadius: 30 }}
-                icon={getCategoryIcon(item.category, 18)}
+                icon={
+                  <span className="material-symbols-outlined">
+                    {categoryIcons[item.category] || 'category'}
+                  </span>
+                }
               />
               <div className="feed-item-content">
                 <Text className="feed-item-title">{item.name}</Text>
@@ -372,11 +335,15 @@ const MobileFinanceFeed = () => {
           dataSource={limitItems(billPrep, 'billPrep')}
           renderItem={item => (
             <List.Item className="feed-list-item">
-              <Avatar 
-                shape="circle" 
+              <Avatar
+                shape="circle"
                 className="feed-item-avatar"
                 style={{ backgroundColor: '#EBF5FF', borderRadius: 30 }}
-                icon={getCategoryIcon(item.category, 18)}
+                icon={
+                  <span className="material-symbols-outlined">
+                    {categoryIcons[item.category] || 'category'}
+                  </span>
+                }
               />
               <div className="feed-item-content">
                 <Text className="feed-item-title">{item.name}</Text>
@@ -441,7 +408,11 @@ const MobileFinanceFeed = () => {
                 shape="circle"
                 className="feed-item-avatar"
                 style={{ backgroundColor: '#E5F8EF', borderRadius: 30 }}
-                icon={getCategoryIcon(item.category, 18)}
+                icon={
+                  <span className="material-symbols-outlined">
+                    {categoryIcons[item.category] || 'category'}
+                  </span>
+                }
               />
               <div className="feed-item-content">
                 <Text className="feed-item-title">{item.name}</Text>
@@ -512,11 +483,15 @@ const MobileFinanceFeed = () => {
           dataSource={limitItems(upcoming, 'upcoming')}
           renderItem={item => (
             <List.Item className="feed-list-item">
-              <Avatar 
-                shape="circle" 
+              <Avatar
+                shape="circle"
                 className="feed-item-avatar"
                 style={{ backgroundColor: '#EBF5FF', borderRadius: 30 }}
-                icon={getCategoryIcon(item.category, 18)}
+                icon={
+                  <span className="material-symbols-outlined">
+                    {categoryIcons[item.category] || 'category'}
+                  </span>
+                }
               />
               <div className="feed-item-content">
                 <Text className="feed-item-title">{item.name}</Text>
