@@ -66,7 +66,10 @@ const UnifiedEditBillModal = ({ open, onCancel, onSubmit, bill }) => {
       : '';
 
   const parseAmount = (value) => {
-    const numeric = parseFloat((value || '').toString().replace(/,/g, ''));
+    if (value === '' || value === null || value === undefined) {
+      return '';
+    }
+    const numeric = parseFloat(value.toString().replace(/,/g, ''));
     return Number.isNaN(numeric) ? '' : numeric;
   };
 
