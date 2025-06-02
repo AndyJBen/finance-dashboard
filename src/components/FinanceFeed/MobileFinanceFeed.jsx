@@ -8,6 +8,8 @@ import {
   IconChevronUp,
   IconCircleCheck,
   IconClock,
+  IconHourglassHigh,
+  IconTimeDuration15,
   IconChevronLeft,
   IconChevronRight
 } from '@tabler/icons-react';
