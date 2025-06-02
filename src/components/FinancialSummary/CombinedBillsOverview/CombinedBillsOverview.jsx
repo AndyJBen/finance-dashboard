@@ -331,12 +331,14 @@ const CombinedBillsOverview = ({ style }) => {
         updateBillWithFuture,
         addBill,
         bills: contextBills,
-        displayedMonth: contextDisplayedMonth
+        displayedMonth: contextDisplayedMonth,
+        goToPreviousMonth: contextGoToPreviousMonth,
+        goToNextMonth: contextGoToNextMonth
     } = useContext(FinanceContext);
 
-    // Local state for month navigation and bills so that changing months here
-    // does not affect the global FinanceContext month or bills
-    const [overviewMonth, setOverviewMonth] = useState(dayjs());
+    // Local month state is kept in sync with FinanceContext so that navigating
+    // months updates the global summary as well
+    const [overviewMonth, setOverviewMonth] = useState(contextDisplayedMonth);
     const [localBills, setLocalBills] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -371,6 +373,11 @@ const CombinedBillsOverview = ({ style }) => {
     useEffect(() => {
         loadBills();
     }, [overviewMonth, loadBills]);
+
+    // When the context month changes elsewhere, keep local month in sync
+    useEffect(() => {
+        setOverviewMonth(dayjs(contextDisplayedMonth));
+    }, [contextDisplayedMonth]);
 
     // Keep local bills in sync with context when months match
     useEffect(() => {
@@ -590,8 +597,14 @@ const CombinedBillsOverview = ({ style }) => {
                         <MonthlyProgressSummary
                             loading={loading}
                             displayedMonth={overviewMonth}
-                            goToPreviousMonth={() => setOverviewMonth(prev => prev.subtract(1, 'month'))}
-                            goToNextMonth={() => setOverviewMonth(prev => prev.add(1, 'month'))}
+                            goToPreviousMonth={() => {
+                                setOverviewMonth(prev => prev.subtract(1, 'month'));
+                                contextGoToPreviousMonth();
+                            }}
+                            goToNextMonth={() => {
+                                setOverviewMonth(prev => prev.add(1, 'month'));
+                                contextGoToNextMonth();
+                            }}
                             totalBillsInDisplayedMonth={billsDueInDisplayedMonth.length}
                             paidBillsInDisplayedMonth={billsDueInDisplayedMonth.filter(b => b.isPaid).length}
                             totalAmountForAllBillsInDisplayedMonth={billsDueInDisplayedMonth.reduce((sum, bill) => (typeof bill.amount === 'number' ? sum + bill.amount : sum), 0)}
