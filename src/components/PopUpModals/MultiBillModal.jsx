@@ -13,16 +13,12 @@ import {
 import dayjs from 'dayjs';
 import { FinanceContext } from '../../contexts/FinanceContext';
 import './styles/MultiBillModal.css';
+import { billCategories } from '../../utils/categoryIcons';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
 
-// Define categories here or get them from context if available globally
-const billCategories = [
-  "Utilities", "Rent", "Mortgage", "Groceries", "Subscription",
-  "Credit Card", "Loan", "Insurance", "Medical", "Personal Care",
-  "Bill Prep", "Auto", "Other"
-];
+// Bill categories sourced from global configuration
 
 export default function MultiBillModal({ open, onClose, onBillsAdded }) {
   const [form] = Form.useForm();

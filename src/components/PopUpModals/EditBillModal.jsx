@@ -20,30 +20,44 @@ import {
     IconWifi,
     IconDeviceLaptop,
     IconFileText,
-    IconHelp
+    IconHelp,
+    IconPlane,
+    IconSchool,
+    IconUsersGroup
 } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import './styles/EditBillModal.css';
+import { billCategories as categoryNames } from '../../utils/categoryIcons';
 
 const { Option } = Select;
 const { Text } = Typography;
 
-// Enhanced bill categories with icons and colors
-const billCategories = [
-    { name: "Utilities", icon: IconBolt, color: "#FF9500", bgColor: "#FFF2E5" },
-    { name: "Rent", icon: IconHome, color: "#007AFF", bgColor: "#E5F2FF" },
-    { name: "Mortgage", icon: IconHome, color: "#5856D6", bgColor: "#EEEEFD" },
-    { name: "Groceries", icon: IconShoppingCart, color: "#34C759", bgColor: "#E8F8EA" },
-    { name: "Subscription", icon: IconDeviceLaptop, color: "#AF52DE", bgColor: "#F4ECFB" },
-    { name: "Credit Card", icon: IconCreditCard, color: "#FF3B30", bgColor: "#FFE9E8" },
-    { name: "Loan", icon: IconFileText, color: "#FF9500", bgColor: "#FFF2E5" },
-    { name: "Insurance", icon: IconCar, color: "#32D74B", bgColor: "#E8F8EA" },
-    { name: "Medical", icon: IconStethoscope, color: "#FF3B30", bgColor: "#FFE9E8" },
-    { name: "Personal Care", icon: IconHelp, color: "#5856D6", bgColor: "#EEEEFD" },
-    { name: "Bill Prep", icon: IconCalendar, color: "#007AFF", bgColor: "#E5F2FF" },
-    { name: "Auto", icon: IconCar, color: "#FF9500", bgColor: "#FFF2E5" },
-    { name: "Other", icon: IconHelp, color: "#8E8E93", bgColor: "#F2F2F7" }
-];
+// Category metadata with icons and colors
+const categoryDetails = {
+    Utilities: { icon: IconBolt, color: "#FF9500", bgColor: "#FFF2E5" },
+    Rent: { icon: IconHome, color: "#007AFF", bgColor: "#E5F2FF" },
+    Mortgage: { icon: IconHome, color: "#5856D6", bgColor: "#EEEEFD" },
+    Groceries: { icon: IconShoppingCart, color: "#34C759", bgColor: "#E8F8EA" },
+    Subscription: { icon: IconDeviceLaptop, color: "#AF52DE", bgColor: "#F4ECFB" },
+    "Credit Card": { icon: IconCreditCard, color: "#FF3B30", bgColor: "#FFE9E8" },
+    Loan: { icon: IconFileText, color: "#FF9500", bgColor: "#FFF2E5" },
+    Insurance: { icon: IconCar, color: "#32D74B", bgColor: "#E8F8EA" },
+    Medical: { icon: IconStethoscope, color: "#FF3B30", bgColor: "#FFE9E8" },
+    "Personal Care": { icon: IconHelp, color: "#5856D6", bgColor: "#EEEEFD" },
+    "Bill Prep": { icon: IconCalendar, color: "#007AFF", bgColor: "#E5F2FF" },
+    Auto: { icon: IconCar, color: "#FF9500", bgColor: "#FFF2E5" },
+    Travel: { icon: IconPlane, color: "#FF9500", bgColor: "#FFF2E5" },
+    Education: { icon: IconSchool, color: "#AF52DE", bgColor: "#F4ECFB" },
+    "Family Support": { icon: IconUsersGroup, color: "#5856D6", bgColor: "#EEEEFD" },
+    Home: { icon: IconHome, color: "#007AFF", bgColor: "#E5F2FF" },
+    Other: { icon: IconHelp, color: "#8E8E93", bgColor: "#F2F2F7" }
+};
+
+// Build final list of bill categories using global names
+const billCategories = categoryNames.map(name => ({
+    name,
+    ...(categoryDetails[name] || { icon: IconHelp, color: '#8E8E93', bgColor: '#F2F2F7' })
+}));
 
 const UnifiedEditBillModal = ({ open, onCancel, onSubmit, bill }) => {
   const [form] = Form.useForm();

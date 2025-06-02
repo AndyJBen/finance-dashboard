@@ -17,3 +17,5 @@ export const categoryIcons = {
   'Family Support': 'group',
   Other: 'category'
 };
+
+export const billCategories = Object.keys(categoryIcons);
