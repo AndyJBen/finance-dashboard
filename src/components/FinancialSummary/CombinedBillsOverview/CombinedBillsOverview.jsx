@@ -248,37 +248,32 @@ const EnhancedBillRow = ({
                         <div className="bill-name-and-category">
                             <Text strong className="bill-name">{record.name}</Text>
                             {record.category && (
-                                <div className="category-and-date">
-                                    <Tag
-                                        className="bill-category-tag"
-                                        style={{
-                                            margin: 0,
-                                            backgroundColor: 'transparent',
-                                            border: 'none',
-                                            fontSize: '0.75rem',
-                                            padding: '0 4px 0 0'
-                                        }}
-                                    >
-                                        <span style={{
-                                            marginRight: '6px',
-                                            display: 'inline-flex',
-                                            alignItems: 'center'
-                                        }}>
-                                            {React.cloneElement(getCategoryIcon(record.category), {
-                                                size: 14,
-                                                style: { color: getCategoryColor(record.category).text }
-                                            })}
-                                        </span>
-                                        <span style={{
-                                            color: getCategoryColor(record.category).text
-                                        }}>
-                                            {record.category}
-                                        </span>
-                                    </Tag>
-                                    <span className="bill-due-date">
-                                        {dayjs(record.dueDate).isValid() ? dayjs(record.dueDate).format('MM/DD/YYYY') : ''}
+                                <Tag
+                                    className="bill-category-tag"
+                                    style={{
+                                        margin: 0,
+                                        backgroundColor: 'transparent',
+                                        border: 'none',
+                                        fontSize: '0.75rem',
+                                        padding: '0 4px 0 0'
+                                    }}
+                                >
+                                    <span style={{
+                                        marginRight: '6px',
+                                        display: 'inline-flex',
+                                        alignItems: 'center'
+                                    }}>
+                                        {React.cloneElement(getCategoryIcon(record.category), {
+                                            size: 14,
+                                            style: { color: getCategoryColor(record.category).text }
+                                        })}
                                     </span>
-                                </div>
+                                    <span style={{
+                                        color: getCategoryColor(record.category).text
+                                    }}>
+                                        {record.category}
+                                    </span>
+                                </Tag>
                             )}
                         </div>
                         <div className="bill-amount-section">
