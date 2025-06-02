@@ -19,7 +19,6 @@ import EditBillModal from '../../PopUpModals/EditBillModal';
 import MultiBillModal from '../../PopUpModals/MultiBillModal';
 import DeleteBillModal from '../../PopUpModals/DeleteBillModal';
 import MonthlyProgressSummary from './MonthlyProgressSummary';
-import { fetchBills } from '../../../services/api';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import updateLocale from 'dayjs/plugin/updateLocale';
@@ -325,6 +324,8 @@ const EnhancedBillRow = ({
 // Main Component
 const CombinedBillsOverview = ({ style }) => {
     const {
+        loading,
+        error,
         deleteBill,
         deleteMasterBill,
         updateBill,
@@ -336,12 +337,6 @@ const CombinedBillsOverview = ({ style }) => {
         goToNextMonth: contextGoToNextMonth
     } = useContext(FinanceContext);
 
-    // Local month state is kept in sync with FinanceContext so that navigating
-    // months updates the global summary as well
-    const [overviewMonth, setOverviewMonth] = useState(contextDisplayedMonth);
-    const [localBills, setLocalBills] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
     
     const [isEditModalVisible, setIsEditModalVisible] = useState(false);
     const [isMultiModalVisible, setMultiModalVisible] = useState(false);
@@ -355,48 +350,20 @@ const CombinedBillsOverview = ({ style }) => {
     const screens = useBreakpoint();
     const isSmallScreen = screens.xs || screens.sm;
 
-    const loadBills = useCallback(async (targetMonth = overviewMonth) => {
-        setLoading(true);
-        setError(null);
-        try {
-            const monthString = targetMonth.format('YYYY-MM');
-            const fetched = await fetchBills(monthString, true);
-            setLocalBills(Array.isArray(fetched) ? fetched : []);
-        } catch (err) {
-            setLocalBills([]);
-            setError(err);
-        } finally {
-            setLoading(false);
-        }
-    }, [overviewMonth]);
-
-    useEffect(() => {
-        loadBills();
-    }, [overviewMonth, loadBills]);
-
-    // When the context month changes elsewhere, keep local month in sync
-    useEffect(() => {
-        setOverviewMonth(dayjs(contextDisplayedMonth));
-    }, [contextDisplayedMonth]);
-
-    // Keep local bills in sync with context when months match
-    useEffect(() => {
-        if (dayjs(contextDisplayedMonth).isSame(overviewMonth, 'month')) {
-            setLocalBills(Array.isArray(contextBills) ? contextBills : []);
-        }
-    }, [contextBills, contextDisplayedMonth, overviewMonth]);
 
     // Data processing logic
-    const validBills = Array.isArray(localBills) ? localBills : [];
-    const startOfDisplayedMonth = overviewMonth.startOf('month');
-    const endOfDisplayedMonth = overviewMonth.endOf('month');
+    const validBills = useMemo(() => (
+        Array.isArray(contextBills) ? contextBills : []
+    ), [contextBills]);
+    const startOfDisplayedMonth = contextDisplayedMonth.startOf('month');
+    const endOfDisplayedMonth = contextDisplayedMonth.endOf('month');
 
     const billsDueInDisplayedMonth = useMemo(() => {
         return validBills.filter(bill => {
             const dueDate = dayjs(bill.dueDate);
             return dueDate.isValid() && dueDate.isBetween(startOfDisplayedMonth, endOfDisplayedMonth, 'day', '[]');
         });
-    }, [validBills, overviewMonth, startOfDisplayedMonth, endOfDisplayedMonth]);
+    }, [validBills, startOfDisplayedMonth, endOfDisplayedMonth]);
 
     const filteredBillsByPaidStatus = useMemo(() => {
         const allBills = showPaidBills
@@ -454,7 +421,6 @@ const CombinedBillsOverview = ({ style }) => {
             await new Promise(res => setTimeout(res, 300));
         }
         await updateBill(record, { isPaid: markingAsPaid });
-        await loadBills();
         if (markingAsPaid) {
             setFadingBillId(null);
         }
@@ -476,7 +442,6 @@ const CombinedBillsOverview = ({ style }) => {
         if (result) {
             setIsEditModalVisible(false);
             setEditingBill(null);
-            await loadBills();
         }
     };
 
@@ -489,7 +454,6 @@ const CombinedBillsOverview = ({ style }) => {
         } finally {
             setDeleteModalVisible(false);
             setBillToDelete(null);
-            await loadBills();
         }
     };
 
@@ -497,7 +461,6 @@ const CombinedBillsOverview = ({ style }) => {
         if (!billToDelete) return;
         try {
             await deleteMasterBill(billToDelete.masterId, billToDelete.dueDate);
-            await loadBills();
         } catch (error) {
             message.error(`Deletion error: ${error.message || 'Unknown'}`);
         } finally {
@@ -596,15 +559,9 @@ const CombinedBillsOverview = ({ style }) => {
                     <div style={{ padding: 'var(--space-20)', paddingBottom: 'calc(var(--space-20) * 0.1)' }}>
                         <MonthlyProgressSummary
                             loading={loading}
-                            displayedMonth={overviewMonth}
-                            goToPreviousMonth={() => {
-                                setOverviewMonth(prev => prev.subtract(1, 'month'));
-                                contextGoToPreviousMonth();
-                            }}
-                            goToNextMonth={() => {
-                                setOverviewMonth(prev => prev.add(1, 'month'));
-                                contextGoToNextMonth();
-                            }}
+                            displayedMonth={contextDisplayedMonth}
+                            goToPreviousMonth={contextGoToPreviousMonth}
+                            goToNextMonth={contextGoToNextMonth}
                             totalBillsInDisplayedMonth={billsDueInDisplayedMonth.length}
                             paidBillsInDisplayedMonth={billsDueInDisplayedMonth.filter(b => b.isPaid).length}
                             totalAmountForAllBillsInDisplayedMonth={billsDueInDisplayedMonth.reduce((sum, bill) => (typeof bill.amount === 'number' ? sum + bill.amount : sum), 0)}
@@ -752,7 +709,6 @@ const CombinedBillsOverview = ({ style }) => {
                 <MultiBillModal
                     open={isMultiModalVisible}
                     onClose={() => setMultiModalVisible(false)}
-                    onBillsAdded={loadBills}
                 />
             )}
 
