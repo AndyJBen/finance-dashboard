@@ -9,9 +9,7 @@ import {
   IconCircleCheck,
   IconClock,
   IconHourglassHigh,
-  IconTimeDuration15,
-  IconChevronLeft,
-  IconChevronRight
+  IconTimeDuration15
 } from '@tabler/icons-react';
 import { categoryIcons } from '../../utils/categoryIcons';
 
@@ -229,23 +227,20 @@ const MobileFinanceFeed = () => {
   return (
     <Spin spinning={loading}>
     <div className="finance-feed-mobile">
-      <div style={{ display: 'flex', alignItems: 'center', marginBottom: 8 }}>
-        <Button
-          type="text"
-          icon={<IconChevronLeft size={16} />}
-          onClick={() => setFeedMonth(prev => prev.subtract(1, 'month'))}
-        />
-        <span style={{ flexGrow: 1, textAlign: 'center', fontWeight: 600 }}>
-          {feedMonth.format('MMMM')}
-        </span>
-        <Button
-          type="text"
-          icon={<IconChevronRight size={16} />}
-          onClick={() => setFeedMonth(prev => prev.add(1, 'month'))}
-        />
+      <Title level={4} style={{ marginBottom: 8 }}>Finance Feed</Title>
+      <div style={{ display: 'flex', alignItems: 'center', marginBottom: 16 }}>
+        <Select
+          value={feedMonth.month()}
+          style={{ width: 120, marginRight: 8 }}
+          onChange={month => setFeedMonth(prev => prev.month(month))}
+        >
+          {dayjs.months().map((m, idx) => (
+            <Select.Option key={idx} value={idx}>{m}</Select.Option>
+          ))}
+        </Select>
         <Select
           value={feedMonth.year()}
-          style={{ width: 80, marginLeft: 8 }}
+          style={{ width: 80 }}
           onChange={year => setFeedMonth(prev => prev.year(year))}
         >
           {Array.from({ length: 5 }, (_, i) => dayjs().year() - 2 + i).map(y => (
@@ -253,7 +248,6 @@ const MobileFinanceFeed = () => {
           ))}
         </Select>
       </div>
-      <Title level={4} style={{ marginBottom: 16 }}>Finance Feed</Title>
 
       {/* Past Due Payments */}
       <SectionCard
