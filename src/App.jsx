@@ -150,10 +150,15 @@ function MyApp() {
                 onExpansionChange={handleBillsExpansionChange}
               />
             </div>
-            <FinanceFeed onEditBill={handleOpenEditBillModal} onAddBill={handleOpenAddBillModal} />
+
+            <div className="dashboard-right">
+              <FinanceFeed
+                onEditBill={handleOpenEditBillModal}
+                onAddBill={handleOpenAddBillModal}
+              />
+            </div>
           </div>
         );
-
       case 'finance-feed':
         return <FinanceFeed
           isMobileView={isMobileView}

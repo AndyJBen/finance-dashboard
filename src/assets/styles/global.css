@@ -436,59 +436,6 @@ textarea {
     font-size: 0.75rem !important;
   }
 
-  .financial-overview-row {
-    display: flex !important;
-    flex-wrap: nowrap !important;
-    margin: 0 !important;
-    width: 100% !important;
-    justify-content: space-between !important;
-  }
-
-  .financial-overview-row .ant-col {
-    flex: 1 1 0 !important;
-    width: 33.33% !important;
-    max-width: 33.33% !important;
-    padding: 0 3px !important;
-  }
-
-  .financial-overview-row .ant-card {
-    border-radius: 10px !important;
-    margin-bottom: 5px !important;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-    min-height: 75px !important;
-  }
-
-  .financial-overview-row .ant-card-body {
-    padding: 8px 10px !important;
-  }
-
-  .financial-overview-row .ant-statistic-content {
-    font-size: 18px !important;
-    line-height: 1 !important;
-    margin-top: 4px !important;
-  }
-
-  .financial-overview-row .cents-superscript {
-    font-size: 40% !important;
-    margin-top: 2px !important;
-  }
-
-  .financial-overview-row .ant-space {
-    margin-bottom: 4px !important;
-  }
-
-  .financial-overview-row .due-balance-subtext {
-    display: none !important;
-  }
-
-  .financial-overview-row .ant-typography {
-    font-size: 0.6rem !important;
-  }
-
-  .financial-overview-row .tabler-icon {
-    width: 16px !important;
-    height: 16px !important;
-  }
 
   main.ant-layout-content {
     padding-left: var(--space-8) !important;
@@ -689,4 +636,29 @@ textarea {
 .page-transition {
   opacity: 0;
   animation: pageFadeIn 0.3s ease-out forwards;
+}
+
+/* Dashboard desktop grid layout */
+.dashboard-grid {
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard-left {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-24);
+}
+
+@media (min-width: 1024px) {
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 380px;
+    gap: var(--space-24);
+    align-items: flex-start;
+  }
+
+  .dashboard-right {
+    width: 380px;
+  }
 }
