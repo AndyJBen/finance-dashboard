@@ -261,7 +261,10 @@ const EnhancedBillRow = ({
                                             alignItems: 'center',
                                             color: getCategoryColor(record.category).text
                                         }}>
-                                            <span className="material-symbols-outlined">
+                                            <span
+                                                className="material-symbols-outlined"
+                                                style={isMobile ? { fontSize: '16px' } : {}}
+                                            >
                                                 {categoryIcons[record.category] || 'category'}
                                             </span>
                                         </span>
@@ -271,9 +274,6 @@ const EnhancedBillRow = ({
                                             {record.category}
                                         </span>
                                     </Tag>
-                                    <span className="bill-due-date">
-                                        {dayjs(record.dueDate).isValid() ? dayjs(record.dueDate).format('MM/DD/YYYY') : ''}
-                                    </span>
                                 </div>
                             )}
                         </div>
@@ -650,9 +650,17 @@ const CombinedBillsOverview = ({ style }) => {
                                             fontSize: '0.85rem' 
                                         }}
                                     >
-                                        <span className="material-symbols-outlined" style={{
-                                            color: selectedCategory === category ? getCategoryColor(category).text : 'var(--neutral-700)'
-                                        }}>
+                                        <span
+                                            className="material-symbols-outlined"
+                                            style={{
+                                                color: isSmallScreen
+                                                    ? 'var(--neutral-600)'
+                                                    : selectedCategory === category
+                                                        ? getCategoryColor(category).text
+                                                        : 'var(--neutral-700)',
+                                                fontSize: isSmallScreen ? '14px' : undefined
+                                            }}
+                                        >
                                             {categoryIcons[category] || 'category'}
                                         </span>
                                         <span>{category}</span>

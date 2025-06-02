@@ -425,6 +425,11 @@ textarea {
     height: 14px !important;
   }
 
+  .category-tags-container .material-symbols-outlined {
+    font-size: 14px !important;
+    color: var(--neutral-600) !important;
+  }
+
   .all-categories-btn {
     height: 20px !important;
     padding: 0 6px !important;

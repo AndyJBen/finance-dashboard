@@ -211,6 +211,12 @@
     white-space: nowrap;
 }
 
+@media (max-width: 768px) {
+    .bill-category-tag .material-symbols-outlined {
+        font-size: 16px;
+    }
+}
+
 .due-date-and-status {
     display: inline-flex;
     align-items: center;
