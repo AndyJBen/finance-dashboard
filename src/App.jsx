@@ -112,44 +112,57 @@ function MyApp() {
   const renderContent = () => {
     switch (selectedMenuKey) {
       case 'dashboard':
-        return (
-          <Row gutter={isMobileView ? [8, 16] : [24, 24]}>
-            <Col xs={24}>
-              <FinancialOverviewCards />
-            </Col>
-
-            <Col xs={24} lg={16}>
-              <div
-                style={{
-                  marginBottom: isMobileView && isBillsListExpanded ? '60px' : '0px',
-                  transition: 'margin-bottom 0.2s ease-in-out',
-                }}
-              >
-                <div style={{ marginTop: isMobileView ? 0 : 24 }}>
-                  <CombinedBillsOverview
-                    style={{ height: '100%' }}
-                    onEditBill={handleOpenEditBillModal}
-                    onAddBill={handleOpenAddBillModal}
-                    onExpansionChange={handleBillsExpansionChange}
-                  />
-                </div>
-              </div>
-            </Col>
-
-            {!isMobileView && (
-              <Col xs={24} lg={8} style={{ width: '100%' }}>
+        if (isMobileView) {
+          return (
+            <Row gutter={[8, 16]}>
+              <Col xs={24}>
+                <FinancialOverviewCards />
+              </Col>
+              <Col xs={24}>
                 <div
                   style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: 24,
-                    width: '100%',
+                    marginBottom: isBillsListExpanded ? '60px' : '0px',
+                    transition: 'margin-bottom 0.2s ease-in-out',
                   }}
                 >
-                  <FinanceFeed onEditBill={handleOpenEditBillModal} onAddBill={handleOpenAddBillModal} />
+                  <div style={{ marginTop: 0 }}>
+                    <CombinedBillsOverview
+                      style={{ height: '100%' }}
+                      onEditBill={handleOpenEditBillModal}
+                      onAddBill={handleOpenAddBillModal}
+                      onExpansionChange={handleBillsExpansionChange}
+                    />
+                  </div>
                 </div>
               </Col>
-            )}
+            </Row>
+          );
+        }
+        return (
+          <Row gutter={[24, 24]}>
+            <Col xs={24} lg={6}>
+              <FinancialOverviewCards />
+            </Col>
+            <Col xs={24} lg={10}>
+              <CombinedBillsOverview
+                style={{ height: '100%', marginTop: 24 }}
+                onEditBill={handleOpenEditBillModal}
+                onAddBill={handleOpenAddBillModal}
+                onExpansionChange={handleBillsExpansionChange}
+              />
+            </Col>
+            <Col xs={24} lg={8} style={{ width: '100%' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 24,
+                  width: '100%',
+                }}
+              >
+                <FinanceFeed onEditBill={handleOpenEditBillModal} onAddBill={handleOpenAddBillModal} />
+              </div>
+            </Col>
           </Row>
         );
 
