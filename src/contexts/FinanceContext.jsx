@@ -3,8 +3,7 @@ import dayjs from 'dayjs';
 import {
   fetchBills, addBill, updateBill, deleteBill, deleteMasterBill,
   fetchBankBalance, updateBankBalance,
-  fetchCreditCards, addCreditCard, updateCreditCard, deleteCreditCard, apiReorderCreditCards,
-  fetchDueBalance
+  fetchCreditCards, addCreditCard, updateCreditCard, deleteCreditCard, apiReorderCreditCards
 } from '../services/api';
 import { message } from 'antd';
 
@@ -46,7 +45,6 @@ export const FinanceProvider = ({ children }) => {
   const [displayedMonth, setDisplayedMonth] = useState(dayjs());
   const [bankBalance, setBankBalance] = useState(null);
   const [creditCards, setCreditCards] = useState([]);
-  const [dueBalanceTotal, setDueBalanceTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [loadingBalance, setLoadingBalance] = useState(true);
   const [loadingCreditCards, setLoadingCreditCards] = useState(true);
@@ -60,17 +58,19 @@ export const FinanceProvider = ({ children }) => {
   });
   const [isEditingBankBalance, setIsEditingBankBalance] = useState(false);
 
-  const pastDueBills = bills.filter(bill => {
-    const dueDate = dayjs(bill.dueDate);
-    const isBillPrep = bill.category?.toLowerCase() === 'bill prep';
-    const startOfCurrentMonth = dayjs().startOf('month');
-    return (
-      !bill.isPaid &&
-      !isBillPrep &&
-      dueDate.isValid() &&
-      dueDate.isBefore(startOfCurrentMonth, 'day')
-    );
-  });
+  const pastDueBills = React.useMemo(() => {
+    const startOfDisplayedMonth = dayjs(displayedMonth).startOf('month');
+    return bills.filter(bill => {
+      const dueDate = dayjs(bill.dueDate);
+      const isBillPrep = bill.category?.toLowerCase() === 'bill prep';
+      return (
+        !bill.isPaid &&
+        !isBillPrep &&
+        dueDate.isValid() &&
+        dueDate.isBefore(startOfDisplayedMonth, 'day')
+      );
+    });
+  }, [bills, displayedMonth]);
 
   const totalCreditCardBalanceAll = creditCards.reduce((sum, card) => sum + Number(card.balance || 0), 0);
 
@@ -79,18 +79,40 @@ export const FinanceProvider = ({ children }) => {
   }, 0);
 
   const hasAnyPastDueBills = pastDueBills.length > 0;
-  const pastDueAmountFromPreviousMonths = pastDueBills.reduce(
-    (sum, bill) => sum + Number(bill.amount || 0),
-    0
+  const pastDueAmountFromPreviousMonths = React.useMemo(
+    () => pastDueBills.reduce((sum, bill) => sum + Number(bill.amount || 0), 0),
+    [pastDueBills]
   );
 
-  const currentDueAmt = bills.reduce((sum, bill) => {
-    const dueDate = dayjs(bill.dueDate);
-    const isCurrentMonth = dueDate.isValid() &&
-      dueDate.month() === displayedMonth.month() &&
-      dueDate.year() === displayedMonth.year();
-    return !bill.isPaid && isCurrentMonth ? sum + Number(bill.amount || 0) : sum;
-  }, 0);
+  const currentDueAmt = React.useMemo(() => {
+    return bills.reduce((sum, bill) => {
+      const dueDate = dayjs(bill.dueDate);
+      const isCurrentMonth =
+        dueDate.isValid() &&
+        dueDate.month() === displayedMonth.month() &&
+        dueDate.year() === displayedMonth.year();
+      return !bill.isPaid && isCurrentMonth ? sum + Number(bill.amount || 0) : sum;
+    }, 0);
+  }, [bills, displayedMonth]);
+
+  const dueBalanceTotal = React.useMemo(() => {
+    const startOfDisplayedMonth = dayjs(displayedMonth).startOf('month');
+    const startOfNextMonth = startOfDisplayedMonth.add(1, 'month');
+    const totalBillsDue = bills.reduce((sum, bill) => {
+      const dueDate = dayjs(bill.dueDate);
+      const isBillPrep = bill.category?.toLowerCase() === 'bill prep';
+      if (bill.isPaid || !dueDate.isValid()) return sum;
+      if (
+        dueDate.isBefore(startOfDisplayedMonth, 'day') ||
+        (dueDate.isSameOrAfter(startOfDisplayedMonth, 'day') && dueDate.isBefore(startOfNextMonth, 'day')) ||
+        isBillPrep
+      ) {
+        return sum + Number(bill.amount || 0);
+      }
+      return sum;
+    }, 0);
+    return totalBillsDue + totalIncludedCreditCardBalance;
+  }, [bills, displayedMonth, totalIncludedCreditCardBalance]);
 
 
   const goToPreviousMonth = useCallback(() => {
@@ -306,19 +328,6 @@ export const FinanceProvider = ({ children }) => {
     }
   }, []);
 
-  const loadDueBalance = useCallback(async () => {
-    try {
-      const data = await fetchDueBalance();
-      if (data && typeof data.total === 'number') {
-        setDueBalanceTotal(data.total);
-      } else {
-        setDueBalanceTotal(0);
-      }
-    } catch (err) {
-      console.error('Error loading due balance:', err);
-      setDueBalanceTotal(0);
-    }
-  }, []);
 
   const handleCreateCreditCard = async (cardData) => {
     try {
@@ -437,9 +446,6 @@ export const FinanceProvider = ({ children }) => {
     loadCreditCards();
   }, [loadBankBalance, loadCreditCards]);
 
-  useEffect(() => {
-    loadDueBalance();
-  }, [bills, creditCards, loadDueBalance]);
 
   const contextValue = {
     bills,
@@ -473,8 +479,7 @@ export const FinanceProvider = ({ children }) => {
     editCreditCard: handleEditCreditCard,
     removeCreditCard: handleRemoveCreditCard,
     reorderCreditCards: handleReorderCreditCards,
-    loadBillsForMonth,
-    loadDueBalance
+    loadBillsForMonth
   };
 
   return (
