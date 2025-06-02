@@ -507,7 +507,7 @@ textarea {
   }
 
   .financial-overview-row .ant-card-body {
-    padding: 8px 8px !important;
+    padding: 6px 8px !important;
     height: 75px !important;
     display: flex !important;
     flex-direction: column !important;

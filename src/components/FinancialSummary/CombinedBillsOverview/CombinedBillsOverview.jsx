@@ -501,6 +501,8 @@ const CombinedBillsOverview = ({ style }) => {
         return { text: '#6B9FD4', bg: '#F5F8FC' };
       case 'auto':
         return { text: '#D4B56B', bg: '#FCFAF5' };
+      case 'family support':
+        return { text: '#69C9AF', bg: '#E7FBF5' };
       default:
         return { text: '#9B9B9B', bg: '#F8F8F8' };
     }
@@ -680,7 +682,7 @@ const CombinedBillsOverview = ({ style }) => {
                       backgroundColor:
                         selectedCategory === category
                           ? getCategoryColor(category).bg
-                          : 'var(--neutral-50)',
+                          : 'var(--neutral-100)',
                       color:
                         selectedCategory === category
                           ? getCategoryColor(category).text

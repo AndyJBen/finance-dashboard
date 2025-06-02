@@ -48,7 +48,7 @@ const categoryDetails = {
     Auto: { icon: IconCar, color: "#FF9500", bgColor: "#FFF2E5" },
     Travel: { icon: IconPlane, color: "#FF9500", bgColor: "#FFF2E5" },
     Education: { icon: IconSchool, color: "#AF52DE", bgColor: "#F4ECFB" },
-    "Family Support": { icon: IconUsersGroup, color: "#5856D6", bgColor: "#EEEEFD" },
+    "Family Support": { icon: IconUsersGroup, color: "#69C9AF", bgColor: "#E7FBF5" },
     Home: { icon: IconHome, color: "#007AFF", bgColor: "#E5F2FF" },
     Other: { icon: IconHelp, color: "#8E8E93", bgColor: "#F2F2F7" }
 };
