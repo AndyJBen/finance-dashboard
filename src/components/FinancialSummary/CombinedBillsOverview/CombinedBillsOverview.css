@@ -211,6 +211,18 @@
     white-space: nowrap;
 }
 
+.category-and-date {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.bill-due-date {
+    font-size: 0.75rem;
+    color: var(--neutral-500);
+}
+
 /* Fade animation for bill completion */
 .bill-row-fade-out {
     opacity: 0.5;
