@@ -1,6 +1,6 @@
 // src/components/Sidebar/Sidebar.jsx
 import React, { useContext, useState, useMemo } from 'react';
-import { Layout, Menu, Spin, Button, Tooltip, Space, message, Typography, Dropdown } from 'antd';
+import { Layout, Menu, Spin, Button, Tooltip, Space, message, Typography, Dropdown, Grid } from 'antd';
 import {
   IconHomeFilled,
   IconChartPieFilled,
@@ -42,6 +42,7 @@ import './Sidebar.css';
 
 const { Sider } = Layout;
 const { Text } = Typography;
+const { useBreakpoint } = Grid;
 
 // Sortable card item for drag-and-drop
 const SortableCardItem = ({ id, card, collapsed, onEdit, onDelete, isOverlay = false }) => {
@@ -148,6 +149,9 @@ const Sidebar = ({
   // State to track the ID of the item being dragged
   const [activeId, setActiveId] = useState(null);
 
+  const screens = useBreakpoint();
+  const isDesktop = screens.md;
+
   // Modal control functions
   const showAddModal = () => setIsAddModalVisible(true);
   const handleAddModalClose = () => setIsAddModalVisible(false);
@@ -206,9 +210,11 @@ const Sidebar = ({
   // Define the main navigation menu items
   const mainMenuItems = [
     { label: 'Dashboard', key: 'dashboard', icon: <IconHomeFilled size={20} /> },
-    { label: 'Finance Feed', key: 'finance-feed', icon: <IconActivityHeartbeat size={20} /> },
-    { label: 'Reports',   key: 'reports',   icon: <IconChartPieFilled size={20} /> },
-    { label: 'Settings',  key: 'settings',  icon: <IconSettings size={20} /> },
+    ...(!isDesktop
+      ? [{ label: 'Finance Feed', key: 'finance-feed', icon: <IconActivityHeartbeat size={20} /> }]
+      : []),
+    { label: 'Reports', key: 'reports', icon: <IconChartPieFilled size={20} /> },
+    { label: 'Settings', key: 'settings', icon: <IconSettings size={20} /> },
   ];
 
   // Memoize credit card IDs for dnd-kit context

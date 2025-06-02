@@ -114,12 +114,17 @@ function MyApp() {
       case 'dashboard':
         return (
           <Row gutter={isMobileView ? [8, 16] : [24, 24]}>
-            <Col xs={24} lg={24}>
+            <Col xs={24}>
               <FinancialOverviewCards />
-              <div style={{
-                marginBottom: (isMobileView && isBillsListExpanded) ? '60px' : '0px',
-                transition: 'margin-bottom 0.2s ease-in-out'
-              }}>
+            </Col>
+
+            <Col xs={24} lg={16}>
+              <div
+                style={{
+                  marginBottom: isMobileView && isBillsListExpanded ? '60px' : '0px',
+                  transition: 'margin-bottom 0.2s ease-in-out',
+                }}
+              >
                 <div style={{ marginTop: isMobileView ? 0 : 24 }}>
                   <CombinedBillsOverview
                     style={{ height: '100%' }}
@@ -132,16 +137,16 @@ function MyApp() {
             </Col>
 
             {!isMobileView && (
-              <Col xs={24} lg={7} style={{ width: '100%' }}>
+              <Col xs={24} lg={8} style={{ width: '100%' }}>
                 <div
                   style={{
                     display: 'flex',
                     flexDirection: 'column',
                     gap: 24,
-                    width: '100%'
+                    width: '100%',
                   }}
                 >
-                  {}
+                  <FinanceFeed onEditBill={handleOpenEditBillModal} onAddBill={handleOpenAddBillModal} />
                 </div>
               </Col>
             )}
