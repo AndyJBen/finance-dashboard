@@ -10,7 +10,12 @@ import MultiBillModal from '../../PopUpModals/MultiBillModal';
 import DeleteBillModal from '../../PopUpModals/DeleteBillModal';
 import MonthlyProgressSummary from './MonthlyProgressSummary';
 import dayjs from 'dayjs';
+import isBetween from 'dayjs/plugin/isBetween';
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import './CombinedBillsOverview.css';
+
+dayjs.extend(isBetween);
+dayjs.extend(isSameOrAfter);
 
 const { Text } = Typography;
 const { useBreakpoint } = Grid;
@@ -331,6 +336,7 @@ const CombinedBillsOverview = ({ style }) => {
     loading,
     error,
     updateBill,
+    updateBillWithFuture,
     deleteBill,
     deleteMasterBill,
     addBill,
