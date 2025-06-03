@@ -502,7 +502,7 @@ const CombinedBillsOverview = ({ style }) => {
       case 'auto':
         return { text: '#D4B56B', bg: '#FCFAF5' };
       case 'family support':
-        return { text: '#69C9AF', bg: '#E7FBF5' };
+        return { text: '#69C9AF', bg: '#F1F5F9' };
       default:
         return { text: '#9B9B9B', bg: '#F8F8F8' };
     }
@@ -574,7 +574,11 @@ const CombinedBillsOverview = ({ style }) => {
 
   return (
     <>
-      <Card style={{ ...style, borderRadius: '20px', boxShadow: 'none' }} bodyStyle={{ padding: 0 }}>
+      <Card
+        className="combined-bills-card"
+        style={{ ...style, borderRadius: '20px', boxShadow: 'none' }}
+        bodyStyle={{ padding: 0 }}
+      >
         <Spin spinning={loading} tip="Loading Bills...">
           {/* Header → Monthly Progress + Month Nav */}
           <div style={{ padding: 'var(--space-20)', paddingBottom: 'calc(var(--space-20) * 0.1)' }}>
@@ -686,7 +690,7 @@ const CombinedBillsOverview = ({ style }) => {
                       color:
                         selectedCategory === category
                           ? getCategoryColor(category).text
-                          : 'var(--neutral-700)',
+                          : '#9e9e9e',
                       lineHeight: '1.4',
                       fontSize: '0.85rem',
                     }}
@@ -695,10 +699,10 @@ const CombinedBillsOverview = ({ style }) => {
                       className="material-symbols-outlined"
                       style={{
                         color: isSmallScreen
-                          ? 'var(--neutral-600)'
+                          ? '#9e9e9e'
                           : selectedCategory === category
                           ? getCategoryColor(category).text
-                          : 'var(--neutral-700)',
+                          : '#9e9e9e',
                         fontSize: isSmallScreen ? '14px' : undefined,
                       }}
                     >
