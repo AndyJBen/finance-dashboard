@@ -31,20 +31,36 @@ const formatBillResponse = (row) => {
 };
 
 const deleteFutureRecurringInstances = async (masterId, currentBillDueDate) => {
-  const deleteQuery = `DELETE FROM bills WHERE master_id = $1 AND due_date > $2`;
-  console.log('deleteFutureRecurringInstances query:', deleteQuery, [masterId, currentBillDueDate]);
-  await db.query(deleteQuery, [masterId, currentBillDueDate]);
+  // Mark any future instances as deleted rather than hard-delete
+  const updateQuery = `UPDATE bills SET is_deleted = TRUE WHERE master_id = $1 AND due_date > $2`;
+  console.log('deleteFutureRecurringInstances query:', updateQuery, [masterId, currentBillDueDate]);
+  await db.query(updateQuery, [masterId, currentBillDueDate]);
 };
 
 const createRecurringInstance = async (masterId, baseBill, monthsToAdd) => {
   const targetDueDate = dayjs(baseBill.due_date || baseBill.dueDate).add(monthsToAdd, 'month');
-  const targetMonth = targetDueDate.format('YYYY-MM');
-  const existsQuery = `SELECT 1 FROM bills WHERE master_id = $1 AND TO_CHAR(due_date, 'YYYY-MM') = $2`;
-  console.log('createRecurringInstance existsQuery:', existsQuery, [masterId, targetMonth]);
-  const exists = await db.query(existsQuery, [masterId, targetMonth]);
-  if (exists.rows.length === 0) {
+  const nextDue = targetDueDate.format('YYYY-MM-DD');
+  const nextMonthKey = nextDue.slice(0, 7);
+
+  // Check for an existing non-deleted instance in that month
+  const existsActive = await db.query(
+    `SELECT 1 FROM bills
+       WHERE master_id = $1
+         AND TO_CHAR(due_date, 'YYYY-MM') = $2
+         AND is_deleted = FALSE
+       LIMIT 1`,
+    [masterId, nextMonthKey]
+  );
+
+  // Check if a deleted row already exists for this exact due_date
+  const existsDeleted = await db.query(
+    'SELECT 1 FROM bills WHERE master_id = $1 AND due_date = $2 AND is_deleted = TRUE LIMIT 1',
+    [masterId, nextDue]
+  );
+
+  if (existsActive.rows.length === 0 && existsDeleted.rows.length === 0) {
     const insertQuery = `INSERT INTO bills (master_id, amount, due_date, is_paid) VALUES ($1, $2, $3, false)`;
-    const params = [masterId, baseBill.amount, targetDueDate.format('YYYY-MM-DD')];
+    const params = [masterId, baseBill.amount, nextDue];
     console.log('createRecurringInstance insertQuery:', insertQuery, params);
     await db.query(insertQuery, params);
   }
@@ -55,12 +71,14 @@ const ensureInstancesUpToMonth = async (month) => {
   const mastersQuery = "SELECT id FROM bill_master WHERE recurrence_pattern = 'monthly' AND is_active = TRUE";
   console.log('ensureInstancesUpToMonth mastersQuery:', mastersQuery);
   const masters = await db.query(mastersQuery);
+
   for (const { id: masterId } of masters.rows) {
     const latestQuery =
       "SELECT amount, due_date FROM bills WHERE master_id = $1 AND is_deleted = FALSE ORDER BY due_date DESC LIMIT 1";
     console.log('ensureInstancesUpToMonth latestQuery:', latestQuery, [masterId]);
     const latestRes = await db.query(latestQuery, [masterId]);
     if (latestRes.rows.length === 0) continue;
+
     let latest = {
       amount: parseFloat(latestRes.rows[0].amount),
       due_date: latestRes.rows[0].due_date
@@ -68,6 +86,7 @@ const ensureInstancesUpToMonth = async (month) => {
 
     while (dayjs(latest.due_date).isBefore(targetDate, 'month')) {
       const nextDue = dayjs(latest.due_date).add(1, 'month').format('YYYY-MM-DD');
+      const nextMonthKey = nextDue.slice(0, 7);
 
       // Check for an existing non-deleted instance in that month
       const existsActive = await db.query(
@@ -76,7 +95,7 @@ const ensureInstancesUpToMonth = async (month) => {
              AND TO_CHAR(due_date, 'YYYY-MM') = $2
              AND is_deleted = FALSE
            LIMIT 1`,
-        [masterId, nextDue.slice(0, 7)]
+        [masterId, nextMonthKey]
       );
 
       // Check if a deleted row already exists for this exact due_date
@@ -91,6 +110,7 @@ const ensureInstancesUpToMonth = async (month) => {
         console.log('ensureInstancesUpToMonth insertQuery:', insertQuery, [masterId, latest.amount, nextDue]);
         await db.query(insertQuery, [masterId, latest.amount, nextDue]);
       }
+
       latest = { due_date: nextDue, amount: latest.amount };
     }
   }
@@ -99,13 +119,18 @@ const ensureInstancesUpToMonth = async (month) => {
 router.get('/', async (req, res) => {
   const month = req.query.month;
   const view = req.query.view;
-  if (!month || !/^\d{4}-\d{2}$/.test(month)) return res.status(400).json({ error: 'Invalid or missing month query parameter. Use YYYY-MM format.' });
+  if (!month || !/^\d{4}-\d{2}$/.test(month)) {
+    return res.status(400).json({ error: 'Invalid or missing month query parameter. Use YYYY-MM format.' });
+  }
+
   try {
     console.log('GET /api/bills params:', { month, view });
     await ensureInstancesUpToMonth(month);
+
     const start = dayjs(month).startOf('month').format('YYYY-MM-DD');
     const end = dayjs(month).endOf('month').format('YYYY-MM-DD');
     let query, params;
+
     if (view === 'current_and_overdue') {
       query = `SELECT b.*, m.name, m.category, m.recurrence_pattern
                FROM bills b
@@ -125,10 +150,12 @@ router.get('/', async (req, res) => {
                ORDER BY b.due_date ASC`;
       params = [start, end];
     }
+
     console.log('GET /api/bills query:', query, params);
     const result = await db.query(query, params);
-    console.log("Bills returned from DB:", result.rows);
+    console.log('Bills returned from DB:', result.rows);
     res.json(result.rows.map(formatBillResponse));
+
   } catch (err) {
     console.error('GET /api/bills error:', err.stack || err);
     res.status(500).json({ error: 'Internal server error while fetching bills.' });
@@ -155,18 +182,20 @@ router.post('/', async (req, res) => {
 
   try {
     let masterId;
-    const existingMasterQuery =
-      `SELECT id, recurrence_pattern, is_active
-        FROM bill_master
-       WHERE name = $1 AND (category IS NOT DISTINCT FROM $2)
-       LIMIT 1`;
+    const existingMasterQuery = `
+      SELECT id, recurrence_pattern, is_active
+      FROM bill_master
+      WHERE name = $1 AND (category IS NOT DISTINCT FROM $2)
+      LIMIT 1`;
     const existingParams = [name.trim(), category];
     console.log('POST /api/bills existingMasterQuery:', existingMasterQuery, existingParams);
     const existingMaster = await db.query(existingMasterQuery, existingParams);
 
     if (existingMaster.rows.length === 0) {
-      const insertMasterQuery =
-        `INSERT INTO bill_master (name, category, recurrence_pattern) VALUES ($1, $2, $3) RETURNING id`;
+      const insertMasterQuery = `
+        INSERT INTO bill_master (name, category, recurrence_pattern)
+        VALUES ($1, $2, $3)
+        RETURNING id`;
       const insertMasterParams = [name.trim(), category, recurrence];
       console.log('POST /api/bills insertMasterQuery:', insertMasterQuery, insertMasterParams);
       const masterRes = await db.query(insertMasterQuery, insertMasterParams);
@@ -187,8 +216,10 @@ router.post('/', async (req, res) => {
       }
     }
 
-    const insertBillQuery =
-      `INSERT INTO bills (master_id, amount, due_date, is_paid) VALUES ($1, $2, $3, $4) RETURNING *`;
+    const insertBillQuery = `
+      INSERT INTO bills (master_id, amount, due_date, is_paid)
+      VALUES ($1, $2, $3, $4)
+      RETURNING *`;
     const insertBillParams = [masterId, amount, dueDate, isPaid];
     console.log('POST /api/bills insertBillQuery:', insertBillQuery, insertBillParams);
     const result = await db.query(insertBillQuery, insertBillParams);
@@ -196,14 +227,15 @@ router.post('/', async (req, res) => {
     const createdBill = result.rows[0];
 
     if (isRecurring) {
+      // Create the next month’s recurring instance, applying the same checks
       await createRecurringInstance(masterId, createdBill, 1);
     }
 
-    const joinedQuery =
-      `SELECT b.*, m.name, m.category, m.recurrence_pattern
-       FROM bills b
-       JOIN bill_master m ON b.master_id = m.id
-       WHERE b.id = $1`;
+    const joinedQuery = `
+      SELECT b.*, m.name, m.category, m.recurrence_pattern
+      FROM bills b
+      JOIN bill_master m ON b.master_id = m.id
+      WHERE b.id = $1`;
     const joinedParams = [createdBill.id];
     console.log('POST /api/bills joinedQuery:', joinedQuery, joinedParams);
     const joined = await db.query(joinedQuery, joinedParams);
@@ -278,7 +310,11 @@ router.patch('/:id', async (req, res) => {
 
   try {
     if (billUpdates.length > 0) {
-      const billQuery = `UPDATE bills SET ${billUpdates.join(', ')}, updated_at = NOW() WHERE id = $${idx} RETURNING *`;
+      const billQuery = `
+        UPDATE bills
+        SET ${billUpdates.join(', ')}, updated_at = NOW()
+        WHERE id = $${idx}
+        RETURNING *`;
       const result = await db.query(billQuery, [...billValues, billId]);
       if (result.rowCount === 0) {
         return res.status(404).json({ error: 'Bill not found.' });
@@ -286,7 +322,10 @@ router.patch('/:id', async (req, res) => {
     }
 
     if (masterUpdates.length > 0) {
-      const masterQuery = `UPDATE bill_master SET ${masterUpdates.join(', ')}, updated_at = NOW() WHERE id = (SELECT master_id FROM bills WHERE id = $${mIdx})`;
+      const masterQuery = `
+        UPDATE bill_master
+        SET ${masterUpdates.join(', ')}, updated_at = NOW()
+        WHERE id = (SELECT master_id FROM bills WHERE id = $${mIdx})`;
       await db.query(masterQuery, [...masterValues, billId]);
     }
 
@@ -318,8 +357,9 @@ router.delete('/:id', async (req, res) => {
 
   try {
     if (mode === 'instance') {
+      // Soft‐delete a single instance
       const result = await db.query(
-        'UPDATE bills SET is_deleted = true WHERE id = $1 RETURNING *',
+        'UPDATE bills SET is_deleted = TRUE WHERE id = $1 RETURNING *',
         [billId]
       );
       if (result.rowCount === 0) {
@@ -328,6 +368,7 @@ router.delete('/:id', async (req, res) => {
       return res.json(formatBillResponse(result.rows[0]));
     }
 
+    // Hard‐delete if not just soft‐deleting the instance
     const result = await db.query('DELETE FROM bills WHERE id = $1 RETURNING id', [billId]);
     if (result.rowCount === 0) {
       return res.status(404).json({ error: 'Bill not found.' });
