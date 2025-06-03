@@ -168,28 +168,11 @@ router.post('/', async (req, res) => {
       }
     }
 
-    const checkDeletedQuery =
-      `SELECT id FROM bills WHERE master_id = $1 AND due_date = $2 AND is_deleted = TRUE LIMIT 1`;
-    const checkDeletedParams = [masterId, dueDate];
-    console.log('POST /api/bills checkDeletedQuery:', checkDeletedQuery, checkDeletedParams);
-    const deletedExisting = await db.query(checkDeletedQuery, checkDeletedParams);
-
-    let result;
-
-    if (deletedExisting.rows.length > 0) {
-      const reviveId = deletedExisting.rows[0].id;
-      const reviveQuery =
-        `UPDATE bills SET amount = $2, is_paid = $3, is_deleted = FALSE, updated_at = NOW() WHERE id = $1 RETURNING *`;
-      const reviveParams = [reviveId, amount, isPaid];
-      console.log('POST /api/bills reviveQuery:', reviveQuery, reviveParams);
-      result = await db.query(reviveQuery, reviveParams);
-    } else {
-      const insertBillQuery =
-        `INSERT INTO bills (master_id, amount, due_date, is_paid) VALUES ($1, $2, $3, $4) RETURNING *`;
-      const insertBillParams = [masterId, amount, dueDate, isPaid];
-      console.log('POST /api/bills insertBillQuery:', insertBillQuery, insertBillParams);
-      result = await db.query(insertBillQuery, insertBillParams);
-    }
+    const insertBillQuery =
+      `INSERT INTO bills (master_id, amount, due_date, is_paid) VALUES ($1, $2, $3, $4) RETURNING *`;
+    const insertBillParams = [masterId, amount, dueDate, isPaid];
+    console.log('POST /api/bills insertBillQuery:', insertBillQuery, insertBillParams);
+    const result = await db.query(insertBillQuery, insertBillParams);
 
     const createdBill = result.rows[0];
 
