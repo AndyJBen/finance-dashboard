@@ -55,24 +55,30 @@ const ensureInstancesUpToMonth = async (month) => {
   const mastersQuery = "SELECT id FROM bill_master WHERE recurrence_pattern = 'monthly' AND is_active = TRUE";
   console.log('ensureInstancesUpToMonth mastersQuery:', mastersQuery);
   const masters = await db.query(mastersQuery);
-  for (const m of masters.rows) {
-    const latestQuery = "SELECT amount, due_date FROM bills WHERE master_id = $1 ORDER BY due_date DESC LIMIT 1";
-    console.log('ensureInstancesUpToMonth latestQuery:', latestQuery, [m.id]);
-    const latest = await db.query(latestQuery, [m.id]);
-    if (latest.rows.length === 0) continue;
-    let nextDate = dayjs(latest.rows[0].due_date).add(1, 'month');
-    const amount = parseFloat(latest.rows[0].amount);
-    while (nextDate.isSameOrBefore(targetDate, 'month')) {
-      const existsQuery = "SELECT 1 FROM bills WHERE master_id = $1 AND TO_CHAR(due_date,'YYYY-MM') = $2";
-      console.log('ensureInstancesUpToMonth existsQuery:', existsQuery, [m.id, nextDate.format('YYYY-MM')]);
-      const exists = await db.query(existsQuery, [m.id, nextDate.format('YYYY-MM')]);
-      if (exists.rows.length === 0) {
-        const insertQuery = "INSERT INTO bills (master_id, amount, due_date, is_paid) VALUES ($1, $2, $3, false)";
-        const params = [m.id, amount, nextDate.format('YYYY-MM-DD')];
-        console.log('ensureInstancesUpToMonth insertQuery:', insertQuery, params);
-        await db.query(insertQuery, params);
+  for (const { id: masterId } of masters.rows) {
+    const latestQuery =
+      "SELECT amount, due_date FROM bills WHERE master_id = $1 AND is_deleted = FALSE ORDER BY due_date DESC LIMIT 1";
+    console.log('ensureInstancesUpToMonth latestQuery:', latestQuery, [masterId]);
+    const latestRes = await db.query(latestQuery, [masterId]);
+    if (latestRes.rows.length === 0) continue;
+    let latest = {
+      amount: parseFloat(latestRes.rows[0].amount),
+      due_date: latestRes.rows[0].due_date
+    };
+
+    while (dayjs(latest.due_date).isBefore(targetDate, 'month')) {
+      const nextDue = dayjs(latest.due_date).add(1, 'month').format('YYYY-MM-DD');
+      const deletedCheck = await db.query(
+        'SELECT id FROM bills WHERE master_id = $1 AND due_date = $2 AND is_deleted = TRUE LIMIT 1',
+        [masterId, nextDue]
+      );
+      if (deletedCheck.rows.length === 0) {
+        const insertQuery =
+          'INSERT INTO bills (master_id, amount, due_date, is_paid) VALUES ($1, $2, $3, false)';
+        console.log('ensureInstancesUpToMonth insertQuery:', insertQuery, [masterId, latest.amount, nextDue]);
+        await db.query(insertQuery, [masterId, latest.amount, nextDue]);
       }
-      nextDate = nextDate.add(1, 'month');
+      latest = { due_date: nextDue, amount: latest.amount };
     }
   }
 };
