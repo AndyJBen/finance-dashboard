@@ -115,7 +115,7 @@ function MyApp() {
       case 'dashboard':
         if (isMobileView) {
           return (
-            <Row gutter={[8, 16]}>
+            <Row gutter={[8, 8]}>
               <Col xs={24}>
                 <FinancialOverviewCards />
               </Col>
