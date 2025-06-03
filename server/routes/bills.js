@@ -137,7 +137,10 @@ router.post('/', async (req, res) => {
   try {
     let masterId;
     const existingMasterQuery =
-      `SELECT id, recurrence_pattern FROM bill_master WHERE name = $1 AND (category IS NOT DISTINCT FROM $2) LIMIT 1`;
+      `SELECT id, recurrence_pattern, is_active
+        FROM bill_master
+       WHERE name = $1 AND (category IS NOT DISTINCT FROM $2)
+       LIMIT 1`;
     const existingParams = [name.trim(), category];
     console.log('POST /api/bills existingMasterQuery:', existingMasterQuery, existingParams);
     const existingMaster = await db.query(existingMasterQuery, existingParams);
@@ -151,6 +154,12 @@ router.post('/', async (req, res) => {
       masterId = masterRes.rows[0].id;
     } else {
       masterId = existingMaster.rows[0].id;
+      if (!existingMaster.rows[0].is_active) {
+        await db.query(
+          'UPDATE bill_master SET is_active = TRUE, updated_at = NOW() WHERE id = $1',
+          [masterId]
+        );
+      }
       if (existingMaster.rows[0].recurrence_pattern !== recurrence) {
         const updateMasterQuery = 'UPDATE bill_master SET recurrence_pattern = $1 WHERE id = $2';
         const updateParams = [recurrence, masterId];
