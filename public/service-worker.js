@@ -1,4 +1,5 @@
-const CACHE_NAME = 'financely-v1';
+// Bump the cache version to invalidate old caches on new deployments
+const CACHE_NAME = 'financely-v2';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -8,6 +9,8 @@ const urlsToCache = [
 
 // Install a service worker
 self.addEventListener('install', event => {
+  // Activate the new Service Worker as soon as it finishes installing
+  self.skipWaiting();
   event.waitUntil((async () => {
     const cache = await caches.open(CACHE_NAME);
     console.log('Opened cache');
@@ -29,54 +32,37 @@ self.addEventListener('fetch', event => {
   }
 
   event.respondWith(
-    caches.match(event.request)
+    fetch(event.request)
       .then(response => {
-        // Cache hit - return response
-        if (response) {
-          return response;
-        }
-        
-        // Clone the request
-        const fetchRequest = event.request.clone();
-        
-        return fetch(fetchRequest).then(
-          response => {
-            // Check if we received a valid response
-            if(!response || response.status !== 200 || response.type !== 'basic') {
-              return response;
-            }
-            
-            // Clone the response
-            const responseToCache = response.clone();
-            
-            caches.open(CACHE_NAME)
-              .then(cache => {
-                // Don't cache API responses to avoid stale data
-                if (!event.request.url.includes('/api/')) {
-                  cache.put(event.request, responseToCache);
-                }
-              });
-              
-            return response;
+        // Successful response - update the cache in the background
+        const responseClone = response.clone();
+        caches.open(CACHE_NAME).then(cache => {
+          if (!event.request.url.includes('/api/')) {
+            cache.put(event.request, responseClone);
           }
-        );
+        });
+        return response;
       })
-    );
+      .catch(() => caches.match(event.request))
+  );
 });
 
 // Update a service worker
 self.addEventListener('activate', event => {
   const cacheWhitelist = [CACHE_NAME];
   event.waitUntil(
-    caches.keys().then(cacheNames => {
-      return Promise.all(
+    (async () => {
+      const cacheNames = await caches.keys();
+      await Promise.all(
         cacheNames.map(cacheName => {
-          if (cacheWhitelist.indexOf(cacheName) === -1) {
+          if (!cacheWhitelist.includes(cacheName)) {
             return caches.delete(cacheName);
           }
         })
       );
-    })
+      // Take control of uncontrolled clients after activation
+      await self.clients.claim();
+    })()
   );
 });
 
