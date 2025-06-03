@@ -31,7 +31,7 @@ const formatBillResponse = (row) => {
 };
 
 const deleteFutureRecurringInstances = async (masterId, currentBillDueDate) => {
-  // Mark any future instances as deleted rather than hard-delete
+  // Mark future bills as deleted rather than hard-deleting
   const updateQuery = `UPDATE bills SET is_deleted = TRUE WHERE master_id = $1 AND due_date > $2`;
   console.log('deleteFutureRecurringInstances query:', updateQuery, [masterId, currentBillDueDate]);
   await db.query(updateQuery, [masterId, currentBillDueDate]);
@@ -42,7 +42,7 @@ const createRecurringInstance = async (masterId, baseBill, monthsToAdd) => {
   const nextDue = targetDueDate.format('YYYY-MM-DD');
   const nextMonthKey = nextDue.slice(0, 7);
 
-  // Check for an existing non-deleted instance in that month
+  // Check if a non-deleted bill already exists for that master/month
   const existsActive = await db.query(
     `SELECT 1 FROM bills
        WHERE master_id = $1
@@ -52,7 +52,7 @@ const createRecurringInstance = async (masterId, baseBill, monthsToAdd) => {
     [masterId, nextMonthKey]
   );
 
-  // Check if a deleted row already exists for this exact due_date
+  // Check if a deleted record exists for that exact due_date
   const existsDeleted = await db.query(
     'SELECT 1 FROM bills WHERE master_id = $1 AND due_date = $2 AND is_deleted = TRUE LIMIT 1',
     [masterId, nextDue]
@@ -88,7 +88,7 @@ const ensureInstancesUpToMonth = async (month) => {
       const nextDue = dayjs(latest.due_date).add(1, 'month').format('YYYY-MM-DD');
       const nextMonthKey = nextDue.slice(0, 7);
 
-      // Check for an existing non-deleted instance in that month
+      // Check if a non-deleted bill already exists for next month
       const existsActive = await db.query(
         `SELECT 1 FROM bills
            WHERE master_id = $1
@@ -98,14 +98,14 @@ const ensureInstancesUpToMonth = async (month) => {
         [masterId, nextMonthKey]
       );
 
-      // Check if a deleted row already exists for this exact due_date
+      // Check if a deleted record exists for that exact due_date
       const existsDeleted = await db.query(
         'SELECT 1 FROM bills WHERE master_id = $1 AND due_date = $2 AND is_deleted = TRUE LIMIT 1',
         [masterId, nextDue]
       );
 
       if (existsActive.rows.length === 0 && existsDeleted.rows.length === 0) {
-        const insertQuery =
+        const insertQuery = 
           'INSERT INTO bills (master_id, amount, due_date, is_paid) VALUES ($1, $2, $3, false)';
         console.log('ensureInstancesUpToMonth insertQuery:', insertQuery, [masterId, latest.amount, nextDue]);
         await db.query(insertQuery, [masterId, latest.amount, nextDue]);
@@ -227,7 +227,7 @@ router.post('/', async (req, res) => {
     const createdBill = result.rows[0];
 
     if (isRecurring) {
-      // Create the next month’s recurring instance, applying the same checks
+      // Create next month's instance with the same two-check logic
       await createRecurringInstance(masterId, createdBill, 1);
     }
 
@@ -357,7 +357,7 @@ router.delete('/:id', async (req, res) => {
 
   try {
     if (mode === 'instance') {
-      // Soft‐delete a single instance
+      // Soft-delete a single instance
       const result = await db.query(
         'UPDATE bills SET is_deleted = TRUE WHERE id = $1 RETURNING *',
         [billId]
@@ -368,7 +368,7 @@ router.delete('/:id', async (req, res) => {
       return res.json(formatBillResponse(result.rows[0]));
     }
 
-    // Hard‐delete if not just soft‐deleting the instance
+    // Hard-delete permanently if not just marking it deleted
     const result = await db.query('DELETE FROM bills WHERE id = $1 RETURNING id', [billId]);
     if (result.rowCount === 0) {
       return res.status(404).json({ error: 'Bill not found.' });
