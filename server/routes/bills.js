@@ -68,11 +68,24 @@ const ensureInstancesUpToMonth = async (month) => {
 
     while (dayjs(latest.due_date).isBefore(targetDate, 'month')) {
       const nextDue = dayjs(latest.due_date).add(1, 'month').format('YYYY-MM-DD');
-      const deletedCheck = await db.query(
-        'SELECT id FROM bills WHERE master_id = $1 AND due_date = $2 AND is_deleted = TRUE LIMIT 1',
+
+      // Check for an existing non-deleted instance in that month
+      const existsActive = await db.query(
+        `SELECT 1 FROM bills
+           WHERE master_id = $1
+             AND TO_CHAR(due_date, 'YYYY-MM') = $2
+             AND is_deleted = FALSE
+           LIMIT 1`,
+        [masterId, nextDue.slice(0, 7)]
+      );
+
+      // Check if a deleted row already exists for this exact due_date
+      const existsDeleted = await db.query(
+        'SELECT 1 FROM bills WHERE master_id = $1 AND due_date = $2 AND is_deleted = TRUE LIMIT 1',
         [masterId, nextDue]
       );
-      if (deletedCheck.rows.length === 0) {
+
+      if (existsActive.rows.length === 0 && existsDeleted.rows.length === 0) {
         const insertQuery =
           'INSERT INTO bills (master_id, amount, due_date, is_paid) VALUES ($1, $2, $3, false)';
         console.log('ensureInstancesUpToMonth insertQuery:', insertQuery, [masterId, latest.amount, nextDue]);
