@@ -503,6 +503,8 @@ const CombinedBillsOverview = ({ style }) => {
         return { text: '#D4B56B', bg: '#FCFAF5' };
       case 'family support':
         return { text: '#69C9AF', bg: '#F1F5F9' };
+      case 'home':
+        return { text: '#6BA4D4', bg: '#F0F6FC' };
       default:
         return { text: '#9B9B9B', bg: '#F8F8F8' };
     }
@@ -698,11 +700,10 @@ const CombinedBillsOverview = ({ style }) => {
                     <span
                       className="material-symbols-outlined"
                       style={{
-                        color: isSmallScreen
-                          ? '#9e9e9e'
-                          : selectedCategory === category
-                          ? getCategoryColor(category).text
-                          : '#9e9e9e',
+                        color:
+                          selectedCategory === category
+                            ? getCategoryColor(category).text
+                            : '#9e9e9e',
                         fontSize: isSmallScreen ? '14px' : undefined,
                       }}
                     >
