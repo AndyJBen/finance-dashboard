@@ -272,7 +272,13 @@ const UnifiedEditBillModal = ({ open, onCancel, onSubmit, bill }) => {
                     name="amount"
                     rules={[
                       { required: true, message: 'Required' },
-                      { type: 'number', min: 0.01, message: 'Must be positive' }
+                      {
+                        validator: (_, value) => {
+                          const numeric = Number(value);
+                          if (numeric > 0) return Promise.resolve();
+                          return Promise.reject(new Error('Must be positive'));
+                        }
+                      }
                     ]}
                     className="amount-input"
                   >
