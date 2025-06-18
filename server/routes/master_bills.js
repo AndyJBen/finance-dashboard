@@ -25,6 +25,10 @@ router.patch('/:id', async (req, res) => {
   const params = [masterId, fromDate];
   let idx = 3;
 
+  const masterUpdates = [];
+  const masterParams = [];
+  let mIdx = 1;
+
   if (amount !== undefined) {
     updates.push(`amount = $${idx}`);
     params.push(amount);
@@ -35,6 +39,10 @@ router.patch('/:id', async (req, res) => {
     updates.push(`category = $${idx}`);
     params.push(category && category !== '' ? category : null);
     idx++;
+
+    masterUpdates.push(`category = $${mIdx}`);
+    masterParams.push(category && category !== '' ? category : null);
+    mIdx++;
   }
 
   if (dueDate) {
@@ -56,6 +64,14 @@ router.patch('/:id', async (req, res) => {
 
   try {
     const result = await db.query(query, params);
+
+    if (masterUpdates.length > 0) {
+      const masterQuery = `UPDATE bill_master
+                           SET ${masterUpdates.join(', ')}, updated_at = NOW()
+                           WHERE id = $${mIdx}`;
+      await db.query(masterQuery, [...masterParams, masterId]);
+    }
+
     res.json({ updated: result.rowCount });
   } catch (err) {
     console.error('PATCH /api/master-bills/:id error:', err.stack || err);
