@@ -270,16 +270,7 @@ const UnifiedEditBillModal = ({ open, onCancel, onSubmit, bill }) => {
 
                   <Form.Item
                     name="amount"
-                    rules={[
-                      { required: true, message: 'Required' },
-                      {
-                        validator: (_, value) => {
-                          const numeric = Number(value);
-                          if (numeric > 0) return Promise.resolve();
-                          return Promise.reject(new Error('Must be positive'));
-                        }
-                      }
-                    ]}
+                    rules={[{ required: true, message: 'Required' }]}
                     className="amount-input"
                   >
                     <div className="compact-input-wrapper amount-wrapper">
