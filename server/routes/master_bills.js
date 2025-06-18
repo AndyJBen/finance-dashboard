@@ -4,6 +4,65 @@ const db = require('../db');
 
 const router = express.Router();
 
+router.patch('/:id', async (req, res) => {
+  const { id } = req.params;
+  const from = req.query.from;
+  const masterId = parseInt(id, 10);
+  if (isNaN(masterId)) {
+    return res.status(400).json({ error: 'Invalid master bill ID.' });
+  }
+
+  const { amount, category, dueDate } = req.body || {};
+  if (amount === undefined && category === undefined && !dueDate) {
+    return res.status(400).json({ error: 'No update fields provided.' });
+  }
+
+  const fromDate = from && dayjs(from).isValid()
+    ? dayjs(from).format('YYYY-MM-DD')
+    : dayjs().format('YYYY-MM-DD');
+
+  const updates = [];
+  const params = [masterId, fromDate];
+  let idx = 3;
+
+  if (amount !== undefined) {
+    updates.push(`amount = $${idx}`);
+    params.push(amount);
+    idx++;
+  }
+
+  if (category !== undefined) {
+    updates.push(`category = $${idx}`);
+    params.push(category && category !== '' ? category : null);
+    idx++;
+  }
+
+  if (dueDate) {
+    const dayOfMonth = dayjs(dueDate).date();
+    updates.push(
+      `due_date = date_trunc('month', due_date) + ($${idx} - 1) * INTERVAL '1 day'`
+    );
+    params.push(dayOfMonth);
+    idx++;
+  }
+
+  if (updates.length === 0) {
+    return res.status(400).json({ error: 'No valid fields provided for update.' });
+  }
+
+  const query = `UPDATE bills
+                 SET ${updates.join(', ')}, updated_at = NOW()
+                 WHERE master_id = $1 AND due_date > $2 AND is_deleted = FALSE`;
+
+  try {
+    const result = await db.query(query, params);
+    res.json({ updated: result.rowCount });
+  } catch (err) {
+    console.error('PATCH /api/master-bills/:id error:', err.stack || err);
+    res.status(500).json({ error: 'Internal server error while updating future bills.' });
+  }
+});
+
 router.delete('/:id', async (req, res) => {
   const { id } = req.params;
   const from = req.query.from;

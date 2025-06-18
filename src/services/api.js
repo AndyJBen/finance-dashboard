@@ -82,6 +82,27 @@ export const updateBill = async (id, updatedData) => {
     }
 };
 
+export const updateFutureBills = async (masterId, fromDate, updatedData) => {
+    try {
+        let url = `${API_URL}/master-bills/${masterId}`;
+        if (fromDate) {
+            url += `?from=${encodeURIComponent(fromDate)}`;
+        }
+        const response = await fetch(url, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(updatedData),
+        });
+        if (!response.ok) {
+            throw await handleApiError(response);
+        }
+        return await response.json();
+    } catch (error) {
+        console.error(`Error in updateFutureBills for master ID ${masterId}:`, error);
+        throw error;
+    }
+};
+
 export const deleteBill = async (id) => {
     try {
         const response = await fetch(`${API_URL}/bills/${id}?mode=instance`, { method: 'DELETE' });
