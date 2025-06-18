@@ -1,7 +1,7 @@
 import React, { createContext, useState, useEffect, useCallback } from 'react';
 import dayjs from 'dayjs';
 import {
-  fetchBills, addBill, updateBill, deleteBill, deleteMasterBill,
+  fetchBills, addBill, updateBill, updateFutureBills, deleteBill, deleteMasterBill,
   fetchBankBalance, updateBankBalance,
   fetchCreditCards, addCreditCard, updateCreditCard, deleteCreditCard, apiReorderCreditCards
 } from '../services/api';
@@ -204,33 +204,38 @@ export const FinanceProvider = ({ children }) => {
       return success;
     }
 
-    const futureBills = bills.filter(
-      b => b.isRecurring && b.name === existingBill.name && dayjs(b.dueDate).isAfter(dayjs(existingBill.dueDate))
-    );
+    const futurePayload = {};
+    if (applyFields.includes('amount') && typeof updates.amount !== 'undefined') {
+      futurePayload.amount = updates.amount;
+    }
+    if (applyFields.includes('category') && typeof updates.category !== 'undefined') {
+      futurePayload.category = updates.category;
+    }
+    if (applyFields.includes('dueDate') && updates.dueDate) {
+      futurePayload.dueDate = updates.dueDate;
+    }
 
-    for (const bill of futureBills) {
-      const futureUpdates = {};
-      if (applyFields.includes('amount') && typeof updates.amount !== 'undefined') {
-        futureUpdates.amount = updates.amount;
-      }
-      if (applyFields.includes('category') && typeof updates.category !== 'undefined') {
-        futureUpdates.category = updates.category;
-      }
-      if (applyFields.includes('dueDate') && updates.dueDate) {
-        futureUpdates.dueDate = dayjs(bill.dueDate)
-          .date(dayjs(updates.dueDate).date())
-          .format('YYYY-MM-DD');
-      }
-      if (Object.keys(futureUpdates).length > 0) {
-        try {
-          const result = await updateBill(bill.id, futureUpdates);
-          if (result) {
-            setBills(prev => prev.map(b => (b.id === bill.id ? { ...b, ...result } : b)));
+    try {
+      await updateFutureBills(existingBill.masterId, existingBill.dueDate, futurePayload);
+      setBills(prev => prev.map(b => {
+        if (
+          b.masterId === existingBill.masterId &&
+          dayjs(b.dueDate).isAfter(dayjs(existingBill.dueDate))
+        ) {
+          const updated = { ...b };
+          if (futurePayload.amount !== undefined) updated.amount = futurePayload.amount;
+          if (futurePayload.category !== undefined) updated.category = futurePayload.category;
+          if (futurePayload.dueDate) {
+            updated.dueDate = dayjs(b.dueDate)
+              .date(dayjs(futurePayload.dueDate).date())
+              .format('YYYY-MM-DD');
           }
-        } catch (err) {
-          console.error('Error updating future bill:', err);
+          return updated;
         }
-      }
+        return b;
+      }));
+    } catch (err) {
+      console.error('Error updating future bills:', err);
     }
     return true;
   };
